@@ -32,7 +32,7 @@ export default function Upgrade(){
                                 <p className="text-base">Work in Teams and know how to visualize and present like a pro.</p>
                             </div>
                             
-                            ?modal=true
+                            {Buttons("Upgrade 🚀!", "?modal=true")}
                         </div>
                     </div>
                 </div>
@@ -59,7 +59,7 @@ export default function Upgrade(){
                             <p className="font-bold text-xl">3️⃣ Expert Guidance & Mentorship</p>
                             <p className="text-lg">Work in Teams and know how to visualize and present like a pro.</p>
                         </div>
-                        ?modal=true
+                        {Buttons("Upgrade 🚀!", "?modal=true")}
                     </div>
                 </div>
             </section>
