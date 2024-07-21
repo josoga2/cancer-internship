@@ -31,10 +31,10 @@ export default function About(){
                             <p className="font-medium ">You <Link href={"#"} className="font-semibold underline text-red-500">NOT</Link>  should apply if...</p>
                             <div className="font-normal text-sm max-w-xs pl-5">
                                 <ul className="list-disc flex flex-col gap-2">
-                                    <li>You are not a team player and don't like working with others.</li>
+                                    <li>You are not a team player and do not like working with others.</li>
                                     <li>You are a graduate student who is just coasting and have no desire to land graduate school scholarships.</li>
                                     <li>You are too lazy and want to be spoon-fed</li>
-                                    <li>You don't like peer review and afraid of constructive criticism of your work</li>
+                                    <li>You do not like peer review and afraid of constructive criticism of your work</li>
                                     <li>You are not ready to be an expert and master the usage of over 100 bioinformatics tools</li>
                                     <li>You have tried coding and given up that its not for you </li>
                                 </ul>
@@ -73,10 +73,10 @@ export default function About(){
                             <p className="font-medium ">You <Link href={"#"} className="font-semibold underline text-red-500">NOT</Link>  should apply if...</p>
                             <div className="font-normal text-sm max-w-xs pl-5">
                                 <ul className="list-disc flex flex-col gap-2">
-                                    <li>You are not a team player and don't like working with others.</li>
+                                    <li>You are not a team player and do not like working with others.</li>
                                     <li>You are a graduate student who is just coasting and have no desire to land graduate school scholarships.</li>
                                     <li>You are too lazy and want to be spoon-fed</li>
-                                    <li>You don't like peer review and afraid of constructive criticism of your work</li>
+                                    <li>You do not like peer review and afraid of constructive criticism of your work</li>
                                     <li>You are not ready to be an expert and master the usage of over 100 bioinformatics tools</li>
                                     <li>You have tried coding and given up/decided its not for you </li>
                                 </ul>

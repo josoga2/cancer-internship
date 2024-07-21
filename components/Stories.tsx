@@ -46,7 +46,7 @@ export default function Stories(){
                                     <Image src={halimat} alt="img-2" className="w-16 h-16 rounded-full border-2"  />
                                     <p className="font-semibold">Halimat Chisom Atanda</p>
                                 </div>
-                                <p>It was really inclusive. I liked that the mentors were always available to respond to questions, comments, and anything at all. I would say that's the highlight of the workshop for me.</p>
+                                <p>It was really inclusive. I liked that the mentors were always available to respond to questions, comments, and anything at all. I would say that is the highlight of the workshop for me.</p>
                                 <p className="font-bold">Now in University of Queensland, Australia</p>
                             </div>
                             <div className="flex flex-col gap-5 max-w-sm rounded-md p-5 bg-hbblue-0.5">
@@ -100,7 +100,7 @@ export default function Stories(){
                                     <Image src={halimat} alt="img-2" className="w-16 h-16 rounded-full border-2"  />
                                     <p className="font-semibold">Halimat Chisom Atanda</p>
                                 </div>
-                                <p>It was really inclusive. I liked that the mentors were always available to respond to questions, comments, and anything at all. I would say that's the highlight of the workshop for me.</p>
+                                <p>It was really inclusive. I liked that the mentors were always available to respond to questions, comments, and anything at all. I would say that is the highlight of the workshop for me.</p>
                                 <p className="font-bold">Now in University of Queensland, Australia</p>
                             </div>
                             <div className="flex flex-col gap-5 max-w-sm rounded-md p-5 bg-hbblue-0.5">
