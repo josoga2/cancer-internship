@@ -9,3 +9,4 @@ function Buttons(inputText: string, inputLink: string){
 };
 
 export default Buttons;
+

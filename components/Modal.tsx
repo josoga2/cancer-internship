@@ -21,7 +21,7 @@ export default function Modal(){
         
         <main>
             
-            <section className="hidden md:flex md:max-w-screen-lg md:m-auto md:items-center md:justify-between  pt-10 px-10 relative">
+            <section className="hidden md:flex md:max-w-screen-lg md:m-auto md:items-center md:justify-between  px-10 relative">
             {modal &&    
                 <dialog className="fixed left-0 top-0 w-full h-full bg-black bg-opacity-50 z-50 overflow-auto backdrop-blur flex items-start">
                     <div className="bg-white m-auto p-8 w-1/4 rounded-lg  border-4 shadow-md border-hbgreen-1">

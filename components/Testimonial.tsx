@@ -37,7 +37,7 @@ function Testimonial(){
                     
                 </div>
                 
-                {Buttons("Read their Stories →", "https://thehackbio.com/stories")}
+                
                 </div>
             </main>
 
@@ -65,10 +65,6 @@ function Testimonial(){
                         <Image src={oklahoma} height={150} width={150} alt="icons" />
                     </div> 
                 </div>
-
-                
-
-                {Buttons("Read their Stories →", "https://thehackbio.com/stories")}
 
             </main>
         </section>

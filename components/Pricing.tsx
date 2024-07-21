@@ -1,5 +1,8 @@
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import Buttons from "./Buttons";
+import Whitebutton from "./Whitebutton";
+import { MdCancel } from "react-icons/md";
+
 
 export default function Pricing(){
 
@@ -14,15 +17,25 @@ export default function Pricing(){
 
                     {/**Free */}
 
-                    <div className="flex flex-col py-10 px-5 bg-figma-grey border rounded-lg max-w-full h-max gap-2">
-                        <span className="font-bold text-3xl flex flex-row items-end gap-2">Free</span>
-                        <p className="font-semibold text-lg">$0.00</p>
+                    <div className="flex flex-col py-10 px-5 bg-figma-grey border rounded-lg max-w-full gap-2 h-max">
+                        <span className="font-bold text-3xl flex flex-row items-end gap-2">Free  </span>
+                        <span className="flex gap-5 items-center">  <p className="font-semibold text-lg">$0.00</p> </span>
                         <hr className="h-px bg-gray-200" />
-                        <ul className="font-medium leading-10 pb-5 min-w-56" >
-                            <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 " /> Complete Stages 0-3</li>
-                            <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 " /> Graded Solutions </li>
+                        <ul className="font-medium text-sm leading-10 pb-5" >
+                            <li className="flex flex-row items-center gap-3"> <IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Complete Stages 0-5</li>
+                            <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Graded Team Tasks Weekly</li>
+                            <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel className="text-red-500 text-2xl" /> Weekly Mentoship Call</li>
+                            <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel className="text-red-500 text-2xl" /> 1-on-1 troubleshooting meetings</li>
+                            <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel className="text-red-500 text-2xl" /> Unlimited Access to Bioinformatics Servers</li>
+                            <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel className="text-red-500 text-2xl" /> Complete All 8 Stages</li>
+                            <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel className="text-red-500 text-2xl" /> Graded Solutions </li>
+                            <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel  className="text-red-500 text-2xl"/> Unlimited Access to Final Project Phase</li>
+                            <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel className="text-red-500 text-2xl" /> Support for first draft manuscript</li>
+                            <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel  className="text-red-500 text-2xl"/> Graded Certification</li>
+                            <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel className="text-red-500 text-2xl" /> No Eviction from the internship</li>
                         </ul>
-                        {Buttons("Opens in August","")}
+
+                        {Whitebutton("Opens in August", "")}
                     </div>
                     
 
@@ -34,9 +47,10 @@ export default function Pricing(){
                         <ul className="font-medium text-sm leading-10 pb-5" >
                             <li className="flex flex-row items-center gap-3"> <IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Complete Training Resource Pack</li>
                             <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Weekly Mentorship Call</li>
+                            <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Graded Team Tasks Weekly</li>
                             <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> 1-on-1 troubleshooting meetings</li>
                             <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Unlimited Access to Bioinformatics Servers</li>
-                            <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Complete Stages 0-4</li>
+                            <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Complete All 8 Stages </li>
                             <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Graded Solutions </li>
                             <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle  className="text-hbgreen-1 text-2xl"/> Unlimited Access to Final Project Phase</li>
                             <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Support for first draft manuscript</li>
@@ -44,7 +58,7 @@ export default function Pricing(){
                             <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> No Eviction from the internship</li>
                         </ul>
 
-                        {Buttons("Begin Your Journey!", "?modal=true")}
+                        {Buttons("Sign Up Now!", "?modal=true")}
                     </div>
 
                 </div>
@@ -52,6 +66,47 @@ export default function Pricing(){
             </section>
 
             <section className="md:hidden p-5">
+                    <div className="flex flex-col py-10 px-5 bg-figma-grey border rounded-lg max-w-full gap-2 h-max mb-10">
+                        <span className="font-bold text-3xl flex flex-row items-end gap-2">Pro  <p className="bg-gradient-to-tr from-hbblue-3 to-pink-500 text-xs w-min rounded-full py-0.5 px-2 text-white">Recommended</p> </span>
+                        <span className="flex gap-5 items-center"> <p className="font-semibold text-base line-through text-red-500">$30.00</p> <p className="font-semibold text-lg">$15.00</p> </span>
+                        <hr className="h-px bg-gray-200" />
+                        <ul className="font-medium text-sm leading-10 pb-5" >
+                            <li className="flex flex-row items-center gap-3"> <IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Complete Training Resource Pack</li>
+                            <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Weekly Mentorship Call</li>
+                            <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Graded Team Tasks Weekly</li>
+                            <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> 1-on-1 troubleshooting meetings</li>
+                            <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Unlimited Access to Bioinformatics Servers</li>
+                            <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Complete All 8 Stages </li>
+                            <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Graded Solutions </li>
+                            <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle  className="text-hbgreen-1 text-2xl"/> Unlimited Access to Final Project Phase</li>
+                            <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Support for first draft manuscript</li>
+                            <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle  className="text-hbgreen-1 text-2xl"/> Graded Certification</li>
+                            <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> No Eviction from the internship</li>
+                        </ul>
+
+                        {Buttons("Sign Up Now!", "?modal=true")}
+                    </div>
+
+                    <div className="flex flex-col py-10 px-5 bg-figma-grey border rounded-lg max-w-full gap-2 h-max">
+                        <span className="font-bold text-3xl flex flex-row items-end gap-2">Free  </span>
+                        <span className="flex gap-5 items-center">  <p className="font-semibold text-lg">$0.00</p> </span>
+                        <hr className="h-px bg-gray-200" />
+                        <ul className="font-medium text-sm leading-10 pb-5" >
+                            <li className="flex flex-row items-center gap-3"> <IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Complete Stages 0-5</li>
+                            <li className="flex flex-row items-center gap-3"><IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Graded Team Tasks Weekly</li>
+                            <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel className="text-red-500 text-2xl" /> Weekly Mentoship Call</li>
+                            <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel className="text-red-500 text-2xl" /> 1-on-1 troubleshooting meetings</li>
+                            <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel className="text-red-500 text-2xl" /> Unlimited Access to Bioinformatics Servers</li>
+                            <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel className="text-red-500 text-2xl" /> Complete All 8 Stages</li>
+                            <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel className="text-red-500 text-2xl" /> Graded Solutions </li>
+                            <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel  className="text-red-500 text-2xl"/> Unlimited Access to Final Project Phase</li>
+                            <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel className="text-red-500 text-2xl" /> Support for first draft manuscript</li>
+                            <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel  className="text-red-500 text-2xl"/> Graded Certification</li>
+                            <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel className="text-red-500 text-2xl" /> No Eviction from the internship</li>
+                        </ul>
+
+                        {Whitebutton("Opens in August", "")}
+                    </div>
 
             </section>
         </main>
