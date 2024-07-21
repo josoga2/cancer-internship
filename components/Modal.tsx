@@ -30,7 +30,7 @@ export default function Modal(){
                                 <IoMdCloseCircleOutline className="text-5xl text-white" />
                             </Link>
                             <h3 className="font-bold">Choose your enrollment type</h3>
-                            <p className="text-xs">50% Early bird discount closes July 27th</p>
+                            <p className="text-xs">50% Early bird discount closes August 8th</p>
                             <div className="flex flex-col gap-4 pt-5">
                                 <div className="p-4 border-2 border-hbblue-1 rounded-md">
                                     <span className="flex flex-row items-center gap-2"> <p className="font-bold"> Premium</p> <p className="font-bold"> $15</p> <p className="line-through text-xs text-red-400"> $30</p> </span>
@@ -64,7 +64,7 @@ export default function Modal(){
                                     <IoMdCloseCircleOutline className="text-5xl text-white" />
                                 </Link>
                                 <h3 className="font-bold">Choose your enrollment type</h3>
-                                <p className="text-xs">50% Early bird discount closes July 27th</p>
+                                <p className="text-xs">50% Early bird discount closes August 8th</p>
                                 <div className="flex flex-col gap-4 pt-5">
                                     <div className="p-4 border-2 border-hbblue-1 rounded-md">
                                         <span className="flex flex-row items-center gap-2"> <p className="font-bold"> Premium</p> <p className="font-bold"> $15</p> <p className="line-through text-xs text-red-400"> $30</p> </span>
