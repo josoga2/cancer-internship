@@ -28,7 +28,7 @@ export default function About(){
                         </div>
 
                         <div className="flex flex-col gap-5 ">
-                            <p className="font-medium ">You <Link href={"#"} className="font-semibold underline text-red-500">NOT</Link>  should apply if...</p>
+                            <p className="font-medium ">You should <Link href={"#"} className="font-semibold underline text-red-500">NOT</Link>  apply if...</p>
                             <div className="font-normal text-sm max-w-xs pl-5">
                                 <ul className="list-disc flex flex-col gap-2">
                                     <li>You are not a team player and do not like working with others.</li>
