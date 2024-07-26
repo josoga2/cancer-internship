@@ -6,6 +6,7 @@ import { FaCcStripe } from "react-icons/fa";
 import { PiButterflyBold } from "react-icons/pi";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { FaArrowRight } from "react-icons/fa6";
+import { FaCcPaypal } from "react-icons/fa6";
 
 
 
@@ -37,8 +38,9 @@ export default function Modal(){
                                     <span className="flex flex-row items-center gap-2 text-xs"> <p className="font-light"> 100% Access to learning and mentorship</p>  </span>
 
                                     <div className="flex flex-col  gap-3 pt-5">
-                                        <Link href={'https://buy.stripe.com/28obKHgXIex3eJy8wC'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight /> Register with <FaCcStripe className="text-xl" /> </span> </Link>
+                                        <Link href={'https://buy.stripe.com/28obKHgXIex3eJy8wC'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight /> Register with <FaCcStripe className="text-xl" /> (Works well in Africa)</span> </Link>
                                         <Link href={'https://flutterwave.com/pay/xncny83hyjjf'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight /> Register with <PiButterflyBold className="text-xl" /> (Works well in Africa)</span> </Link>
+                                        <Link href={'https://www.paypal.com/ncp/payment/TLCE8JFAZQF2L'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight /> Register with <FaCcPaypal className="text-xl" /> (Works globally)</span> </Link>
                                     </div>
                                 </div>
                                
@@ -73,6 +75,7 @@ export default function Modal(){
                                         <div className="flex flex-col  gap-3 pt-5">
                                             <Link href={'https://buy.stripe.com/28obKHgXIex3eJy8wC'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight /> Register with <FaCcStripe className="text-xl" /> </span> </Link>
                                             <Link href={'https://flutterwave.com/pay/xncny83hyjjf'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight /> Register with <PiButterflyBold className="text-xl" /> (Works well in Africa)</span> </Link>
+                                            <Link href={'https://www.paypal.com/ncp/payment/TLCE8JFAZQF2L'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight /> Register with <FaCcPaypal className="text-xl" /> (Works globally)</span> </Link>
                                         </div>
                                     </div>
                                 
