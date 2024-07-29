@@ -13,7 +13,7 @@ export default function Hero(){
                     {/**Cancer Image */}
                     <div className="flex flex-col items-center justify-center gap-10">
                         <Image src={cancer} alt="cancer" className="h-72 w-72" />
-                        <p></p>
+                        <p>Starts September 1, 2024!</p>
                     </div>
                     {/**Description */}
                     <div className="">
