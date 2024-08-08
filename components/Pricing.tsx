@@ -34,8 +34,7 @@ export default function Pricing(){
                             <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel  className="text-red-500 text-2xl"/> Graded Certification</li>
                             <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel className="text-red-500 text-2xl" /> No Eviction from the internship</li>
                         </ul>
-
-                        {Whitebutton("Opens in August", "")}
+                        {Buttons('Free (Now Open)','https://forms.gle/D8G4RWwNyzkfq7x37')}
                     </div>
                     
 
@@ -105,7 +104,7 @@ export default function Pricing(){
                             <li className="flex flex-row items-center gap-3 text-gray-500 line-through"><MdCancel className="text-red-500 text-2xl" /> No Eviction from the internship</li>
                         </ul>
 
-                        {Whitebutton("Opens in August", "")}
+                        {Buttons('Free (Now Open)','https://forms.gle/D8G4RWwNyzkfq7x37')}
                     </div>
 
             </section>

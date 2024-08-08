@@ -34,11 +34,11 @@ export default function Modal(){
                             <p className="text-xs">50% Early bird discount closes August 8th</p>
                             <div className="flex flex-col gap-4 pt-5">
                                 <div className="p-4 border-2 border-hbblue-1 rounded-md">
-                                    <span className="flex flex-row items-center gap-2"> <p className="font-bold"> Premium</p> <p className="font-bold"> $15</p> <p className="line-through text-xs text-red-400"> $30</p> </span>
+                                    <span className="flex flex-row items-center gap-2"> <p className="font-bold"> Premium</p> <p className="font-bold"> $30</p> <p className="line-through text-xs text-red-400"> </p> </span>
                                     <span className="flex flex-row items-center gap-2 text-xs"> <p className="font-light"> 100% Access to learning and mentorship</p>  </span>
 
                                     <div className="flex flex-col  gap-3 pt-5">
-                                        <Link href={'https://buy.stripe.com/28obKHgXIex3eJy8wC'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight /> Register with <FaCcStripe className="text-xl" /> (Works globally)</span> </Link>
+                                        <Link href={'https://buy.stripe.com/4gw1635f0bkR0SI14b'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight /> Register with <FaCcStripe className="text-xl" /> (Works globally)</span> </Link>
                                         <Link href={'https://flutterwave.com/pay/xncny83hyjjf'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight /> Register with <PiButterflyBold className="text-xl" /> (Works well in Africa)</span> </Link>
                                         <Link href={'https://www.paypal.com/ncp/payment/TLCE8JFAZQF2L'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight /> Register with <FaCcPaypal className="text-xl" /> (Works globally)</span> </Link>
                                     </div>
@@ -46,7 +46,7 @@ export default function Modal(){
                                
                                 <div className="p-4 border-2 border-hbblue-1 rounded-md">
                                     <p className="font-bold">Free</p>
-                                    <Link href={''}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight />  Register (Opens in August) </span> </Link>
+                                    <Link href={'https://forms.gle/D8G4RWwNyzkfq7x37'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight />  Register Here (Now Open!) </span> </Link>
                                 </div>
                                 
                             </div>
@@ -69,11 +69,11 @@ export default function Modal(){
                                 <p className="text-xs">50% Early bird discount closes August 8th</p>
                                 <div className="flex flex-col gap-4 pt-5">
                                     <div className="p-4 border-2 border-hbblue-1 rounded-md">
-                                        <span className="flex flex-row items-center gap-2"> <p className="font-bold"> Premium</p> <p className="font-bold"> $15</p> <p className="line-through text-xs text-red-400"> $30</p> </span>
+                                        <span className="flex flex-row items-center gap-2"> <p className="font-bold"> Premium</p> <p className="font-bold"> $30</p> <p className="line-through text-xs text-red-400"> </p> </span>
                                         <span className="flex flex-row items-center gap-2 text-xs"> <p className="font-light"> 100% Access to learning and mentorship</p>  </span>
 
                                         <div className="flex flex-col  gap-3 pt-5">
-                                            <Link href={'https://buy.stripe.com/28obKHgXIex3eJy8wC'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight /> Register with <FaCcStripe className="text-xl" /> </span> </Link>
+                                            <Link href={'https://buy.stripe.com/4gw1635f0bkR0SI14b'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight /> Register with <FaCcStripe className="text-xl" /> </span> </Link>
                                             <Link href={'https://flutterwave.com/pay/xncny83hyjjf'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight /> Register with <PiButterflyBold className="text-xl" /> (Works well in Africa)</span> </Link>
                                             <Link href={'https://www.paypal.com/ncp/payment/TLCE8JFAZQF2L'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight /> Register with <FaCcPaypal className="text-xl" /> (Works globally)</span> </Link>
                                         </div>

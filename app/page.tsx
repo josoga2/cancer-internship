@@ -9,6 +9,7 @@ import Stories from "@/components/Stories";
 import Testimonial from "@/components/Testimonial";
 import Tracks from "@/components/Tracks";
 import Upgrade from "@/components/Upgrade";
+import Youtube from "@/components/Youtube";
 
 
 export default function Home() {
@@ -22,6 +23,7 @@ export default function Home() {
       <Stories />
       {/**<Upgrade />**/}
       <Tracks />
+      {/**<Youtube />**/}
       <Pricing />
       {/**<Calendar />**/}
       <Footer />
