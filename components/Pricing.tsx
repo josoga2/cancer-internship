@@ -41,7 +41,7 @@ export default function Pricing(){
                     {/**Full certification */}
                     <div className="flex flex-col py-10 px-5 bg-figma-grey border rounded-lg max-w-full gap-2 h-max">
                         <span className="font-bold text-3xl flex flex-row items-end gap-2">Pro  <p className="bg-gradient-to-tr from-hbblue-3 to-pink-500 text-xs w-min rounded-full py-0.5 px-2 text-white">Recommended</p> </span>
-                        <span className="flex gap-5 items-center"> <p className="font-semibold text-base line-through text-red-500">$30.00</p> <p className="font-semibold text-lg">$15.00</p> </span>
+                        <span className="flex gap-5 items-center"> <p className="font-semibold text-base line-through text-red-500"></p><p className="font-semibold text-lg">$30.00</p> </span>
                         <hr className="h-px bg-gray-200" />
                         <ul className="font-medium text-sm leading-10 pb-5" >
                             <li className="flex flex-row items-center gap-3"> <IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Complete Training Resource Pack</li>
@@ -67,7 +67,7 @@ export default function Pricing(){
             <section className="md:hidden p-5">
                     <div className="flex flex-col py-10 px-5 bg-figma-grey border rounded-lg max-w-full gap-2 h-max mb-10">
                         <span className="font-bold text-3xl flex flex-row items-end gap-2">Pro  <p className="bg-gradient-to-tr from-hbblue-3 to-pink-500 text-xs w-min rounded-full py-0.5 px-2 text-white">Recommended</p> </span>
-                        <span className="flex gap-5 items-center"> <p className="font-semibold text-base line-through text-red-500">$30.00</p> <p className="font-semibold text-lg">$15.00</p> </span>
+                        <span className="flex gap-5 items-center"> <p className="font-semibold text-base line-through text-red-500"></p> <p className="font-semibold text-lg">$30</p> </span>
                         <hr className="h-px bg-gray-200" />
                         <ul className="font-medium text-sm leading-10 pb-5" >
                             <li className="flex flex-row items-center gap-3"> <IoIosCheckmarkCircle className="text-hbgreen-1 text-2xl" /> Complete Training Resource Pack</li>

@@ -44,7 +44,7 @@ export default function About(){
 
                     <div className="w-full flex items-center flex-row gap-10 justify-center py-10"> 
                         {Buttons('Free (Now Open)','https://forms.gle/D8G4RWwNyzkfq7x37')} 
-                        <div className="hidden md:flex font-semibold rounded-md border-4 border-hbblue-3 text-white hover:bg-white bg-hbblue-3 hover:text-hbblue-3 w-fit  text-center py-2 text-base px-5"> <a href='?modal=true'> <span className="flex flex-row gap-2"> <p className="line-through">$30</p> <p>$15 Premium</p></span>  <p>Apply Now!</p> </a> </div>
+                        <div className="hidden md:flex font-semibold rounded-md border-4 border-hbblue-3 text-white hover:bg-white bg-hbblue-3 hover:text-hbblue-3 w-fit  text-center py-2 text-base px-5"> <a href='?modal=true'> <span className="flex flex-row gap-2"> <p className="line-through"></p> <p>$30 Premium</p></span>  <p>Apply Now!</p> </a> </div>
                     </div>
                 </div>
             </section>
@@ -85,7 +85,7 @@ export default function About(){
                     </div>
 
                     <div className="w-full flex items-center flex-col gap-10 justify-center py-10"> 
-                        <div className=" md:hidden font-semibold rounded-md border-4 border-hbblue-3 text-white hover:bg-white bg-hbblue-3 hover:text-hbblue-3 w-fit  text-center text-sm py-2 px-5"> <a href='?modal=true'> <span className="flex flex-row gap-2"> <p className="line-through">$30</p> <p>$15 Premium</p></span>  <p>Apply Now!</p> </a> </div>
+                        <div className=" md:hidden font-semibold rounded-md border-4 border-hbblue-3 text-white hover:bg-white bg-hbblue-3 hover:text-hbblue-3 w-fit  text-center text-sm py-2 px-5"> <a href='?modal=true'> <span className="flex flex-row gap-2"> <p className="line-through"></p> <p>$30 Premium</p></span>  <p>Apply Now!</p> </a> </div>
                         {Whitebutton('Free (Opens in August)','#')} 
                     </div>
                 </div>
