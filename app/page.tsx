@@ -23,7 +23,7 @@ export default function Home() {
       <Stories />
       {/**<Upgrade />**/}
       <Tracks />
-      {/**<Youtube />**/}
+      <Youtube />
       <Pricing />
       {/**<Calendar />**/}
       <Footer />
