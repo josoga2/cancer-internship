@@ -81,7 +81,7 @@ export default function Modal(){
                                 
                                     <div className="p-4 border-2 border-hbblue-1 rounded-md">
                                         <p className="font-bold">Free</p>
-                                        <Link href={''}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight />  Register (Opens in August) </span> </Link>
+                                        <Link href={'https://forms.gle/D8G4RWwNyzkfq7x37'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight />  Register (Now Open!) </span> </Link>
                                     </div>
                                     
                                 </div>
