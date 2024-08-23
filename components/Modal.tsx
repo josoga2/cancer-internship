@@ -30,7 +30,9 @@ export default function Modal(){
                             <Link href={pathname} className="absolute right-5 top-5">
                                 <IoMdCloseCircleOutline className="text-5xl text-white" />
                             </Link>
-                            <h3 className="font-bold">Choose your enrollment type</h3>
+                            <p className="font-bold text-2xl">Applications have now closed. Join us next year for Microbiology 2025</p>
+                            <p className="font-bold">Dates: TBA</p>
+                            {/**<h3 className="font-bold">Choose your enrollment type</h3>
                             <p className="text-xs">50% Early bird discount closes August 8th</p>
                             <div className="flex flex-col gap-4 pt-5">
                                 <div className="p-4 border-2 border-hbblue-1 rounded-md">
@@ -49,7 +51,7 @@ export default function Modal(){
                                     <Link href={'https://forms.gle/D8G4RWwNyzkfq7x37'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight />  Register Here (Now Open!) </span> </Link>
                                 </div>
                                 
-                            </div>
+                            </div> **/}
                             
                         </div>
                     </div>
@@ -58,14 +60,17 @@ export default function Modal(){
             </section>
 
             <section className="md:hidden p-5">
-                {modal &&    
+                { modal &&    
                     <dialog className="fixed left-0 top-20 w-full h-full bg-black bg-opacity-50 z-50 overflow-auto backdrop-blur flex items-start">
                         <div className="bg-white p-8 w-full rounded-lg  border-4 shadow-md border-hbgreen-1">
                             <div className="flex flex-col items-start gap-2">
                                 <Link href={pathname} className="absolute right-5 top-5">
                                     <IoMdCloseCircleOutline className="text-5xl text-white" />
                                 </Link>
-                                <h3 className="font-bold">Choose your enrollment type</h3>
+
+                                <p className="font-bold text-2xl">Applications have now closed. Join us next year for Microbiology 2025</p>
+                                <p className="font-bold">Dates: TBA</p>
+                                {/**<h3 className="font-bold">Choose your enrollment type</h3>
                                 <p className="text-xs">50% Early bird discount closes August 8th</p>
                                 <div className="flex flex-col gap-4 pt-5">
                                     <div className="p-4 border-2 border-hbblue-1 rounded-md">
@@ -84,7 +89,7 @@ export default function Modal(){
                                         <Link href={'https://forms.gle/D8G4RWwNyzkfq7x37'}> <span className="text-xs flex flex-row gap-2 items-center"> <FaArrowRight />  Register (Now Open!) </span> </Link>
                                     </div>
                                     
-                                </div>
+                                </div> **/}
                                 
                             </div>
                         </div>
