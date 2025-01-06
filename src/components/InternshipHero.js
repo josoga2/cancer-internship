@@ -56,8 +56,8 @@ const InternshipHero = () => {
                             {/**<Link to={token && token.trim().length > 0? '/dashboard': '/login' } onClick={openModal} className='font-semibold border-2 text-white bg-hackbio-green border-hackbio-green px-5 py-2 rounded-md hover:bg-hackbio-green-light hover:text-hackbio-green'> {token && token.trim().length > 0? 'Continue Learning': 'Enroll'} </Link> 
                             <PaymentModal isOpen={isModalOpen} onClose={closeModal} />
                             **/}
-                            <button className='font-semibold border-2 border-hackbio-green bg-hackbio-green-light px-4 py-3 rounded-md hover:bg-hackbio-green hover:text-white'> Talk to a Mentor </button> 
-                            
+                    <a href={'https://cal.com/hackbio-office-neg2ef/15min'} className='font-semibold border-2 border-hackbio-green bg-hackbio-green-light px-5 py-2 rounded-md hover:bg-hackbio-green hover:text-white'> Talk to a Mentor </a> 
+                                           
                         </div>
                     </div>
                     <div>
@@ -90,7 +90,7 @@ const InternshipHero = () => {
                   {/**<Link to={token && token.trim().length > 0? '/dashboard': '/login' } onClick={openModal} className='font-semibold border-2 text-white bg-hackbio-green border-hackbio-green px-5 py-2 rounded-md hover:bg-hackbio-green-light hover:text-hackbio-green'> {token && token.trim().length > 0? 'Continue Learning': 'Enroll'} </Link> 
                   <PaymentModal isOpen={isModalOpen} onClose={closeModal} />
                   **/}
-                  <button className='font-semibold border-2 text-white bg-hackbio-green border-hackbio-green px-4 py-3 rounded-md hover:bg-hackbio-green-light hover:text-hackbio-green'> Talk to a Mentor </button> 
+                    <a href={'https://cal.com/hackbio-office-neg2ef/15min'} className='font-semibold border-2 border-hackbio-green bg-hackbio-green-light px-5 py-2 rounded-md hover:bg-hackbio-green hover:text-white'> Talk to a Mentor </a> 
                             
                 </div>
                 <div className='flex flex-col gap-5 items-center justify-center'>

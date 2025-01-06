@@ -10,9 +10,9 @@ const Navbar = () => {
               <a href={'/'} > <div> <img src={hbLogo} className='h-10' alt='hbLogo' /> </div></a>
               <div className='flex flex-row justify-evenly min-w-px gap-10'>
 
-                  <ul>Courses</ul>
-                  <ul>Internships</ul>
-                  <ul>Resources</ul>
+                  <a href='https://thehackbio.com/courses'><ul>Courses</ul></a> 
+                  <a href='/'><ul>Internships</ul></a> 
+                  {/*<a href=''><ul>Resources</ul></a> */}
 
               </div>
               <div> <Link to={'/dashboard'} className='font-semibold border-2 border-hackbio-green px-5 py-2 rounded-md hover:bg-hackbio-green hover:text-white'> Get Started </Link> </div>
@@ -23,7 +23,7 @@ const Navbar = () => {
         <section className='md:hidden p-5'>
             
             <div className='flex flex-row items-center justify-between w-full'> 
-              <div> <img src={hbLogo} className='h-10' alt='hbLogo' /> </div>
+              <div> <a href={'/'} > <div> <img src={hbLogo} className='h-10' alt='hbLogo' /> </div></a> </div>
 
               <button 
                     className="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-hackbio-green"

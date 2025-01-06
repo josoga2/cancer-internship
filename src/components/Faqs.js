@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+
 
 const faqlist = [
   {
@@ -75,7 +75,7 @@ const Faqs = () => {
                         </div>
                     ))}
                 </div>
-                <a href={"#open_internships"} className='font-semibold border-2 text-white bg-hackbio-green border-hackbio-green px-5 py-2 rounded-md hover:bg-hackbio-green-light hover:text-hackbio-green'> Get Started </a> 
+                <a href={'#open_internships'} className='font-semibold border-2 text-white bg-hackbio-green border-hackbio-green px-5 py-2 rounded-md hover:bg-hackbio-green-light hover:text-hackbio-green'> Get Started </a> 
               </div>
           </section>
         

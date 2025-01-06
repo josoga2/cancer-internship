@@ -36,7 +36,7 @@ const Open = () => {
           {/*  Mobiles */}
           <section className='md:hidden p-5 text-sm w-full' id="open_internships">
               <div className='items-center justify-center flex flex-col gap-5'>
-                <p className='font-bold text-xl'>Open Internships</p>
+                <p className='font-bold text-xl'>Internship Calendar</p>
                 <div className=' p-2 flex flex-col items-start gap-5'>
                 {internshipData.filter((internship)=>internship.open_status).map((internship)=>(
                         <Link to={`internships/${internship.id}`} key={internship.id} className="rounded-md border border-hackbio-green max-w-56 shadow-md min-h-64 p-2 space-y-2 relative">
