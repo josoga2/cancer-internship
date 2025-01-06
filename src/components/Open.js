@@ -18,7 +18,7 @@ const Open = () => {
                     <div className='flex flex-row pt-10  rounded-md w-full  p-5 gap-10 items-center justify-center '>
                        
                        {internshipData.filter((internship)=>internship.open_status).map((internship)=>(
-                        <Link to={`internships/${internship.id}`} key={internship.id} className="rounded-md border border-hackbio-green max-w-64  shadow-md min-h-72 p-3 space-y-2 relative">
+                        <Link to={`internships/${internship.id}`} key={internship.id} className="rounded-md border border-hackbio-green max-w-64  shadow-md min-h-96 p-3 space-y-2 relative">
                           <div> <img alt="hackbio-course" className="rounded-t-md w-full" src="https://png.pngtree.com/thumb_back/fw800/background/20240924/pngtree-fascinating-abstract-background-with-backlit-green-liquid-perfect-for-science-and-image_16248041.jpg" /> </div>
                           <div> <p className="text-base font-bold">{internship.internship_title }</p> </div>
                           <div> <p className="text-sm ">{internship.summary}</p> </div>
@@ -39,7 +39,7 @@ const Open = () => {
                 <p className='font-bold text-xl'>Internship Calendar</p>
                 <div className=' p-2 flex flex-col items-start gap-5'>
                 {internshipData.filter((internship)=>internship.open_status).map((internship)=>(
-                        <Link to={`internships/${internship.id}`} key={internship.id} className="rounded-md border border-hackbio-green max-w-56 shadow-md min-h-64 p-2 space-y-2 relative">
+                        <Link to={`internships/${internship.id}`} key={internship.id} className="rounded-md border border-hackbio-green max-w-56 shadow-md min-h-80 p-2 space-y-2 relative">
                           <div> <img alt="hackbio-coding-course" className="rounded-t-md w-full" src="https://png.pngtree.com/thumb_back/fw800/background/20240924/pngtree-fascinating-abstract-background-with-backlit-green-liquid-perfect-for-science-and-image_16248041.jpg" /> </div>
                           <div> <p className="text-sm font-bold">{internship.internship_title }</p> </div>
                           <div> <p className="text-xs ">{internship.summary}</p> </div>
