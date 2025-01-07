@@ -1,36 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
 import { BsFillCheckCircleFill } from "react-icons/bs";
 
 const PaymentSuccess = () => {
-  const [isValidReferrer, setIsValidReferrer] = useState(false);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    // List of allowed referrers
-    const allowedReferrers = [
-      "https://stripe.com",
-      "https://www.paypal.com",
-      "https://flutterwave.com",
-      "http://localhost:3000/",
-    ];
-
-    // Check if the document.referrer matches any allowed referrer
-    const referrer = document.referrer;
-    const isValid = allowedReferrers.some((url) => referrer.startsWith(url));
-
-    if (isValid) {
-      setIsValidReferrer(true);
-    } else {
-      // Redirect to home or error page if referrer is not valid
-      navigate("/");
-    }
-  }, [navigate]);
-
-  if (!isValidReferrer) {
-    // Prevent rendering if the referrer is invalid
-    return null;
-  }
+  
 
   return (
     <main>
