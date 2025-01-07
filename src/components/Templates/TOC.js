@@ -39,7 +39,7 @@ const TOC = () => {
     const { internshipData } = useContext(InternshipContext)
     const { internshipId } = useParams()
     const INT_ID = parseInt(internshipId, 10);
-    //console.log()
+    console.log(INT_ID)
     const currInternship = internshipData[INT_ID-1]
     const currModule = internshipModulesData.filter((thisModule)=>(thisModule.internship === INT_ID))
     //console.log(currInternship)

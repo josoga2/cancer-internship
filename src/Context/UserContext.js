@@ -11,11 +11,12 @@ export const UserContextProvider = ({ children }) => {
 
     const grabUserData = async () => {
         try {
-            const response = await api.get('/api/internships/user-profile/1', { cache: 'no-store' });
+            const response = await api.get('/api/internships/user-profile/', { cache: 'no-store' });
             setUserData(response.data);
+            console.log(UserData)
         } catch (error) {
-            alert('Error fetching internship data');
-            console.error('Error fetching internship data:', error);
+            alert('Error fetching User data');
+            console.error('Error fetching User data:', error);
             setUserData([]); // Reset to empty state on error
         }
     }

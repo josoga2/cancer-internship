@@ -11,7 +11,7 @@ const Dashboard = () => {
     const openInternships = internshipData.filter((internshipData)=>(internshipData.open_status === true))
     const closeInternships = internshipData.filter((internshipData)=>(internshipData.open_status === false))
     const { UserData } = useContext(UserContext);
-    //console.log(UserData.first_name)
+    console.log(UserData)
     //console.log(openInternships)
 
   return (
@@ -25,7 +25,7 @@ const Dashboard = () => {
                 </div>
                 <div className="flex flex-col gap-5 w-full  items-center justify-center">
                     <div className="flex flex-col justify-start gap-5 w-5/6">
-                        <p className="px-5 pt-5 text-2xl font-bold">👋 Welcome {UserData.first_name}, </p>
+                        <p className="px-5 pt-5 text-2xl font-bold">👋 Welcome, </p>
                         <p className="px-5 font-bold"> ▷ Internship Dashboard </p>
                     </div>
 
