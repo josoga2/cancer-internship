@@ -34,13 +34,12 @@ const InternshipModules = () => {
               <div>
                 <div className='flex flex-col items-center justify-center w-full p-5'>
                 <p className='text-xl font-bold text-center w-full'>Overview</p>
-                    <div className='flex flex-col rounded-md w-full p-5 gap-20 items-center justify-center '>
+                    <div className='flex flex-col rounded-md w-full p-5 items-center justify-center '>
                     
                         <div className='flex flex-col items-start justify-start gap-5 w-2/3'>
                         {/*<iframe width="200" height="350" title='sequencer' className="rounded-lg border-hackbio-yellow border-4 w-full " src={ internshipData[internshipId-1].preview_video_url } ></iframe>*/}
                         </div>
                         <div className='flex flex-col gap-5'>
-                            <p className='font-semibold text-lg'>Overview</p>
                             <div className="flex flex-col gap-10 items-center">
                                 <div className="flex flex-col gap-5">
                                     <p className='text-justify'>{ internshipData[internshipId-1].overview }</p>
