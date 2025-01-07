@@ -108,7 +108,8 @@ const Pricing = () => {
                         </li>
                     </ul>
                    
-                    <button className="w-full bg-hackbio-green text-white p-2 rounded-md">Get Started</button>
+                    {/* {<PaymentModal isOpen={isModalOpen} onClose={closeModal} />} */}
+                    <div className="px-3 py-3 bg-hackbio-green-light rounded-md font-bold">Not yet available!</div>
                 </div>
             </div>
 
@@ -193,7 +194,7 @@ const Pricing = () => {
                     </ul>
                     <p className="text-sm text-start">*Active only for the duration of the program</p>
                     <p className="text-sm text-start">ª Or preprint manuscript</p>
-                    <button className="w-full bg-hackbio-green text-white p-2 rounded-md">Get Started</button>
+                    <PaymentModal isOpen={isModalOpen} onClose={closeModal} />
                 </div>
             </div>
         </div>
@@ -284,7 +285,8 @@ const Pricing = () => {
                             <span className="line-through">Community access (Zero Evictions)</span>
                         </li>
                     </ul>
-                    <PaymentModal isOpen={isModalOpen} onClose={closeModal} />
+                    {/* {<PaymentModal isOpen={isModalOpen} onClose={closeModal} />} */}
+                    <div className="px-3 py-3 bg-hackbio-green-light rounded-md font-bold">Not yet available!</div>
                 </div>
             </div>
 
