@@ -137,29 +137,31 @@ export default function PaymentModal() {
                       </p>
                     </span>
                     <div className="flex flex-col gap-3 pt-5">
-                      <Link to="https://buy.stripe.com/4gw1635f0bkR0SI14b">
+                    <Link to="https://buy.stripe.com/fZe5mjcHs4Wt30QeV4">
                         <span className="text-xs flex flex-row gap-2 items-center">
                           <FaArrowRight /> Register with{" "}
                           <FaCcStripe className="text-xl" /> (Works globally)
                         </span>
                       </Link>
-                      <Link to="https://flutterwave.com/pay/xncny83hyjjf">
+                      <Link to="https://flutterwave.com/pay/bxis1nqtelop">
                         <span className="text-xs flex flex-row gap-2 items-center">
                           <FaArrowRight /> Register with{" "}
                           <PiButterflyBold className="text-xl" /> (Works well in
                           Africa)
                         </span>
                       </Link>
-                      <Link to="https://www.paypal.com/ncp/payment/TLCE8JFAZQF2L">
+                      <Link to="https://www.paypal.com/ncp/payment/L5SAYFKPRXJRC">
                         <span className="text-xs flex flex-row gap-2 items-center">
                           <FaArrowRight /> Register with{" "}
                           <FaCcPaypal className="text-xl" /> (Works globally)
                         </span>
                       </Link>
                       <div >
-                        <span className="text-xs flex flex-col gap-2 items-center">
-                          <p>Register with{" "}</p>
-                          <p> Opay A/C: 8108368289 (Adewale J. Ogunleye) (Nigerian Alternative) </p>
+                        <span className="text-xs flex flex-col gap-2 items-start rounded-md border-2 p-2">
+                          <p>Register with Opay (Nigerian Alternative)</p>
+                          <p>A/C: 8108368289 (Adewale J. Ogunleye)  </p>
+                          <p>₦11000</p>
+                          <p>Send a mail to contact@thehackbio.com with reciept for verification upon payment</p>
                         </span>
                       </div>
                     </div>
