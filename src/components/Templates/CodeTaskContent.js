@@ -127,10 +127,11 @@ const CodeTaskContent = () => {
         try {
             const token = localStorage.getItem(ACCESS_TOKEN);
             const response = await axios.post(`${SERVER_URL}/api/run-code/`, 
-                { code },
+                { code:code },
                 { headers: { 'Authorization': `Bearer ${token}` }}
             );
             setOutput(response.data.output || "No output");
+            console.log(output)
             setFileUrl(`${SERVER_URL}/api/outputs/output.txt`)
             setPlot(response.data.plot || null);
         } catch (error) {
@@ -145,7 +146,7 @@ const CodeTaskContent = () => {
         setIsLoading(true)
         try {
             const token = localStorage.getItem(ACCESS_TOKEN);
-            const response = await axios.post(`${SERVER_URL}/api/run-r-code/`, { code }, { headers: { 'Authorization': `Bearer ${token}` }});
+            const response = await axios.post(`${SERVER_URL}/api/run-r-code/`, { code:code }, { headers: { 'Authorization': `Bearer ${token}` }});
             setOutput(response.data.output || "No output");
             setFileUrl(`${SERVER_URL}/api/outputs/output.txt`)
             setPlot(response.data.plot || null);
