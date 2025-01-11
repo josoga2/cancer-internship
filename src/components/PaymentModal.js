@@ -63,13 +63,13 @@ export default function PaymentModal() {
                           <FaCcStripe className="text-xl" /> (Works globally)
                         </span>
                       </Link>
-                      <Link to="https://flutterwave.com/pay/bxis1nqtelop">
+                      {/* <Link to="https://flutterwave.com/pay/bxis1nqtelop">
                         <span className="text-xs flex flex-row gap-2 items-center">
                           <FaArrowRight /> Register with{" "}
                           <PiButterflyBold className="text-xl" /> (Works well in
                           Africa)
                         </span>
-                      </Link>
+                      </Link> */}
                       <Link to="https://www.paypal.com/ncp/payment/L5SAYFKPRXJRC">
                         <span className="text-xs flex flex-row gap-2 items-center">
                           <FaArrowRight /> Register with{" "}
@@ -143,13 +143,13 @@ export default function PaymentModal() {
                           <FaCcStripe className="text-xl" /> (Works globally)
                         </span>
                       </Link>
-                      <Link to="https://flutterwave.com/pay/bxis1nqtelop">
+                      {/* <Link to="https://flutterwave.com/pay/bxis1nqtelop">
                         <span className="text-xs flex flex-row gap-2 items-center">
                           <FaArrowRight /> Register with{" "}
                           <PiButterflyBold className="text-xl" /> (Works well in
                           Africa)
                         </span>
-                      </Link>
+                      </Link> */}
                       <Link to="https://www.paypal.com/ncp/payment/L5SAYFKPRXJRC">
                         <span className="text-xs flex flex-row gap-2 items-center">
                           <FaArrowRight /> Register with{" "}
