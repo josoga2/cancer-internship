@@ -117,7 +117,7 @@ const JupyterContent = () => {
                     <div className="flex flex-col gap-5 bg-white p-10 h-fit w-fit rounded-md max-h-screen overflow-scroll">
                         <p>Table of Contents</p>
                         {allModules.map((mod)=>(
-                            <div className="w-full max-h-screen">
+                            <div className="w-full ">
                             <p className="font-semibold pb-2"> {mod.title} </p>
                             {(allContents.filter((content_mod)=>(content_mod.module === mod.id))).map((content)=>(
                                 <Link to={`/internships/${content.internship}/TOC/${content.module}/${content.content_type}/${content.id}`}> <li className="font-medium text-sm w-full hover:font-medium pl-2 flex flex-row items-center gap-3 py-1 "> {<ContentRenderer contentType={content.content_type} />}{content.order}. {content.title} </li></Link>
