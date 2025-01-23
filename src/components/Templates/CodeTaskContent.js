@@ -248,7 +248,7 @@ const CodeTaskContent = () => {
                   </div>
                   
                   <div className="pt-10 px-5 flex flex-row gap-10 items-start justify-start w-full h-fit">
-                      <div className="flex flex-col gap-5 bg-white p-5 h-fit w-fit rounded-md max-h-screen ">
+                      <div className="flex flex-col gap-5 bg-white p-5 h-fit w-fit rounded-md max-h-screen overflow-scroll">
                           <p>Table of Contents</p>
                           {allModules.map((mod)=>(
                               <div className="max-w-40">
@@ -296,24 +296,23 @@ const CodeTaskContent = () => {
                                 <div className="font-mono text-sm bg-white  border h-full rounded-md"> <p className="w-full pt-5 font-bold font-mono bg-zinc-700 text-white rounded-t-md px-3">Plot Output</p> {plot && <img src={`data:image/png;base64,${plot}`} alt="Plot" className="w-full object-contain" />} </div>
                             </div>
                             {/**Terminal */}
-                            <div className="max-h-1/3">
+                            <div className="h-full">
                                 <div className="font-mono text-sm bg-gray-900 border h-full rounded-md ">
                                     <p className="w-full pt-5 font-bold font-mono bg-zinc-700 text-white rounded-t-md px-3">
                                         Terminal Output
                                     </p>
-                                    <div className="w-full bg-gray-900 text-white p-3  ">
+                                    <div className="w-full bg-gray-900 text-white h-full p-3  overflow-x-auto">
                                         {fileUrl === "" ? "" : <TextFileViewer fileUrl={fileUrl} />}
                                     </div>
                                 </div>
                             </div>
                             {/**Task */}
-                            <div className="rounded-sm border border-hackbio-green-light overflow-hidden ">
+                            <div className="rounded-sm border border-hackbio-green-light overflow-hidden max-h-1/3">
                                 <p className="font-bold text-sm px-5 py-2">Tasks Description</p>
-                                <p className="text-sm leading-5 text-justify prose prose-lg max-w-none px-5 max-h-1/3"> <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{currContent[0].coding_content}</Markdown> </p>
+                                <p className="text-sm leading-5 text-justify prose prose-lg max-w-none px-5"> <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{currContent[0].coding_content}</Markdown> </p>
                             </div>
 
                         </div>
-                        
                         <button className='font-semibold border-2 border-hackbio-green bg-hackbio-green-light px-5 py-2 rounded-md hover:bg-hackbio-green hover:text-white w-fit' onClick={handleMarkAsComplete}> Mark as Completed  ✅ </button> 
                         <p className="font-mono animate-bounce"> { markingStatus } </p>
                       </div>
