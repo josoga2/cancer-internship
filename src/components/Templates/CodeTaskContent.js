@@ -247,8 +247,8 @@ const CodeTaskContent = () => {
                       <PlatformNavBar /> 
                   </div>
                   
-                  <div className="pt-10 px-5 flex flex-row gap-10 items-start justify-start w-full h-full">
-                      <div className="flex flex-col gap-5 bg-white p-5 h-fit w-fit rounded-md max-h-screen overflow-scroll">
+                  <div className="pt-10 px-5 flex flex-row gap-10 items-start justify-start w-full h-fit">
+                      <div className="flex flex-col gap-5 bg-white p-5 h-fit w-fit rounded-md max-h-screen ">
                           <p>Table of Contents</p>
                           {allModules.map((mod)=>(
                               <div className="max-w-40">
@@ -267,9 +267,9 @@ const CodeTaskContent = () => {
                             <p className="font-bold text-lg pb-5"> {currContent[0].order}: {currContent[0].title} </p>
                             <p className="font-bold text-lg pb-5"> <span className="text-purple-600"> {XPData.xp_earned} </span>  XP </p>
                         </div>
-                        <div className="rounded-md p-5 w-full border border-hackbio-green-light h-full grid grid-cols-2 gap-5">
+                        <div className="rounded-md p-2 w-full border border-hackbio-green-light h-full grid grid-cols-2 gap-5">
                             {/**Editor */}
-                            <div className="w-full items-center border">
+                            <div className="w-full h-full items-center border">
                                 <div className="rounded-t-md border border-hackbio-green-light p-2 bg-zinc-700 flex flex-row w-full justify-between">
                                     <select 
                                         value={codingLanguage}
@@ -284,7 +284,7 @@ const CodeTaskContent = () => {
                                     </div>
                                 </div>
                                 <div>
-                                <Editor className="w-full h-[400px] border-hackbio-green-light border rounded" defaultLanguage={codingLanguage} theme='hc-black' defaultValue="#start coding... " onChange={handleEditorChange} />
+                                <Editor className="w-full h-[550px] border-hackbio-green-light border rounded" defaultLanguage={codingLanguage} theme='hc-black' defaultValue="#start coding... " onChange={handleEditorChange} />
                                 </div>
                                 <div className=" flex flex-row w-full items-center justify-between text-sm">
                                     <div className=""> <button className="bg-hackbio-green text-white px-4 py-2 rounded-md hover:bg-green-200 hover:text-hackbio-green " onClick={handleCodingHint}> {isLoading? <LoadingIndicator/>: `🧠 Ask AI`}</button> </div> 
@@ -293,26 +293,27 @@ const CodeTaskContent = () => {
                             </div>
                             {/**Plot output */}
                             <div className=" h-full"> 
-                                <div className="font-mono text-sm bg-white  border h-full rounded-md"> <p className="w-full pt-5 font-bold font-mono bg-zinc-700 text-white rounded-t-md px-3">Plot Output</p> {plot && <img src={`data:image/png;base64,${plot}`} alt="Plot" className="w-full h-full object-contain" />} </div>
+                                <div className="font-mono text-sm bg-white  border h-full rounded-md"> <p className="w-full pt-5 font-bold font-mono bg-zinc-700 text-white rounded-t-md px-3">Plot Output</p> {plot && <img src={`data:image/png;base64,${plot}`} alt="Plot" className="w-full object-contain" />} </div>
                             </div>
                             {/**Terminal */}
-                            <div className="h-full">
-                                <div className="font-mono text-sm bg-gray-900 border h-full rounded-md overflow-auto">
+                            <div className="max-h-1/3">
+                                <div className="font-mono text-sm bg-gray-900 border h-full rounded-md ">
                                     <p className="w-full pt-5 font-bold font-mono bg-zinc-700 text-white rounded-t-md px-3">
                                         Terminal Output
                                     </p>
-                                    <div className="w-full bg-gray-900 text-white h-full p-3  overflow-x-auto">
+                                    <div className="w-full bg-gray-900 text-white p-3  ">
                                         {fileUrl === "" ? "" : <TextFileViewer fileUrl={fileUrl} />}
                                     </div>
                                 </div>
                             </div>
                             {/**Task */}
-                            <div className="rounded-sm border border-hackbio-green-light overflow-hidden max-h-1/3">
+                            <div className="rounded-sm border border-hackbio-green-light overflow-hidden ">
                                 <p className="font-bold text-sm px-5 py-2">Tasks Description</p>
-                                <p className="text-sm leading-5 text-justify prose prose-lg max-w-none px-5"> <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{currContent[0].coding_content}</Markdown> </p>
+                                <p className="text-sm leading-5 text-justify prose prose-lg max-w-none px-5 max-h-1/3"> <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{currContent[0].coding_content}</Markdown> </p>
                             </div>
 
                         </div>
+                        
                         <button className='font-semibold border-2 border-hackbio-green bg-hackbio-green-light px-5 py-2 rounded-md hover:bg-hackbio-green hover:text-white w-fit' onClick={handleMarkAsComplete}> Mark as Completed  ✅ </button> 
                         <p className="font-mono animate-bounce"> { markingStatus } </p>
                       </div>
@@ -341,7 +342,7 @@ const CodeTaskContent = () => {
                         <p className="font-bold text-lg "> {currContent[0].order}: {currContent[0].title} </p>
                         <p className="font-bold text-lg "> <span className="text-purple-600"> {XPData.xp_earned} </span> XP </p>
                     </div>
-                    <p className="text-red-500 text-sm">⚠️ For optimal rendering, please use a PC.</p>
+                    <p className="text-red-500 text-sm">⚠️ For optimal experience, please use a PC.</p>
                     <div className="rounded-md w-full border border-hackbio-green-light h-full grid grid-cols-1 gap-10">
                         {/**Editor */}
                         <div className="w-full items-center border">

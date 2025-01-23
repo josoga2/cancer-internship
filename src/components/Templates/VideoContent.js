@@ -126,7 +126,7 @@ const VideoContent = () => {
                         <div className="w-full border-hackbio-green-light h-full">
                           <div className="flex flex-row items-center justify-between pr-20">
                             <p className="font-bold text-lg pb-5"> {currContent[0].order}: {currContent[0].title} </p>
-                            <p className="font-bold text-lg pb-5"> <span className="text-purple-600"> {XPData.xp_earned} </span> /{thisInternship.total_xp_available} XP </p>
+                            <p className="font-bold text-lg pb-5"> <span className="text-purple-600"> {XPData.xp_earned} </span>  </p>
                           </div>
 
                           <iframe  height="250" title='sequencer' className="rounded-lg min-h-96 border-hackbio-yellow border-4 w-2/3" src={ currContent[0].video_url }  ></iframe>
@@ -163,7 +163,7 @@ const VideoContent = () => {
                         <div className="w-full border-hackbio-green-light h-full">
                           <div className="flex flex-row items-center justify-between pb-5">
                             <p className="font-bold text-lg "> {currContent[0].order}: {currContent[0].title} </p>
-                            <p className="font-bold text-lg "> <span className="text-purple-600"> {XPData.xp_earned} </span> /{thisInternship.total_xp_available} XP </p>
+                            <p className="font-bold text-lg "> <span className="text-purple-600"> {XPData.xp_earned} </span> </p>
                           </div>
                           <iframe  height="250" title='sequencer' className="rounded-lg  w-full" src={ currContent[0].video_url }  ></iframe>
                         </div>
