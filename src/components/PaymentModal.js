@@ -41,7 +41,7 @@ export default function PaymentModal() {
                 <p className="font-bold">Starts: February 02, 2025</p>
                 <h3 className="font-bold">Choose your enrollment type</h3>
                 <p className="text-xs">
-                  50% Early bird discount closes January 20th
+                  50% Early bird discount closes January 25th
                 </p>
                 <div className="flex flex-col gap-4 pt-5">
                   {/* Premium Option */}
@@ -121,7 +121,7 @@ export default function PaymentModal() {
                 </p>
                 <h3 className="font-bold">Choose your enrollment type</h3>
                 <p className="text-xs">
-                  50% Early bird discount closes January 20th
+                  50% Early bird discount closes January 25th
                 </p>
                 <div className="flex flex-col gap-4 pt-5">
                   {/* Premium Option */}
