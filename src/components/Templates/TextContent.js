@@ -114,13 +114,13 @@ const TextContent = () => {
                 </div>
                 
                 <div className="pt-10 px-5 flex flex-row gap-10 items-start justify-start w-full h-full">
-                    <div className="flex flex-col gap-5 bg-white p-10 h-fit w-fit rounded-md max-h-screen overflow-scroll">
+                    <div className="flex flex-col gap-5 bg-white p-5 h-fit w-fit rounded-md max-h-screen overflow-scroll">
                         <p>Table of Contents</p>
                         {allModules.map((mod)=>(
-                            <div className="w-full ">
+                            <div className="max-w-40 ">
                             <p className="font-semibold pb-2"> {mod.title} </p>
                             {(allContents.filter((content_mod)=>(content_mod.module === mod.id))).map((content)=>(
-                                <Link to={`/internships/${content.internship}/TOC/${content.module}/${content.content_type}/${content.id}`}> <li className="font-medium text-sm w-full hover:font-medium pl-2 flex flex-row items-center gap-3 py-1 "> {<ContentRenderer contentType={content.content_type} />}{content.order}. {content.title} </li></Link>
+                                <Link to={`/internships/${content.internship}/TOC/${content.module}/${content.content_type}/${content.id}`}> <li className="font-medium text-xs w-full hover:font-medium pl-2 flex flex-row items-center gap-3 py-1 "> {<ContentRenderer contentType={content.content_type} />}{content.order}. {content.title} </li></Link>
                             ))}
                             </div>
                         ))}
