@@ -301,7 +301,7 @@ const CodeTaskContent = () => {
                                     <p className="w-full pt-5 font-bold font-mono bg-zinc-700 text-white rounded-t-md px-3">
                                         Terminal Output
                                     </p>
-                                    <div className="w-full bg-gray-900 text-white h-full p-3  overflow-x-auto">
+                                    <div className="w-full bg-gray-900 text-white p-3  overflow-x-auto">
                                         {fileUrl === "" ? "" : <TextFileViewer fileUrl={fileUrl} />}
                                     </div>
                                 </div>
