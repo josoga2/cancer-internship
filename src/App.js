@@ -24,6 +24,7 @@ import ProjectContent from "./components/Templates/ProjectContent";
 import { XPContextProvider } from "./Context/XPContext";
 import ThankYou from "./components/Templates/ThankYou";
 import PaymentSuccess from "./components/PaymentSuccess";
+import BootcampContent from "./components/Templates/BootcampContent";
 
 
 function Logout(){
@@ -61,6 +62,7 @@ function App() {
             <Route path='/internships/:internshipId/TOC/:moduleID/project/:contentId' element={ <> <ProtectedRoute> <InternshipContextProvider> <InternshipModulesContextProvider> <InternshipContentContextProvider> <XPContextProvider> <ProjectContent /> </XPContextProvider> </InternshipContentContextProvider> </InternshipModulesContextProvider>  </InternshipContextProvider> </ProtectedRoute> </>  } />  
             <Route path='/internships/:internshipId/TOC/:moduleID/certification/:contentId' element={ <> <ProtectedRoute> <InternshipContextProvider> <InternshipModulesContextProvider> <InternshipContentContextProvider> <XPContextProvider> <CertificateContent /> </XPContextProvider>  </InternshipContentContextProvider> </InternshipModulesContextProvider>  </InternshipContextProvider> </ProtectedRoute> </>  } /> 
             <Route path='/internships/ThankYou/' element={ <> <ProtectedRoute> <InternshipContextProvider> <InternshipModulesContextProvider> <InternshipContentContextProvider>  <ThankYou /> </InternshipContentContextProvider> </InternshipModulesContextProvider>  </InternshipContextProvider> </ProtectedRoute> </>  } />   
+            <Route path='/internships/:internshipId/TOC/:moduleID/bootcamp/:contentId' element={ <> <ProtectedRoute> <InternshipContextProvider> <InternshipModulesContextProvider> <InternshipContentContextProvider> <XPContextProvider>   <BootcampContent /> </XPContextProvider>  </InternshipContentContextProvider> </InternshipModulesContextProvider>  </InternshipContextProvider> </ProtectedRoute> </>  } />   
           </Routes>
         </BrowserRouter>
       </div>

@@ -40,7 +40,7 @@ export default function PaymentModal() {
                 </p>
                 <p className="font-bold">Starts: February 02, 2025</p>
                 <h3 className="font-bold">Choose your enrollment type</h3>
-                <p className="text-xs">
+                <p className="text-xs line-through">
                   50% Early bird discount closes January 25th
                 </p>
                 <div className="flex flex-col gap-4 pt-5">
@@ -48,7 +48,7 @@ export default function PaymentModal() {
                   <div className="p-4 border-2 border-hbblue-1 rounded-md">
                     <span className="flex flex-row items-center gap-2">
                       <p className="font-bold">Premium</p>
-                      <p className="font-bold">$10</p> 
+                      <p className="font-bold">$20</p> 
                       <p className="font-bold text-red-600 line-through">$20</p> 
                     </span>
                     <span className="flex flex-row items-center gap-2 text-xs">
@@ -57,7 +57,7 @@ export default function PaymentModal() {
                       </p>
                     </span>
                     <div className="flex flex-col gap-3 pt-5">
-                      <Link to="https://buy.stripe.com/fZe5mjcHs4Wt30QeV4">
+                      <Link to="https://buy.stripe.com/3cscOL5f0gFb30Q14f">
                         <span className="text-xs flex flex-row gap-2 items-center">
                           <FaArrowRight /> Register with{" "}
                           <FaCcStripe className="text-xl" /> (Works globally)
@@ -80,7 +80,7 @@ export default function PaymentModal() {
                         <span className="text-xs flex flex-col gap-2 items-start rounded-md border-2 p-2">
                           <p>Register with Opay (Nigerian Alternative)</p>
                           <p>A/C: 8108368289 (Adewale J. Ogunleye)  </p>
-                          <p>₦11000</p>
+                          <p>₦22000</p>
                           <p>Send a mail to contact@thehackbio.com with reciept for verification upon payment</p>
                         </span>
                       </div>
@@ -120,7 +120,7 @@ export default function PaymentModal() {
                   Enroll For this HackBio Internship
                 </p>
                 <h3 className="font-bold">Choose your enrollment type</h3>
-                <p className="text-xs">
+                <p className="text-xs line-through">
                   50% Early bird discount closes January 25th
                 </p>
                 <div className="flex flex-col gap-4 pt-5">
@@ -128,7 +128,7 @@ export default function PaymentModal() {
                   <div className="p-4 border-2 border-hbblue-1 rounded-md">
                     <span className="flex flex-row items-center gap-2">
                       <p className="font-bold">Premium</p>
-                      <p className="font-bold">$10</p>
+                      <p className="font-bold">$20</p>
                       <p className="font-bold text-red-600 line-through">$20</p> 
                     </span>
                     <span className="flex flex-row items-center gap-2 text-xs">
@@ -137,7 +137,7 @@ export default function PaymentModal() {
                       </p>
                     </span>
                     <div className="flex flex-col gap-3 pt-5">
-                    <Link to="https://buy.stripe.com/fZe5mjcHs4Wt30QeV4">
+                    <Link to="https://buy.stripe.com/3cscOL5f0gFb30Q14f">
                         <span className="text-xs flex flex-row gap-2 items-center">
                           <FaArrowRight /> Register with{" "}
                           <FaCcStripe className="text-xl" /> (Works globally)
@@ -160,7 +160,7 @@ export default function PaymentModal() {
                         <span className="text-xs flex flex-col gap-2 items-start rounded-md border-2 p-2">
                           <p>Register with Opay (Nigerian Alternative)</p>
                           <p>A/C: 8108368289 (Adewale J. Ogunleye)  </p>
-                          <p>₦11000</p>
+                          <p>₦22000</p>
                           <p>Send a mail to contact@thehackbio.com with reciept for verification upon payment</p>
                         </span>
                       </div>

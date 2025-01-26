@@ -73,12 +73,12 @@ const ThankYou = () => {
                             <p className="text-sm leading-5 text-justify prose prose-lg max-w-none"> 
                               <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}> 
                                 I hope this message finds you in good health and high spirits. 
-                                <br/> If you are seeing this, it means you have completed your internship and I would like to take this opportunity to congratulate you on this achievement.<br/>
-                                It has been a pleasure having you as our student, and we are thrilled that you have taken this important step towards expanding your knowledge and skills in bioinformatics. By completing this course, you have demonstrated your dedication to learning and your commitment to your career development. I am confident that the knowledge and skills you have gained through this course will serve you well in your present and future endeavors<br/>
-                                We are proud to have been a part of your journey, and we hope that you found our course both challenging and rewarding. Your dedication and hard work have paid off, and we hope that this is just the beginning of your success in the field of bioinformatics.<br/>
-                                Please feel free to reach out to us with any feedback or suggestions you may have. We are always looking for ways to improve our courses and make them more relevant and useful for our students.<br/>
-                                Once again, congratulations on your achievement, and we wish you all the best in your future endeavors.<br/>
-                                Nice regards,<br/>
+                                 If you are seeing this, it means you have completed your internship and I would like to take this opportunity to congratulate you on this achievement.
+                                It has been a pleasure having you as our student, and we are thrilled that you have taken this important step towards expanding your knowledge and skills in bioinformatics. By completing this course, you have demonstrated your dedication to learning and your commitment to your career development. I am confident that the knowledge and skills you have gained through this course will serve you well in your present and future endeavors
+                                We are proud to have been a part of your journey, and we hope that you found our course both challenging and rewarding. Your dedication and hard work have paid off, and we hope that this is just the beginning of your success in the field of bioinformatics.
+                                Please feel free to reach out to us with any feedback or suggestions you may have. We are always looking for ways to improve our courses and make them more relevant and useful for our students.
+                                Once again, congratulations on your achievement, and we wish you all the best in your future endeavors.
+                                Nice regards,
                                 **Wale Ogunleye (Founder, HackBio)**
                               </Markdown> 
                             </p>

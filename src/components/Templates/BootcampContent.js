@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import soundFile from './../../Assets/level_up.mp3'
 import { XPContext } from "../../Context/XPContext";
 import LoadingIndicator from "../LoadingIndicator";
+import { useRef } from "react";
 
 
 const ContentRenderer = ({ contentType }) => {
@@ -46,10 +47,10 @@ const ContentRenderer = ({ contentType }) => {
 
 
 
-const CodeTaskContent = () => {
+const BootcampContent = () => {
     const [ markingStatus, setMarkingStatus ] = useState("")
     const navigate = useNavigate();
-
+    const [fileExplorer, setFileExplorer] = useState("");
     const [code, setCode] = useState("");
     const [codingLanguage, setCodingLanguage] = useState("r");
     const [output, setOutput] = useState("");
@@ -59,6 +60,23 @@ const CodeTaskContent = () => {
     const [task, setTask] = useState("");
     const [fileUrl, setFileUrl] = useState("")
     const { XPData } = useContext(XPContext)
+    const socketRef = useRef(null);
+    const [activeTab, setActiveTab] = useState("terminal");
+
+    useEffect(() => {
+        // Connect to WebSocket
+        socketRef.current = new WebSocket('ws://localhost:8001/ws/bash/');
+
+        socketRef.current.onmessage = (event) => {
+            // Append received output to the output state
+            setOutput((prev) => prev + event.data);
+        };
+
+        return () => {
+            // Close WebSocket when component unmounts
+            socketRef.current.close();
+        };
+    }, []);
 
     const { internshipContentData } = useContext(InternshipContentContext)
     const { internshipModulesData } = useContext(InternshipModulesContext)
@@ -140,6 +158,64 @@ const CodeTaskContent = () => {
         setIsLoading(false)
 
     }
+
+    const handleRunBashCode = () => {
+        if (socketRef.current && code.trim()) {
+            // Send the Bash command to the backend
+            socketRef.current.send(code);
+            setOutput(''); // Clear previous output
+        }
+    };
+
+
+        // Send the Bash command to the backend
+        // Clear previous output
+    
+
+    
+    
+    /* const handleRunBashCode = async () => {
+        setOutput(""); // Clear previous output
+        setIsStreaming(true);
+
+        try {
+            const token = localStorage.getItem("ACCESS_TOKEN");
+
+            // First send the Bash code to the server (to start processing)
+            await axios.post(
+                `${SERVER_URL}/api/run-bash/`,
+                { code },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            // Now, set up the EventSource for real-time streaming
+            const eventSource = new EventSource(
+                `${SERVER_URL}/run-bash/stream/`
+            );
+
+            eventSource.onmessage = (event) => {
+                // Append new output as it's streamed
+                setOutput((prevOutput) => prevOutput + event.data + "\n");
+            };
+
+            eventSource.onerror = () => {
+                console.error("Error occurred during streaming.");
+                eventSource.close();
+                setIsStreaming(false);
+            };
+
+            // When the stream ends, close it
+            eventSource.addEventListener("close", () => {
+                eventSource.close();
+                setIsStreaming(false);
+            });
+        } catch (error) {
+            setOutput(error.response?.data?.error || "An error occurred");
+            setIsStreaming(false);
+        }
+    }; */
+
+    
 
     const handleRunRCode = async() => {
         //console.log(code);
@@ -278,9 +354,21 @@ const CodeTaskContent = () => {
                                     >
                                         <option value="python">Python</option>
                                         <option value="r">R</option>
+                                        <option value="bash">Bash</option>
                                     </select>
                                     <div>
-                                        <button className="bg-hackbio-green text-white px-4 py-1 rounded-md hover:text-hackbio-green hover:bg-white text-sm" onClick={codingLanguage === "python" ? handleRunPythonCode : handleRunRCode}>{isLoading? <LoadingIndicator />: 'Run Code'}</button>
+                                        <button className="bg-hackbio-green text-white px-4 py-1 rounded-md hover:text-hackbio-green hover:bg-white text-sm" 
+                                            onClick={() => {
+                                                if (codingLanguage === "python") {
+                                                    handleRunPythonCode();
+                                                } else if (codingLanguage === "r") {
+                                                    handleRunRCode();
+                                                } else if (codingLanguage === "bash") {
+                                                    handleRunBashCode();
+                                                }
+                                            }}>
+                                                {isLoading? <LoadingIndicator />: 'Run Code'}
+                                        </button>
                                     </div>
                                 </div>
                                 <div>
@@ -298,12 +386,70 @@ const CodeTaskContent = () => {
                             </div>
                             {/**Terminal */}
                             <div className="h-full">
-                                <div className="font-mono text-sm bg-gray-900 border h-full rounded-md ">
-                                    <p className="w-full pt-5 font-bold font-mono bg-zinc-700 text-white rounded-t-md px-3">
-                                        Terminal Output
-                                    </p>
-                                    <div className="w-full bg-gray-900 text-white p-3  overflow-x-auto">
-                                        {fileUrl === "" ? "" : <TextFileViewer fileUrl={fileUrl} />}
+                                <div className="font-mono text-sm bg-gray-900 border h-full rounded-md">
+                                    {/* Tabs */}
+                                    <div className="flex w-full bg-zinc-700 text-white rounded-t-md">
+                                        <button
+                                            className={`px-4 py-2 font-bold font-mono ${
+                                                activeTab === "terminal"
+                                                    ? "bg-gray-900"
+                                                    : "bg-zinc-700 hover:bg-gray-800"
+                                            }`}
+                                            onClick={() => setActiveTab("terminal")}
+                                        >
+                                            Terminal Output
+                                        </button>
+                                        <button
+                                            className={`px-4 py-2 font-bold font-mono ${
+                                                activeTab === "console"
+                                                    ? "bg-gray-900"
+                                                    : "bg-zinc-700 hover:bg-gray-800"
+                                            }`}
+                                            onClick={() => setActiveTab("console")}
+                                        >
+                                            BASh Output
+                                        </button>
+                                        <button
+                                            className={`px-4 py-2 font-bold font-mono ${
+                                                activeTab === "explorer"
+                                                    ? "bg-gray-900"
+                                                    : "bg-zinc-700 hover:bg-gray-800"
+                                            }`}
+                                            onClick={() => setActiveTab("explorer")}
+                                        >
+                                            File Explorer
+                                        </button>
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="w-full bg-gray-900 text-white p-3 overflow-x-auto">
+                                        {activeTab === "terminal" && (
+                                            <div>
+                                                {fileUrl === "" ? (
+                                                    <p>No terminal output available.</p>
+                                                ) : (
+                                                    <TextFileViewer fileUrl={fileUrl} />
+                                                )}
+                                            </div>
+                                        )}
+                                        {activeTab === "console" && (
+                                            <div>
+                                                
+                                                <pre className="text-white text-xs h-full overflow-auto font-mono whitespace-pre-wrap">
+                                                    {output}
+                                                </pre>
+                                            </div>
+
+                                        )}
+                                        {activeTab === "explorer" && (
+                                            <div>
+                                                
+                                                <pre className="text-white text-xs h-full overflow-auto font-mono whitespace-pre-wrap">
+                                                    
+                                                </pre>
+                                            </div>
+
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -357,8 +503,18 @@ const CodeTaskContent = () => {
                                     <option value="r">R</option>
                                 </select>
                                 <div>
-                                    <button className="bg-hackbio-green text-white px-4 py-1 rounded-md hover:text-hackbio-green hover:bg-white text-sm" onClick={codingLanguage === "python" ? handleRunPythonCode : handleRunRCode}>{isLoading? <LoadingIndicator />: 'Run Code'}</button>
-                                </div>
+                                    <button className="bg-hackbio-green text-white px-4 py-1 rounded-md hover:text-hackbio-green hover:bg-white text-sm" 
+                                            onClick={() => {
+                                                if (codingLanguage === "python") {
+                                                    handleRunPythonCode();
+                                                } else if (codingLanguage === "r") {
+                                                    handleRunRCode();
+                                                } else if (codingLanguage === "bash") {
+                                                    handleRunBashCode();
+                                                }
+                                            }}>
+                                                {isLoading? <LoadingIndicator />: 'Run Code'}
+                                        </button>                                </div>
                             </div>
                             <div>
                             <Editor className="w-full h-[400px] border-hackbio-green-light border rounded" defaultLanguage={codingLanguage} theme='hc-black' defaultValue="#start coding... " onChange={handleEditorChange} />
@@ -402,4 +558,4 @@ const CodeTaskContent = () => {
   );
 }
 
-export default CodeTaskContent;
+export default BootcampContent;
