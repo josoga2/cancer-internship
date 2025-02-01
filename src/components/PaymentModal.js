@@ -44,8 +44,13 @@ export default function PaymentModal() {
                   50% Early bird discount closes January 25th
                 </p>
                 <div className="flex flex-col gap-4 pt-5">
+                    <span className="flex flex-row items-center gap-2 text-base">
+                      <p className="font-bold">
+                        Application for this cohort has now closed! Join us in May 2025 for Ai x Bio
+                      </p>
+                    </span>
                   {/* Premium Option */}
-                  <div className="p-4 border-2 border-hbblue-1 rounded-md">
+                  {/* <div className="p-4 border-2 border-hbblue-1 rounded-md">
                     <span className="flex flex-row items-center gap-2">
                       <p className="font-bold">Premium</p>
                       <p className="font-bold">$20</p> 
@@ -63,13 +68,13 @@ export default function PaymentModal() {
                           <FaCcStripe className="text-xl" /> (Works globally)
                         </span>
                       </Link>
-                      {/* <Link to="https://flutterwave.com/pay/bxis1nqtelop">
+                      <Link to="https://flutterwave.com/pay/bxis1nqtelop">
                         <span className="text-xs flex flex-row gap-2 items-center">
                           <FaArrowRight /> Register with{" "}
                           <PiButterflyBold className="text-xl" /> (Works well in
                           Africa)
                         </span>
-                      </Link> */}
+                      </Link> 
                       <Link to="https://www.paypal.com/ncp/payment/L5SAYFKPRXJRC">
                         <span className="text-xs flex flex-row gap-2 items-center">
                           <FaArrowRight /> Register with{" "}
@@ -85,7 +90,7 @@ export default function PaymentModal() {
                         </span>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Free Option */}
                   {/*<div className="p-4 border-2 border-hbblue-1 rounded-md">
@@ -124,8 +129,13 @@ export default function PaymentModal() {
                   50% Early bird discount closes January 25th
                 </p>
                 <div className="flex flex-col gap-4 pt-5">
+                <span className="flex flex-row items-center gap-2 text-base">
+                      <p className="font-bold">
+                        Application for this cohort has now closed! Join us in May 2025 for Ai x Bio
+                      </p>
+                    </span>
                   {/* Premium Option */}
-                  <div className="p-4 border-2 border-hbblue-1 rounded-md">
+                  {/* <div className="p-4 border-2 border-hbblue-1 rounded-md">
                     <span className="flex flex-row items-center gap-2">
                       <p className="font-bold">Premium</p>
                       <p className="font-bold">$20</p>
@@ -143,13 +153,13 @@ export default function PaymentModal() {
                           <FaCcStripe className="text-xl" /> (Works globally)
                         </span>
                       </Link>
-                      {/* <Link to="https://flutterwave.com/pay/bxis1nqtelop">
+                      { <Link to="https://flutterwave.com/pay/bxis1nqtelop">
                         <span className="text-xs flex flex-row gap-2 items-center">
                           <FaArrowRight /> Register with{" "}
                           <PiButterflyBold className="text-xl" /> (Works well in
                           Africa)
                         </span>
-                      </Link> */}
+                      </Link> }
                       <Link to="https://www.paypal.com/ncp/payment/L5SAYFKPRXJRC">
                         <span className="text-xs flex flex-row gap-2 items-center">
                           <FaArrowRight /> Register with{" "}
@@ -165,7 +175,7 @@ export default function PaymentModal() {
                         </span>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Free Option */}
                   {/**<div className="p-4 border-2 border-hbblue-1 rounded-md">
