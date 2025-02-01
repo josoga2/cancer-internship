@@ -56,14 +56,14 @@ const Form = ({ isLogin = true }) => {
         if (isLogin) {
           localStorage.setItem(ACCESS_TOKEN, submitResponse.data.access);
           localStorage.setItem(REFRESH_TOKEN, submitResponse.data.refresh);
-          navigate('/');
+          navigate('/dashboard');
         } else {
           navigate('/login');
         }
       }
     } catch (error) {
       console.error('Error:', error);
-      setError(error.response?.data?.detail || 'An error occurred');
+      setError(error.response?.data?.detail || 'use a single character username');
     } finally {
       setIsLoading(false);
     }
