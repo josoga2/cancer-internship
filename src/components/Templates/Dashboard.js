@@ -11,7 +11,7 @@ const Dashboard = () => {
     const openInternships = internshipData.filter((internshipData)=>(internshipData.open_status === true))
     const closeInternships = internshipData.filter((internshipData)=>(internshipData.open_status === false))
     const { UserData } = useContext(UserContext);
-    console.log(UserData)
+    //console.log(UserData)
     //console.log(openInternships)
 
   return (

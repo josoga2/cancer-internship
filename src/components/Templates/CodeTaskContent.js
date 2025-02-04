@@ -17,6 +17,8 @@ import { useNavigate } from "react-router-dom";
 import soundFile from './../../Assets/level_up.mp3'
 import { XPContext } from "../../Context/XPContext";
 import LoadingIndicator from "../LoadingIndicator";
+import { UserContext } from "../../Context/UserContext";
+import api from "../../api";
 
 
 const ContentRenderer = ({ contentType }) => {
@@ -64,6 +66,9 @@ const CodeTaskContent = () => {
     const { internshipModulesData } = useContext(InternshipModulesContext)
     const { internshipData } = useContext(InternshipContext)
     const { internshipId, moduleID, contentId } = useParams()
+    const { UserData } = useContext(UserContext);
+    //console.log(UserData.username)
+
 
     //convert values to integers
     const INT_ID = parseInt(internshipId, 10);
@@ -132,7 +137,7 @@ const CodeTaskContent = () => {
             );
             setOutput(response.data.output || "No output");
             console.log(output)
-            setFileUrl(`${SERVER_URL}/api/outputs/output.txt`)
+            setFileUrl(`${SERVER_URL}/api/outputs/output_${UserData.username}.txt`)
             setPlot(response.data.plot || null);
         } catch (error) {
             setOutput(error.response?.data?.error || "An error occurred");
@@ -148,7 +153,8 @@ const CodeTaskContent = () => {
             const token = localStorage.getItem(ACCESS_TOKEN);
             const response = await axios.post(`${SERVER_URL}/api/run-r-code/`, { code:code }, { headers: { 'Authorization': `Bearer ${token}` }});
             setOutput(response.data.output || "No output");
-            setFileUrl(`${SERVER_URL}/api/outputs/output.txt`)
+            setFileUrl(`${SERVER_URL}/api/outputs/output_${UserData.username}.txt`)
+
             setPlot(response.data.plot || null);
         } catch (error) {
             setOutput(error.response?.data?.error || "An error occurred");
@@ -162,7 +168,8 @@ const CodeTaskContent = () => {
             const token = localStorage.getItem(ACCESS_TOKEN);
             const response = await axios.post(`${SERVER_URL}/api/get-coding-hint/`, { question:task, language:codingLanguage, usercode:code }, { headers: { 'Authorization': `Bearer ${token}` }});
             setOutput(response.data.hint)
-            setFileUrl(`${SERVER_URL}/api/outputs/output.txt`)
+            setFileUrl(`${SERVER_URL}/api/outputs/output_${UserData.username}.txt`)
+
             await axios.post(`${SERVER_URL}/api/progress/ai-call/`, {internship_id: INT_ID, content_id: CON_ID}, { headers: { 'Authorization': `Bearer ${token}` }})
         }catch (error) {
             setOutput(error.response?.data?.error || "An error occurred");
@@ -176,7 +183,7 @@ const CodeTaskContent = () => {
             const token = localStorage.getItem(ACCESS_TOKEN);
             const response = await axios.post(`${SERVER_URL}/api/get-code-feedback/`, { code:code, language:codingLanguage, task:task }, { headers: { 'Authorization': `Bearer ${token}` }});
             setOutput(response.data.feedbackText)
-            setFileUrl(`${SERVER_URL}/api/outputs/output.txt`)
+            setFileUrl(`${SERVER_URL}api/outputs/output_${UserData.username}.txt`)
             //console.log(response.data.feedback.score)
             setScore(response.data.feedback.score)
             //await axios.post('http://localhost:8000/api/progress/add-xp/',  { internship_id:INT_ID, content_id:CON_ID, xp_to_add:score }, { headers: { 'Authorization': `Bearer ${token}` }})
@@ -214,17 +221,44 @@ const CodeTaskContent = () => {
     
     const TextFileViewer = ({ fileUrl }) => {
         const [content, setContent] = useState("");
-     
-     
+        console.log(fileUrl)
+
         useEffect(() => {
-            //console.log("Fetching file from URL:", fileUrl); 
-          // Fetch the text file
-          fetch(fileUrl)
-            .then((response) => response.text())
+            fetchFileUrl();
+        }, []);
+    
+        const fetchFileUrl = async () => {
+            try {
+                const response = await api.get(fileUrl, { cache: 'no-store' });
+                setContent(response.data);
+                //console.log(response.data)
+            } catch (error) {
+                alert('Error fetching fileUrl');
+                console.error('Error fetching fileUrl:', error);
+                setContent([]); // Reset to empty state on error
+            }
+        }
+     
+        /*useEffect(() => {
+            const token = localStorage.getItem(ACCESS_TOKEN);  // Retrieve JWT from localStorage
+            console.log(token)
+    
+            fetch(fileUrl, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`  // Attach JWT token
+                }
+            })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch file");
+                }
+                return response.text();
+            })
             .then((data) => setContent(data))
             .catch((error) => console.error("Error loading file:", error));
         }, [fileUrl]);
-        
+        */
         //console.log(fileUrl)
 
         

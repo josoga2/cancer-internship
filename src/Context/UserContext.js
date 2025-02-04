@@ -11,7 +11,7 @@ export const UserContextProvider = ({ children }) => {
 
     const grabUserData = async () => {
         try {
-            const response = await api.get('/api/internships/user-profile/', { cache: 'no-store' });
+            const response = await api.get('/api/user/', { cache: 'no-store' });
             setUserData(response.data);
             console.log(UserData)
         } catch (error) {
