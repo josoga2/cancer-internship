@@ -233,7 +233,8 @@ const CodeTaskContent = () => {
                 setContent(response.data);
                 //console.log(response.data)
             } catch (error) {
-                alert('Error fetching fileUrl');
+                //alert('Error fetching fileUrl');
+                setContent('timeout error')
                 console.error('Error fetching fileUrl:', error);
                 setContent([]); // Reset to empty state on error
             }
