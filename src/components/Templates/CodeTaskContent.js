@@ -19,6 +19,9 @@ import { XPContext } from "../../Context/XPContext";
 import LoadingIndicator from "../LoadingIndicator";
 import { UserContext } from "../../Context/UserContext";
 import api from "../../api";
+import remarkMath from 'remark-math'
+import rehypeKatex from "rehype-katex";
+
 
 
 const ContentRenderer = ({ contentType }) => {
@@ -329,7 +332,7 @@ const CodeTaskContent = () => {
                             {/**Task */}
                             <div className="rounded-sm border border-hackbio-green-light overflow-auto max-h-96 ">
                                 <p className="font-bold text-sm px-5 py-2">Tasks Description</p>
-                                <p className="text-sm leading-5 text-justify prose prose-lg max-w-none px-5"> <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{currContent[0].coding_content}</Markdown> </p>
+                                <p className="text-sm leading-5 text-justify prose prose-lg max-w-none px-5"> <Markdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeRaw, rehypeKatex]}>{currContent[0].coding_content}</Markdown> </p>
                             </div>
                             {/**Terminal */}
                             <div className="h-full">
@@ -421,7 +424,7 @@ const CodeTaskContent = () => {
                         {/**Task */}
                         <div className="rounded-sm border border-hackbio-green-light overflow-hidden max-h-1/3">
                             <p className="font-bold text-sm px-5 py-2">Tasks Description</p>
-                            <p className="text-sm leading-5 text-justify prose prose-lg max-w-none px-5"> <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{currContent[0].coding_content}</Markdown> </p>
+                            <p className="text-sm leading-5 text-justify prose prose-lg max-w-none px-5"> <Markdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeRaw, rehypeKatex]}>{currContent[0].coding_content}</Markdown> </p>
                         </div>
 
                     </div>
