@@ -5,14 +5,16 @@ import { InternshipModulesContext } from "../../Context/InternshipModulesContext
 import { InternshipContext } from "../../Context/InternshipContext";
 import { InternshipContentContext } from "../../Context/InternshipContentContext";
 import { Link } from "react-router-dom";
-//import Markdown from 'react-markdown';
-//import remarkGfm from 'remark-gfm';
-//import rehypeRaw from "rehype-raw";
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from "rehype-raw";
 import axios from "axios";
 import { ACCESS_TOKEN, SERVER_URL } from "../../constants/constants";
 import { useNavigate } from "react-router-dom";
 import soundFile from './../../Assets/level_up.mp3';
 import { XPContext } from "../../Context/XPContext";
+import remarkMath from 'remark-math'
+import rehypeKatex from "rehype-katex";
 
 
 
@@ -126,21 +128,28 @@ const JupyterContent = () => {
                         ))}
                         <Link to={'/dashboard'}> <div className="flex flex-row gap-5 font-bold items-center text-lg">  Dashboard </div></Link>
                     </div>
-                    <div className="w-full flex flex-col gap-5 border border-hackbio-green-light max-h-fit h-fit rounded-md bg-white p-5">
+                    <div className="w-full flex flex-col gap-5 border border-hackbio-green-light max-h-fit h-fit rounded-md bg-white p-2">
                           <div className="flex flex-row items-center justify-between pr-20">
                             <p className="font-bold text-lg pb-5"> {currContent[0].order}: {currContent[0].title} </p>
                             <p className="font-bold text-lg pb-5"> <span className="text-purple-600"> {XPData.xp_earned} </span> XP </p>
                           </div>
-                        <div className="rounded-md p-5 w-4/5 border border-hackbio-green-light h-full">
-                        <iframe
-                          src={currContent[0].jupyter_url}
-                          width="100%"
-                          height="800px"
-                          style={{ border: "none" }}
-                          title="Jupyter Notebook Viewer"
-                          sandbox="allow-scripts allow-same-origin"
-                        />
+                        <div className="flex flex-row gap-5">
+                          <div className="rounded-md p-2 w-3/5 border border-hackbio-green-light h-full">
+                            <iframe
+                              src={currContent[0].jupyter_url}
+                              width="100%"
+                              height="400px"
+                              style={{ border: "none" }}
+                              title="Coding sandbox"
+                              sandbox="allow-scripts allow-same-origin"
+                            />
 
+                          </div>
+                          {/**Task */}
+                          {<div className="rounded-sm border border-hackbio-green-light overflow-auto min-h-96 ">
+                              <p className="font-bold text-sm px-5 py-2">Tasks Description</p>
+                              <p className="text-sm leading-5 text-justify prose prose-lg max-w-none px-5"> <Markdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeRaw, rehypeKatex]}>{currContent[0].coding_content}</Markdown> </p>
+                          </div>}
                         </div>
                         <button className='font-semibold border-2 border-hackbio-green bg-hackbio-green-light px-5 py-2 rounded-md hover:bg-hackbio-green hover:text-white w-fit' onClick={handleMarkAsSubmit}> Mark as Completed  ✅ </button> 
                         <p className="font-mono animate-bounce"> { markingStatus } </p>
