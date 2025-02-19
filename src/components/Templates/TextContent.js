@@ -115,8 +115,8 @@ const TextContent = () => {
                 
                 <div className="pt-10 px-5 flex flex-row gap-10 items-start justify-start w-full h-full">
                     <div className="flex flex-col gap-5 bg-white p-5 h-fit w-fit rounded-md max-h-screen overflow-scroll">
-                        <p>Table of Contents</p>
-                        {allModules.map((mod)=>(
+                    <Link to={`/internships/${INT_ID}/TOC/`}> <div className="flex flex-row gap-5 font-bold items-center text-lg underline">  Table of Contents </div></Link>
+                      {allModules.map((mod)=>(
                             <div className="max-w-40 ">
                             <p className="font-semibold pb-2"> {mod.title} </p>
                             {(allContents.filter((content_mod)=>(content_mod.module === mod.id))).map((content)=>(

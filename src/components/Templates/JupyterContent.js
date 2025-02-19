@@ -115,30 +115,30 @@ const JupyterContent = () => {
                     <PlatformNavBar /> 
                 </div>
                 
-                <div className="pt-10 px-5 flex flex-row gap-10 items-start justify-start w-full h-full">
-                    <div className="flex flex-col gap-5 bg-white p-10 h-fit w-fit rounded-md max-h-screen overflow-scroll">
-                        <p>Table of Contents</p>
-                        {allModules.map((mod)=>(
-                            <div className="w-full ">
-                            <p className="font-semibold pb-2"> {mod.title} </p>
-                            {(allContents.filter((content_mod)=>(content_mod.module === mod.id))).map((content)=>(
-                                <Link to={`/internships/${content.internship}/TOC/${content.module}/${content.content_type}/${content.id}`}> <li className="font-medium text-sm w-full hover:font-medium pl-2 flex flex-row items-center gap-3 py-1 "> {<ContentRenderer contentType={content.content_type} />}{content.order}. {content.title} </li></Link>
-                            ))}
-                            </div>
-                        ))}
-                        <Link to={'/dashboard'}> <div className="flex flex-row gap-5 font-bold items-center text-lg">  Dashboard </div></Link>
-                    </div>
+                <div className="pt-10 px-5 flex flex-row gap-5 items-start justify-start w-full h-fit">
+                                      <div className="flex flex-col gap-5 bg-white p-5 h-fit w-fit rounded-md max-h-screen overflow-scroll">
+                                        <Link to={`/internships/${INT_ID}/TOC/`}> <div className="flex flex-row gap-5 font-bold items-center text-lg underline">  Table of Contents </div></Link>
+                                          {allModules.map((mod)=>(
+                                              <div className="max-w-40">
+                                              <p className="font-semibold pb-2"> {mod.title} </p>
+                                              {(allContents.filter((content_mod)=>(content_mod.module === mod.id))).map((content)=>(
+                                                  <Link to={`/internships/${content.internship}/TOC/${content.module}/${content.content_type}/${content.id}`}> <li className="font-medium text-xs w-full hover:font-medium pl-2 flex flex-row items-center gap-3 py-1 "> {<ContentRenderer contentType={content.content_type} />} {content.order}. {content.title} </li></Link>
+                                              ))}
+                                              </div>
+                                          ))}
+                                          <Link to={'/dashboard'}> <div className="flex flex-row gap-5 font-bold items-center text-lg">  Dashboard </div></Link>
+                                      </div>  
                     <div className="w-full flex flex-col gap-5 border border-hackbio-green-light max-h-fit h-fit rounded-md bg-white p-2">
                           <div className="flex flex-row items-center justify-between pr-20">
                             <p className="font-bold text-lg pb-5"> {currContent[0].order}: {currContent[0].title} </p>
                             <p className="font-bold text-lg pb-5"> <span className="text-purple-600"> {XPData.xp_earned} </span> XP </p>
                           </div>
-                        <div className="flex flex-row gap-5">
-                          <div className="rounded-md p-2 w-3/5 border border-hackbio-green-light h-full">
+                        <div className="grid grid-cols-2 gap-5">
+                          <div className="rounded-md p-2 w-full border border-hackbio-green-light h-fit">
                             <iframe
                               src={currContent[0].jupyter_url}
                               width="100%"
-                              height="400px"
+                              height="500px"
                               style={{ border: "none" }}
                               title="Coding sandbox"
                               sandbox="allow-scripts allow-same-origin"

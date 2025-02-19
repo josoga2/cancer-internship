@@ -287,7 +287,7 @@ const CodeTaskContent = () => {
                   
                   <div className="pt-10 px-5 flex flex-row gap-5 items-start justify-start w-full h-fit">
                       <div className="flex flex-col gap-5 bg-white p-5 h-fit w-fit rounded-md max-h-screen overflow-scroll">
-                          <p>Table of Contents</p>
+                      <Link to={`/internships/${INT_ID}/TOC/`}> <div className="flex flex-row gap-5 font-bold items-center text-lg underline">  Table of Contents </div></Link>
                           {allModules.map((mod)=>(
                               <div className="max-w-40">
                               <p className="font-semibold pb-2"> {mod.title} </p>
