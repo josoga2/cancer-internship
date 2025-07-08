@@ -26,7 +26,7 @@ export default function Login() {
                 
                 <div className='w-full flex justify-center flex-col gap-10 items-center'>
                     <p className='text-3xl font-bold text-hb-green'> You are enrolled! Please proceed to register with the link below! </p>
-                    <a href='/register' className='text-lg underline hover:text-neutral-500 font-bold'> In the mean time, you can read our past articles on LinkedIn! </a>
+                    <a href='/register' className='text-lg underline hover:text-neutral-500 font-bold'> Proceed to Register Here </a>
                 </div>
 
 
