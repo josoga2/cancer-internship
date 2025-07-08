@@ -74,7 +74,7 @@ export default function Login() {
                                 <p className='text-red-500 text-center'>{error}</p>
                                 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="username" className='text-lg'>Email</Label>
+                                    <Label htmlFor="username" className='text-lg'>Username</Label>
                                     <Input id="username" type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required className='bg-blue-50 text-lg placeholder:text-lg py-6' />
                                 </div>
                                 

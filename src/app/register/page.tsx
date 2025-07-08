@@ -42,7 +42,7 @@ export default function Login() {
                 
                 router.replace('/login');
             } else {
-                setError('Either a User with the same credentials exist or Invalid Email or Password.');
+                setError('You are successfully registered. Please check your email to verify your registeration.');
             }
         } catch (error) {
             console.error('Registration error:', error);
