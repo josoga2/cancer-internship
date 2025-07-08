@@ -237,7 +237,6 @@ export default function Page() {
       
         {/**MOBILE */}
         <div className="flex md:hidden flex-col gap-10 w-full p-1">
-            <Navbar />
             <Image src={keywords} alt="biology" className="w-full" />
             <div className="flex flex-col gap-4">
                 <p className="text-3xl font-bold text-start">Open Internships</p>

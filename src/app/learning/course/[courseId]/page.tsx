@@ -132,9 +132,9 @@ export default function Page() {
 
   return (
     <div className="max-w-4/5 mx-auto 2xl:max-w-2/3">
-
-      <div className="hidden md:flex flex-col gap-2 w-full items-start">
         <Navbar />
+      <div className="hidden md:flex flex-col gap-2 w-full items-start">
+
         <div className="py-5 h-full w-full flex flex-row justify-between items-center">
             <div className="flex flex-col gap-5">
                 <p className="text-5xl font-bold text-start"> {coursesList[0].title} </p>
@@ -285,7 +285,7 @@ export default function Page() {
       
       {/**Mobile Version */}
       <div className="max-w-full  block md:hidden">
-        <Navbar />
+
         {/* Hero Section */}
         <div className="flex flex-col gap-5 py-10">
             <p className="text-3xl font-bold">{coursesList[0].title}</p>
