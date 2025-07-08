@@ -6,7 +6,7 @@ import withAuth from "@/components/withAuth";
 import api from "@/api";
 import { useState, useEffect } from "react";
 import React from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { MdOutlineDashboard } from "react-icons/md";
 import { BiDna } from "react-icons/bi";
 import { LuNotebook } from "react-icons/lu";
