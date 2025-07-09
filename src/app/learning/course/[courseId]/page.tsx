@@ -169,13 +169,13 @@ export default function Page() {
                     <div className="flex flex-col gap-5 items-start justify-center w-full overflow-y-auto">
                         <p className="text-3xl font-bold">What will you learn?</p>
                         
-                        {modulesList.map((module) => (
+                        {modulesList.map((module, idx) => (
                             <div key={module.id} className="flex flex-col gap-10 items-start justify-start w-full">
                                 <div className="flex flex-col gap-10 items-start justify-start w-full">
                                 <div className="flex flex-row gap-5 items-center justify-start w-full rounded-lg border border-green-300 px-7 py-3 hover:bg-green-50">
                                     <Accordion type="single" collapsible className="w-full">
                                         <AccordionItem value={(module.id ?? '').toString()}>
-                                            <AccordionTrigger className="text-xl font-bold">{module.id}.  {module.title}</AccordionTrigger>
+                                            <AccordionTrigger className="text-xl font-bold">{idx+1}.  {module.title}</AccordionTrigger>
                                             <AccordionContent className="text-lg ">
                                                 <p className="py-2 pb-3"> {module.description}</p>
                                                 <hr className="w-full h-5" />
