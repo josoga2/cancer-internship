@@ -1,7 +1,5 @@
 "use client";
-import { use, useEffect, useState } from "react";
-import { Button } from "@/components/ui/button"
-import biology from "../../../../../public/biology.svg"
+import { useEffect, useState } from "react";
 import winfred from "../../../../../public/winfred.svg"
 import keywords from "../../../../../public/keywords.svg"
 import { GoDotFill } from "react-icons/go";
