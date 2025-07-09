@@ -26,6 +26,7 @@ export default function Page() {
         id?: number | string
         title?: string
         description?: string
+        overview?: string
         published?: boolean
         image?: string
     }>>([
@@ -33,6 +34,7 @@ export default function Page() {
             id: "",
             title: "",
             description: "",
+            overview: "",
             published: false,
             image: "/",
         }
@@ -138,7 +140,7 @@ export default function Page() {
         <div className="py-5 h-full w-full flex flex-row justify-between items-center">
             <div className="flex flex-col gap-5">
                 <p className="text-5xl font-bold text-start"> {coursesList[0].title} </p>
-                <p className="text-2xl"> {coursesList[0].description} </p>
+                <p className="text-2xl"> {coursesList[0].overview} </p>
                 <EnrollCourseDialog />
             
             </div>
