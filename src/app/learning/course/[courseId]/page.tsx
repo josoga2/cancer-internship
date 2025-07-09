@@ -138,9 +138,9 @@ export default function Page() {
       <div className="hidden md:flex flex-col gap-2 w-full items-start">
 
         <div className="py-5 h-full w-full flex flex-row justify-between items-center">
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-5 max-w-2/3">
                 <p className="text-5xl font-bold text-start"> {coursesList[0].title} </p>
-                <p className="text-2xl max-w-1/2"> {coursesList[0].overview} </p>
+                <p className="text-2xl "> {coursesList[0].overview} </p>
                 <EnrollCourseDialog />
             
             </div>
