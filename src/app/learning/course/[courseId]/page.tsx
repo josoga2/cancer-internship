@@ -15,6 +15,10 @@ import React from "react";
 import publicApi from "@/publicApi";
 import { EnrollCourseDialog } from "@/components/enroll/enroll-course";
 import Navbar from "@/components/Nav/navbar";
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import rehypeKatex from 'rehype-katex'
+import remarkMath from 'remark-math'
 
 
 
@@ -195,7 +199,8 @@ export default function Page() {
 
                         <div className="py-5 flex flex-col gap-5 items-start justify-start w-full">
                             <p className="text-2xl font-bold">Course Description</p>
-                            <p className="leading-7 text-lg"> {coursesList[0].description}</p>
+                            <Markdown  remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{coursesList[0].description}</Markdown>
+                            <p className="leading-7 text-lg"> </p>
                             <EnrollCourseDialog />
 
                         </div>

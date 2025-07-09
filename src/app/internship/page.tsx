@@ -8,6 +8,10 @@ import Image from "next/image";
 import publicApi from "../../publicApi"
 import { EnrollDialog } from "@/components/enroll/enroll";
 import  Navbar  from "@/components/Nav/navbar";
+import Markdown from "react-markdown";
+import rehypeKatex from "rehype-katex";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 
 
 
@@ -141,14 +145,14 @@ export default function Page() {
                                 
                             ))}
 
-                            {coursesList.filter(course => course.published === true).map((course) => (
-                                <div key={course.id} className="py-5 flex flex-col gap-5 items-start justify-start w-full">
+                            
+                                <div  className="py-5 flex flex-col gap-5 items-start justify-start w-full">
                                     <p className="text-2xl font-bold">Description</p>
-                                    <p className="leading-7 text-lg"> {course.description} </p>
+                                    <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{upcoming.description}</Markdown>
                                     <EnrollDialog />
 
                                 </div>
-                            ))}
+                           
 
                             
 
@@ -254,7 +258,7 @@ export default function Page() {
                 </div>
 
                 <div className="flex flex-col gap-5 border-2 border-hb-green rounded-lg px-5 py-5">
-                    <img src={upcoming.int_image} alt="internship" width={48} height={48} className="border-2 rounded-md border-hb-green" />
+                    <img src={upcoming.int_image} alt="internship" width={64} height={64} className="border-2 rounded-md border-hb-green" />
                     <p className="text-xl font-bold">{upcoming.title}</p>
                     <p className="text-md">{upcoming.overview}</p>
                     <p className="text-md">{upcoming.lenght_in_weeks} Weeks</p>
@@ -265,19 +269,19 @@ export default function Page() {
                     <div className="text-xl font-bold"> <p> {`What will you learn?`} </p> <p className="text-sm py-3 underline font-normal"> {`(click to preview)`} </p> </div>
                     {coursesList.filter(course => course.published).map((course) => (
                     <a key={course.id} href={`learning/course/${course.id}`} className="flex flex-row items-center  gap-2 border border-hb-green rounded-lg px-5 py-4 hover:bg-green-50">
-                        <p className="text-lg font-bold">{course.id}. {course.title} Use these visualizations</p>
+                        <p className="text-lg font-bold">{course.id}. {course.title} </p>
                         <ArrowRight className="text-hb-green min-w-10" />
                     </a>
                     ))}
 
-                    {coursesList.filter(course => course.published === true).map((course) => (
-                        <div key={course.id} className="py-5 flex flex-col gap-5 items-start justify-start w-full">
+
+                        <div  className="py-5 flex flex-col gap-5 items-start justify-start w-full">
                             <p className="text-2xl font-bold">Description</p>
-                            <p className="leading-7 text-lg"> {course.description} </p>
+                            <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{upcoming.description}</Markdown>
                             <EnrollDialog />
 
                         </div>
-                    ))}
+
                 </div>
                 </div>
             ))}

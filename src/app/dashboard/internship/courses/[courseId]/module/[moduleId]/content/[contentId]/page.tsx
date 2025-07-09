@@ -643,7 +643,7 @@ return (
                         </div>
                         <div className="border-2 p-5 rounded-md border-hb-green flex flex-col gap-2 w-1/3">
                             <p className="font-bold text-xl">Guideline for Submissions </p>
-                            <p>{content.text_content}</p>
+                            <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.text_content}</Markdown>
                         </div>
                     </div>
                 )}
