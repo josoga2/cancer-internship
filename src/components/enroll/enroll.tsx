@@ -82,7 +82,8 @@ export function EnrollDialog() {
           <DialogHeader>
             <DialogTitle className="text-xl">Enroll for this internship.</DialogTitle>
             <DialogDescription>
-              Enroll in the internship by filling out the form below and proceeding to pay.
+              <p>Enroll in the internship by filling out the form below and proceeding to pay.</p>
+              <span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> <p>$20</p> <p className="text-red-600 line-through text-xl">{`$40 (50% off)`}</p>  </span>
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-5">
