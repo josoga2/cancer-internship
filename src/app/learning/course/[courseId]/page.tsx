@@ -295,7 +295,6 @@ export default function Page() {
         <div className="flex flex-col gap-5 py-10">
             <p className="text-3xl font-bold">{coursesList[0].title}</p>
             <p className="text-lg text-gray-700">{coursesList[0].description}</p>
-            <Image src={keywords} alt="biology" className="w-full rounded-lg" />
             <EnrollCourseDialog />
         </div>
 
@@ -316,10 +315,10 @@ export default function Page() {
         {/* Learning Objectives */}
         <div className="py-10">
             <p className="text-2xl font-bold mb-5">What will you learn?</p>
-            {modulesList.map((module) => (
+            {modulesList.map((module, idx) => (
             <Accordion key={module.id} type="single" collapsible className="w-full border-b border-gray-200 py-3">
                 <AccordionItem value={(module.id ?? '').toString()}>
-                <AccordionTrigger className="text-lg font-bold">{module.id}. {module.title}</AccordionTrigger>
+                <AccordionTrigger className="text-lg font-bold">{idx+1}. {module.title}</AccordionTrigger>
                 <AccordionContent className="text-base">
                     <p className="mb-2">{module.description}</p>
                     <ul className="list-disc pl-5 text-sm text-neutral-600">
