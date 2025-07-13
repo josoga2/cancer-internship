@@ -294,7 +294,7 @@ export default function Page() {
         {/* Hero Section */}
         <div className="flex flex-col gap-5 py-10">
             <p className="text-3xl font-bold">{coursesList[0].title}</p>
-            <p className="text-lg text-gray-700">{coursesList[0].description}</p>
+            <p className="text-lg text-gray-700">{coursesList[0].overview}</p>
             <EnrollCourseDialog />
         </div>
 
