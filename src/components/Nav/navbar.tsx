@@ -17,7 +17,7 @@ export default function Navbar() {
           <a href='/internship'>Internships</a>
           <a href='https://thehackbio.com/'>Courses</a>
         </div>
-        <a href='/login'><button className='border-2 border-black bg-hb-green rounded-lg px-5 text-white text-xl font-semibold py-2'>Get Started</button></a>
+        <a href='/login'><button className='border-2 border-black bg-hb-green rounded-lg px-5 text-white text-xl font-semibold py-2'>Sign In/Up</button></a>
     </div>
     
     
@@ -40,7 +40,7 @@ export default function Navbar() {
             <a href="https://thehackbio.com/" className="text-lg font-medium text-black">Courses</a>
             <a href="/login">
               <button className="border-2 border-black bg-hb-green rounded-lg px-6 text-white text-lg font-semibold py-2 w-full">
-                Get Started
+                Sign In/Up
               </button>
             </a>
           </div>

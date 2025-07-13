@@ -72,23 +72,23 @@ export default function Login() {
                                 {error && <p className='text-red-500 text-center'>{error}</p>}
                                 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="email" className='text-lg'>Email</Label>
+                                    <Label className='text-lg'>Email</Label>
                                     <Input id="email" type="text" placeholder="you@mail.com" value={email} onChange={(e) => setEmail((e.target as HTMLInputElement).value)} required className='bg-blue-50 text-lg placeholder:text-lg py-6' />
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="username" className='text-lg'>Username</Label>
+                                    <Label className='text-lg'>Username</Label>
                                     <Input id="username" type="text" placeholder="myUniqueUserName" value={username} onChange={(e)=>setUsername(e.target.value)} required className='bg-blue-50 text-lg placeholder:text-lg py-6' />
                                 </div>
                                 
                                 <div className="grid gap-2">
                                     <Label htmlFor="password" className='text-lg'>Password</Label>
-                                    <Input id="password" type="password" placeholder="Password" required value={password} onChange={(e)=>setPassword(e.target.value)}  className='bg-blue-50 text-lg placeholder:text-lg py-6'/>
+                                    <Input  type="password" placeholder="Password" required value={password} onChange={(e)=>setPassword(e.target.value)}  className='bg-blue-50 text-lg placeholder:text-lg py-6'/>
                                 </div>
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="password" className='text-lg'>Confirm Password</Label>
-                                    <Input id="password" type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e)=>setConfirmPassword(e.target.value)} required  className='bg-blue-50 text-lg placeholder:text-lg py-6'/>
+                                    <Input  type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e)=>setConfirmPassword(e.target.value)} required  className='bg-blue-50 text-lg placeholder:text-lg py-6'/>
                                 </div>
                                 
                                 <a onClick={handleLogin} className='w-full'>
