@@ -248,7 +248,7 @@ export default function Page() {
             <span className="flex flex-row items-start font-bold text-4xl gap-2"> <p>One time pricing, Lifetime Access</p> </span>
             <div className="flex flex-col gap-5 max-w-4/5 rounded border-2 p-5 px-10 border-green-500 shadow-2xl items-start justify-start  ">
                 <span className="flex flex-row items-start font-bold text-4xl gap-2 py-5"> <p>Premium Learning</p> </span>
-                <span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> <p>$15</p> <p className="text-red-600 line-through text-xl">$30 </p>  </span>
+                <span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> <p>$20</p> <p className="text-red-600 line-through text-xl">$40 </p>  </span>
                 <ul className="flex flex-col gap-5 items-start justify-start ">
                     <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Complete Training Pack </span></li>
                     <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Weekly mentorship calls </span></li>
@@ -371,7 +371,7 @@ export default function Page() {
             <p className="text-2xl font-bold text-center mb-5">One time pricing, Lifetime Access</p>
             <div className="border border-green-500 rounded-lg p-5 shadow-lg">
             <p className="text-xl font-bold mb-2">Premium Learning</p>
-            <p className="text-xl font-bold">$15 <span className="line-through text-red-500 text-sm">$30</span></p>
+            <p className="text-xl font-bold">$20 <span className="line-through text-red-500 text-sm">$40</span></p>
             <ul className="list-disc pl-5 mt-4 text-sm">
                 <li>Complete Training Pack</li>
                 <li>Weekly mentorship calls</li>
