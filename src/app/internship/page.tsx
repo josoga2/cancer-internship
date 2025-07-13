@@ -319,7 +319,7 @@ export default function Page() {
             <div className="flex flex-col gap-6 border-2 border-hb-green p-5 rounded shadow-md">
                 <p className="text-2xl font-bold">One-time pricing, Lifetime Access</p>
                 <p className="text-xl font-bold">Premium Learning</p>
-                <p className="text-xl font-bold">$15 <span className="text-red-600 line-through text-base">$30</span></p>
+                <p className="text-xl font-bold">$20 <span className="text-red-600 line-through text-base">$40</span></p>
                 <ul className="flex flex-col gap-2 text-md">
                 <li>Complete Training Pack</li>
                 <li>Weekly mentorship calls</li>
