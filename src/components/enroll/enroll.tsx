@@ -55,7 +55,7 @@ export function EnrollDialog() {
                 router.replace('https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
             } else if (paymentMethod === "opay") {
                 setIsSubmitted(true)
-                setPaymentInstructions("Please proceed to pay via OPay using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
+                setPaymentInstructions("Please proceed to pay NGN30,000 via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
             } else if (paymentMethod === "mastercard") {
                 router.replace('https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
             }
