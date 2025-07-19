@@ -25,7 +25,7 @@ import { useRouter } from 'next/navigation';
 
 
 
-export function EnrollDialog() {
+export function EnrollLiteDialog() {
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -55,7 +55,7 @@ export function EnrollDialog() {
                 router.replace('https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
             } else if (paymentMethod === "opay") {
                 setIsSubmitted(true)
-                setPaymentInstructions("Please proceed to pay NGN30,000 via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
+                setPaymentInstructions("Please proceed to pay NGN15,000 via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
             } else if (paymentMethod === "mastercard") {
                 router.replace('https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
             }
@@ -83,7 +83,7 @@ export function EnrollDialog() {
             <DialogTitle className="text-xl">Enroll for this internship.</DialogTitle>
             <DialogDescription>
               Enroll in the internship by filling out the form below and proceeding to pay.
-              <span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> <p>$20</p> <p className="text-red-600 line-through text-xl">{`$40`}</p> <p className="text-red-600  text-xl">{`(50% off)`}</p>  </span>
+              <span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> <p>$10</p> <p className="text-red-600 line-through text-xl">{`$20`}</p> <p className="text-red-600  text-xl">{`(50% off)`}</p>  </span>
 
             </DialogDescription>
           </DialogHeader>

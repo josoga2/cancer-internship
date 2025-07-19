@@ -18,6 +18,7 @@ import Markdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
+import { EnrollLiteDialog } from "@/components/enroll/enrollLite";
 
 
 
@@ -240,26 +241,49 @@ export default function Page() {
 
         <div className="flex flex-col gap-10 items-center justify-start w-full mx-auto px-5 py-20">
             <span className="flex flex-row items-start font-bold text-4xl gap-2"> <p>One time pricing, Lifetime Access</p> </span>
-            <div className="flex flex-col gap-5 max-w-4/5 rounded border-2 p-5 px-10 border-hb-green shadow-2xl items-start justify-start  ">
-                <span className="flex flex-row items-start font-bold text-4xl gap-2 py-5"> <p>Premium Learning</p> </span>
-                <span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> <p>$20</p> <p className="text-red-600 line-through text-xl">{`$40`}</p> <p className="text-red-600  text-xl">{`(50% off)`}</p>  </span>
-                <ul className="flex flex-col gap-5 items-start justify-start ">
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Complete Training Pack </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Weekly mentorship calls </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> AI-Assisted Training and Mentorship </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Teamwork and Projects </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Weekly Graded Tasks + Feedback </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> 1-on-1 troubleshooting meetings </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Unlimited access to Bioinformatics servers* </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Complete All 8 stages </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Unlimited access to final project phase </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Support for first draft manuscript </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Graded Certification </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> No Eviction from the internship </span></li>
-                </ul>
-                <p className="font-bold">* Active only for the duration of the internship</p>
-                <EnrollDialog />
+            <div className="flex flex-row gap-10">
+                {/* <div className="flex flex-col gap-5 max-w-4/5 rounded border-2 p-5 px-10 border-hb-green shadow-2xl items-start justify-start  ">
+                    <span className="flex flex-col items-start font-bold text-4xl gap-2 py-5"> <p>Lite Learning</p> <p className="text-lg text-red-500">{`(Without project phase)`}</p> </span>
+                    <span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> <p>$10</p> <p className="text-red-600 line-through text-xl">{`$20`}</p> <p className="text-red-600  text-xl">{`(50% off)`}</p>  </span>
+                    <ul className="flex flex-col gap-5 items-start justify-start ">
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Complete Training Pack </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Weekly mentorship calls </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> AI-Assisted Training and Mentorship </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Teamwork and Projects </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Graded Certification </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Weekly Graded Tasks + Feedback </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> 1-on-1 troubleshooting meetings </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl line-through"> Unlimited access to Bioinformatics servers* </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl line-through"> Complete All 8 stages </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl  line-through"> Unlimited access to final project phase </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl  line-through"> Support for first draft manuscript </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl  line-through"> No Eviction from the internship </span></li>
+                    </ul>
 
+                    <EnrollLiteDialog />
+
+                </div> */}
+                <div className="flex flex-col gap-5 max-w-4/5 rounded border-2 p-5 px-10 border-hb-green shadow-2xl items-start justify-start  ">
+                    <span className="flex flex-row items-start font-bold text-4xl gap-2 py-5"> <p>Premium Learning</p> </span>
+                    <span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> <p>$20</p> <p className="text-red-600 line-through text-xl">{`$40`}</p> <p className="text-red-600  text-xl">{`(50% off)`}</p>  </span>
+                    <ul className="flex flex-col gap-5 items-start justify-start ">
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Complete Training Pack </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Weekly mentorship calls </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> AI-Assisted Training and Mentorship </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Teamwork and Projects </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Weekly Graded Tasks + Feedback </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> 1-on-1 troubleshooting meetings </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Unlimited access to Bioinformatics servers* </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Complete All 8 stages </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Unlimited access to final project phase </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Support for first draft manuscript </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Graded Certification </span></li>
+                        <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> No Eviction from the internship </span></li>
+                    </ul>
+                    <p className="font-bold">* Active only for the duration of the internship</p>
+                    <EnrollDialog />
+
+                </div>
             </div>
         </div>
 
@@ -398,14 +422,14 @@ export default function Page() {
                 <p className="text-xl font-bold">Premium Learning</p>
                 <span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> <p>$20</p> <p className="text-red-600 line-through text-xl">{`$40`}</p> <p className="text-red-600  text-xl">{`(50% off)`}</p>  </span>
                 <ul className="flex flex-col gap-2 text-md">
-                <li>Complete Training Pack</li>
-                <li>Weekly mentorship calls</li>
-                <li>AI-Assisted Mentorship</li>
-                <li>Team Projects + Feedback</li>
-                <li>Graded Tasks, Server Access*</li>
-                <li>Support for manuscript</li>
-                <li>Graded Certification</li>
-                <li>No Eviction</li>
+                    <li>Complete Training Pack</li>
+                    <li>Weekly mentorship calls</li>
+                    <li>AI-Assisted Mentorship</li>
+                    <li>Team Projects + Feedback</li>
+                    <li>Graded Tasks, Server Access*</li>
+                    <li>Support for manuscript</li>
+                    <li>Graded Certification</li>
+                    <li>No Eviction</li>
                 </ul>
                 <p className="text-sm">*Server active only during internship</p>
                 <EnrollDialog />
