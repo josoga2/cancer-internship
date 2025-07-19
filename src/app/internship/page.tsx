@@ -1,8 +1,14 @@
 "use client";
 import React, {  useEffect, useState } from "react";
-import winfred from "../../../public/winfred.svg"
 import { ArrowRight } from 'lucide-react';
+import winfred from "../../../public/winfred.svg"
 import keywords from "../../../public/keywords.svg"
+import microbe from "../../../public/microbe.webp"
+import phealth from "../../../public/phealth.jpg"
+import molmed from '../../../public/molmed.webp'
+import animals from '../../../public/animals.webp'
+import plantAnim from '../../../public/plants.webp'
+import cancers from '../../../public/cancer.webp'
 import { GoDotFill } from "react-icons/go";
 import Image from "next/image";
 import publicApi from "../../publicApi"
@@ -164,6 +170,42 @@ export default function Page() {
             </div>
         ))}
 
+
+        {/**LEARNING TRACKS */}
+        <div className="w-full">
+            <p className="w-full pb-10 text-center text-4xl font-bold">Learning Tracks</p>
+            <div className="grid grid-cols-4 gap-10 items-start justify-start px-10">
+                <div className=" flex flex-col w-56 p-5 justify-start items-start gap-5 min-h-40 border-2 border-hb-green rounded-md ">
+                    <Image src={microbe.src} alt="microbe" width={50} height={50} />
+                    <p className="font-bold">Microbes and Viruses</p>
+                </div>
+                <div className=" flex flex-col w-56 p-5 justify-start items-start gap-5 min-h-40 border-2 border-hb-green rounded-md ">
+                    <Image src={molmed.src} alt="microbe" width={50} height={50} />
+                    <p className="font-bold">Molecular Medicine</p>
+                </div>
+                <div className=" flex flex-col w-56 p-5 justify-start items-start gap-5 min-h-40 border-2 border-hb-green rounded-md ">
+                    <Image src={plantAnim.src} alt="microbe" width={50} height={50} />
+                    <p className="font-bold">Plant Health and Physiology</p>
+                </div>
+                <div className=" flex flex-col w-56 p-5 justify-start items-start gap-5 min-h-40 border-2 border-hb-green rounded-md ">
+                    <Image src={cancers.src} alt="microbe" width={50} height={50} />
+                    <p className="font-bold">Cancers Biomarker Discovery </p>
+                </div>
+                <div className=" flex flex-col w-56 p-5 justify-start items-start gap-5 min-h-40 border-2 border-hb-green rounded-md ">
+                    <Image src={phealth.src} alt="microbe" width={50} height={50} />
+                    <p className="font-bold">Public Health & Genomic Epid. </p>
+                </div>
+                <div className=" flex flex-col w-56 p-5 justify-start items-start gap-5 min-h-40 border-2 border-hb-green rounded-md ">
+                    <Image src={animals.src} alt="microbe" width={50} height={50} />
+                    <p className="font-bold">Animal Health and Physiology</p>
+                </div>
+            </div>
+        </div>
+
+        <div className="w-full flex flex-col items-center justify-center py-10">
+            <EnrollDialog />
+        </div>
+
         {/** who is this internship for?*/}
         <div className="w-full flex flex-col items-center justify-center">
             <p className="text-5xl font-bold text-center p-10">Who is this internship for?</p>
@@ -193,6 +235,7 @@ export default function Page() {
         <div className="w-full flex flex-col items-center justify-center py-10">
             <EnrollDialog />
         </div>
+        
         
 
         <div className="flex flex-col gap-10 items-center justify-start w-full mx-auto px-5 py-20">
@@ -285,6 +328,40 @@ export default function Page() {
                 </div>
                 </div>
             ))}
+
+            <div className="w-full">
+                <p className="w-full pb-10 text-center text-4xl font-bold">Learning Tracks</p>
+                <div className="grid grid-cols-1 gap-10 items-start justify-start px-10">
+                    <div className=" flex flex-col w-56 p-5 justify-start items-start gap-5 min-h-40 border-2 border-hb-green rounded-md ">
+                        <Image src={microbe.src} alt="microbe" width={50} height={50} />
+                        <p className="font-bold">Microbes and Viruses</p>
+                    </div>
+                    <div className=" flex flex-col w-56 p-5 justify-start items-start gap-5 min-h-40 border-2 border-hb-green rounded-md ">
+                        <Image src={molmed.src} alt="microbe" width={50} height={50} />
+                        <p className="font-bold">Molecular Medicine</p>
+                    </div>
+                    <div className=" flex flex-col w-56 p-5 justify-start items-start gap-5 min-h-40 border-2 border-hb-green rounded-md ">
+                        <Image src={plantAnim.src} alt="microbe" width={50} height={50} />
+                        <p className="font-bold">Plant Health and Physiology</p>
+                    </div>
+                    <div className=" flex flex-col w-56 p-5 justify-start items-start gap-5 min-h-40 border-2 border-hb-green rounded-md ">
+                        <Image src={cancers.src} alt="microbe" width={50} height={50} />
+                        <p className="font-bold">Cancers Biomarker Discovery </p>
+                    </div>
+                    <div className=" flex flex-col w-56 p-5 justify-start items-start gap-5 min-h-40 border-2 border-hb-green rounded-md ">
+                        <Image src={phealth.src} alt="microbe" width={50} height={50} />
+                        <p className="font-bold">Public Health & Genomic Epid. </p>
+                    </div>
+                    <div className=" flex flex-col w-56 p-5 justify-start items-start gap-5 min-h-40 border-2 border-hb-green rounded-md ">
+                        <Image src={animals.src} alt="microbe" width={50} height={50} />
+                        <p className="font-bold">Animal Health and Physiology</p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="w-full flex flex-col items-center justify-center py-10">
+                <EnrollDialog />
+            </div>
 
             <div className="flex flex-col gap-5 items-center">
                 <p className="text-3xl font-bold text-center">Who is this internship for?</p>
