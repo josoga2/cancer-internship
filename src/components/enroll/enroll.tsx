@@ -19,8 +19,9 @@ import { CgCircleci } from "react-icons/cg";
 import { useState } from "react";
 import publicApi from "@/publicApi";
 import { useRouter } from 'next/navigation';
+import { PiFlagBanner } from "react-icons/pi";
 
-
+//https://wise.com/pay/me/adewaleo251
 
 
 
@@ -32,7 +33,9 @@ export function EnrollDialog() {
     const [paymentMethod, setPaymentMethod] = useState("paypal");
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [paymentInstructions, setPaymentInstructions] = useState("");
+    const [bulk, setBulk] = useState(false)
     const router = useRouter();
+    
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -46,19 +49,39 @@ export function EnrollDialog() {
 
         if (response.status === 201) {
             // Handle successful submission, e.g., show a success message
-            console.log("Enrollment successful:", response.data);
-            if (paymentMethod === "paypal") {
-                router.replace('https://www.paypal.com/ncp/payment/L5SAYFKPRXJRC');
-            } else if (paymentMethod === "stripe") {
-                router.replace('https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
-            } else if (paymentMethod === "visa") {
-                router.replace('https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
-            } else if (paymentMethod === "opay") {
-                setIsSubmitted(true)
-                setPaymentInstructions("Please proceed to pay NGN30,000 via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
-            } else if (paymentMethod === "mastercard") {
-                router.replace('https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
+            //console.log("Enrollment successful:", response.data);
+            if (bulk){
+              if (paymentMethod === "paypal") {
+                  router.replace('https://www.paypal.com/ncp/payment/QRTQL4BM5HEG6');
+              } else if (paymentMethod === "stripe") {
+                  router.replace('https://buy.stripe.com/6oU9AS4YY237bHZ5fOc7u0e');
+              } else if (paymentMethod === "visa") {
+                  router.replace('https://buy.stripe.com/6oU9AS4YY237bHZ5fOc7u0e');
+              } else if (paymentMethod === "opay") {
+                  setIsSubmitted(true)
+                  setPaymentInstructions("Please proceed to pay NGN70,000 via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details with the emails and names of your group to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
+              } else if (paymentMethod === "mastercard") {
+                  router.replace('https://buy.stripe.com/6oU9AS4YY237bHZ5fOc7u0e');
+              } else if (paymentMethod === "wise") {
+                  router.replace('https://wise.com/pay/me/adewaleo251');
+              }
+            }else{
+              if (paymentMethod === "paypal") {
+                  router.replace('https://www.paypal.com/ncp/payment/L5SAYFKPRXJRC');
+              } else if (paymentMethod === "stripe") {
+                  router.replace('https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
+              } else if (paymentMethod === "visa") {
+                  router.replace('https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
+              } else if (paymentMethod === "opay") {
+                  setIsSubmitted(true)
+                  setPaymentInstructions("Please proceed to pay NGN30,000 via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
+              } else if (paymentMethod === "mastercard") {
+                  router.replace('https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
+              } else if (paymentMethod === "wise") {
+                  router.replace('https://wise.com/pay/me/adewaleo251');
+              }
             }
+            
         } else {
             // Handle error case, e.g., show an error message
             console.error("Enrollment failed:", response.data);
@@ -70,7 +93,7 @@ export function EnrollDialog() {
         setPaymentMethod("paypal");
         //setIsSubmitted(false);
     }
-        
+
 
   return (
     <Dialog>
@@ -83,7 +106,17 @@ export function EnrollDialog() {
             <DialogTitle className="text-xl">Enroll for this internship.</DialogTitle>
             <DialogDescription>
               Enroll in the internship by filling out the form below and proceeding to pay.
-              <span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> <p>$20</p> <p className="text-red-600 line-through text-xl">{`$40`}</p> <p className="text-red-600  text-xl">{`(50% off)`}</p>  </span>
+              {bulk?(<span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> 
+                <p>$15</p> 
+                <p className="text-red-600 line-through text-xl">{`$40`}</p> 
+                <p className="text-red-600  text-xl">{`(62.5% off)`}</p>  
+              </span>): 
+              (<span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> 
+                <p>$20</p> 
+                <p className="text-red-600 line-through text-xl">{`$40`}</p> 
+                <p className="text-red-600  text-xl">{`(50% off)`}</p>  
+              </span>)}
+              <span className="flex flex-row gap-5"> <input className="" type="checkbox" onChange={(e) => setBulk(e.target.checked)} /> <p>Group of 3 Discount </p> </span>
 
             </DialogDescription>
           </DialogHeader>
@@ -160,7 +193,20 @@ export function EnrollDialog() {
                     />
                     <div className="flex flex-col items-center border-2 border-gray-300 peer-checked:bg-green-200 peer-checked:border-green-600 rounded-lg p-2 transition">
                         <FaCcMastercard className="text-2xl text-blue-900" />
-                        <span className="mt-2 text-sm">MasterCard</span>
+                        <span className="mt-2 text-sm">Master Card</span>
+                    </div>
+                </Label>
+                <Label className="flex flex-col items-start cursor-pointer">
+                    <input
+                        type="radio"
+                        name="payment"
+                        value="wise"
+                        className="peer sr-only"
+                        onClick={() => setPaymentMethod("wise")}
+                    />
+                    <div className="flex flex-col items-center border-2 border-gray-300 peer-checked:bg-green-200 peer-checked:border-green-600 rounded-lg p-2 transition">
+                        <PiFlagBanner className="text-2xl text-blue-900" />
+                        <span className="mt-2 text-sm">Wise </span>
                     </div>
                 </Label>
             </div>
