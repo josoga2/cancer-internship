@@ -32,7 +32,7 @@ export default function Login() {
                 // Handle successful login, e.g., redirect to dashboard
                 router.replace('/dashboard');
             } else if (loginResponse.status === 401 || loginResponse.status === 400) {
-                setError('Your email is not yet verified. Please check your email to verify your account.');
+                setError('Either your email is not yet verified or you are not inputting your username. Please check your email to verify your account or enter your username.');
             }
         } catch (error) {
             console.error('Login error:', error);
@@ -114,7 +114,7 @@ export default function Login() {
                         <p className="text-red-500 text-center">{error}</p>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="username" className="text-lg">Email</Label>
+                            <Label htmlFor="username" className="text-lg">Username</Label>
                             <Input
                             id="username"
                             type="text"
