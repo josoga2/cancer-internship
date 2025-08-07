@@ -45,7 +45,7 @@ export default function Login() {
                 'status' in (error as any).response &&
                 (error as any).response.status === 401
             ) {
-                setError('Your email is not yet verified. Please check your email to verify your account.');
+                setError('Either your email is not yet verified or you are not inputting your username. Please check your email to verify your account or enter your username.');
             } else {
                 setError(' Invalid Username or Password. Username and Password are case sensitive. Please try again.');
             }
