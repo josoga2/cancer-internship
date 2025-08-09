@@ -514,9 +514,8 @@ return (
                     {/**Text */}
                     {content.content_type === 'text' && (
                         <div className="w-full flex flex-row gap-10">
-                            <div className="w-full border-2 rounded-md border-hb-green p-5 bg-white flex flex-col gap-2 text-sm leading-7">
-                                <p className="font-bold text-lg">Content Details</p>
-                                
+                            <div className="w-full border-2 rounded-md border-hb-green p-5 bg-white prose flex flex-col ">
+                                <p className="font-bold text-lg">Table of Content</p>
                                 <Markdown
                                     remarkPlugins={[
                                         remarkGfm,
@@ -669,7 +668,7 @@ return (
                                     </CardContent>
                                 </Card>
                         </div>
-                        <div className="border-2 p-5 rounded-md border-hb-green flex flex-col gap-2 w-1/3">
+                        <div className="border-2 p-5 rounded-md border-hb-green flex flex-col gap-2 ">
                             <p className="font-bold text-xl">Guideline for Submissions </p>
                             <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.text_content}</Markdown>
                         </div>
@@ -708,7 +707,7 @@ return (
                                 </CardContent>
                             </Card>
                         </div>
-                        <div className="border-2 p-5 rounded-md border-hb-green flex flex-col gap-2 w-1/3">
+                        <div className="border-2 p-5 rounded-md border-hb-green flex flex-col gap-2 ">
                             <p className="font-bold text-xl">Guideline for Submissions </p>
                             <p>You can only generate your certificate once. Please note that “Your Internship Grade - in percentage -  will be recorded on your certificate. </p>
                             <p> Please ensure you have attained enough points before requesting for your certificate. Once you process, it cannot be generated again.</p>
