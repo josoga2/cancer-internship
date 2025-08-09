@@ -15,9 +15,22 @@ import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
+import rehypeRaw from 'rehype-raw'
 import withAuth from "@/components/withAuth";
 import { CiViewList } from "react-icons/ci";
 import Logout from "@/components/logout";
+import 'katex/dist/katex.min.css';
+import 'highlight.js/styles/github.css'; // or another theme
+// remark plugins
+import remarkSlug from "remark-slug";
+import remarkAutolinkHeadings from "remark-autolink-headings";
+import remarkFootnotes from "remark-footnotes";
+import remarkDeflist from "remark-deflist";
+
+// rehype plugins
+import rehypeHighlight from "rehype-highlight";
+import rehypeToc from "rehype-toc";
+
 
 
 function Page() {
@@ -421,14 +434,14 @@ function Page() {
 
 return (
     <main className="w-full">
-    <div className="hidden md:flex flex-row w-full">
+    <div className="hidden md:flex flex-row w-full pl-5">
         {/**LEFT SIDE BAR */}
-        <div className="flex flex-col gap-10 text-base h-screen bg-white items-start w-1/5 border-r">
+        <div className="flex flex-col gap-10 text-base h-screen bg-white items-start max-w-[200px] border-r">
             <div className="flex flex-row items-center gap-2 px-2 py-5">
                 <Image src={hb_logo} alt="logo" width={40} height={40} />
                 <p className="font-bold">HackBio</p>
             </div>
-            <div className="flex flex-col gap-2 w-full items-start">
+            <div className="flex flex-col gap-2 w-full items-start text-base">
             
                 <a href={`/dashboard/internship/courses/${courseId}`} className="font-bold text-lg px-2 py-2 hover:underline flex flex-row items-center gap-2"> <CiViewList /> <p> Table of Content </p></a>
                 
@@ -443,7 +456,7 @@ return (
                     <p className="font-bold text-lg px-5 py-5 text-gray-400"> ← Previous Module</p>
                 )}
 
-                    <p className="font-bold text-lg px-5 py-5">Module Content </p>
+                    <p className="font-bold text-lg px-5 py-3">Module Content </p>
                 {contentList
                     .map((content) => (
                         <div key={content.id} className="w-full px-5 py-2 hover:underline">
@@ -475,11 +488,11 @@ return (
                         <Logout />
                     </div>
             </div>
-            <div className="px-10 pt-10 w-4/5  flex flex-col gap-5">
+            <div className="px-10 pt-10 w-2/4  flex flex-col gap-5">
                 {filteredContentList.length >0? (filteredContentList.map((content) => (
                     <div className="flex flex-col gap-10" key={content.id}>
                         <div className="flex flex-row w-full justify-between"><p className="font-bold text-3xl "> {content.title} 
-                            </p> <Button className="font-bold text-xl border-2 border-black bg-hb-green px-5" onClick={handleMarkCompleted}>Mark Completed</Button>
+                            </p> <Button className="font-bold text-xl py-5 border-2 border-black bg-hb-green px-5" onClick={handleMarkCompleted}>Mark Completed</Button>
                         </div>
                         <div className="font-bold w-full p-3 text-lg border rounded-md border-hb-green"> 
                             {uniqueContentId >0 && totalContent>0 ? (<div className="flex flex-row gap-10 items-center max-w-full"> 
@@ -501,9 +514,24 @@ return (
                     {/**Text */}
                     {content.content_type === 'text' && (
                         <div className="w-full flex flex-row gap-10">
-                            <div className="w-full border-2 rounded-md border-hb-green p-5 flex flex-col gap-2">
+                            <div className="w-full border-2 rounded-md border-hb-green p-5 bg-white flex flex-col gap-2 text-sm leading-7">
                                 <p className="font-bold text-lg">Content Details</p>
-                                <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.text_content}</Markdown>
+                                
+                                <Markdown
+                                    remarkPlugins={[
+                                        remarkGfm,
+                                        remarkMath,
+                                        remarkDeflist
+                                    ]}
+                                    rehypePlugins={[
+                                        rehypeRaw,
+                                        rehypeKatex,
+                                        rehypeHighlight,
+                                        rehypeToc
+                                    ]}
+                                    >
+                                    {content.text_content}
+                                    </Markdown>
                             </div>
                         </div>
                     )}

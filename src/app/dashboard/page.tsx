@@ -26,7 +26,7 @@ const tab_items = [
     id: 2,
     name: "Internships",
     link: "/dashboard/internship/",
-    isActive: true,
+    isActive: false,
     iconImage: BiDna
   },
   {
@@ -94,7 +94,7 @@ function Page() {
 
   return (
     <main className=" w-full">
-    <div className="hidden md:flex flex-row w-full">
+    <div className="hidden md:flex flex-row w-full pl-5">
       {/**LEFT SIDE BAR */}
       <div className="flex flex-col gap-5 text-base h-screen bg-white items-start w-[200px] border-r">
         <div className="flex flex-row items-center gap-2 px-2 py-5">
@@ -103,9 +103,11 @@ function Page() {
         </div>
         <div className="flex flex-col gap-5 w-full items-start">
           {tab_items.map((tab_item) => (
-            <a href={tab_item.link} key={tab_item.id}><div key={tab_item.id} className= "bg-white w-full px-5 py-5 hover:underline flex flex-row items-center gap-2">
-              {<tab_item.iconImage />} <p>{tab_item.name}</p>
-            </div></a>
+            <a href={tab_item.link} key={tab_item.id}>
+              <div key={tab_item.id} className= {`bg-white w-full px-3 py-2.5 hover:underline flex flex-row items-center gap-2 ${tab_item.isActive ? "text-hb-green rounded-md border-gray-200 border-2 font-bold" : "text-gray-600"}`}>
+                {<tab_item.iconImage />} <p>{tab_item.name}</p>
+              </div>
+            </a>
           ))}
         </div>
       </div>

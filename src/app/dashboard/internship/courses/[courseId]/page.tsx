@@ -270,18 +270,20 @@ const scientistAdjectives = [
 
   return (
     <main className="w-full">
-      <div className="hidden md:flex flex-row w-full">
+      <div className="hidden md:flex flex-row w-full pl-5">
         {/**LEFT SIDE BAR */}
         <div className="flex flex-col gap-5 text-base h-screen bg-white items-start w-[200px] border-r">
           <div className="flex flex-row items-center gap-2 px-2 py-5">
             <Image src={hb_logo} alt="logo" width={40} height={40} />
             <p className="font-bold">HackBio</p>
           </div>
-          <div className="flex flex-col gap-5 w-full items-start ">
+          <div className="flex flex-col gap-7 w-full items-start">
             {tab_items.map((tab_item) => (
-              <a href={tab_item.link} key={tab_item.id}><div key={tab_item.id} className= "bg-white w-full px-5 py-5 hover:underline flex flex-row items-center gap-2">
-                {<tab_item.iconImage />} <p>{tab_item.name}</p>
-              </div></a>
+              <a href={tab_item.link} key={tab_item.id}>
+                <div key={tab_item.id} className= {`bg-white w-full px-3 py-2.5 hover:underline flex flex-row items-center gap-2 ${tab_item.isActive ? "text-hb-green rounded-md border-gray-200 border-2 font-bold" : "text-gray-600"}`}>
+                  {<tab_item.iconImage />} <p>{tab_item.name}</p>
+                </div>
+              </a>
             ))}
           </div>
         </div>
@@ -307,7 +309,7 @@ const scientistAdjectives = [
                   .map((course) => (
                   <div key={course.id}>
                   {course.image && (
-                      <div className="flex flex-row items-end gap-5 mb-10 max-w-3/4">    
+                      <div className="flex flex-row items-end gap-5 mb-10 w-2/5">    
                           <img src={course.image} alt="course image" className="w-48 h-48 border-2 rounded-md border-neutral-400" />
                               <div className="flex flex-col gap-5 w-full">
                                   <p className="font-bold text-3xl ">{course.title}</p>
@@ -322,7 +324,7 @@ const scientistAdjectives = [
               {modulesList.map((module) => (
                 <div key={module.id} className="flex flex-col gap-5 pb-5">
                   <div>
-                      <div className="flex flex-col gap-5 items-center justify-start w-3/4 rounded-lg border border-hb-green px-7 py-3 bg-white">
+                      <div className="flex flex-col gap-5 items-center justify-start w-2/5 rounded-lg border border-hb-green px-7 py-3 bg-white">
                       <Accordion type="multiple" className="w-full flex flex-col gap-5 ">
                       <AccordionItem value={module.id.toString()}>
                           <AccordionTrigger className="text-2xl font-bold">

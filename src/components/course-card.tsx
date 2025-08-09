@@ -14,19 +14,19 @@ type UpcomingCourseCardProps = {
 
 const UpcomingCourseCard = ({ image, title, desc, lessons, weeks, directTo }: UpcomingCourseCardProps) => {
   return (
-    <main className='w-full'>
-      <div className="hidden md:flex flex-row gap-10 items-start justify-start relative border-2 border-green-600 rounded-md px-5 py-5 w-1/2 h-fit bg-white">
+    <main className='max-w-1/2'>
+      <div className="hidden md:flex flex-row gap-10 items-start justify-start  border-2 border-green-600 rounded-md px-5 py-5 w-1/2 h-fit bg-white">
         <img
           src={typeof image === 'string' ? image : image.src}
           alt={title}
-          width={50}
-          height={50}
-          className="border-2 rounded-md max-w-48 max-h-48 w-full h-full"
+          width={75}
+          height={75}
+          className="border-2 rounded-md max-w-[150px] max-h-[150px] object-contain"
         />
-        <div>
+        <div className='flex flex-col gap-5 w-full'>
           <p className="text-lg font-bold">{title}</p>
           <p className="text-base text-gray-500">{desc}</p>
-          <a href={directTo}> <Button className="bg-hb-green text-lg py-5 px-5 font-bold w-fit border-2 border-zinc-700 absolute bottom-5">Proceed </Button></a>
+          <a href={directTo}> <Button className="bg-hb-green text-lg py-5 px-5 font-bold w-fit border-2 border-zinc-700  bottom-5">Proceed </Button></a>
         </div>
       </div>
 
