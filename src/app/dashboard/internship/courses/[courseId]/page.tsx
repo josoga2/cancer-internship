@@ -268,6 +268,8 @@ const scientistAdjectives = [
         setTitle(`${adjective} ${username}`);
     }, [username]);
 
+  
+
   return (
     <main className="w-full">
       <div className="hidden md:flex flex-row w-full pl-5">
@@ -309,7 +311,7 @@ const scientistAdjectives = [
                   .map((course) => (
                   <div key={course.id}>
                   {course.image && (
-                      <div className="flex flex-row items-end gap-5 mb-10 w-2/5">    
+                      <div className="flex flex-row items-end gap-5 mb-10 max-w-[800px]">    
                           <img src={course.image} alt="course image" className="w-48 h-48 border-2 rounded-md border-neutral-400" />
                               <div className="flex flex-col gap-5 w-full">
                                   <p className="font-bold text-3xl ">{course.title}</p>
@@ -324,7 +326,7 @@ const scientistAdjectives = [
               {modulesList.map((module) => (
                 <div key={module.id} className="flex flex-col gap-5 pb-5">
                   <div>
-                      <div className="flex flex-col gap-5 items-center justify-start w-2/5 rounded-lg border border-hb-green px-7 py-3 bg-white">
+                      <div className="flex flex-col gap-5 items-center justify-start max-w-[800px] rounded-lg border border-hb-green px-7 py-3 bg-white">
                       <Accordion type="multiple" className="w-full flex flex-col gap-5 ">
                       <AccordionItem value={module.id.toString()}>
                           <AccordionTrigger className="text-2xl font-bold">

@@ -153,7 +153,7 @@ function Page() {
         const response = await api.get('/api/get-user-profile/'); // Adjust the endpoint as needed
         //console.log("Response from get-user-profile:", response.data);
         if (response.data && response.status == 200 || response.status == 201) {
-          console.log("User profile data:", response.data);
+          //console.log("User profile data:", response.data);
           const userProfile = response.data; 
           setUsername(userProfile.username);
           setUserXP(userProfile.total_xp.toString());
@@ -225,10 +225,14 @@ function Page() {
                     const modules = modulesResponse.data.filter((module: { course?: number | string; id?: number | string }) =>
                         Number(module.course) === courseId && Number(module.id) === moduleId
                     );
+                    const allModules = modulesResponse.data.filter((module: { course?: number | string;  }) =>
+                        Number(module.course) === courseId 
+                    );
                     const getPreviousModuleId = () => {
-                        if (!modulesResponse.data || modulesResponse.data.length === 0) return 0;
+                        //console.log(allModules)
+                        if (!allModules || allModules.length === 0) return 0;
                         // Sort modules by id (assuming numeric ids)
-                        const sortedModules = [...modulesResponse.data].sort((a, b) => Number(a.id) - Number(b.id));
+                        const sortedModules = [...allModules].sort((a, b) => Number(a.id) - Number(b.id));
                         const currentIndex = sortedModules.findIndex(m => Number(m.id) === moduleId);
                         if (currentIndex > 0) {
                             return Number(sortedModules[currentIndex - 1].id);
@@ -237,9 +241,9 @@ function Page() {
                     };
 
                     const getNextModuleId = () => {
-                        if (!modulesResponse.data || modulesResponse.data.length === 0) return 0;
+                        if (!allModules || allModules.length === 0) return 0;
                         // Sort modules by id (assuming numeric ids)
-                        const sortedModules = [...modulesResponse.data].sort((a, b) => Number(a.id) - Number(b.id));
+                        const sortedModules = [...allModules].sort((a, b) => Number(a.id) - Number(b.id));
                         const currentIndex = sortedModules.findIndex(m => Number(m.id) === moduleId);
                         if (currentIndex !== -1 && currentIndex < sortedModules.length - 1) {
                             return Number(sortedModules[currentIndex + 1].id);
@@ -488,7 +492,7 @@ return (
                         <Logout />
                     </div>
             </div>
-            <div className="px-10 pt-10 w-2/4  flex flex-col gap-5">
+            <div className="px-10 pt-10 w-[800px]  flex flex-col gap-5">
                 {filteredContentList.length >0? (filteredContentList.map((content) => (
                     <div className="flex flex-col gap-10" key={content.id}>
                         <div className="flex flex-row w-full justify-between"><p className="font-bold text-3xl "> {content.title} 
@@ -514,8 +518,8 @@ return (
                     {/**Text */}
                     {content.content_type === 'text' && (
                         <div className="w-full flex flex-row gap-10">
-                            <div className="w-full border-2 rounded-md border-hb-green p-5 bg-white prose flex flex-col ">
-                                <p className="font-bold text-lg">Table of Content</p>
+                            <div className="w-full border-2 rounded-md border-hb-green p-5 bg-white prose prose-base flex flex-col  ">
+                                <p className="font-bold text-lg"></p>
                                 <Markdown
                                     remarkPlugins={[
                                         remarkGfm,
@@ -525,8 +529,7 @@ return (
                                     rehypePlugins={[
                                         rehypeRaw,
                                         rehypeKatex,
-                                        rehypeHighlight,
-                                        rehypeToc
+                                        rehypeHighlight
                                     ]}
                                     >
                                     {content.text_content}
@@ -575,9 +578,9 @@ return (
                     {/**Project */}
                     {content.content_type === 'project' && (
                         <div className="w-full flex flex-row gap-10">
-                            <div className="border-2 rounded-md border-hb-green p-10 flex flex-col gap-2 w-full">
+                            <div className="border-2 rounded-md border-hb-green prose prose-base p-5 flex flex-col  w-full">
                                 <p className="font-bold text-lg">
-                                    Project Details
+                                    Project Details: Submit markdown or code solution to the project below
                                 </p>
                                 <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.project_data}</Markdown>
                                 <div className="grid gap-2">
@@ -595,7 +598,7 @@ return (
                                             </svg>
                                         ): (<p>Your grade is: {grade}</p>)}
 
-                                        </div>
+                                    </div>
                                 </div>
 
                             </div>
@@ -668,7 +671,7 @@ return (
                                     </CardContent>
                                 </Card>
                         </div>
-                        <div className="border-2 p-5 rounded-md border-hb-green flex flex-col gap-2 ">
+                        <div className="border-2 p-5 rounded-md border-hb-green prose prose-base flex flex-col gap-2 ">
                             <p className="font-bold text-xl">Guideline for Submissions </p>
                             <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.text_content}</Markdown>
                         </div>
@@ -771,7 +774,7 @@ return (
             </div>
 
             {/* Main Content */}
-            <div className="flex flex-col gap-5 px-4 pb-10 bg-green-50 py-10">
+            <div className="flex flex-col gap-5 px-4 pb-10 bg-green-50 py-10 w-full">
                 {filteredContentList.length > 0 ? filteredContentList.map((content) => (
                     <div key={content.id} className="flex flex-col gap-5">
                         <div className="flex justify-between items-center">
