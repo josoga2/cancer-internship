@@ -192,12 +192,12 @@ export default function ContentPage() {
             </section>
 
             <section className="flex flex-col md:hidden w-full px-4 pt-5 gap-5">
-                <a 
+                <Link 
                     href="/blog" 
                     className="flex flex-row gap-2 items-center font-bold text-lg hover:underline"
                 > 
                     <BiArrowBack /> All Articles 
-                </a>
+                </Link>
 
                 {articles__
                     .filter(article => article.slug === blogId)
