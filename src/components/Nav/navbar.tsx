@@ -11,13 +11,13 @@ export default function Navbar() {
   
   return (
     <main className='w-full'>
-    <div className="hidden w-full max-w-6xl pt-5 pb-1 md:flex flex-row justify-between items-center mx-auto ">
-        <Link href='/'><Image src={hb_logo} alt='hb_log' width={50} height={50} /></Link>
+    <div className="hidden md:flex md:max-w-screen-lg bg md:m-auto md:items-center pt-5 md:justify-between">
+        <Link href='/'><Image src={hb_logo} alt='hb_log' width={40} height={40} /></Link>
         <div className='flex flex-row gap-10'>
           <a href='/internship'>Internships</a>
           <a href='https://thehackbio.com/'>Courses</a>
         </div>
-        <a href='/login'><button className='border-2 border-black bg-hb-green rounded-lg px-5 text-white text-xl font-semibold py-2'>Sign In/Up</button></a>
+        <a href='/login'><button className='border-2  bg-hb-green rounded-lg px-5 text-white text-base font-semibold py-2'>Sign In/Up</button></a>
     </div>
     
     

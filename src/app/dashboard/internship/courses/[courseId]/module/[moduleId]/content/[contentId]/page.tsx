@@ -537,7 +537,7 @@ return (
                                     ]}
                                     >
                                     {content.text_content}
-                                    </Markdown>
+                                </Markdown>
                             </div>
                         </div>
                     )}
