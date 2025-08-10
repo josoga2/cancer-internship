@@ -1,6 +1,7 @@
 "use client";
 import Navbar from "@/components/Nav/navbar";
 import publicApi from "@/publicApi";
+import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BiArrowBack } from "react-icons/bi";
@@ -107,7 +108,7 @@ export default function ContentPage() {
             <Navbar />
             <section className="hidden md:flex md:max-w-screen-lg bg md:m-auto md:items-center pt-5 md:justify-between">
                 <div className="flex flex-col items-start justify-start gap-5  max-w-3xl min-w-3xl">
-                    <a href="/blog" className="flex flex-row gap-2 items-center font-bold text-xl hover:underline"> <BiArrowBack /> All Articles </a>
+                    <Link href="/blog" className="flex flex-row gap-2 items-center font-bold text-xl hover:underline"> <BiArrowBack /> All Articles </Link>
                     <div className="flex flex-col gap-5 w-full">
                         {articles__
                             .filter((article__: {
