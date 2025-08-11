@@ -729,7 +729,7 @@ return (
 
     {/**MOBILE */}
 
-    <div className="md:hidden w-full flex flex-col h-screen overflow-y-auto ">
+    <div className="md:hidden w-full flex flex-col pb-20 min-h-[100svh] ">
             {/* Header */}
             <div className="flex flex-row items-center justify-between px-4 py-4 border-b bg-white">
                 <div className="flex flex-row items-center gap-2">
@@ -764,23 +764,12 @@ return (
                 )}
             </div>
 
-            {/* Content List */}
-            <div className="px-5 py-2 text-sm flex flex-col gap-5 pb-5 border-t bottom-0 absolute bg-white w-full">
-                <p className="font-bold text-xl">Module Content </p>
-                <ul className="flex flex-row gap-3 overflow-auto list-inside">
-                    {contentList.map((content, idx) => (
-                        <li key={content.id} className="py-1 hover:underline border border-green-900 rounded-full px-3">
-                            <a href={`/dashboard/internship/courses/${courseId}/module/${moduleId}/content/${content.id}`}>✻ Content { idx+1}</a>
-                        </li>
-                    ))}
-                </ul>
-                
-            </div>
+            
 
             {/* Main Content */}
-            <div className="flex flex-col gap-5 px-4 pb-10 bg-green-50 py-10 w-full">
+            <div className="flex flex-col gap-5 px-4  bg-green-50 py-10 w-full pb-20 ">
                 {filteredContentList.length > 0 ? filteredContentList.map((content) => (
-                    <div key={content.id} className="flex flex-col gap-5">
+                    <div key={content.id} className="flex flex-col gap-5 pb-20 scroll-pb-20 overflow-auto">
                         <div className="flex justify-between items-center">
                             <p className="font-bold text-lg">{content.title}</p>
                         </div>
@@ -799,7 +788,7 @@ return (
                             <>
                                 <iframe height={200} src={content.video_url} className="rounded-md w-full border border-hb-green" />
                                 <p className="text-xs pt-2">⛭ Use the gear icon to set video quality</p>
-                                <div className=" border-hb-green border-2 p-7  pb-24 rounded-md text-sm">
+                                <div className=" border-hb-green border-2 p-7  pb-24 rounded-md text-sm prose prose-base">
                                     <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.text_content}</Markdown>
                                 </div>
                                 
@@ -808,14 +797,14 @@ return (
 
                         {/* Text */}
                         {content.content_type === 'text' && (
-                            <div className=" border-hb-green border-2 p-7  pb-24 rounded-md text-sm">
+                            <div className=" border-hb-green border-2 p-7  pb-24 rounded-md text-sm prose prose-base">
                                 <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.text_content}</Markdown>
                             </div>
                         )}
 
                         {/* Jupyter */}
                         {content.content_type === 'jupyter' && (
-                            <div className="flex flex-col pb-24 gap-2 text-xs max-w-full overflow-auto">
+                            <div className="flex flex-col pb-24 gap-2 text-xs max-w-full overflow-auto prose prose-base">
                                 <a href="#" target="_blank">
                                     <Button className="bg-hb-green text-white">Notebook on HackBio</Button>
                                 </a>
@@ -872,6 +861,18 @@ return (
                         )}
                     </div>
                 )) : <p className="text-center">Loading content...</p>}
+            </div>
+            {/* Content List */}
+            <div className="px-5 py-2 text-sm flex flex-col gap-5 border-t bottom-0 pb-20  bg-white w-full fixed">
+                <p className="font-bold text-xl">Module Content </p>
+                <ul className="flex flex-row gap-3 overflow-x-auto list-inside w-full">
+                    {contentList.map((content, idx) => (
+                        <li key={content.id} className="py-3 hover:underline border border-green-900 w-full rounded-md px-3 flex flex-row items-center  justify-center">
+                            <a href={`/dashboard/internship/courses/${courseId}/module/${moduleId}/content/${content.id}`} className="flex min-w-24 items-center justify-center flex-row"> <p>✻</p> <p>Content </p> <p>{ idx+1} </p></a>
+                        </li>
+                    ))}
+                </ul>
+                
             </div>
         </div>         
     </main>

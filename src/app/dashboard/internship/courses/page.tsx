@@ -223,7 +223,7 @@ function Page() {
     </div>
 
           {/** MOBILE */}
-    <div className="block md:hidden w-full ">
+    <div className="block md:hidden w-full pb-20 min-h-[100svh]">
 
       {/* Header */}
       {/* Top Navbar - Logo + Menu */}
@@ -253,12 +253,12 @@ function Page() {
           </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto bg-green-50 h-screen px-4 py-6">
+      <div className="flex-1  bg-green-50 pb-20 min-h-[100svh] px-4 py-6">
         <p className="text-xl font-bold mb-6">
           {username.charAt(0).toUpperCase() + username.slice(1).toLowerCase()}'s Courses
         </p>
 
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 pb-20 min-h-[100svh] items-center">
           {coursesList.map((course) => (
             <UpcomingCourseCard
               key={course.id}

@@ -135,7 +135,7 @@ function Page() {
     </div>
 
     {/** Mobile */}
-    <div className="block md:hidden w-full">
+    <div className="block md:hidden w-full pb-20 min-h-[100svh]">
 
           {/* Top Navbar - Logo + Menu */}
           <div className="flex flex-row items-center justify-between px-4 py-4 border-b bg-white">
@@ -164,12 +164,12 @@ function Page() {
           </div>
 
           {/* Main Content */}
-          <div className="flex flex-col bg-green-50 gap-8 h-screen px-4 py-6 overflow-y-auto min-h-screen">
+          <div className="flex flex-col bg-green-50 gap-8 h-screen px-4 py-6 min-h-[100svh]">
             <p className="font-bold text-xl">
               👋 Welcome back, {username.charAt(0).toUpperCase() + username.slice(1).toLocaleLowerCase()}
             </p>
 
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-6 items-center min-h-[100svh] ">
               {course_list.filter(course_item => course_item.sub).map((course_item) => (
                 <UpcomingCourseCard
                   key={course_item.id}

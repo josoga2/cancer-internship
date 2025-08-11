@@ -77,7 +77,7 @@ export default function RootLayout({
       <body
         className={`${dmSans}`}
       >
-        <div className="min-h-screen flex items-start justify-center">
+        <div className="min-h-[100svh] flex items-start justify-center">
             {children}
         </div>
       </body>

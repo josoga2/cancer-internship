@@ -360,7 +360,7 @@ const scientistAdjectives = [
       </div>
 
       {/**MOBILE */}
-      <div className="flex flex-col w-full h-screen md:hidden bg-hb-lightgreen overflow-hidden">
+      <div className="flex flex-col w-full md:hidden bg-hb-lightgreen pb-20 min-h-[100svh]">
 
         {/* Header */}
          <div className="flex flex-row items-center justify-between px-4 py-4 border-b bg-white">
@@ -398,7 +398,7 @@ const scientistAdjectives = [
         </div>
 
         {/* Main Scrollable Content */}
-        <div className="flex-1 overflow-y-auto px-4 pt-6 pb-10">
+        <div className="flex-1 pb-20 min-h-[100svh] px-4 pt-6 ">
 
           {/* Course Preview Block */}
           {coursesList
@@ -425,7 +425,7 @@ const scientistAdjectives = [
 
                 {/* Modules Accordion */}
                 {modulesList.map((module) => (
-                  <div key={module.id} className="w-full border border-hb-green rounded-lg bg-white px-4 py-3">
+                  <div key={module.id} className="w-full border border-hb-green rounded-lg bg-white px-4 py-3 ">
                     <Accordion type="multiple">
                       <AccordionItem value={module.id.toString()}>
                         <AccordionTrigger className="text-lg font-bold">

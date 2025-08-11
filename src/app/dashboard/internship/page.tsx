@@ -185,7 +185,7 @@ function Page() {
     </div>
 
     {/**MOBILE */}
-    <div className="flex flex-col w-full h-screen overflow-hidden md:hidden">
+    <div className="flex flex-col w-full pb-20 min-h-[100svh] md:hidden">
 
       {/* Top Navigation */}
       <div className="flex flex-row items-center justify-between px-4 py-4 border-b bg-white">
@@ -213,12 +213,12 @@ function Page() {
           </div>
 
       {/* Main Scrollable Content */}
-      <div className="flex-1 overflow-y-auto bg-green-50 px-4 py-6">
+      <div className="flex-1 items-center bg-green-50 px-4 py-6">
         <p className="font-bold text-xl mb-6">
           {username.charAt(0).toUpperCase() + username.slice(1).toLowerCase()}'s Internships
         </p>
 
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 items-center pb-20 min-h-[100svh]">
           {internshipList.map((internship) => (
             <UpcomingCourseCard
               key={internship.id}
