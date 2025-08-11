@@ -769,7 +769,7 @@ return (
             {/* Main Content */}
             <div className="flex flex-col gap-5 px-4  bg-green-50 py-10 w-full pb-20 ">
                 {filteredContentList.length > 0 ? filteredContentList.map((content) => (
-                    <div key={content.id} className="flex flex-col gap-5 pb-20 scroll-pb-20 overflow-auto">
+                    <div key={content.id} className="flex flex-col gap-5  scroll-pb-20 overflow-auto">
                         <div className="flex justify-between items-center">
                             <p className="font-bold text-lg">{content.title}</p>
                         </div>
