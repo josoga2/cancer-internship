@@ -30,6 +30,7 @@ import remarkDeflist from "remark-deflist";
 // rehype plugins
 import rehypeHighlight from "rehype-highlight";
 import rehypeToc from "rehype-toc";
+import { channel } from "diagnostics_channel";
 
 
 
@@ -115,6 +116,7 @@ function Page() {
     quiz_answer_c: string
     actual_answer: string
     project_data: string
+    project_promote_channel: string
     jupyter_url: string
     course: number | string
     finished: boolean
@@ -133,6 +135,7 @@ function Page() {
         quiz_answer_c: string
         actual_answer: string
         project_data: string
+        project_promote_channel : string
         jupyter_url: string
         course: number | string
         finished: boolean
@@ -390,7 +393,8 @@ function Page() {
         try {
             const response = await api.post('/api/submit-solution/', {
                 content: filteredContentList[0].project_data, // Assuming the content is in the first item of filteredContentList
-                solution: solution
+                solution: solution,
+                channel: filteredContentList[0].project_promote_channel || "C09A477A43E" // Default channel if not provided
             });
             if (response.status === 200) {
                 console.log("Solution submitted successfully.: ", response.data.grade_response.grade);
