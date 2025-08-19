@@ -3,13 +3,13 @@ import UpcomingCourseCard from "@/components/course-card";
 import hb_logo from "../../../public/hb_logo.png";
 import internship from '../../../public/internships.jpg'
 import courses from '../../../public/courses.jpg'
+import learning_pathway from '../../../public/learning_path.jpg'
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import api from "../../api";
 import withAuth from "@/components/withAuth";
 import { MdOutlineDashboard } from "react-icons/md";
-import { BiDna } from "react-icons/bi";
-import { LuNotebook } from "react-icons/lu";
+import { BiAtom, BiDna } from "react-icons/bi";
 import Logout from "@/components/logout";
 import { useRouter } from "next/navigation";
 
@@ -31,10 +31,24 @@ const tab_items = [
   },
   {
     id: 3,
-    name: "Courses",
+    name: "Internship Courses",
     link: "/dashboard/internship/courses/",
     isActive: false,
-    iconImage: LuNotebook
+    iconImage: BiDna
+  },
+  {
+    id: 4,
+    name: "Career Paths",
+    link: "/dashboard/pathway/",
+    isActive: false,
+    iconImage: BiAtom
+  },
+  {
+    id: 5,
+    name: "CP Courses",
+    link: "/dashboard/pathway/courses/",
+    isActive: false,
+    iconImage: BiAtom
   }
 ]
 
@@ -43,7 +57,7 @@ const course_list = [
   {
     id: 1,
     title: "Internships",
-    desc: "Access all your enrolled internships here. You can also view your progress and complete tasks.",
+    desc: "Access all your internships (their learning contents, tasks and projects) here.",
     image: internship,
     directTo: "/dashboard/internship",
     lessons: 34,
@@ -51,15 +65,15 @@ const course_list = [
     sub: true,
   },
   {
-    id: 2,
-    title: "Courses",
-    desc: "Access all your enrolled courses here. You can also view your progress and complete tasks.",
-    image: courses,
-    directTo: "/dashboard/internship/courses",
+    id: 3,
+    title: "Career Paths",
+    desc: "Access all your enrolled structured learning paths for defined careers in life science and biotech here.",
+    image: learning_pathway,
+    directTo: "/dashboard/pathway",
     lessons: 34,
     weeks: 4,
     sub: true,
-  },
+  }
 ]
 
 function Page() {
@@ -104,7 +118,7 @@ function Page() {
         <div className="flex flex-col gap-5 w-full items-start">
           {tab_items.map((tab_item) => (
             <a href={tab_item.link} key={tab_item.id}>
-              <div key={tab_item.id} className= {`bg-white w-full px-3 py-2.5 hover:underline flex flex-row items-center gap-2 ${tab_item.isActive ? "text-hb-green rounded-md border-gray-200 border-2 font-bold" : "text-gray-600"}`}>
+              <div key={tab_item.id} className= {` w-[200px] px-2 pl-5 py-2.5 hover:underline flex flex-row items-center gap-2 ${tab_item.isActive ? "text-hb-green rounded-l-md bg-green-100 font-bold" : "text-gray-600"}`}>
                 {<tab_item.iconImage />} <p>{tab_item.name}</p>
               </div>
             </a>

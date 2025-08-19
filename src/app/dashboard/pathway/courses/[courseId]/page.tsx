@@ -19,6 +19,7 @@ import { MdOutlineDashboard } from "react-icons/md";
 import { BiAtom, BiDna } from "react-icons/bi";
 import { LuNotebook } from "react-icons/lu";
 import Logout from "@/components/logout";
+import path from "path";
 
 
 const tab_items = [
@@ -40,12 +41,12 @@ const tab_items = [
     id: 3,
     name: "Internship Courses",
     link: "/dashboard/internship/courses/",
-    isActive: true,
+    isActive: false,
     iconImage: BiDna
   },
   {
     id: 4,
-    name: "Learning Pathway",
+    name: "Career Pathway",
     link: "/dashboard/pathway/",
     isActive: false,
     iconImage: BiAtom
@@ -53,13 +54,12 @@ const tab_items = [
   
   {
     id: 5,
-    name: "LP Courses",
+    name: "CP Courses",
     link: "/dashboard/pathway/courses/",
-    isActive: false,
+    isActive: true,
     iconImage: BiAtom
   }
 ]
-
 
 
 
@@ -78,13 +78,14 @@ function Page() {
   const [uniqueContentId, setUniqueContentId] = useState<number>(0);
   const [totalContent, setTotalContent] = useState<number>(0);
    const [completedContent, setCompletedContent] = useState<string>('');
-  const [userInternshipId, setUserInternshipId] = useState<number[]>([]);
+  const [userPathwayId, setUserPathwayId] = useState<number[]>([]);
   const [userCoursesId, setUserCoursesId] = useState<number[]>([]);
-  const [internshipList, setInternshipList] = useState<Array<{
+  const [pathwayList, setPathwayList] = useState<Array<{
         id?: string
         title?: string
         description?: string
         published?: boolean
+        free?: boolean
         start_date?: string
         overview?: string
         lenght_in_weeks?: number
@@ -98,6 +99,7 @@ function Page() {
             title: "",
             description: "",
             published: false,
+            free: false,
             start_date: "",
             overview: "",
             lenght_in_weeks: 0,
@@ -177,31 +179,31 @@ function Page() {
         if (response.data && response.status == 200 || response.status == 201) {
           //console.log("User profile data:", response.data[0].Internships);
           const userProfile = response.data; // Assuming you want the first profile
-          setUserInternshipId(
-            Array.isArray(userProfile.Internships)
-              ? userProfile.Internships.map((id: any) => Number(id))
-              : userProfile.Internships
-                ? [Number(userProfile.Internships)]
+          setUserPathwayId(
+            Array.isArray(userProfile.Pathways)
+              ? userProfile.Pathways.map((id: any) => Number(id))
+              : userProfile.Pathways
+                ? [Number(userProfile.Pathways)]
                 : []
           ); // Set the internships array if it exists
 
           //make the internship list
-          const internshipResponse = await api.get('/api/internships/');
+          const pathwayResponse = await api.get('/api/pathways/');
 
-          if (internshipResponse.status === 200) {
-            const internships = internshipResponse.data.filter((internship: { id: string }) => 
-              userProfile.Internships.includes(Number(internship.id))
+          if (pathwayResponse.status === 200) {
+            const pathways = pathwayResponse.data.filter((pathway: { id: string, free: boolean }) => 
+              userProfile.Pathways.includes(Number(pathway.id)) && pathway.free
             );
-            setInternshipList(internships);
+            setPathwayList(pathways);
 
             //make the courses list
             const coursesResponse = await api.get('/api/courses/');
             if (coursesResponse.status === 200) {
                 
-                const allCourseIds = internships
-                .flatMap((internship: any) => 
-                    Array.isArray(internship.courses)
-                    ? internship.courses.map((c: any) => Number(c)) // each c is already an ID
+                const allCourseIds = pathways
+                .flatMap((pathway: any) => 
+                    Array.isArray(pathway.courses)
+                    ? pathway.courses.map((c: any) => Number(c)) // each c is already an ID
                     : []
                 );
                 //console.log("filtered internships:", internships);
@@ -274,16 +276,236 @@ const scientistAdjectives = [
     "Analytical",
     "Clever",
     "Astute",
-    "Persistent"
-    ];
+    "Persistent",
+    "Adaptive",
+    "Adventurous",
+    "Ambitious",
+    "Articulate",
+    "Attentive",
+    "Bold",
+    "Candid",
+    "Capable",
+    "Cautious",
+    "Committed",
+    "Composed",
+    "Confident",
+    "Consistent",
+    "Constructive",
+    "Creative",
+    "Critical",
+    "Curatorial",
+    "Decisive",
+    "Dedicated",
+    "Dependable",
+    "Determined",
+    "Discerning",
+    "Disciplined",
+    "Dynamic",
+    "Eloquent",
+    "Empirical",
+    "Enterprising",
+    "Enthusiastic",
+    "Exacting",
+    "Expansive",
+    "Experimental",
+    "Experienced",
+    "Exploratory",
+    "Expressive",
+    "Farsighted",
+    "Fearless",
+    "Focused",
+    "Formal",
+    "Functional",
+    "Grounded",
+    "Imaginative",
+    "Impartial",
+    "Independent",
+    "Industrious",
+    "Inquisitive",
+    "Inspirational",
+    "Integrative",
+    "Intelligent",
+    "Judicious",
+    "Keen",
+    "Knowledgeable",
+    "Logical-minded",
+    "Lucid",
+    "Measured",
+    "Motivated",
+    "Objective",
+    "Observant",
+    "Open-minded",
+    "Organized",
+    "Original",
+    "Passionate",
+    "Patient",
+    "Pioneering",
+    "Pragmatic",
+    "Proactive",
+    "Proficient",
+    "Punctual",
+    "Purposeful",
+    "Quantitative",
+    "Questioning",
+    "Reflective",
+    "Relentless",
+    "Resourceful",
+    "Rigorous",
+    "Scrupulous",
+    "Self-reliant",
+    "Shrewd",
+    "Skeptical",
+    "Strategic",
+    "Systematic",
+    "Tenacious",
+    "Thorough",
+    "Unbiased",
+    "Versatile",
+    "Zealous",
+    "Accurate",
+    "Accomplished",
+    "Adaptable",
+    "Alert",
+    "Altruistic",
+    "Ambidextrous",
+    "Amiable",
+    "Analytical-minded",
+    "Assertive",
+    "Attuned",
+    "Authoritative",
+    "Balanced",
+    "Benevolent",
+    "Brave",
+    "Broad-minded",
+    "Calculating",
+    "Careful",
+    "Charismatic",
+    "Clear-headed",
+    "Collaborative",
+    "Communicative",
+    "Competent",
+    "Comprehensive",
+    "Conscientious",
+    "Conservative",
+    "Cooperative",
+    "Courteous",
+    "Curiosity-driven",
+    "Data-driven",
+    "Deep-thinking",
+    "Deliberate",
+    "Detail-oriented",
+    "Determinate",
+    "Dexterous",
+    "Diplomatic",
+    "Discreet",
+    "Distinguished",
+    "Driven",
+    "Educated",
+    "Effective",
+    "Efficient",
+    "Energetic",
+    "Engaged",
+    "Enlightened",
+    "Entertaining",
+    "Ethical",
+    "Exact",
+    "Exceptional",
+    "Exemplary",
+    "Experienced-minded",
+    "Fact-based",
+    "Fair",
+    "Firm",
+    "Flexible",
+    "Focused-minded",
+    "Forward-thinking",
+    "Frugal",
+    "Genuine",
+    "Hardworking",
+    "Helpful",
+    "Honest",
+    "Humble",
+    "Idealistic",
+    "Impeccable",
+    "Inclusive",
+    "Indefatigable",
+    "Individualistic",
+    "Influential",
+    "Ingenious-minded",
+    "Innovative-minded",
+    "Inspiring",
+    "Intellectual",
+    "Inventive",
+    "Learner-oriented",
+    "Level-headed",
+    "Lifelong-learning",
+    "Logical-thinking",
+    "Loyal",
+    "Masterful",
+    "Mentoring",
+    "Mindful",
+    "Multi-skilled",
+    "Neat",
+    "Objective-minded",
+    "Observational",
+    "Open",
+    "Optimistic",
+    "Orderly",
+    "Organisational",
+    "Passion-driven",
+    "Perceptive",
+    "Persevering",
+    "Persuasive",
+    "Philosophical",
+    "Pioneering-minded",
+    "Polished",
+    "Positive",
+    "Practical",
+    "Precautionary",
+    "Principled",
+    "Problem-solving",
+    "Productive",
+    "Professional",
+    "Progressive",
+    "Protective",
+    "Prudent",
+    "Purpose-driven",
+    "Qualified",
+    "Quick-witted",
+    "Realistic",
+    "Reliable",
+    "Resilient",
+    "Respectful",
+    "Scholarly",
+    "Scientific",
+    "Self-aware",
+    "Self-disciplined",
+    "Self-motivated",
+    "Skillful",
+    "Sophisticated",
+    "Specialised",
+    "Steadfast",
+    "Supportive",
+    "Sustainable",
+    "Tactful",
+    "Talented",
+    "Thrifty",
+    "Time-conscious",
+    "Trustworthy",
+    "Unconventional",
+    "Unshakeable",
+    "Value-driven",
+    "Well-informed",
+    "Well-prepared",
+    "Well-rounded"
+];
     
-    function getRandomAdjective() {
-        return scientistAdjectives[Math.floor(Math.random() * scientistAdjectives.length)];
-    }
-    useEffect(() => {
-        const adjective = getRandomAdjective();
-        setTitle(`${adjective} ${username}`);
-    }, [username]);
+function getRandomAdjective() {
+    return scientistAdjectives[Math.floor(Math.random() * scientistAdjectives.length)];
+}
+useEffect(() => {
+    const adjective = getRandomAdjective();
+    setTitle(`${adjective} ${username}`);
+}, [username]);
 
   
 
@@ -298,12 +520,12 @@ const scientistAdjectives = [
           </div>
           <div className="flex flex-col gap-7 w-full items-start">
             {tab_items.map((tab_item) => (
-              <a href={tab_item.link} key={tab_item.id}>
-                <div key={tab_item.id} className= {` w-[150px] px-2 py-2.5 hover:underline flex flex-row items-center gap-2 ${tab_item.isActive ? "text-hb-green rounded-md bg-green-100 font-bold" : "text-gray-600"}`}>
-                  {<tab_item.iconImage />} <p>{tab_item.name}</p>
-                </div>
-              </a>
-            ))}
+            <a href={tab_item.link} key={tab_item.id}>
+              <div key={tab_item.id} className= {` w-[200px] px-2 py-2.5 hover:underline flex flex-row items-center gap-2 ${tab_item.isActive ? "text-hb-green rounded-l-md bg-green-100 font-bold" : "text-gray-600"}`}>
+                {<tab_item.iconImage />} <p>{tab_item.name}</p>
+              </div>
+            </a>
+          ))}
           </div>
         </div>
         {/** MAIN */}
@@ -356,7 +578,7 @@ const scientistAdjectives = [
                                   .map((content) => (
                                       <div key={content.id} className="flex flex-col gap-2">
                                           <ul className="list-disc pl-5 text-lg" key={content.id}>
-                                              <a href={`/dashboard/internship/courses/${courseId}/module/${module.id}/content/${content.id}`} className="hover:underline">
+                                              <a href={`/dashboard/pathway/courses/${courseId}/module/${module.id}/content/${content.id}`} className="hover:underline">
                                                   <li>{content.title}</li>
                                               </a>
                                           </ul>
@@ -394,64 +616,63 @@ const scientistAdjectives = [
           </div>
 
           {/* Navigation Tabs (from sidebar) */}
-                    {/* Drawer Toggle Button */}
-                    <div className="flex items-center py-4 px-4">
-                      <button
-                        onClick={() => setDrawerOpen(true)}
-                        aria-label="Open navigation"
-                        className="p-2 rounded-md border border-gray-300 bg-white shadow-sm"
-                      >
-                        {/* Hamburger Icon */}
-                        <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                      </button>
-                    </div>
-          
-                    {/* Drawer Overlay */}
-                    {drawerOpen && (
-                      <div
-                        className="fixed inset-0 z-40 bg-black bg-opacity-30"
-                        onClick={() => setDrawerOpen(false)}
-                        aria-label="Close navigation overlay"
-                      />
-                    )}
-          
-                    {/* Drawer Panel */}
-                    <div
-                      className={`fixed top-0 left-0 z-50 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ${
-                        drawerOpen ? "translate-x-0" : "-translate-x-full"
-                      }`}
-                      style={{ willChange: "transform" }}
-                    >
-                      <div className="flex flex-row items-center justify-between px-4 py-4 border-b">
-                        <div className="flex flex-row items-center gap-2">
-                          <Image src={hb_logo} alt="HackBio logo" width={32} height={32} />
-                          <p className="font-bold text-lg">HackBio</p>
-                        </div>
-                        <button
-                          onClick={() => setDrawerOpen(false)}
-                          aria-label="Close navigation"
-                          className="p-2 rounded-md"
-                        >
-                          {/* Close Icon */}
-                          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M6 6l12 12M6 18L18 6" />
-                          </svg>
-                        </button>
-                      </div>
-                      <div className="flex flex-col gap-2 px-4 py-4">
-                        {tab_items.map((tab_item) => (
-                          <a key={tab_item.id} href={tab_item.link} onClick={() => setDrawerOpen(false)}>
-                            <div className={`flex flex-row items-center gap-2 py-2 px-3 rounded-md ${tab_item.isActive ? "bg-green-100 text-hb-green font-bold" : "text-green-900"}`}>
-                              <tab_item.iconImage />
-                              <p className="text-sm">{tab_item.name}</p>
-                            </div>
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-          
+          {/* Drawer Toggle Button */}
+          <div className="flex items-center py-4 px-4">
+            <button
+              onClick={() => setDrawerOpen(true)}
+              aria-label="Open navigation"
+              className="p-2 rounded-md border border-gray-300 bg-white shadow-sm"
+            >
+              {/* Hamburger Icon */}
+              <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Drawer Overlay */}
+          {drawerOpen && (
+            <div
+              className="fixed inset-0 z-40 bg-black bg-opacity-30"
+              onClick={() => setDrawerOpen(false)}
+              aria-label="Close navigation overlay"
+            />
+          )}
+
+          {/* Drawer Panel */}
+          <div
+            className={`fixed top-0 left-0 z-50 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ${
+              drawerOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
+            style={{ willChange: "transform" }}
+          >
+            <div className="flex flex-row items-center justify-between px-4 py-4 border-b">
+              <div className="flex flex-row items-center gap-2">
+                <Image src={hb_logo} alt="HackBio logo" width={32} height={32} />
+                <p className="font-bold text-lg">HackBio</p>
+              </div>
+              <button
+                onClick={() => setDrawerOpen(false)}
+                aria-label="Close navigation"
+                className="p-2 rounded-md"
+              >
+                {/* Close Icon */}
+                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M6 6l12 12M6 18L18 6" />
+                </svg>
+              </button>
+            </div>
+            <div className="flex flex-col gap-2 px-4 py-4">
+              {tab_items.map((tab_item) => (
+                <a key={tab_item.id} href={tab_item.link} onClick={() => setDrawerOpen(false)}>
+                  <div className={`flex flex-row items-center gap-2 py-2 px-3 rounded-md ${tab_item.isActive ? "bg-green-100 text-hb-green font-bold" : "text-green-900"}`}>
+                    <tab_item.iconImage />
+                    <p className="text-sm">{tab_item.name}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
           
         <div className="flex w-full flex-col gap-3  px-10 py-4 border-b mx-auto items-center ">
 
@@ -503,7 +724,7 @@ const scientistAdjectives = [
                               .map((content) => (
                                 <ul className="list-disc pl-5" key={content.id}>
                                   <a
-                                    href={`/dashboard/internship/courses/${courseId}/module/${module.id}/content/${content.id}`}
+                                    href={`/dashboard/pathway/courses/${courseId}/module/${module.id}/content/${content.id}`}
                                     className="hover:underline"
                                   >
                                     <li>{content.title}</li>

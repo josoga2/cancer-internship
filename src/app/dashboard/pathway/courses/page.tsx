@@ -32,7 +32,7 @@ const tab_items = [
     id: 3,
     name: "Internship Courses",
     link: "/dashboard/internship/courses/",
-    isActive: true,
+    isActive: false,
     iconImage: BiDna
   },
   {
@@ -47,23 +47,24 @@ const tab_items = [
     id: 5,
     name: "CP Courses",
     link: "/dashboard/pathway/courses/",
-    isActive: false,
+    isActive: true,
     iconImage: BiAtom
   }
 ]
-
 
 function Page() {
 
   const router = useRouter()
   const [username, setUsername] = useState("");
-  const [userInternshipId, setUserInternshipId] = useState<number[]>([]);
+  const [userPathwaysId, setUserPathwaysId] = useState<number[]>([]);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [userCoursesId, setUserCoursesId] = useState<number[]>([]);
-  const [internshipList, setInternshipList] = useState<Array<{
+  const [pathwaysList, setPathwaysList] = useState<Array<{
         id?: string
         title?: string
         description?: string
         published?: boolean
+        free?: boolean
         start_date?: string
         overview?: string
         lenght_in_weeks?: number
@@ -77,6 +78,7 @@ function Page() {
             title: "",
             description: "",
             published: false,
+            free: false,
             start_date: "",
             overview: "",
             lenght_in_weeks: 0,
@@ -137,31 +139,32 @@ function Page() {
         if (response.data && response.status == 200 || response.status == 201) {
           //console.log("User profile data:", response.data[0].Internships);
           const userProfile = response.data; // Assuming you want the first profile
-          setUserInternshipId(
-            Array.isArray(userProfile.Internships)
-              ? userProfile.Internships.map((id: any) => Number(id))
-              : userProfile.Internships
-                ? [Number(userProfile.Internships)]
+          setPathwaysList(
+            Array.isArray(userProfile.Pathways)
+              ? userProfile.Pathways.map((id: any) => Number(id))
+              : userProfile.Pathways
+                ? [Number(userProfile.Pathways)]
                 : []
           ); // Set the internships array if it exists
 
           //make the internship list
-          const internshipResponse = await api.get('/api/internships/');
+          const pathwayResponse = await api.get('/api/pathways/');
 
-          if (internshipResponse.status === 200) {
-            const internships = internshipResponse.data.filter((internship: { id: string }) => 
-              userProfile.Internships.includes(Number(internship.id))
+          if (pathwayResponse.status === 200) {
+            //console.log("Pathway Response Data:", pathwayResponse.data);
+            const pathways = pathwayResponse.data.filter((pathway: { id: string, free: boolean }) => 
+              userProfile.Pathways.includes(Number(pathway.id)) && pathway.free
             );
-            setInternshipList(internships);
+            setPathwaysList(pathways);
 
             //make the courses list
             const coursesResponse = await api.get('/api/courses/');
             if (coursesResponse.status === 200) {
               
-              const allCourseIds = internships
-              .flatMap((internship: any) => 
-                Array.isArray(internship.courses)
-                  ? internship.courses.map((c: any) => Number(c)) // each c is already an ID
+              const allCourseIds = pathways
+              .flatMap((pathways: any) => 
+                Array.isArray(pathways.courses)
+                  ? pathways.courses.map((c: any) => Number(c)) // each c is already an ID
                   : []
               );
               //console.log("filtered internships:", internships);
@@ -203,7 +206,7 @@ function Page() {
         <div className="flex flex-col gap-7 w-full items-start">
           {tab_items.map((tab_item) => (
             <a href={tab_item.link} key={tab_item.id}>
-              <div key={tab_item.id} className= {` w-[200px]  pl-5 py-2.5 hover:underline flex flex-row items-center gap-2 ${tab_item.isActive ? "text-hb-green rounded-l-md bg-green-100 font-bold" : "text-gray-600"}`}>
+              <div key={tab_item.id} className= {` w-[200px] px-2 pl-5 py-2.5 hover:underline flex flex-row items-center gap-2 ${tab_item.isActive ? "text-hb-green rounded-l-md bg-green-100 font-bold" : "text-gray-600"}`}>
                 {<tab_item.iconImage />} <p>{tab_item.name}</p>
               </div>
             </a>
@@ -220,14 +223,14 @@ function Page() {
             <Logout />
           </div>
           <div className="">
-        <p className="px-10 font-bold text-2xl"> {username.charAt(0).toUpperCase() + username.slice(1).toLocaleLowerCase()}'s Courses </p>
+        <p className="px-10 font-bold text-2xl"> {username.charAt(0).toUpperCase() + username.slice(1).toLocaleLowerCase()}'s Career Pathway Courses </p>
         <div className="flex flex-col gap-10 w-full px-10 pt-10">
           {coursesList.map((course) => (
             <div key={course.id}>
               <UpcomingCourseCard
                 desc={course.overview ?? ""}
                 image={course.image ?? "/"}
-                directTo={'/dashboard/internship/courses/' + course.id + '/'}
+                directTo={'/dashboard/pathway/courses/' + course.id + '/'}
                 title={course.title ?? ""}
                 weeks={ 0} lessons={0} />
             </div>
@@ -257,21 +260,68 @@ function Page() {
           </div>
 
           {/* Navigation Tabs (from sidebar) */}
-          <div className="flex flex-row w-full bg-white border-b gap-3 justify-center px-4 py-4 space-y-2">
-            {tab_items.map((tab_item) => (
-              <a key={tab_item.id} href={tab_item.link}>
-                <div className="flex flex-row items-center gap-1 py-2 border w-fit px-3 rounded-full text-green-900">
-                  <tab_item.iconImage />
-                  <p className="text-sm">{tab_item.name}</p>
-                </div>
-              </a>
-            ))}
+          {/* Drawer Toggle Button */}
+          <div className="flex items-center py-4 px-4">
+            <button
+              onClick={() => setDrawerOpen(true)}
+              aria-label="Open navigation"
+              className="p-2 rounded-md border border-gray-300 bg-white shadow-sm"
+            >
+              {/* Hamburger Icon */}
+              <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Drawer Overlay */}
+          {drawerOpen && (
+            <div
+              className="fixed inset-0 z-40 bg-black bg-opacity-30"
+              onClick={() => setDrawerOpen(false)}
+              aria-label="Close navigation overlay"
+            />
+          )}
+
+          {/* Drawer Panel */}
+          <div
+            className={`fixed top-0 left-0 z-50 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ${
+              drawerOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
+            style={{ willChange: "transform" }}
+          >
+            <div className="flex flex-row items-center justify-between px-4 py-4 border-b">
+              <div className="flex flex-row items-center gap-2">
+                <Image src={hb_logo} alt="HackBio logo" width={32} height={32} />
+                <p className="font-bold text-lg">HackBio</p>
+              </div>
+              <button
+                onClick={() => setDrawerOpen(false)}
+                aria-label="Close navigation"
+                className="p-2 rounded-md"
+              >
+                {/* Close Icon */}
+                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M6 6l12 12M6 18L18 6" />
+                </svg>
+              </button>
+            </div>
+            <div className="flex flex-col gap-2 px-4 py-4">
+              {tab_items.map((tab_item) => (
+                <a key={tab_item.id} href={tab_item.link} onClick={() => setDrawerOpen(false)}>
+                  <div className={`flex flex-row items-center gap-2 py-2 px-3 rounded-md ${tab_item.isActive ? "bg-green-100 text-hb-green font-bold" : "text-green-900"}`}>
+                    <tab_item.iconImage />
+                    <p className="text-sm">{tab_item.name}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
           </div>
 
       {/* Main Content */}
       <div className="flex-1  bg-green-50 pb-20 min-h-[100svh] px-4 py-6">
         <p className="text-xl font-bold mb-6">
-          {username.charAt(0).toUpperCase() + username.slice(1).toLowerCase()}'s Courses
+          {username.charAt(0).toUpperCase() + username.slice(1).toLowerCase()}'s Career Pathway Courses
         </p>
 
         <div className="flex flex-col gap-6 pb-20 min-h-[100svh] items-center">
@@ -280,7 +330,7 @@ function Page() {
               key={course.id}
               desc={course.overview ?? ""}
               image={course.image ?? "/"}
-              directTo={`/dashboard/internship/courses/${course.id}/`}
+              directTo={`/dashboard/pathway/courses/${course.id}/`}
               title={course.title ?? ""}
               weeks={0}
               lessons={0}

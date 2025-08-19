@@ -148,12 +148,12 @@ export default function ContentPage() {
                                 <div key={article.id} className="flex flex-col gap-5 p-5 border rounded-md justify-between ">
                                     <div className="flex flex-col h-fit w-full gap-5 justify-center p-5 items-start bg-hb-lightgreen ">
                                         <h1 className="text-2xl font-bold"> {article.title} </h1>
-                                        <div className=" min-w-36 hover:cursor-pointer">
+                                        <div className=" min-w-36 w-full hover:cursor-pointer">
                                             {article.cover_image && (
                                                 <img 
                                                     src={article.cover_image} 
                                                     alt={article.title || "Cover image"} 
-                                                    className="w-full h-48 object-cover rounded-md" 
+                                                    className="w-full h-64 object-cover rounded-md" 
                                                 />
                                             )}
                                         </div>
@@ -174,7 +174,7 @@ export default function ContentPage() {
                                             >
                                             {article.content_markdown}
                                         </Markdown>
-                                        ): (<div dangerouslySetInnerHTML={{ __html: article.content_html ?? "" }} />)}
+                                        ): (<div className="text-base" dangerouslySetInnerHTML={{ __html: article.content_html ?? "" }} />)}
                                         
                                     </div>
                                     <div className="flex flex-col pt-5 px-3 gap-5">
@@ -228,12 +228,12 @@ export default function ContentPage() {
                             {article.content_markdown}
                             </Markdown>
                         ) : (
-                            <div dangerouslySetInnerHTML={{ __html: article.content_html ?? "" }} />
+                            <div className="text-base max-w-xs" dangerouslySetInnerHTML={{ __html: article.content_html ?? "" }} />
                         )}
                         </div>
 
                         {/* Subscribe Form */}
-                        <div className="flex flex-col gap-3 pt-3 border-t border-gray-300">
+                        <div className="flex flex-col gap-3 pt-3 border-t border-gray-300 w-[300px]">
                         <p className="text-base font-bold">Subscribe</p>
                         <input 
                             type="text" 

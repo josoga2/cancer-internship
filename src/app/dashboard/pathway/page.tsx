@@ -1,15 +1,15 @@
 'use client';
 import UpcomingCourseCard from "@/components/course-card";
-import hb_logo from "../../../../../public/hb_logo.png";
+import hb_logo from "../../../../public/hb_logo.png";
 import Image from "next/image";
 import withAuth from "@/components/withAuth";
 import api from "@/api";
 import { useState, useEffect } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import { MdOutlineDashboard } from "react-icons/md";
-import { BiAtom, BiDna } from "react-icons/bi";
+import { BiDna, BiAtom } from "react-icons/bi";
 import { LuNotebook } from "react-icons/lu";
-import { all } from "axios";
 import Logout from "@/components/logout";
 
 
@@ -32,17 +32,16 @@ const tab_items = [
     id: 3,
     name: "Internship Courses",
     link: "/dashboard/internship/courses/",
-    isActive: true,
+    isActive: false,
     iconImage: BiDna
   },
   {
     id: 4,
     name: "Career Paths",
     link: "/dashboard/pathway/",
-    isActive: false,
+    isActive: true,
     iconImage: BiAtom
   },
-  
   {
     id: 5,
     name: "CP Courses",
@@ -51,19 +50,17 @@ const tab_items = [
     iconImage: BiAtom
   }
 ]
-
-
 function Page() {
 
   const router = useRouter()
   const [username, setUsername] = useState("");
-  const [userInternshipId, setUserInternshipId] = useState<number[]>([]);
-  const [userCoursesId, setUserCoursesId] = useState<number[]>([]);
-  const [internshipList, setInternshipList] = useState<Array<{
+  const [userPathwayId, setUserPathwayId] = useState<number[]>([]);
+  const [pathwayList, setPathwayList] = useState<Array<{
         id?: string
         title?: string
         description?: string
         published?: boolean
+        free?: boolean
         start_date?: string
         overview?: string
         lenght_in_weeks?: number
@@ -77,6 +74,7 @@ function Page() {
             title: "",
             description: "",
             published: false,
+            free: false,
             start_date: "",
             overview: "",
             lenght_in_weeks: 0,
@@ -84,24 +82,6 @@ function Page() {
             courses: [{ id: "" }]
         }
     ]);
-
-  const [coursesList, setCoursesList] = useState<Array<{
-    id?: number | string
-    title?: string
-    overview?: string
-    description?: string
-    published?: boolean
-    image?: string
-  }>>([
-      {
-        id: "",
-        title: "",
-        overview: "",
-        description: "",
-        published: false,
-        image: "/"
-      }
-  ]);
 
     //get username
   useEffect(() => {
@@ -137,62 +117,46 @@ function Page() {
         if (response.data && response.status == 200 || response.status == 201) {
           //console.log("User profile data:", response.data[0].Internships);
           const userProfile = response.data; // Assuming you want the first profile
-          setUserInternshipId(
-            Array.isArray(userProfile.Internships)
-              ? userProfile.Internships.map((id: any) => Number(id))
-              : userProfile.Internships
-                ? [Number(userProfile.Internships)]
+          setUserPathwayId(
+            Array.isArray(userProfile.Pathways)
+              ? userProfile.Pathways.map((id: any) => Number(id))
+              : userProfile.Pathways
+                ? [Number(userProfile.Pathways)]
                 : []
           ); // Set the internships array if it exists
 
           //make the internship list
-          const internshipResponse = await api.get('/api/internships/');
+          const pathwayResponse = await api.get('/api/pathways/');
 
-          if (internshipResponse.status === 200) {
-            const internships = internshipResponse.data.filter((internship: { id: string }) => 
-              userProfile.Internships.includes(Number(internship.id))
+          if (pathwayResponse.status === 200) {
+            //console.log("Pathway Response Data:", pathwayResponse.data);
+            const pathways = pathwayResponse.data.filter((pathway: { id: string, free: boolean }) => 
+              userProfile.Pathways.includes(Number(pathway.id)) && pathway.free
             );
-            setInternshipList(internships);
-
-            //make the courses list
-            const coursesResponse = await api.get('/api/courses/');
-            if (coursesResponse.status === 200) {
-              
-              const allCourseIds = internships
-              .flatMap((internship: any) => 
-                Array.isArray(internship.courses)
-                  ? internship.courses.map((c: any) => Number(c)) // each c is already an ID
-                  : []
-              );
-              //console.log("filtered internships:", internships);
-              const courses = coursesResponse.data.filter((course: { id: number | string }) =>
-              allCourseIds.includes(Number(course.id))
-              );
-              //console.log("Courses List:", courses);
-              setCoursesList(courses)
-            }
+            setPathwayList(pathways);
           }
-
-          
           
         } else {
           console.error("No user profile found.");
           router.push("/login");
         }
       } catch (error) {
-        console.error("Error fetching user profile:", error);
         router.push("/login");
+        console.error("Error fetching user profile:", error);
+        
       }
     };
 
     fetchUserProfile();
   }, []);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   //console.log("User Internship IDs:", internshipList);
 
   //console.log("Internship List:", internshipList);
 
   return (
-    <main className="w-full ">
+    <main className="w-full">
     <div className="hidden md:flex flex-row w-full pl-5">
       {/**LEFT SIDE BAR */}
       <div className="flex flex-col gap-5 text-base h-screen bg-white items-start w-[200px] border-r">
@@ -203,7 +167,7 @@ function Page() {
         <div className="flex flex-col gap-7 w-full items-start">
           {tab_items.map((tab_item) => (
             <a href={tab_item.link} key={tab_item.id}>
-              <div key={tab_item.id} className= {` w-[200px]  pl-5 py-2.5 hover:underline flex flex-row items-center gap-2 ${tab_item.isActive ? "text-hb-green rounded-l-md bg-green-100 font-bold" : "text-gray-600"}`}>
+              <div key={tab_item.id} className= {` w-[200px] px-2 pl-5 py-2.5 hover:underline flex flex-row items-center gap-2 ${tab_item.isActive ? "text-hb-green rounded-l-md bg-green-100 font-bold" : "text-gray-600"}`}>
                 {<tab_item.iconImage />} <p>{tab_item.name}</p>
               </div>
             </a>
@@ -220,16 +184,16 @@ function Page() {
             <Logout />
           </div>
           <div className="">
-        <p className="px-10 font-bold text-2xl"> {username.charAt(0).toUpperCase() + username.slice(1).toLocaleLowerCase()}'s Courses </p>
+        <p className="px-10 font-bold text-2xl"> {username.charAt(0).toUpperCase() + username.slice(1).toLocaleLowerCase()}'s Career Pathways </p>
         <div className="flex flex-col gap-10 w-full px-10 pt-10">
-          {coursesList.map((course) => (
-            <div key={course.id}>
+          {pathwayList.map((pathway) => (
+            <div key={pathway.id}>
               <UpcomingCourseCard
-                desc={course.overview ?? ""}
-                image={course.image ?? "/"}
-                directTo={'/dashboard/internship/courses/' + course.id + '/'}
-                title={course.title ?? ""}
-                weeks={ 0} lessons={0} />
+                desc={pathway.overview ?? ""}
+                image={pathway.int_image ?? "/"}
+                directTo={'/dashboard/pathway/courses'}
+                title={pathway.title ?? ""}
+                weeks={pathway.lenght_in_weeks ?? 0} lessons={0} />
             </div>
           ))}
         </div>
@@ -238,12 +202,11 @@ function Page() {
       </div>
     </div>
 
-          {/** MOBILE */}
-    <div className="block md:hidden w-full pb-20 min-h-[100svh]">
+    {/**MOBILE */}
+    <div className="flex flex-col w-full pb-20 min-h-[100svh] md:hidden">
 
-      {/* Header */}
-      {/* Top Navbar - Logo + Menu */}
-          <div className="flex flex-row items-center justify-between px-4 py-4 border-b bg-white">
+      {/* Top Navigation */}
+      <div className="flex flex-row items-center justify-between px-4 py-4 border-b bg-white">
             <div className="flex flex-row items-center gap-2">
               <Image src={hb_logo} alt="HackBio logo" width={32} height={32} />
               <p className="font-bold text-lg">HackBio</p>
@@ -251,44 +214,92 @@ function Page() {
 
             {/* Simple hamburger or nav toggle — can be replaced with mobile menu logic */}
             <div className="flex flex-row gap-4 text-sm font-bold">
-              
               <Logout />
             </div>
           </div>
 
           {/* Navigation Tabs (from sidebar) */}
-          <div className="flex flex-row w-full bg-white border-b gap-3 justify-center px-4 py-4 space-y-2">
-            {tab_items.map((tab_item) => (
-              <a key={tab_item.id} href={tab_item.link}>
-                <div className="flex flex-row items-center gap-1 py-2 border w-fit px-3 rounded-full text-green-900">
-                  <tab_item.iconImage />
-                  <p className="text-sm">{tab_item.name}</p>
-                </div>
-              </a>
-            ))}
+          {/* Drawer Toggle Button */}
+          <div className="flex items-center py-4 px-4">
+            <button
+              onClick={() => setDrawerOpen(true)}
+              aria-label="Open navigation"
+              className="p-2 rounded-md border border-gray-300 bg-white shadow-sm"
+            >
+              {/* Hamburger Icon */}
+              <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
           </div>
 
-      {/* Main Content */}
-      <div className="flex-1  bg-green-50 pb-20 min-h-[100svh] px-4 py-6">
-        <p className="text-xl font-bold mb-6">
-          {username.charAt(0).toUpperCase() + username.slice(1).toLowerCase()}'s Courses
+          {/* Drawer Overlay */}
+          {drawerOpen && (
+            <div
+              className="fixed inset-0 z-40 bg-black bg-opacity-30"
+              onClick={() => setDrawerOpen(false)}
+              aria-label="Close navigation overlay"
+            />
+          )}
+
+          {/* Drawer Panel */}
+          <div
+            className={`fixed top-0 left-0 z-50 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ${
+              drawerOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
+            style={{ willChange: "transform" }}
+          >
+            <div className="flex flex-row items-center justify-between px-4 py-4 border-b">
+              <div className="flex flex-row items-center gap-2">
+                <Image src={hb_logo} alt="HackBio logo" width={32} height={32} />
+                <p className="font-bold text-lg">HackBio</p>
+              </div>
+              <button
+                onClick={() => setDrawerOpen(false)}
+                aria-label="Close navigation"
+                className="p-2 rounded-md"
+              >
+                {/* Close Icon */}
+                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M6 6l12 12M6 18L18 6" />
+                </svg>
+              </button>
+            </div>
+            <div className="flex flex-col gap-2 px-4 py-4">
+              {tab_items.map((tab_item) => (
+                <a key={tab_item.id} href={tab_item.link} onClick={() => setDrawerOpen(false)}>
+                  <div className={`flex flex-row items-center gap-2 py-2 px-3 rounded-md ${tab_item.isActive ? "bg-green-100 text-hb-green font-bold" : "text-green-900"}`}>
+                    <tab_item.iconImage />
+                    <p className="text-sm">{tab_item.name}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+
+      {/* Main Scrollable Content */}
+      <div className="flex-1 items-center bg-green-50 px-4 py-6">
+        <p className="font-bold text-xl mb-6">
+          {username.charAt(0).toUpperCase() + username.slice(1).toLowerCase()}'s Learning Pathways
         </p>
 
-        <div className="flex flex-col gap-6 pb-20 min-h-[100svh] items-center">
-          {coursesList.map((course) => (
+        <div className="flex flex-col gap-6 items-center pb-20 min-h-[100svh]">
+          {pathwayList.map((pathway) => (
             <UpcomingCourseCard
-              key={course.id}
-              desc={course.overview ?? ""}
-              image={course.image ?? "/"}
-              directTo={`/dashboard/internship/courses/${course.id}/`}
-              title={course.title ?? ""}
-              weeks={0}
+              key={pathway.id}
+              desc={pathway.overview ?? ""}
+              image={pathway.int_image ?? "/"}
+              directTo="/dashboard/pathway/courses"
+              title={pathway.title ?? ""}
+              weeks={pathway.lenght_in_weeks ?? 0}
               lessons={0}
             />
           ))}
         </div>
       </div>
 
+      {/* Logout (Bottom) */}
+      
     </div>
 
     </main>
