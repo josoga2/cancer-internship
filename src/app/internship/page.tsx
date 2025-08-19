@@ -342,9 +342,8 @@ export default function Page() {
                 <div className="flex flex-col gap-3">
                     <div className="text-xl font-bold"> <p> {`What will you learn?`} </p> <p className="text-sm py-3 underline font-normal"> {`(click course item to preview)`} </p> </div>
                     {coursesList.filter(course => course.published).map((course) => (
-                    <a key={course.id} href={`learning/course/${course.id}`} className="flex flex-row items-center min-h-20 gap-3 border border-hb-green rounded-lg px-5 py-4 hover:bg-green-50">
-                        <p className="text-lg font-bold">{course.id}. {course.title} </p>
-                        <ArrowRight className="text-hb-green min-w-10" />
+                    <a key={course.id} href={`learning/course/${course.id}`} className="flex flex-row items-center min-h-24 gap-3 border border-hb-green rounded-lg px-5 py-4 hover:bg-green-50">
+                        <p className="text-base font-bold">{course.id}. {course.title} → </p>
                     </a>
                     ))}
 
@@ -363,8 +362,8 @@ export default function Page() {
             ))}
 
             <div className="w-full">
-                <p className="w-full pb-10 text-center text-2xl font-bold">Learning Tracks</p>
-                <div className="grid grid-cols-1 gap-10 items-start justify-start px-10">
+                <p className="w-full pb-10 text-start text-2xl font-bold">Learning Tracks</p>
+                <div className="grid grid-cols-1 gap-10 items-start justify-start ">
                     <div className=" flex flex-col w-56 p-5 justify-start items-start gap-5 min-h-40 border-2 border-hb-green rounded-md ">
                         <Image src={microbe.src} alt="microbe" width={50} height={50} />
                         <p className="font-bold">Microbes and Viruses</p>
