@@ -22,7 +22,7 @@ export default function Navbar() {
     
     
     {/***MOBILE */}
-    <div className="w-full pt-4 px-5 flex items-center justify-between md:hidden relative z-50 bg-white">
+    <div className="w-full pt-4 px-1 flex items-center justify-between md:hidden relative z-50 bg-white">
       {/* Logo */}
         <Link href="/">
           <Image src={hb_logo} alt="hb_logo" width={50} height={50} />
