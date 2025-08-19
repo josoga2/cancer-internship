@@ -334,8 +334,8 @@ export default function Page() {
                 <div className="flex flex-col gap-5 border-2 border-hb-green rounded-lg px-5 py-5">
                     <img src={upcoming.int_image} alt="internship" width={64} height={64} className="border-2 rounded-md border-hb-green" />
                     <p className="text-lg font-bold">{upcoming.title}</p>
-                    <p className="text-base">{upcoming.overview}</p>
-                    <p className="text-base">{upcoming.lenght_in_weeks} Weeks</p>
+                    <p className="text-sm">{upcoming.overview}</p>
+                    <p className="text-sm">{upcoming.lenght_in_weeks} Weeks</p>
                     <EnrollDialog />
                 </div>
 
