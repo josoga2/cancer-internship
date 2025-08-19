@@ -22,15 +22,15 @@ export default function Navbar() {
     
     
     {/***MOBILE */}
-    <div className="w-full pt-4 px-1 flex items-center justify-between md:hidden relative z-50 bg-white">
+    <div className="w-full pt-4 px-4 flex items-center justify-between md:hidden relative z-50 bg-white">
       {/* Logo */}
         <Link href="/">
-          <Image src={hb_logo} alt="hb_logo" width={50} height={50} />
+          <Image src={hb_logo} alt="hb_logo" width={35} height={35} />
         </Link>
 
         {/* Toggle Button */}
         <button onClick={() => setIsOpen(!isOpen)} className="text-black">
-          {isOpen ? <X size={50} /> : <Menu size={50} />}
+          {isOpen ? <X size={30} /> : <Menu size={30} />}
         </button>
 
         {/* Drawer */}

@@ -102,10 +102,12 @@ export default function Page() {
     //console.log(coursesList.filter(course => course.published === true));
 
   return (
+    <section>
+        <Navbar />
     <main className="hidden md:flex md:max-w-screen-lg bg md:m-auto md:items-center pt-5 md:justify-between">
         
       <div className="">
-        <Navbar />
+        
         
         <div className="py-5 h-full w-full flex flex-row  pt-10 justify-between items-center">
             <div className="flex flex-col gap-5">
@@ -308,9 +310,11 @@ export default function Page() {
         </div>
 
       </div>
+      </main>
       
         {/**MOBILE */}
-        <div className="flex md:hidden flex-col gap-10 w-full p-1">
+        <main>
+        <div className="flex md:hidden flex-col gap-10 w-full p-5">
             <Image src={keywords} alt="biology" className="w-full" />
             <div className="flex flex-col gap-4">
                 <p className="text-2xl font-bold text-start">Open Internships</p>
@@ -457,5 +461,6 @@ export default function Page() {
             </div>
 
     </main>
+    </section>
   );
 }
