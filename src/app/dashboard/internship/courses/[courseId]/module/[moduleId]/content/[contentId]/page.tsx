@@ -118,6 +118,7 @@ function Page() {
     actual_answer: string
     project_data: string
     project_promote_channel: string
+    project_rubric: string
     jupyter_url: string
     course: number | string
     finished: boolean
@@ -137,6 +138,7 @@ function Page() {
         actual_answer: string
         project_data: string
         project_promote_channel : string
+        project_rubric : string
         jupyter_url: string
         course: number | string
         finished: boolean
@@ -403,7 +405,8 @@ function Page() {
             const response = await api.post('/api/submit-solution/', {
                 content: filteredContentList[0].project_data, // Assuming the content is in the first item of filteredContentList
                 solution: solution,
-                channel: filteredContentList[0].project_promote_channel || "C09A477A43E" // Default channel if not provided
+                channel: filteredContentList[0].project_promote_channel || "C09A477A43E", // Default channel if not provided
+                minimal_rubric: filteredContentList[0].project_rubric || "Use your best judgment to grade the solution based on the content provided." // Default minimal rubric if not provided
             });
             if (response.status === 200) {
                 console.log("Solution submitted successfully.: ", response.data.grade_response.grade);
