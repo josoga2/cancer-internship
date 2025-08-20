@@ -299,7 +299,7 @@ const scientistAdjectives = [
           <div className="flex flex-col gap-7 w-full items-start">
             {tab_items.map((tab_item) => (
               <a href={tab_item.link} key={tab_item.id}>
-                <div key={tab_item.id} className= {` w-[150px] px-2 py-2.5 hover:underline flex flex-row items-center gap-2 ${tab_item.isActive ? "text-hb-green rounded-md bg-green-100 font-bold" : "text-gray-600"}`}>
+                <div key={tab_item.id} className= {` w-[200px] px-2 py-2.5 hover:underline flex flex-row items-center gap-2 ${tab_item.isActive ? "text-hb-green rounded-md bg-green-100 font-bold" : "text-gray-600"}`}>
                   {<tab_item.iconImage />} <p>{tab_item.name}</p>
                 </div>
               </a>

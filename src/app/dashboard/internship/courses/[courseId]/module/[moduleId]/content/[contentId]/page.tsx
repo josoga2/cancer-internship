@@ -444,42 +444,42 @@ return (
     <main className="w-full">
     <div className="hidden md:flex flex-row w-full pl-5">
         {/**LEFT SIDE BAR */}
-        <div className="flex flex-col gap-10 text-base h-screen bg-white items-start max-w-[200px] border-r">
+        <div className="flex flex-col gap-10 text-base h-screen bg-white items-start w-[250px] border-r">
             <div className="flex flex-row items-center gap-2 px-2 py-5">
                 <Image src={hb_logo} alt="logo" width={40} height={40} />
                 <p className="font-bold">HackBio</p>
             </div>
-            <div className="flex flex-col gap-2 w-full items-start text-base">
+            <div className="flex flex-col gap-2 w-full items-start text-sm">
             
-                <a href={`/dashboard/internship/courses/${courseId}`} className="font-bold text-lg px-2 py-2 hover:underline flex flex-row items-center gap-2"> <CiViewList /> <p> Table of Content </p></a>
+                <a href={`/dashboard/internship/courses/${courseId}`} className="font-bold text-base px-2 py-2 hover:underline flex flex-row items-center gap-2"> <CiViewList /> <p> Table of Content </p></a>
                 
                 {previousModuleId > 0 ? (
                     <a 
                         href={`/dashboard/internship/courses/${courseId}/module/${previousModuleId}/content/${previousContentId}`} 
-                        className="font-bold text-xl px-5 py-5 hover:underline"
+                        className="font-bold text-base px-5 py-5 hover:underline"
                     >
                         ← Previous Module
                     </a>
                 ) : (
-                    <p className="font-bold text-lg px-5 py-5 text-gray-400"> ← Previous Module</p>
+                    <p className="font-bold text-base px-5 py-5 text-gray-400"> ← Previous Module</p>
                 )}
 
-                    <p className="font-bold text-lg px-5 py-3">Module Content </p>
+                    <p className="font-bold text-base px-5 py-3">Module Content </p>
                 {contentList
                     .map((content) => (
-                        <div key={content.id} className="w-full px-5 py-2 hover:underline">
+                        <div key={content.id} className={`w-full px-5 py-2 hover:underline ${Number(content.id) === contentId ? 'bg-hb-lightgreen text-hb-green font-bold rounded-l-md' : ''}`}>
                             <li className="list-disc"> <a href={`/dashboard/internship/courses/${courseId}/module/${moduleId}/content/${content.id}`}> {content.title} </a> </li>
                         </div>
                 ))}
                 {nextModuleId > 0 ? (
                     <a 
                         href={`/dashboard/internship/courses/${courseId}/module/${nextModuleId}/content/${nextContentId}`} 
-                        className="font-bold text-lg px-5 py-5 hover:underline"
+                        className="font-bold text-base px-5 py-5 hover:underline"
                     >
                         Next Module →
                     </a>
                 ) : (
-                    <p className="font-bold text-lg px-5 py-5 text-gray-400">Next Module →</p>
+                    <p className="font-bold text-base px-5 py-5 text-gray-400">Next Module →</p>
                 )}
             </div>
         </div>
@@ -513,7 +513,7 @@ return (
                         
                         <div className="w-full flex flex-row gap-10">
                             <div className="w-full flex flex-col gap-5">
-                                <iframe height={600} src={content.video_url} className="rounded-md w-full border-2 border-hb-green" />
+                                <iframe height={400} src={content.video_url} className="rounded-md w-full border-2 border-hb-green" />
                                 <p className="text-lg pt-5 font-bold">⛭ Remember to Use the gear icon to select your desired video quality</p>
                                 <p className="text-lg pt-5 font-bold">{`</> Source Code`}</p>
                                 <div className=" bg-white p-5 border border-gray-200 rounded-md text-sm prose prose-base  w-full">
