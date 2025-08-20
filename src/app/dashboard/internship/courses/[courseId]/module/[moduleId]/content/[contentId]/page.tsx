@@ -26,6 +26,7 @@ import remarkSlug from "remark-slug";
 import remarkAutolinkHeadings from "remark-autolink-headings";
 import remarkFootnotes from "remark-footnotes";
 import remarkDeflist from "remark-deflist";
+import { toast } from "sonner"
 
 // rehype plugins
 import rehypeHighlight from "rehype-highlight";
@@ -262,11 +263,18 @@ function Page() {
                     //make content list
                     const contentResponse = await api.get('/api/contents/');
                     if (contentResponse.status === 200) {
-                        setTotalContent(contentResponse.data.length);
+                        //setTotalContent(contentResponse.data.length);
                         // Assuming you want to filter contents based on the courseId
+                        const allCourseContents = contentResponse.data.filter(
+                            (content: { id: number | string; course?: number | string }) =>
+                                [1, 2, 3].includes(Number(content.course))
+                        );
+                        setTotalContent(allCourseContents.length);
+
                         const contents = contentResponse.data.filter((content: { id: number | string; module?: number | string }) =>
                             Number(content.module) === moduleId
                         );
+                        
                         if (contents.length > 0) {
                             setFilteredContentList(
                                 contents.filter((content: { id: any; }) => Number(content.id) === contentId)
@@ -378,6 +386,7 @@ function Page() {
                 //setUserXP(prevXP => prevXP + 10); // Increment user XP by 10 or any desired value
                 //setUserClicks(prevClicks => prevClicks + 1); // Increment user clicks by 1
                 setCompletedContent(prevCompleted => prevCompleted.concat(',',String(contentId))); // Increment completed content count
+                toast.success("Marked as complete. 2 XP gained! Proceed to next content.");
 
             } else {
                 console.error("Failed to mark content as completed.");
@@ -451,20 +460,20 @@ return (
             </div>
             <div className="flex flex-col gap-2 w-full items-start text-sm">
             
-                <a href={`/dashboard/internship/courses/${courseId}`} className="font-bold text-base px-2 py-2 hover:underline flex flex-row items-center gap-2"> <CiViewList /> <p> Table of Content </p></a>
+                <a href={`/dashboard/internship/courses/${courseId}`} className="font-bold text-base py-2 hover:underline flex flex-row items-center gap-2"> <CiViewList /> <p> Table of Content </p></a>
                 
                 {previousModuleId > 0 ? (
                     <a 
                         href={`/dashboard/internship/courses/${courseId}/module/${previousModuleId}/content/${previousContentId}`} 
-                        className="font-bold text-base px-5 py-5 hover:underline"
+                        className="font-bold text-base py-5 hover:underline"
                     >
                         ← Previous Module
                     </a>
                 ) : (
-                    <p className="font-bold text-base px-5 py-5 text-gray-400"> ← Previous Module</p>
+                    <p className="font-bold text-base py-5 text-gray-400"> ← Previous Module</p>
                 )}
 
-                    <p className="font-bold text-base px-5 py-3">Module Content </p>
+                    <p className="font-bold text-base py-3">Module Content </p>
                 {contentList
                     .map((content) => (
                         <div key={content.id} className={`w-full px-5 py-2 hover:underline ${Number(content.id) === contentId ? 'bg-hb-lightgreen text-hb-green font-bold rounded-l-md' : ''}`}>
@@ -474,12 +483,12 @@ return (
                 {nextModuleId > 0 ? (
                     <a 
                         href={`/dashboard/internship/courses/${courseId}/module/${nextModuleId}/content/${nextContentId}`} 
-                        className="font-bold text-base px-5 py-5 hover:underline"
+                        className="font-bold text-base  py-5 hover:underline"
                     >
                         Next Module →
                     </a>
                 ) : (
-                    <p className="font-bold text-base px-5 py-5 text-gray-400">Next Module →</p>
+                    <p className="font-bold text-base  py-5 text-gray-400">Next Module →</p>
                 )}
             </div>
         </div>

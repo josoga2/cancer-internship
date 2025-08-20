@@ -10,6 +10,7 @@ import { useState } from 'react';
 import publicApi from '@/publicApi';
 import { useRouter } from 'next/navigation';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/constants/constants';
+import { toast } from 'sonner';
 
 
 
@@ -29,6 +30,7 @@ export default function Login() {
             if (loginResponse.status === 200 || loginResponse.status === 201) {
                 localStorage.setItem(ACCESS_TOKEN, loginResponse.data.access);
                 localStorage.setItem(REFRESH_TOKEN, loginResponse.data.refresh);
+                toast.success("Marked as complete. 2 XP gained!");
                 // Handle successful login, e.g., redirect to dashboard
                 router.replace('/dashboard');
             } else if (loginResponse.status === 401 || loginResponse.status === 400) {

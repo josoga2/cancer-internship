@@ -223,7 +223,11 @@ function Page() {
                     //make content list
                     const contentResponse = await api.get('/api/contents/');
                     if (contentResponse.status === 200) {
-                        setTotalContent(contentResponse.data.length);
+                        const allCourseContents = contentResponse.data.filter(
+                            (content: { id: number | string; course?: number | string }) =>
+                                [1, 2, 3].includes(Number(content.course))
+                        );
+                        setTotalContent(allCourseContents.length);
                         // Assuming you want to filter contents based on the courseId
                         const contents = contentResponse.data.filter((content: { id: number | string; course?: number | string }) =>
                             courseId === Number(content.course) 

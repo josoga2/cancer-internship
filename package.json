@@ -33,6 +33,7 @@
     "katex": "^0.16.22",
     "lucide-react": "^0.511.0",
     "next": "15.3.2",
+    "next-themes": "^0.4.6",
     "postcss": "^8.5.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -56,6 +57,7 @@
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
     "remark-slug": "^7.0.1",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.0",
     "unified": "^11.0.5"
   },

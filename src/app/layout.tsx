@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { DM_Sans, Manrope } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner"
+
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -79,6 +81,7 @@ export default function RootLayout({
       >
         <div className="min-h-[100svh] flex items-start justify-center">
             {children}
+            <Toaster />
         </div>
       </body>
     </html>
