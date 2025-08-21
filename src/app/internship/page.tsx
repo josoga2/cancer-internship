@@ -33,9 +33,7 @@ export default function Page() {
         overview?: string
         lenght_in_weeks?: number
         int_image?: string
-        courses?: Array<{
-            id?: number | string
-        }>
+        courses?: Array<string | number>
     }>>([
         {
             id: "",
@@ -46,7 +44,7 @@ export default function Page() {
             overview: "",
             lenght_in_weeks: 0,
             int_image: "/",
-            courses: [{ id: "" }]
+            courses: [""]
         }
     ]);
 
@@ -142,17 +140,23 @@ export default function Page() {
                         <div className="flex flex-col gap-5 items-start justify-center w-full overflow-y-auto">
                             <p className="text-2xl font-bold">What will you learn?</p>
                             
-                            {coursesList.filter(course => course.published === true).map((course) => (
-                                <div key={course.id} className="flex flex-col gap-10 items-start justify-start w-full">
-                                    <div className="flex flex-col gap-10 items-start justify-start w-full">
-                                    <a href={`learning/course/${course.id}`} className="flex flex-row gap-5 items-center justify-start w-full rounded-lg border border-hb-green px-7 py-5 min-h-24 hover:bg-green-50">
-                                        <p className="text-lg font-bold">{course.id}. </p>
-                                        <p className="text-lg font-bold">{course.title}</p>
-                                        <ArrowRight className="ml-auto text-hb-green" />
-                                    </a>
+                            {coursesList
+                                .filter(course =>{
+                                    //upcoming.courses?.filter(upCourse => upCourse.id === course.id)
+                                    const courseIds = (upcoming.courses ?? []).filter((id): id is string | number => id !== undefined);
+                                    return courseIds.includes(course.id as string | number);    
+                                    }
+                                )
+                                .map((course) => (
+                                    <div key={course.id} className="flex flex-col gap-10 items-start justify-start w-full">
+                                        <div className="flex flex-col gap-10 items-start justify-start w-full">
+                                            <a href={`learning/course/${course.id}`} className="flex flex-row gap-5 items-center justify-start w-full rounded-lg border border-hb-green px-7 py-5 min-h-24 hover:bg-green-50">
+                                                <p className="text-lg font-bold">{course.id}. </p>
+                                                <p className="text-lg font-bold">{course.title}</p>
+                                                <ArrowRight className="ml-auto text-hb-green" />
+                                            </a>
+                                        </div>
                                     </div>
-                                </div>
-                                
                             ))}
 
                             

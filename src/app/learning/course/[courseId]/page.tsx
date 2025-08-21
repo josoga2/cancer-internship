@@ -31,6 +31,9 @@ export default function Page() {
         overview?: string
         published?: boolean
         image?: string
+        courses?: Array<{
+            id?: number | string
+        }>
     }>>([
         {
             id: "",
@@ -39,6 +42,7 @@ export default function Page() {
             overview: "",
             published: false,
             image: "/",
+            courses: [{ id: "" }]
         }
     ]);
 
@@ -113,7 +117,7 @@ export default function Page() {
         };
         fetchModules();
     }, []);
-    //console.log(modulesList);
+    
 
     useEffect(() => {
         const fetchContents = async () => {
@@ -131,6 +135,7 @@ export default function Page() {
         fetchContents();
     }, []);
 
+    console.log(coursesList);
 
 
 
