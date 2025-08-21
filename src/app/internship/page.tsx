@@ -345,7 +345,13 @@ export default function Page() {
 
                 <div className="flex flex-col gap-3">
                     <div className="text-xl font-bold"> <p> {`What will you learn?`} </p> <p className="text-sm py-3 underline font-normal"> {`(click course item to preview)`} </p> </div>
-                    {coursesList.filter(course => course.published).map((course) => (
+                    {coursesList
+                                .filter(course =>{
+                                    //upcoming.courses?.filter(upCourse => upCourse.id === course.id)
+                                    const courseIds = (upcoming.courses ?? []).filter((id): id is string | number => id !== undefined);
+                                    return courseIds.includes(course.id as string | number);    
+                                    }
+                                ).map((course) => (
                     <a key={course.id} href={`learning/course/${course.id}`} className="flex flex-row items-center min-h-24 gap-3 border border-hb-green rounded-lg px-5 py-4 hover:bg-green-50">
                         <p className="text-base font-bold">{course.id}. {course.title} → </p>
                     </a>

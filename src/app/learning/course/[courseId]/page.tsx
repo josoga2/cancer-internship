@@ -140,18 +140,20 @@ export default function Page() {
 
 
   return (
-    <div className="max-w-4/5 mx-auto 2xl:max-w-2/3">
+    <section>
         <Navbar />
-      <div className="hidden md:flex flex-col gap-2 w-full items-start">
+    <div className="hidden md:flex md:max-w-screen-lg bg md:m-auto md:items-center pt-5 md:justify-between">
+        
+      <div className=" ">
 
         <div className="py-5 h-full w-full flex flex-row justify-between items-center">
-            <div className="flex flex-col gap-5 max-w-1/2">
-                <p className="text-5xl font-bold text-start"> {coursesList[0].title} </p>
-                <p className="text-2xl "> {coursesList[0].overview} </p>
+            <div className="flex flex-col gap-5 max-w-2/5">
+                <p className="text-3xl font-bold text-start"> {coursesList[0].title} </p>
+                <p className="text-base "> {coursesList[0].overview} </p>
                 <EnrollCourseDialog />
             
             </div>
-            <Image src={keywords} alt="biology" className="w-1/2" />
+            <Image src={keywords} alt="biology" className="w-2/5" />
         </div>
 
         {/** Learning Paths */}
@@ -159,22 +161,22 @@ export default function Page() {
 
         <div  className="py-5 w-full flex flex-col gap-5 justify-center items-center pb-10">
             <div className="flex flex-col gap-2 w-full items-start justify-start">
-                <p className="text-3xl font-bold">Start Now</p>
+                <p className="text-2xl font-bold">Start Now</p>
             </div>
             <div className="flex flex-row gap-10 w-full justify-center">
                 <div className="grid grid-cols-2 gap-10 w-full items-start justify-between ">
                     <div className="flex flex-col gap-7 items-start justify-start border-2 border-green-600 rounded-lg px-5 py-10 w-4/5 sticky top-0">
                         <img src={coursesList[0].image} alt="course-image" width={64} height={64} className="border-2 rounded-md border-green-300"/>
-                        <p className="text-2xl font-bold">{coursesList[0].title}</p>
+                        <p className="text-xl font-bold">{coursesList[0].title}</p>
                         
                         <span className="flex flex-row gap-5 items-center justify-center">
-                            <p className="text-lg">{modulesList.length} Lessons</p>
+                            <p className="text-base">{modulesList.length} Lessons</p>
                         </span>
                         <EnrollCourseDialog />
 
                     </div>
                     <div className="flex flex-col gap-5 items-start justify-center w-full overflow-y-auto">
-                        <p className="text-3xl font-bold">What will you learn?</p>
+                        <p className="text-2xl font-bold">What will you learn?</p>
                         
                         {modulesList.map((module, idx) => (
                             <div key={module.id} className="flex flex-col gap-10 items-start justify-start w-full">
@@ -183,14 +185,14 @@ export default function Page() {
                                     <Accordion type="single" collapsible className="w-full">
                                         <AccordionItem value={(module.id ?? '').toString()}>
                                             <AccordionTrigger className="text-xl font-bold">{idx+1}.  {module.title}</AccordionTrigger>
-                                            <AccordionContent className="text-lg ">
+                                            <AccordionContent className="text-base ">
                                                 <p className="py-2 pb-3"> {module.description}</p>
                                                 <hr className="w-full h-5" />
-                                                <ul className="list-disc pl-5 text-neutral-600">
+                                                <ul className="list-disc pl-5  text-neutral-600">
                                                     {contentList
                                                         .filter((content) => content.module === module.id)
                                                         .map((content) => (
-                                                            <li key={content.id}>{content.title}</li>
+                                                            <li className="py-1 " key={content.id}>{content.title}</li>
                                                         ))}
                                                 </ul>
                                             </AccordionContent>
@@ -204,7 +206,9 @@ export default function Page() {
 
                         <div className="py-5 flex flex-col gap-5 items-start justify-start w-full">
                             <p className="text-2xl font-bold">Course Description</p>
-                            <Markdown  remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{coursesList[0].description}</Markdown>
+                            <div className="prose">
+                                <Markdown  remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{coursesList[0].description}</Markdown>
+                            </div>
                             <p className="leading-7 text-lg"> </p>
                             <EnrollCourseDialog />
 
@@ -220,26 +224,26 @@ export default function Page() {
 
         {/** who is this internship for?*/}
         <div className="w-full flex flex-col items-center justify-center">
-            <p className="text-5xl font-bold text-center p-10">Who is this course for?</p>
+            <p className="text-3xl font-bold text-center p-10">Who is this course for?</p>
         </div>
 
         <div className="flex flex-row gap-24 items-start justify-center w-full mx-auto px-5">
             <div className="flex flex-col gap-5 max-w-2/5 rounded border-2 p-10  border-green-500 shadow-md shadow-green-300 items-start justify-start  ">
-            <span className="flex flex-row items-start font-bold text-4xl gap-2 flex-wrap"> <p>You are a</p> <p className="text-green-600 underline">great</p> <p>fit if:</p> </span>
+            <span className="flex flex-row items-start font-bold text-2xl gap-2 flex-wrap"> <p>You are a</p> <p className="text-green-600 underline">great</p> <p>fit if:</p> </span>
             <ul className="flex flex-col gap-5 items-start justify-start w-full list-disc pl-5">
-                <li className="text-lg"> Self-taught learners who are tired of piecing together YouTube videos and random tutorials, and want <strong>  a structured, real-world learning experience.</strong> </li>
-                <li className="text-lg"> Ambitious beginners in bioinformatics, data science, or computational biology who are ready to roll up their sleeves and <strong> get hands-on.</strong> </li>
-                <li className="text-lg"> Researchers or postgrads who want to learn how to analyze biological data, <strong> build pipelines, or publish with confidence.</strong> </li>
-                <li className="text-lg"> Anyone ready to put in the work, follow the roadmap, and build a real portfolio they can proudly show <strong> employers or grad schools.</strong> </li>
+                <li className="text-base"> Self-taught learners who are tired of piecing together YouTube videos and random tutorials, and want <strong>  a structured, real-world learning experience.</strong> </li>
+                <li className="text-base"> Ambitious beginners in bioinformatics, data science, or computational biology who are ready to roll up their sleeves and <strong> get hands-on.</strong> </li>
+                <li className="text-base"> Researchers or postgrads who want to learn how to analyze biological data, <strong> build pipelines, or publish with confidence.</strong> </li>
+                <li className="text-base"> Anyone ready to put in the work, follow the roadmap, and build a real portfolio they can proudly show <strong> employers or grad schools.</strong> </li>
             </ul>
         </div>
         <div className="flex flex-col gap-5 max-w-2/5 rounded border-2 p-10 border-zinc-500 shadow-2xl shadow-zinc-300 items-start justify-start ">
-            <span className="flex flex-row items-start font-bold text-4xl gap-2 flex-wrap"> <p>You are</p> <p className="text-red-600 underline">not </p> <p>a fit if:</p> </span>
+            <span className="flex flex-row items-start font-bold text-2xl gap-2 flex-wrap"> <p>You are</p> <p className="text-red-600 underline">not </p> <p>a fit if:</p> </span>
             <ul className="flex flex-col gap-5 items-start justify-start w-full list-disc pl-5">
-                <li className="text-lg"> Those looking for a  <strong> “watch-and-passively-consume”</strong> experience — this is hands-on, project-based learning. </li>
-                <li className="text-lg"> People expecting <strong> instant results. </strong> - We believe growth is earned, not gifted </li>
-                <li className="text-lg"> Folks <strong> unwilling to collaborate</strong> — HackBio thrives on peer-to-peer support, team challenges, and real-world interactions. </li>
-                <li className="text-lg"> Advanced experts looking for deep academic theory — we focus on practical skills, tools, and industry application.</li>
+                <li className="text-base"> Those looking for a  <strong> “watch-and-passively-consume”</strong> experience — this is hands-on, project-based learning. </li>
+                <li className="text-base"> People expecting <strong> instant results. </strong> - We believe growth is earned, not gifted </li>
+                <li className="text-base"> Folks <strong> unwilling to collaborate</strong> — HackBio thrives on peer-to-peer support, team challenges, and real-world interactions. </li>
+                <li className="text-base"> Advanced experts looking for deep academic theory — we focus on practical skills, tools, and industry application.</li>
             </ul>
             </div>
         </div>
@@ -250,23 +254,23 @@ export default function Page() {
         
 
         <div className="flex flex-col gap-10 items-center justify-start w-full mx-auto px-5 py-20">
-            <span className="flex flex-row items-start font-bold text-4xl gap-2"> <p>One time pricing, Lifetime Access</p> </span>
-            <div className="flex flex-col gap-5 max-w-4/5 rounded border-2 p-5 px-10 border-green-500 shadow-2xl items-start justify-start  ">
-                <span className="flex flex-row items-start font-bold text-4xl gap-2 py-5"> <p>Premium Learning</p> </span>
-                <span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> <p>$20</p> <p className="text-red-600 line-through text-xl">{`$40`}</p> <p className="text-red-600  text-xl">{`(50% off)`}</p>  </span>
-                <ul className="flex flex-col gap-5 items-start justify-start ">
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Complete Training Pack </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Weekly mentorship calls </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> AI-Assisted Training and Mentorship </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Teamwork and Projects </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Weekly Graded Tasks + Feedback </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> 1-on-1 troubleshooting meetings </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Unlimited access to Bioinformatics servers* </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Complete All 8 stages </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Unlimited access to final project phase </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Support for first draft manuscript </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> Graded Certification </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-xl"> No Eviction from the internship </span></li>
+            <span className="flex flex-row items-start font-bold text-2xl gap-2"> <p>One time pricing, Lifetime Access</p> </span>
+            <div className="flex flex-col gap-3 max-w-2/5 rounded border-2 p-5 px-10 border-green-500 shadow-2xl items-start justify-start  ">
+                <span className="flex flex-row items-start font-bold text-2xl gap-2 py-5"> <p>Premium Learning</p> </span>
+                <span className="flex flex-row items-start font-bold text-xl gap-2 pb-5"> <p>$20</p> <p className="text-red-600 line-through text-base">{`$40`}</p> <p className="text-red-600  text-xl">{`(50% off)`}</p>  </span>
+                <ul className="flex flex-col gap-2 items-start justify-start ">
+                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Complete Training Pack </span></li>
+                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Weekly mentorship calls </span></li>
+                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> AI-Assisted Training and Mentorship </span></li>
+                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Teamwork and Projects </span></li>
+                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Weekly Graded Tasks + Feedback </span></li>
+                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> 1-on-1 troubleshooting meetings </span></li>
+                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Unlimited access to Bioinformatics servers* </span></li>
+                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Complete All 8 stages </span></li>
+                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Unlimited access to final project phase </span></li>
+                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Support for first draft manuscript </span></li>
+                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Graded Certification </span></li>
+                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> No Eviction from the internship </span></li>
                 </ul>
                 <p className="font-bold">* Active only for the duration of the internship</p>
                 <EnrollCourseDialog />
@@ -276,13 +280,13 @@ export default function Page() {
 
 
         <div className="py-10 w-full h-full bg-green-50 flex flex-col gap-5 ">
-          <p className="text-5xl font-bold text-center"> Join thousands of global learners</p>
+          <p className="text-3xl font-bold text-center"> Join thousands of global learners</p>
           <p className="text-center">For real, you will work and learn with people around the world.</p>
 
           <div className="flex flex-row gap-10 items-center justify-center max-w-3/5 mx-auto py-5">
-            <Image src={winfred} alt="biology" className="rounded-full " />
+            <Image src={winfred} alt="biology" className="rounded-full w-[120px] h-[120px] " />
             <div className="flex flex-col gap-2 ">
-              <p className="text-lg text-gray-700">{`"My HackBio experience (and preprint) was my leverage for an interesting conversation with my interview with my Graduate School Admission Team."`}</p>
+              <p className="text-base text-gray-700">{`"My HackBio experience (and preprint) was my leverage for an interesting conversation with my interview with my Graduate School Admission Team."`}</p>
               <p className="text-base font-bold pt-5">{`Winfred Gatua (Now in University of Bristol, UK)`}</p>
             </div>
           </div>
@@ -409,5 +413,6 @@ export default function Page() {
         </div>
         </div>
     </div>
+    </section>
   );
 }
