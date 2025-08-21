@@ -1,11 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button"
-import biology from "../../../public/biology.svg"
-import chem from "../../../public/chem.svg"
-import data from "../../../public/data.svg"
-import omics from "../../../public/omics.svg"
-import coding from "../../../public/coding.svg"
-import molbio from "../../../public/molbio.svg"
 import publicApi from "@/publicApi";
 import winfred from "../../../public/winfred.svg"
 import { useState, useEffect } from "react";
@@ -123,7 +117,7 @@ export default function Home() {
                                 })
                                 .map(course => (
                                     <div className="flex flex-col gap-5 items-start justify-start" key={course.id}>
-                                        <img src={course.image} alt="biology" className="hover:border-4 hover:border-hb-green border-hb-green border-2 hover:rounded-md h-[150px] w-[150px]"/>
+                                        <img src={course.image} alt="biology" className="hover:border-2 hover:border-hb-green border-gray-300 border-2 hover:rounded-md rounded-md h-[150px] w-[150px]"/>
                                         <p className="font-medium max-w-[150px]">{course.title}</p>
                                     </div>
                             ))}
