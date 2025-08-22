@@ -53,7 +53,7 @@
   --card-foreground: oklch(0.141 0.005 285.823);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(0.723 0.219 149.579);
+  --primary: oklch(64.595% 0.15638 152.2);
   --primary-foreground: oklch(0.982 0.018 155.826);
   --secondary: oklch(0.967 0.001 286.375);
   --secondary-foreground: oklch(0.21 0.006 285.885);
@@ -136,3 +136,18 @@ body {
   font-family: var(--font-dm-sans);
 }
 
+@layer utilities {
+  .prose {
+    --tw-prose-body: var(--color-text);
+    --tw-prose-headings: var(--color-primary);
+    --tw-prose-links: var(--color-primary);
+    --tw-prose-bold: var(--color-primary-light);
+    --tw-prose-hr: var(--color-border);
+    --tw-prose-code: var(--color-primary);
+    max-width: none; /* Optional: remove width limit */
+  }
+
+  .prose a:hover {
+    color: var(--color-primary-light);
+  }
+}

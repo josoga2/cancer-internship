@@ -158,7 +158,7 @@ export default function ContentPage() {
                                             )}
                                         </div>
                                     </div>
-                                    <div className="flex flex-col w-full pt-10 px-5 prose ">
+                                    <div className="flex flex-col w-full pt-10 px-5 prose prose-base leading-tight">
                                         {article.content_type === "md" ? (
                                             <Markdown
                                             remarkPlugins={[
@@ -219,7 +219,7 @@ export default function ContentPage() {
                         </div>
 
                         {/* Content */}
-                        <div className="prose max-w-none text-sm">
+                        <div className="prose max-w-none text-sm prose-base leading-tight">
                         {article.content_type === "md" ? (
                             <Markdown
                             remarkPlugins={[remarkGfm, remarkMath, remarkDeflist]}

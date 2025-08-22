@@ -528,7 +528,7 @@ return (
                                 <iframe height={400} src={content.video_url} className="rounded-md w-full border-2 border-hb-green" />
                                 <p className="text-lg pt-5 font-bold">⛭ Remember to Use the gear icon to select your desired video quality</p>
                                 <p className="text-lg pt-5 font-bold">{`</> Source Code`}</p>
-                                <div className=" bg-white p-5 border border-gray-200 rounded-md text-sm prose prose-base  w-full">
+                                <div className=" bg-white p-5 border border-gray-200 rounded-md text-sm prose prose-base leading-tight">
                                     <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.text_content}</Markdown>
                                 </div>
                             </div>
@@ -538,9 +538,9 @@ return (
                     {/**Text */}
                     {content.content_type === 'text' && (
                         <div className="w-full flex flex-row gap-10">
-                            <div className="w-full border-2 rounded-md border-hb-green p-5 bg-white prose prose-base flex flex-col  ">
+                            <div className="w-full border-2 rounded-md border-hb-green p-5 bg-white prose prose-base leading-tight ">
                                 <p className="font-bold text-lg"></p>
-                                <Markdown
+                                <article> <Markdown
                                     remarkPlugins={[
                                         remarkGfm,
                                         remarkMath,
@@ -554,6 +554,7 @@ return (
                                     >
                                     {content.text_content}
                                 </Markdown>
+                                </article>
                             </div>
                         </div>
                     )}
@@ -804,7 +805,7 @@ return (
                             <>
                                 <iframe height={200} src={content.video_url} className="rounded-md w-full border border-hb-green" />
                                 <p className="text-xs pt-2">⛭ Use the gear icon to set video quality</p>
-                                <div className=" border-hb-green border-2 p-7  pb-24 rounded-md text-sm prose prose-base">
+                                <div className=" border-hb-green border-2 p-7  pb-24 rounded-md text-sm prose prose-base leading-tight">
                                     <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.text_content}</Markdown>
                                 </div>
                                 
@@ -813,14 +814,14 @@ return (
 
                         {/* Text */}
                         {content.content_type === 'text' && (
-                            <div className=" border-hb-green border-2 p-7  pb-24 rounded-md text-sm prose prose-base">
+                            <div className=" border-hb-green border-2 p-7  pb-24 rounded-md text-sm prose prose-base leading-tight">
                                 <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.text_content}</Markdown>
                             </div>
                         )}
 
                         {/* Jupyter */}
                         {content.content_type === 'jupyter' && (
-                            <div className="flex flex-col pb-24 gap-2 text-xs max-w-full overflow-auto prose prose-base">
+                            <div className="flex flex-col pb-24 gap-2 text-xs max-w-full overflow-auto prose prose-base leading-tight">
                                 <a href="#" target="_blank">
                                     <Button className="bg-hb-green text-white">Notebook on HackBio</Button>
                                 </a>
