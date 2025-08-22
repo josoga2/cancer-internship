@@ -30,7 +30,7 @@ export default function Login() {
             if (loginResponse.status === 200 || loginResponse.status === 201) {
                 localStorage.setItem(ACCESS_TOKEN, loginResponse.data.access);
                 localStorage.setItem(REFRESH_TOKEN, loginResponse.data.refresh);
-                toast.success("Marked as complete. 2 XP gained!");
+                toast.success("Logged in successfully!");
                 // Handle successful login, e.g., redirect to dashboard
                 router.replace('/dashboard');
             } else if (loginResponse.status === 401 || loginResponse.status === 400) {
