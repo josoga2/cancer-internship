@@ -102,7 +102,7 @@ export default function Home() {
             {pathway.map((learning) => (
                 <div key={learning.id} className="py-5 w-full flex flex-row gap-5 justify-start items-center pb-10">
                     <div className="flex flex-col gap-10 w-full">
-                        <div className="flex flex-row gap-10">
+                        <div className="flex flex-row gap-10 hover:underline hover:cursor-pointer" onClick={() => router.push(`/pathway/${learning.id}`)}>
                             <img src={learning.int_image} alt="learning_image" width={64} height={64} className="w-24 h-24" />
                             <div className="flex flex-col gap-2 items-start justify-center">
                                 <p className="text-2xl font-bold">{learning.title}</p>
