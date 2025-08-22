@@ -4,13 +4,14 @@ import publicApi from "@/publicApi";
 import winfred from "../../../public/winfred.svg"
 import { useState, useEffect } from "react";
 import keywords from "../../../public/keywords.svg"
-
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Navbar from "@/components/Nav/navbar";
 
 
 
 export default function Home() {
+    const router = useRouter();
 
     const [pathway, setPathwayList] = useState<Array<{
         id?: string
@@ -92,7 +93,7 @@ export default function Home() {
             <div className="py-5 h-full w-full flex flex-row justify-between items-center">
                 <div className="flex flex-col gap-5">
                 <p className="text-3xl font-bold text-start"> Career Paths</p>
-                <p className="text-lg">Step by step, one skill at a time</p>
+                <p className="text-lg">Build your career, Step by step, one skill at a time</p>
                 </div>
                 <Image src={keywords} alt="biology" className="w-2/5" />
             </div>
@@ -116,7 +117,7 @@ export default function Home() {
                                     return courseIds.includes(course.id as string | number);
                                 })
                                 .map(course => (
-                                    <div className="flex flex-col gap-5 items-start justify-start" key={course.id}>
+                                    <div className="flex flex-col gap-5 items-start justify-start hover:cursor-pointer hover:underline " key={course.id} onClick={() => router.push(`/learning/course/${course.id}`)}>
                                         <img src={course.image} alt="biology" className="hover:border-2 hover:border-hb-green border-gray-300 border-2 hover:rounded-md rounded-md h-[150px] w-[150px]"/>
                                         <p className="font-medium max-w-[150px]">{course.title}</p>
                                     </div>
