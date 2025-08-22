@@ -125,7 +125,6 @@ export default function Page() {
             <div key={upcoming.id} className="py-5 w-full flex flex-col gap-5 justify-center items-center pb-10">
                 <div className="flex flex-col gap-2 w-full items-start justify-start">
                     <p className="text-3xl font-bold">Start Now</p>
-                    <p className="text-lg">{upcoming.start_date}</p>
                 </div>
                 <div className="flex flex-row gap-10 w-full justify-center">
                     <div className="grid grid-cols-2 gap-10 w-full items-start justify-start ">
@@ -323,18 +322,17 @@ export default function Page() {
         <div className="flex md:hidden flex-col gap-10 w-full p-5">
             <Image src={keywords} alt="biology" className="w-full" />
             <div className="flex flex-col gap-4">
-                <p className="text-2xl font-bold text-start">Open Internships</p>
-                <p className="text-base">Fast, Fun and Complete Bioinformatics Training</p>
+                <p className="text-2xl font-bold text-start">Career Path</p>
+                <p className="text-base">Build your career, completely, one step at a time! </p>
                 <EnrollDialog />
             </div>
 
             
 
-            {internship.map((upcoming) => (
+            {internship.filter(c => Number(pathwayId) === Number(c.id) ).map((upcoming) => (
                 <div key={upcoming.id} className="flex flex-col gap-5 w-full">
                 <div className="flex flex-col gap-3 items-start justify-start w-full">
-                    <p className="text-xl font-bold">Upcoming</p>
-                    <p className="text-base">{upcoming.start_date}</p>
+                    <p className="text-xl font-bold">Start Now</p>
                 </div>
 
                 <div className="flex flex-col gap-5 border-2 border-hb-green rounded-lg px-5 py-5">
@@ -353,17 +351,17 @@ export default function Page() {
                                     const courseIds = (upcoming.courses ?? []).filter((id): id is string | number => id !== undefined);
                                     return courseIds.includes(course.id as string | number);    
                                     }
-                                ).map((course) => (
-                    <a key={course.id} href={`learning/course/${course.id}`} className="flex flex-row items-center min-h-24 gap-3 border border-hb-green rounded-lg px-5 py-4 hover:bg-green-50">
-                        <p className="text-base font-bold">{course.id}. {course.title} → </p>
+                                ).map((course, idx) => (
+                    <a key={course.id} href={`/learning/course/${course.id}`} className="flex flex-row items-center min-h-18 gap-3 border border-hb-green rounded-lg px-5 py-2 bg-green-50">
+                        <p className="text-base font-bold">{idx+1}. {course.title}  </p>
                     </a>
                     ))}
 
 
                     <div  className="py-5 flex flex-col gap-5 items-start justify-start w-full">
-                        <p className="text-2xl font-bold">Description</p>
+                        <p className="text-xl font-bold">Description</p>
                         <div className="prose">
-                        <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{upcoming.description}</Markdown>
+                            <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{upcoming.description}</Markdown>
                         </div>
                         <EnrollDialog />
 
@@ -374,7 +372,7 @@ export default function Page() {
             ))}
 
             <div className="w-full">
-                <p className="w-full pb-10 text-start text-2xl font-bold">Learning Tracks</p>
+                <p className="w-full pb-10 text-start text-xl font-bold">Project Tracks</p>
                 <div className="grid grid-cols-1 gap-10 items-center justify-start ">
                     <div className=" flex flex-col w-56 p-5 justify-start items-start gap-5 min-h-40 border-2 border-hb-green rounded-md ">
                         <Image src={microbe.src} alt="microbe" width={50} height={50} />
