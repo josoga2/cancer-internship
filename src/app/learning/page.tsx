@@ -18,6 +18,7 @@ export default function Home() {
         title?: string
         free?: boolean
         overview?: string
+        published?: boolean
         int_image?: string
         courses?: Array<string | number>
     }>>([
@@ -26,6 +27,7 @@ export default function Home() {
             title: "",
             free: false,
             overview: "",
+            published: false,
             int_image: "https://hbapi.jisender.com/media/internship_images/drugs.jpg",
             courses: [""]
         }
@@ -99,7 +101,7 @@ export default function Home() {
             </div>
 
             {/** Learning Paths */}
-            {pathway.map((learning) => (
+            {pathway.filter(pw => pw.published === true).map((learning) => (
                 <div key={learning.id} className="py-5 w-full flex flex-row gap-5 justify-start items-center pb-10">
                     <div className="flex flex-col gap-10 w-full">
                         <div className="flex flex-row gap-10 hover:underline hover:cursor-pointer" onClick={() => router.push(`/pathway/${learning.id}`)}>
