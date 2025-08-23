@@ -184,7 +184,7 @@ export default function Page() {
 
         {/**LEARNING TRACKS */}
         <div className="w-full">
-            <p className="w-full pb-10 text-center text-4xl font-bold">Learning Tracks</p>
+            <p className="w-full pb-10 text-center text-2xl font-bold">Project Tracks</p>
             <div className="grid grid-cols-3 gap-10 items-start justify-start w-full">
                 <div className=" flex flex-col w-56 p-5 justify-start items-start gap-5 min-h-40 border-2 border-hb-green rounded-md ">
                     <Image src={microbe.src} alt="microbe" width={50} height={50} />

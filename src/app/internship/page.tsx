@@ -119,7 +119,7 @@ export default function Page() {
 
         {/** Learning Paths */}
 
-        {internship.map((upcoming) => (
+        {internship.filter(int => int.published === true).map((upcoming) => (
             <div key={upcoming.id} className="py-5 w-full flex flex-col gap-5 justify-center items-center pb-10">
                 <div className="flex flex-col gap-2 w-full items-start justify-start">
                     <p className="text-3xl font-bold">Upcoming</p>
