@@ -160,7 +160,7 @@ export default function Home() {
         </div>
 
         {/* Learning Paths */}
-        {pathway.map((learning) => (
+        {pathway.filter(pw => pw.published === true).map((learning) => (
             <div key={learning.id} className="space-y-4">
             <div className="flex flex-row gap-5 items-start text-start pt-10">
                 <img
@@ -168,7 +168,7 @@ export default function Home() {
                 alt="learning_image"
                 className="w-20 h-20 rounded-md"
                 />
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 pb-5">
                     <p className="text-lg font-bold">{learning.title}</p>
                     <p className="text-sm text-gray-600">{learning.overview}</p>
                 </div>
@@ -185,7 +185,8 @@ export default function Home() {
                 .map((course) => (
                     <div
                     key={course.id}
-                    className="flex flex-row items-center text-center gap-2"
+                    className="flex flex-row items-center text-center gap-2 "
+                    onClick={() => router.push(`/learning/course/${course.id}`)}
                     >
                     <img
                         src={course.image}

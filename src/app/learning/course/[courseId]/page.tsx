@@ -142,9 +142,9 @@ export default function Page() {
   return (
     <section>
         <Navbar />
-    <div className="hidden md:flex md:max-w-screen-lg bg md:m-auto md:items-center pt-5 md:justify-between">
+        <div className="hidden md:flex md:max-w-screen-lg bg md:m-auto md:items-center pt-5 md:justify-between">
         
-      <div className=" ">
+        <div className=" ">
 
         <div className="py-5 h-full w-full flex flex-row justify-between items-center">
             <div className="flex flex-col gap-5 max-w-2/5">
@@ -260,17 +260,11 @@ export default function Page() {
                 <span className="flex flex-row items-start font-bold text-xl gap-2 pb-5"> <p>$20</p> <p className="text-red-600 line-through text-base">{`$40`}</p> <p className="text-red-600  text-xl">{`(50% off)`}</p>  </span>
                 <ul className="flex flex-col gap-2 items-start justify-start ">
                     <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Complete Training Pack </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Weekly mentorship calls </span></li>
                     <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> AI-Assisted Training and Mentorship </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Teamwork and Projects </span></li>
                     <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Weekly Graded Tasks + Feedback </span></li>
                     <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> 1-on-1 troubleshooting meetings </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Unlimited access to Bioinformatics servers* </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Complete All 8 stages </span></li>
                     <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Unlimited access to final project phase </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Support for first draft manuscript </span></li>
                     <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Graded Certification </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> No Eviction from the internship </span></li>
                 </ul>
                 <p className="font-bold">* Active only for the duration of the internship</p>
                 <EnrollCourseDialog />
@@ -297,24 +291,26 @@ export default function Page() {
 
       </div>
       
-      {/**Mobile Version */}
-      <div className="max-w-full  block md:hidden">
+      
+    </div>
+    {/**Mobile Version */}
+      <div className="max-w-full p-4  block md:hidden">
 
         {/* Hero Section */}
         <div className="flex flex-col gap-5 py-10">
-            <p className="text-3xl font-bold">{coursesList[0].title}</p>
-            <p className="text-lg text-gray-700">{coursesList[0].overview}</p>
+            <p className="text-2xl font-bold">{coursesList[0].title}</p>
+            <p className="text-base text-gray-700">{coursesList[0].overview}</p>
             <EnrollCourseDialog />
         </div>
 
         {/* Course Overview */}
         <div className="flex flex-col gap-5 py-5">
-            <p className="text-2xl font-bold">Start Now</p>
+            <p className="text-lg font-bold">Start Now</p>
             <div className="border-2 border-green-600 rounded-lg px-5 py-7">
             <img src={coursesList[0].image} alt="course-image" className="w-16 h-16 border-2 border-green-300 rounded-md mb-4" />
-            <p className="text-xl font-bold mb-2">{coursesList[0].title}</p>
+            <p className="text-base font-bold mb-2">{coursesList[0].title}</p>
 
-            <p className="text-base">{modulesList.length} Lessons</p>
+            <p className="text-sm">{modulesList.length} Lessons</p>
             <div className="mt-4">
                 <EnrollCourseDialog />
             </div>
@@ -368,7 +364,6 @@ export default function Page() {
                 <ul className="list-disc pl-5 text-sm">
                 <li>Looking for passive consumption — this is hands-on.</li>
                 <li>Expecting instant results — growth is earned.</li>
-                <li>Unwilling to collaborate — teamwork is key here.</li>
                 <li>Experts seeking deep theory — we focus on applied skills.</li>
                 </ul>
             </div>
@@ -383,13 +378,10 @@ export default function Page() {
             <span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> <p>$20</p> <p className="text-red-600 line-through text-xl">{`$40`}</p> <p className="text-red-600  text-xl">{`(50% off)`}</p>  </span>
             <ul className="list-disc pl-5 mt-4 text-sm">
                 <li>Complete Training Pack</li>
-                <li>Weekly mentorship calls</li>
                 <li>AI-Assisted Training</li>
-                <li>Team projects + graded feedback</li>
-                <li>Unlimited access to final phase</li>
-                <li>Support for manuscript drafting</li>
+                <li>Projects + grading + feedback</li>
+                <li>Unlimited number to final projects</li>
             </ul>
-            <p className="text-xs mt-3">* Server access only during internship</p>
             <div className="mt-4">
                 <EnrollCourseDialog />
             </div>
@@ -412,7 +404,6 @@ export default function Page() {
             </div>
         </div>
         </div>
-    </div>
     </section>
   );
 }
