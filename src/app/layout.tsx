@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { DM_Sans, Manrope } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner"
+import { GoogleAnalytics } from '@next/third-parties/google'
+
 
 
 const dmSans = DM_Sans({
@@ -74,6 +76,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const gaId = 'G-E5BTKCZEBN'
   return (
     <html lang="en">
       <body
@@ -82,6 +85,7 @@ export default function RootLayout({
         <div className="min-h-[100svh] flex items-start justify-center">
             {children}
             <Toaster />
+            <GoogleAnalytics gaId={gaId} />
         </div>
       </body>
     </html>
