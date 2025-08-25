@@ -119,7 +119,7 @@ export default function Page() {
 
         {/** Learning Paths */}
 
-        {internship.filter(int => int.published === true).map((upcoming) => (
+        {internship.filter(int => int.published === true).map((upcoming, idx) => (
             <div key={upcoming.id} className="py-5 w-full flex flex-col gap-5 justify-center items-center pb-10">
                 <div className="flex flex-col gap-2 w-full items-start justify-start">
                     <p className="text-3xl font-bold">Upcoming</p>
@@ -151,7 +151,7 @@ export default function Page() {
                                     <div key={course.id} className="flex flex-col gap-10 items-start justify-start w-full">
                                         <div className="flex flex-col gap-10 items-start justify-start w-full">
                                             <a href={`learning/course/${course.id}`} className="flex flex-row gap-5 items-center justify-start w-full rounded-lg border border-hb-green px-7 py-5 min-h-24 hover:bg-green-50">
-                                                <p className="text-lg font-bold">{course.id}. </p>
+                                                <p className="text-lg font-bold">{idx}. </p>
                                                 <p className="text-lg font-bold">{course.title}</p>
                                                 <ArrowRight className="ml-auto text-hb-green" />
                                             </a>
