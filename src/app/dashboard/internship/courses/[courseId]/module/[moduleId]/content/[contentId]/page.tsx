@@ -532,7 +532,17 @@ return (
                                     <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.text_content}</Markdown>
                                 </div>
                             </div>
-                            
+                            {/* Floating JupyterLite widget */}
+                            {/* <div
+                                className="fixed top-1/2 right-10 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1"
+                            >
+                                <iframe
+                                    src="https://josoga2.github.io/jpuyterlite-hb-dev/repl/index.html?showBanner=0&kernel=python&toolbar=1"
+                                    height={300}
+                                    width={300}
+                                    className="rounded-lg border border-gray-200"
+                                />
+                            </div> */}
                         </div>
                     )}
                     {/**Text */}
@@ -599,7 +609,7 @@ return (
                     {/**Project */}
                     {content.content_type === 'project' && (
                         <div className="w-full flex flex-row gap-10">
-                            <div className="border-2 rounded-md border-hb-green prose prose-base p-5 flex flex-col  w-full">
+                            <div className="border-2 rounded-md border-hb-green prose prose-base p-5 flex flex-col leading-tight w-full">
                                 <p className="font-bold text-lg">
                                     Project Details: Submit markdown or code solution to the project below
                                 </p>
@@ -803,10 +813,18 @@ return (
                         {/* Video */}
                         {content.content_type === 'video' && (
                             <>
-                                <iframe height={200} src={content.video_url} className="rounded-md w-full border border-hb-green" />
-                                <p className="text-xs pt-2">⛭ Use the gear icon to set video quality</p>
-                                <div className=" border-hb-green border-2 p-7  pb-24 rounded-md text-sm prose prose-base leading-tight">
-                                    <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.text_content}</Markdown>
+                                <div>
+                                    <div className="flex flex-col gap-5">
+                                        <iframe height={200} src={content.video_url} className="rounded-md w-full border border-hb-green" />
+                                        <p className="text-xs pt-2">⛭ Use the gear icon to set video quality</p>
+                                        <div className=" border-hb-green border-2 p-7  pb-24 rounded-md text-sm prose prose-base leading-tight">
+                                            <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.text_content}</Markdown>
+                                        </div>
+                                        <iframe src="https://jupyterlite.github.io/demo/repl/index.html?showBanner=0&kernel=python&toolbar=1" height={150} width={150} />
+                                    </div>
+                                    <div>
+                                        <iframe src="https://jupyterlite.github.io/demo/repl/index.html?showBanner=0&kernel=python&toolbar=1" height={150} width={150} />
+                                    </div>
                                 </div>
                                 
                             </>
@@ -842,7 +860,7 @@ return (
 
                         {/* Project */}
                         {content.content_type === 'project' && (
-                            <div className="flex flex-col gap-3 pb-24">
+                            <div className="flex flex-col prose leading-tight gap-3 pb-24">
                                 <Markdown  remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.project_data}</Markdown>
                                 <Label htmlFor="solution">Your Solution</Label>
                                 <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} className="text-xs font-mono h-[300px] p-2 bg-green-900 text-white" />
