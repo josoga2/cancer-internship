@@ -409,8 +409,8 @@ function Page() {
                 minimal_rubric: filteredContentList[0].project_rubric || "Use your best judgment to grade the solution based on the content provided." // Default minimal rubric if not provided
             });
             if (response.status === 200) {
-                console.log("Solution submitted successfully.: ", response.data.grade_response.grade);
-                setGrade(response.data.grade_response.grade); // Assuming the response contains a grade field
+                //console.log("Solution submitted successfully.: ", response.data);
+                setGrade(Number(response.data.grade_response)); // Assuming the response contains a grade field
                 setLoading(false);
                 // Handle success, e.g., show a success message or redirect
             } else {
@@ -865,7 +865,7 @@ return (
                                 <Label htmlFor="solution">Your Solution</Label>
                                 <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} className="text-xs font-mono h-[300px] p-2 bg-green-900 text-white" />
                                 <Button onClick={() => {handleSolutionSubmit(); handleMarkCompleted();}} className="bg-hb-green text-white">SUBMIT</Button>
-                                {loading ? (<p>Loading grade...</p>) : (<p>Your grade is: {grade}</p>)}
+                                {loading ? (<p>Loading grade...</p>) : (<p>Your score is: {grade}</p>)}
                             </div>
                         )}
 

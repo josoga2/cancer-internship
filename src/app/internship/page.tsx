@@ -328,7 +328,7 @@ export default function Page() {
 
             
 
-            {internship.map((upcoming) => (
+            {internship.filter(int => int.published === true).map((upcoming) => (
                 <div key={upcoming.id} className="flex flex-col gap-5 w-full">
                 <div className="flex flex-col gap-3 items-start justify-start w-full">
                     <p className="text-xl font-bold">Upcoming</p>
