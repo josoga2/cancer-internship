@@ -151,7 +151,7 @@ export default function Page() {
                                     <div key={course.id} className="flex flex-col gap-10 items-start justify-start w-full">
                                         <div className="flex flex-col gap-10 items-start justify-start w-full">
                                             <a href={`learning/course/${course.id}`} className="flex flex-row gap-5 items-center justify-start w-full rounded-lg border border-hb-green px-7 py-5 min-h-24 hover:bg-green-50">
-                                                <p className="text-lg font-bold">{idx}. </p>
+                                                <p className="text-lg font-bold">{idx+1}. </p>
                                                 <p className="text-lg font-bold">{course.title}</p>
                                                 <ArrowRight className="ml-auto text-hb-green" />
                                             </a>
@@ -353,7 +353,7 @@ export default function Page() {
                                     }
                                 ).map((course) => (
                     <a key={course.id} href={`learning/course/${course.id}`} className="flex flex-row items-center min-h-24 gap-3 border border-hb-green rounded-lg px-5 py-4 hover:bg-green-50">
-                        <p className="text-base font-bold">{idx}. {course.title} → </p>
+                        <p className="text-base font-bold">{idx+1}. {course.title} → </p>
                     </a>
                     ))}
 
