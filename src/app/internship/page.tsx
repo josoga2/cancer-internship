@@ -147,11 +147,11 @@ export default function Page() {
                                     return courseIds.includes(course.id as string | number);    
                                     }
                                 )
-                                .map((course) => (
+                                .map((course, n) => (
                                     <div key={course.id} className="flex flex-col gap-10 items-start justify-start w-full">
                                         <div className="flex flex-col gap-10 items-start justify-start w-full">
                                             <a href={`learning/course/${course.id}`} className="flex flex-row gap-5 items-center justify-start w-full rounded-lg border border-hb-green px-7 py-5 min-h-24 hover:bg-green-50">
-                                                <p className="text-lg font-bold">{idx+1}. </p>
+                                                <p className="text-lg font-bold">{n+1}. </p>
                                                 <p className="text-lg font-bold">{course.title}</p>
                                                 <ArrowRight className="ml-auto text-hb-green" />
                                             </a>
