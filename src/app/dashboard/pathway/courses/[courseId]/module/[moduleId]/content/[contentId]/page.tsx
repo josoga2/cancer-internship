@@ -337,7 +337,7 @@ function Page() {
   }, []);
   
   //console.log("Internship List:", moduleId, contentId, courseId);
-  console.log("Content List:", contentList);
+  //console.log("Content List:", contentList);
   //console.log("user clicks:", userClicks);
   //console.log("total Content:", totalContent);
   //console.log("unique Content:", uniqueContentId);
