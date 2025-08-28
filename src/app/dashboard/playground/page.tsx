@@ -1,12 +1,12 @@
 "use client";
-import UpcomingCourseCard from "@/components/course-card";
-import hb_logo from "../../../public/hb_logo.png";
-import internship from '../../../public/internships.jpg'
-import playground from '../../../public/playground.jpg'
-import learning_pathway from '../../../public/learning_path.jpg'
+import UpcomingCourseCard from "@/components/pl-card";
+import hb_logo from "../../../../public/hb_logo.png";
+import internship from '../../../../public/internships.jpg'
+import playground from '../../../../public/playground.jpg'
+import learning_pathway from '../../../../public/learning_path.jpg'
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import api from "../../api";
+import api from "@/api";
 import withAuth from "@/components/withAuth";
 import { MdOutlineDashboard } from "react-icons/md";
 import { BiAtom, BiDna } from "react-icons/bi";
@@ -55,36 +55,37 @@ const tab_items = [
 
 const course_list = [
   {
-    id: 1,
-    title: "Internships",
-    desc: "Access all your internships (their learning contents, tasks and projects) here.",
-    image: internship,
-    directTo: "/dashboard/internship",
-    lessons: 34,
-    weeks: 4,
-    sub: true,
+    id:1,
+    title: "COVID-19 Genome Variant Analysis",
+    description: "Analyze mutations across different SARS-CoV-2 genome sequences.\n\n**Tasks:**\n- Download sequences from GISAID or NCBI.\n- Align genomes to a reference (e.g., using `MAFFT` or `BLAST`).\n- Identify and visualize SNPs or deletions.\n- Correlate variants with geographical locations or time.\n\n**Skills:** Python, Biopython, sequence alignment, data visualization.",
+    image: playground
   },
   {
-    id: 2,
-    title: "Career Paths",
-    desc: "Access all your enrolled structured learning paths for defined careers in life science and biotech here.",
-    image: learning_pathway,
-    directTo: "/dashboard/pathway",
-    lessons: 34,
-    weeks: 4,
-    sub: true,
+    id:2,
+    title: "Gene Expression Analysis Using RNA-Seq Data",
+    description: "Identify differentially expressed genes from a public RNA-seq dataset.\n\n**Tasks:**\n- Use publicly available data (e.g., from GEO or SRA).\n- Perform quality control (e.g., with `FastQC`).\n- Map reads with `HISAT2` or `STAR`.\n- Use `DESeq2` or `edgeR` to find significant genes.\n\n**Skills:** Command line tools, R or Python, data visualization.",
+    image: playground
   },
-  /* {
-    id: 3,
-    title: "Playground",
-    desc: "New Challenges, New Projects, New Skills. Complete Short Interesting Projects, Every Month.",
-    image: playground,
-    directTo: "/dashboard/playground",
-    lessons: 34,
-    weeks: 4,
-    sub: true,
-  } */
+  {
+    id:3,
+    title: "Protein-Protein Interaction Network Visualization",
+    description: "Build and analyze a PPI network for a specific disease or pathway.\n\n**Tasks:**\n- Use STRING or BioGRID to get interaction data.\n- Use `NetworkX` or Cytoscape for visualization.\n- Calculate network metrics (e.g., centrality, clustering).\n- Identify key hubs or potential drug targets.\n\n**Skills:** Python, network theory, data mining.",
+    image: playground
+  },
+  {
+    id:4,
+    title: "Predicting DNA-Binding Proteins Using Machine Learning",
+    description: "Train a classifier to predict whether a protein binds DNA based on its sequence.\n\n**Tasks:**\n- Get positive and negative datasets (e.g., from UniProt).\n- Extract features (e.g., amino acid composition, motifs).\n- Train a classifier (e.g., SVM, random forest).\n- Evaluate performance with cross-validation.\n\n**Skills:** Machine learning (scikit-learn), protein sequence analysis.",
+    image: playground
+  },
+  {
+    id:5,
+    title: "Microbiome Diversity Analysis",
+    description: "Compare microbial diversity in different environments (e.g., gut vs. soil).\n\n**Tasks:**\n- Use 16S rRNA data (e.g., from QIIME 2 sample datasets).\n- Process and classify sequences.\n- Compute alpha/beta diversity metrics.\n- Visualize results with PCA/UMAP and plots.\n\n**Skills:** QIIME 2, Python or R for data analysis.",
+    image: playground
+  }
 ]
+
 
 function Page() {
 
@@ -145,18 +146,28 @@ function Page() {
             <Logout />
           </div>
           <div className="">
-        <p className="px-10 font-bold text-2xl"> 👋 Welcome back,  {username.charAt(0).toUpperCase() + username.slice(1).toLocaleLowerCase()} </p>
-        <div className="flex flex-col gap-10 w-full px-10 pt-10">
-          {course_list.filter(course_item => course_item.sub).map((course_item) => (
-            <div key={course_item.id}>
-              <UpcomingCourseCard desc={course_item.desc} image={course_item.image} directTo={course_item.directTo} title={course_item.title} lessons={course_item.lessons} weeks={course_item.weeks}/>
+        <p className="px-5 font-bold text-2xl"> 👋 Welcome back,  {username.charAt(0).toUpperCase() + username.slice(1).toLocaleLowerCase()} </p>
+        <div className="flex flex-row gap-10 w-full">
+            <div className="flex flex-1 overflow-auto w-full h-full pl-5  ">
+                <iframe src="https://webr.sh/" height={600} width={1500} className="border-hb-green border-2 rounded-md p-2 text-xs"/>
             </div>
-          ))}
+            <div className="flex flex-col w-[340px] right-0 gap-4 px-4 pt-3 rounded-md border-2 border-hb-green h-[600px] overflow-y-auto">
+                <span className="flex flex-row items-center gap-5">
+                    <p className="font-bold text-2xl">Projects</p>
+                    <p className="text-sm text-red-500">Scroll to view more</p>
+                </span>
+                {course_list.map((course_item) => (
+                    <div key={course_item.id}>
+                        <UpcomingCourseCard desc={course_item.description} image={course_item.image} title={course_item.title} lessons={1} weeks={4}/>
+                    </div>
+                ))}
+            </div>
         </div>
 
           </div>
       </div>
     </div>
+    
 
     {/** Mobile */}
     <div className="block md:hidden w-full pb-20 min-h-[100svh]">
@@ -193,7 +204,9 @@ function Page() {
               👋 Welcome back, {username.charAt(0).toUpperCase() + username.slice(1).toLocaleLowerCase()}
             </p>
 
-            <div className="flex flex-col gap-6 items-center min-h-[100svh] ">
+            <p className="text-sm font-bold">Only available on mobile</p>
+
+            {/* <div className="flex flex-col gap-6 items-center min-h-[100svh] ">
               {course_list.filter(course_item => course_item.sub).map((course_item) => (
                 <UpcomingCourseCard
                   key={course_item.id}
@@ -205,7 +218,7 @@ function Page() {
                   weeks={course_item.weeks}
                 />
               ))}
-            </div>
+            </div> */}
           </div>
         </div>
     </main>
