@@ -456,7 +456,7 @@ return (
     <main className="w-full">
     <div className="hidden md:flex flex-row w-full pl-5">
         {/**LEFT SIDE BAR */}
-        <div className="flex flex-col gap-10 text-base h-screen bg-white items-start w-[250px] border-r">
+        <div className="flex flex-col gap-10 text-base h-screen bg-white items-start w-[250px] border-r overflow-auto">
             <div className="flex flex-row items-center gap-2 px-2 py-5">
                 <Image src={hb_logo} alt="logo" width={40} height={40} />
                 <p className="font-bold">HackBio</p>
