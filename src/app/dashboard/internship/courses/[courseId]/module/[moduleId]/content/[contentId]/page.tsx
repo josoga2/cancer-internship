@@ -57,7 +57,9 @@ function Page() {
   const [uniqueContentId, setUniqueContentId] = useState<number>(0);
   const [totalContent, setTotalContent] = useState<number>(0);
   const [userInternshipId, setUserInternshipId] = useState<number[]>([]);
+  const [improve, setImprove] = useState<string>("waiting for review...");
   const [userCoursesId, setUserCoursesId] = useState<number[]>([]);
+  const [selectedAnswer, setSelectedAnswer] = useState("none");
   const [internshipList, setInternshipList] = useState<Array<{
         id?: string
         title?: string
@@ -427,6 +429,50 @@ function Page() {
         }
     }
 
+    const handleCodeTaskSubmit = async () => {
+        //e.preventDefault();
+        setLoading(true);
+        try {
+            const response = await api.post('/api/submit-codetask/', {
+                content: filteredContentList[0].text_content, // Assuming the content is in the first item of filteredContentList
+                solution: solution
+            });
+            if (response.status === 200) {
+                //console.log("Solution submitted successfully.: ", response.data.grade_response.grade);
+                setGrade(response.data.grade_response); // Assuming the response contains a grade field
+                setImprove(response.data.suggestions);
+                setLoading(false);
+                // Handle success, e.g., show a success message or redirect
+            } else {
+                console.error("Failed to submit solution.");
+            }
+        } catch (error) {
+            console.error("Error submitting solution:", error);
+        }
+    }
+
+    const handleMCQSubmit = async () => {
+        //e.preventDefault();
+        setLoading(true);
+        try {
+            const response = await api.post('/api/submit-mcq/', {
+                actual_answer: filteredContentList[0].actual_answer, // Assuming the content is in the first item of filteredContentList
+                user_answer: selectedAnswer
+            });
+            if (response.status === 200) {
+                //console.log("Solution submitted successfully.: ", response.data.grade_response.grade);
+                setGrade(response.data.xp_earned); // Assuming the response contains a grade field
+                setLoading(false);
+                toast.success(`Great! You earned ${response.data.xp_earned} XP 🎉`)
+                // Handle success, e.g., show a success message or redirect
+            } else {
+                console.error("Failed to submit solution.");
+            }
+        } catch (error) {
+            console.error("Error submitting solution:", error);
+        }
+    }
+
     const [officialName, setOfficialName] = useState<string>("");
     
     // State for toggling Jupyter and WebR widgets
@@ -604,6 +650,42 @@ return (
                             )}
                         </div>
                     )}
+
+                    {/**Code Task */}
+                    {content.content_type === 'codeTask' && (
+                        <div className="w-full flex flex-col text-sm">
+                            <div className="border-2 rounded-md border-hb-green p-10 flex flex-col w-full prose leading-3">
+                                <Markdown
+                                    remarkPlugins={[
+                                        remarkGfm,
+                                        remarkMath,
+                                        remarkDeflist
+                                    ]}
+                                    rehypePlugins={[
+                                        rehypeRaw,
+                                        rehypeKatex,
+                                        rehypeHighlight
+                                    ]}
+                                    >
+                                    {content.text_content}
+                                </Markdown>
+                                <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} placeholder="type your solution..." required  className='bg-green-950 text-white text-xs placeholder:text-xs p-3 h-[400px] rounded-md font-mono border border-neutral-200'/>
+                                <div className="flex flex-col gap-5 items-start justify-start pt-5">
+                                    <Button onClick={() => {handleCodeTaskSubmit(); }} className='w-fit bg-green-500 text-white text-xl py-6 hover:bg-green-600'>
+                                        SUBMIT
+                                    </Button>
+                                    {loading ? (
+                                        <svg className="animate-spin h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                        </svg>
+                                    ): (<div> <p>Your grade is: {grade} XP</p> <p className="leading-7 text-sm">Suggested Improvements: {improve} </p> </div>)}
+
+                                </div>
+                                
+                            </div>
+                        </div>
+                    )}
                     {/**Text */}
                     {content.content_type === 'text' && (
                         <div className="w-full flex flex-row gap-10">
@@ -709,17 +791,33 @@ return (
                         </div>
                     )}
                     {/**Test */}
+                    {/**Test */}
                     {content.content_type === 'quiz' && (
                         <div className="w-full flex flex-row gap-10">
-                            <div className="border-2 rounded-md border-hb-green p-10 flex flex-row gap-2 w-full">
+                            <div className="border-2 rounded-md border-hb-green p-10 flex flex-col gap-2 w-full">
                                 <QuestionBlock 
-                                    question={content.quiz_question || "No question provided"} 
+                                    question={content.quiz_question || "No question provided"}
                                     answer1={content.quiz_answer_a || "No answer provided"} 
                                     answer2={content.quiz_answer_b || "No answer provided"} 
                                     answer3={content.quiz_answer_c || "No answer provided"} 
+                                    selectedAnswer={selectedAnswer}
+                                    onanswerSelect={setSelectedAnswer}
                                 />
-                                { content.text_content && 
-                                    <Image src={content.text_content} alt="Schematic" width={300} height={300} className="rounded-md border-2 w-full max-w-3/5" /> }
+                                { content.video_url && 
+                                    <Image src={content.video_url} alt="Schematic" width={300} height={300} className="rounded-md border-2 w-full max-w-3/5" /> 
+                                }
+                                <div className="flex flex-col gap-5 items-start justify-start pt-5">
+                                    <Button onClick={() => {handleMCQSubmit(); }} className='w-fit bg-hb-green font-bold text-xl py-6 border-2 border-black'>
+                                        SUBMIT
+                                    </Button>
+                                </div>
+                                {!loading && (
+                                     <div>
+                                        <p>Grade: {grade}</p>
+                                        <p>Great! You earned 2 XP 🎉</p>
+                                    </div>
+                                )}
+                                
                             </div>
                         </div>
                     )}
@@ -1012,6 +1110,43 @@ return (
                             </div>
                         )}
 
+                        {/**Code Task */}
+                        {content.content_type === 'codeTask' && (
+                            <div className="w-full flex flex-col text-sm">
+                                <div className="border-2 rounded-md border-hb-green p-2 flex flex-col w-full prose prose-sm leading-5 py-5">
+                                    <Markdown
+                                        remarkPlugins={[
+                                            remarkGfm,
+                                            remarkMath,
+                                            remarkDeflist
+                                        ]}
+                                        rehypePlugins={[
+                                            rehypeRaw,
+                                            rehypeKatex,
+                                            rehypeHighlight
+                                        ]}
+                                        >
+                                        {content.text_content}
+                                    </Markdown>
+                                    <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} placeholder="type your solution..." required  className='bg-green-950 text-white text-xs placeholder:text-xs p-3 h-[250px] rounded-md font-mono border border-neutral-200'/>
+                                    <div className="flex flex-col gap-5 items-start justify-start pt-5">
+                                        <Button onClick={() => {handleCodeTaskSubmit(); }} className='w-fit bg-green-500 text-white text-xl py-6 hover:bg-green-600'>
+                                            SUBMIT
+                                        </Button>
+                                        {loading ? (
+                                            <svg className="animate-spin h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                            </svg>
+                                        ): (<div> <p>Your grade is: {grade} XP</p> <p className="leading-7 text-sm">Suggested Improvements: {improve} </p> </div>)}
+
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        )}
+                        
+
                         {/* Jupyter */}
                         {content.content_type === 'jupyter' && (
                             <div className="flex flex-col pb-24 gap-2 text-xs max-w-full overflow-auto prose prose-base leading-tight">
@@ -1026,10 +1161,34 @@ return (
                         )}
 
                         {/* Quiz */}
+                        {/**Test */}
                         {content.content_type === 'quiz' && (
-                            <div className="border p-3  pb-24 rounded-md">
-                                <QuestionBlock question={content.quiz_question} answer1={content.quiz_answer_a} answer2={content.quiz_answer_b} answer3={content.quiz_answer_c} />
-                                {content.text_content && <Image src={content.text_content} alt="Schematic" width={300} height={300} className="rounded-md w-full" />}
+                            <div className="w-full flex flex-row gap-10">
+                                <div className="border-2 rounded-md border-hb-green p-10 flex flex-col gap-2 w-full">
+                                    <QuestionBlock 
+                                        question={content.quiz_question || "No question provided"}
+                                        answer1={content.quiz_answer_a || "No answer provided"} 
+                                        answer2={content.quiz_answer_b || "No answer provided"} 
+                                        answer3={content.quiz_answer_c || "No answer provided"} 
+                                        selectedAnswer={selectedAnswer}
+                                        onanswerSelect={setSelectedAnswer}
+                                    />
+                                    { content.video_url && 
+                                        <Image src={content.video_url} alt="Schematic" width={300} height={300} className="rounded-md border-2 w-full max-w-3/5" /> 
+                                    }
+                                    <div className="flex flex-col gap-5 items-start justify-start pt-5">
+                                        <Button onClick={() => {handleMCQSubmit(); }} className='w-fit bg-hb-green font-bold text-xl py-6 border-2 border-black'>
+                                            SUBMIT
+                                        </Button>
+                                    </div>
+                                    {!loading && (
+                                        <div>
+                                            <p>Grade: {grade}</p>
+                                            <p>Great! You earned 2 XP 🎉</p>
+                                        </div>
+                                    )}
+                                    
+                                </div>
                             </div>
                         )}
 
