@@ -107,7 +107,7 @@ export default function WebRConsole() {
     };
 
     return (
-        <div className="flex flex-col h-[300px] min-w-[320px] rounded-lg shadow-lg border border-gray-700 bg-gray-900 text-green-200 text-xs font-mono">
+        <div className="flex flex-col h-[300px] min-w-[320px] max-w-[320px] rounded-lg shadow-lg border border-gray-700 bg-gray-900 text-green-200 text-xs font-mono">
             {/* Output area */}
             <pre className="flex-1 overflow-auto p-3 scroll-auto" ref={outRef}>
                 <code></code>
