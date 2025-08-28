@@ -32,6 +32,7 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeToc from "rehype-toc";
 import { channel } from "diagnostics_channel";
 import path from "path";
+import dynamic from "next/dynamic";
 
 
 
@@ -151,6 +152,9 @@ function Page() {
   const [solution, setSolution] = useState<string>("");
   const [grade, setGrade] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+      // State for toggling Jupyter and WebR widgets
+    const [showJupyter, setShowJupyter] = useState(false);
+    const [showWebR, setShowWebR] = useState(false);
 
     //get username
   useEffect(() => {
@@ -442,47 +446,52 @@ function Page() {
         }
     }
 
+    const WebRConsole = dynamic(() => import('@/components/webR/webRConsole'), {
+        ssr: false,
+        loading: () => <p>Loading webR console...</p>,
+    });
+
 
 return (
     <main className="w-full">
     <div className="hidden md:flex flex-row w-full pl-5">
         {/**LEFT SIDE BAR */}
-        <div className="flex flex-col gap-10 text-base h-screen bg-white items-start max-w-[200px] border-r">
+        <div className="flex flex-col gap-10 text-base h-screen bg-white items-start w-[250px] border-r">
             <div className="flex flex-row items-center gap-2 px-2 py-5">
                 <Image src={hb_logo} alt="logo" width={40} height={40} />
                 <p className="font-bold">HackBio</p>
             </div>
-            <div className="flex flex-col gap-2 w-full items-start text-base">
+            <div className="flex flex-col gap-2 w-full items-start text-sm">
             
-                <a href={`/dashboard/pathway/courses/${courseId}`} className="font-bold text-lg px-2 py-2 hover:underline flex flex-row items-center gap-2"> <CiViewList /> <p> Table of Content </p></a>
+                <a href={`/dashboard/pathway/courses/${courseId}`} className="font-bold text-base  py-2 hover:underline flex flex-row items-center gap-2"> <CiViewList /> <p> Table of Content </p></a>
                 
                 {previousModuleId > 0 ? (
                     <a 
                         href={`/dashboard/pathway/courses/${courseId}/module/${previousModuleId}/content/${previousContentId}`} 
-                        className="font-bold text-xl px-5 py-5 hover:underline"
+                        className="font-bold text-base  py-5 hover:underline"
                     >
                         ← Previous Module
                     </a>
                 ) : (
-                    <p className="font-bold text-lg px-5 py-5 text-gray-400"> ← Previous Module</p>
+                    <p className="font-bold text-base py-5 text-gray-400"> ← Previous Module</p>
                 )}
 
-                    <p className="font-bold text-lg px-5 py-3">Module Content </p>
+                    <p className="font-bold text-base py-3">Module Content </p>
                 {contentList
                     .map((content) => (
-                        <div key={content.id} className="w-full px-5 py-2 hover:underline">
+                        <div key={content.id} className={`w-full px-5 py-2 hover:underline ${Number(content.id) === contentId ? 'bg-hb-lightgreen text-hb-green font-bold rounded-l-md' : ''}`}>
                             <li className="list-disc"> <a href={`/dashboard/pathway/courses/${courseId}/module/${moduleId}/content/${content.id}`}> {content.title} </a> </li>
                         </div>
                 ))}
                 {nextModuleId > 0 ? (
                     <a 
                         href={`/dashboard/pathway/courses/${courseId}/module/${nextModuleId}/content/${nextContentId}`} 
-                        className="font-bold text-lg px-5 py-5 hover:underline"
+                        className="font-bold text-base  py-5 hover:underline"
                     >
                         Next Module →
                     </a>
                 ) : (
-                    <p className="font-bold text-lg px-5 py-5 text-gray-400">Next Module →</p>
+                    <p className="font-bold text-base  py-5 text-gray-400">Next Module →</p>
                 )}
             </div>
         </div>
@@ -523,7 +532,64 @@ return (
                                     <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.text_content}</Markdown>
                                 </div>
                             </div>
-                            
+                            {/* Floating action buttons */}
+                            <div className="fixed top-1/2 right-10 -translate-y-1/2 z-50 flex flex-col gap-3 text-sm">
+                                {/* Python Button */}
+                                <button
+                                    onClick={() => {
+                                    setShowJupyter(true);
+                                    setShowWebR(false);
+                                    }}
+                                    aria-label="Show Python (JupyterLite)"
+                                    type="button"
+                                    className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
+                                    ${showJupyter 
+                                        ? 'bg-hb-green scale-105 shadow-xl ring-2 ring-green-300'
+                                        : 'bg-hb-green hover:bg-green-600 hover:scale-105'
+                                    }`}
+                                >
+                                    Python
+                                </button>
+
+                                {/* R Button */}
+                                <button
+                                    onClick={() => {
+                                    setShowWebR(true);
+                                    setShowJupyter(false);
+                                    }}
+                                    aria-label="Show R (WebR Console)"
+                                    type="button"
+                                    className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
+                                    ${showWebR 
+                                        ? 'bg-blue-700 scale-105 shadow-xl ring-2 ring-blue-300'
+                                        : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'
+                                    }`}
+                                >
+                                    R
+                                </button>
+                                </div>
+
+
+                            {/* Floating JupyterLite widget */}
+                            {showJupyter && (
+                                <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
+                                    <iframe
+                                        src="https://josoga2.github.io/jpuyterlite-hb-dev/repl/index.html?showBanner=0&kernel=python&toolbar=1"
+                                        height={300}
+                                        width={300}
+                                        className="rounded-lg border border-gray-200"
+                                    />
+                                    <p className="text-xs pl-1 py-1 font-bold">▶︎ Shift+Enter to run code</p>
+                                </div>
+                            )}
+
+                            {/* Floating WebRConsole widget */}
+                            {showWebR && (
+                                <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
+                                    <WebRConsole />
+                                    <p className="text-xs pl-1 py-1 font-bold">▶︎ Press Enter to run code</p>
+                                </div>
+                            )}
                         </div>
                     )}
                     {/**Text */}
@@ -546,6 +612,64 @@ return (
                                     {content.text_content}
                                 </Markdown>
                             </div>
+                            {/* Floating action buttons */}
+                            <div className="fixed top-1/2 right-10 -translate-y-1/2 z-50 flex flex-col gap-3 text-sm">
+                                {/* Python Button */}
+                                <button
+                                    onClick={() => {
+                                    setShowJupyter(true);
+                                    setShowWebR(false);
+                                    }}
+                                    aria-label="Show Python (JupyterLite)"
+                                    type="button"
+                                    className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
+                                    ${showJupyter 
+                                        ? 'bg-hb-green scale-105 shadow-xl ring-2 ring-green-300'
+                                        : 'bg-hb-green hover:bg-green-600 hover:scale-105'
+                                    }`}
+                                >
+                                    Python
+                                </button>
+
+                                {/* R Button */}
+                                <button
+                                    onClick={() => {
+                                    setShowWebR(true);
+                                    setShowJupyter(false);
+                                    }}
+                                    aria-label="Show R (WebR Console)"
+                                    type="button"
+                                    className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
+                                    ${showWebR 
+                                        ? 'bg-blue-700 scale-105 shadow-xl ring-2 ring-blue-300'
+                                        : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'
+                                    }`}
+                                >
+                                    R
+                                </button>
+                                </div>
+
+
+                            {/* Floating JupyterLite widget */}
+                            {showJupyter && (
+                                <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
+                                    <iframe
+                                        src="https://josoga2.github.io/jpuyterlite-hb-dev/repl/index.html?showBanner=0&kernel=python&toolbar=1"
+                                        height={300}
+                                        width={300}
+                                        className="rounded-lg border border-gray-200"
+                                    />
+                                    <p className="text-xs pl-1 py-1 font-bold">▶︎ Shift+Enter to run code</p>
+                                </div>
+                            )}
+
+                            {/* Floating WebRConsole widget */}
+                            {showWebR && (
+                                <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
+                                    <WebRConsole />
+                                    <p className="text-xs pl-1 py-1 font-bold">▶︎ Press Enter to run code</p>
+                                </div>
+                            )}
                         </div>
                     )}
                     {/**Jupyter */}
@@ -613,6 +737,64 @@ return (
                                 </div>
 
                             </div>
+                            {/* Floating action buttons */}
+                            <div className="fixed top-1/2 right-10 -translate-y-1/2 z-50 flex flex-col gap-3 text-sm">
+                                {/* Python Button */}
+                                <button
+                                    onClick={() => {
+                                    setShowJupyter(true);
+                                    setShowWebR(false);
+                                    }}
+                                    aria-label="Show Python (JupyterLite)"
+                                    type="button"
+                                    className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
+                                    ${showJupyter 
+                                        ? 'bg-hb-green scale-105 shadow-xl ring-2 ring-green-300'
+                                        : 'bg-hb-green hover:bg-green-600 hover:scale-105'
+                                    }`}
+                                >
+                                    Python
+                                </button>
+
+                                {/* R Button */}
+                                <button
+                                    onClick={() => {
+                                    setShowWebR(true);
+                                    setShowJupyter(false);
+                                    }}
+                                    aria-label="Show R (WebR Console)"
+                                    type="button"
+                                    className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
+                                    ${showWebR 
+                                        ? 'bg-blue-700 scale-105 shadow-xl ring-2 ring-blue-300'
+                                        : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'
+                                    }`}
+                                >
+                                    R
+                                </button>
+                                </div>
+
+
+                            {/* Floating JupyterLite widget */}
+                            {showJupyter && (
+                                <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
+                                    <iframe
+                                        src="https://josoga2.github.io/jpuyterlite-hb-dev/repl/index.html?showBanner=0&kernel=python&toolbar=1"
+                                        height={300}
+                                        width={300}
+                                        className="rounded-lg border border-gray-200"
+                                    />
+                                    <p className="text-xs pl-1 py-1 font-bold">▶︎ Shift+Enter to run code</p>
+                                </div>
+                            )}
+
+                            {/* Floating WebRConsole widget */}
+                            {showWebR && (
+                                <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
+                                    <WebRConsole />
+                                    <p className="text-xs pl-1 py-1 font-bold">▶︎ Press Enter to run code</p>
+                                </div>
+                            )}
                         </div>
                     )}
                     {/**Carousel3 */}
@@ -759,15 +941,15 @@ return (
             {/* Module Navigation */}
             <div className="px-10 py-5 text-sm text-gray-700 text-center w-full items-center justify-between flex flex-row gap-5">
                 {previousModuleId > 0 ? (
-                    <a href={`/dashboard/pathway/courses/${courseId}/module/${previousModuleId}/content/${previousContentId}`} className="font-bold text-base hover:underline border border-green-800 rounded-full px-2 py-2 ">← Previous Module</a>
+                    <a href={`/dashboard/pathway/courses/${courseId}/module/${previousModuleId}/content/${previousContentId}`} className="font-bold text-xs hover:underline border border-green-800 rounded-md px-5 py-2 ">← Previous </a>
                 ) : (
-                    <p className="text-gray-400 font-bold border border-zinc-500 rounded-full px-3 py-2">← Previous Module</p>
+                    <p className="text-gray-400 text-xs font-bold border border-zinc-500 rounded-md px-5 py-2">← Previous </p>
                 )}
 
                 {nextModuleId > 0 ? (
-                    <a href={`/dashboard/pathway/courses/${courseId}/module/${nextModuleId}/content/${nextContentId}`} className="font-bold hover:underline border text-green-900 border-green-800 rounded-full px-2 py-2 ">Next Module →</a>
+                    <a href={`/dashboard/pathway/courses/${courseId}/module/${nextModuleId}/content/${nextContentId}`} className="font-bold hover:underline border text-xs text-green-900 border-green-800 rounded-md px-5 py-2 ">Next →</a>
                 ) : (
-                    <p className="text-gray-400 font-bold border-zinc-500 rounded-full px-3 py-2">Next Module →</p>
+                    <p className="text-gray-400 font-bold text-xs border-zinc-500 rounded-full px-5 py-2">Next → </p>
                 )}
             </div>
 
@@ -870,12 +1052,12 @@ return (
                 )) : <p className="text-center">Loading content...</p>}
             </div>
             {/* Content List */}
-            <div className="px-5 py-2 text-sm flex flex-col gap-5 border-t bottom-0 pb-20  bg-white w-full fixed">
+            <div className="px-5 py-2 text-sm flex flex-col gap-5 border-t bottom-0 pb-10  bg-white w-full fixed">
                 <p className="font-bold text-xl">Module Content </p>
                 <ul className="flex flex-row gap-3 overflow-x-auto list-inside w-full">
                     {contentList.map((content, idx) => (
-                        <li key={content.id} className="py-3 hover:underline border border-green-900 w-full rounded-md px-3 flex flex-row items-center  justify-center">
-                            <a href={`/dashboard/pathway/courses/${courseId}/module/${moduleId}/content/${content.id}`} className="flex min-w-24 items-center justify-center flex-row"> <p>✻</p> <p>Content </p> <p>{ idx+1} </p></a>
+                        <li key={content.id} className="py-2 hover:underline border border-green-900 w-full rounded-md px-3 flex flex-row items-center  justify-center">
+                            <a href={`/dashboard/pathway/courses/${courseId}/module/${moduleId}/content/${content.id}`} className="flex min-w-24 items-center justify-center flex-row">  <p>{`▶︎ Content ${idx+1}`} </p> </a>
                         </li>
                     ))}
                 </ul>

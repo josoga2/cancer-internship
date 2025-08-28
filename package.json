@@ -12,6 +12,7 @@
     "@jupyterlab/services": "^7.4.2",
     "@next/third-parties": "^15.5.0",
     "@primer/react": "^37.24.0",
+    "@r-wasm/webr": "^0.2.0",
     "@radix-ui/react-accordion": "^1.2.10",
     "@radix-ui/react-collapsible": "^1.1.11",
     "@radix-ui/react-dialog": "^1.1.14",
@@ -60,7 +61,8 @@
     "remark-slug": "^7.0.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.0",
-    "unified": "^11.0.5"
+    "unified": "^11.0.5",
+    "webr": "^0.5.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
