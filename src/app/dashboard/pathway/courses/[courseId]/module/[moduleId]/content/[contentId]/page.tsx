@@ -525,7 +525,7 @@ return (
                         
                         <div className="w-full flex flex-row gap-10">
                             <div className="w-full flex flex-col gap-5">
-                                <iframe height={600} src={content.video_url} className="rounded-md w-full border-2 border-hb-green" />
+                                <iframe height={400} src={content.video_url} className="rounded-md w-full border-2 border-hb-green" />
                                 <p className="text-lg pt-5 font-bold">⛭ Remember to Use the gear icon to select your desired video quality</p>
                                 <p className="text-lg pt-5 font-bold">{`</> Source Code`}</p>
                                 <div className=" bg-white p-5 border border-gray-200 rounded-md text-sm prose prose-base  w-full">
