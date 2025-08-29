@@ -54,14 +54,14 @@ export function EnrollDialog() {
               if (paymentMethod === "paypal") {
                   router.replace('https://www.paypal.com/ncp/payment/QRTQL4BM5HEG6');
               } else if (paymentMethod === "stripe") {
-                  router.replace('https://buy.stripe.com/7sY6oG0II37bdQ75fOc7u0f');
+                  router.replace('https://buy.stripe.com/6oU9AS4YY237bHZ5fOc7u0e');
               } else if (paymentMethod === "visa") {
-                  router.replace('https://buy.stripe.com/7sY6oG0II37bdQ75fOc7u0f');
+                  router.replace('https://buy.stripe.com/6oU9AS4YY237bHZ5fOc7u0e');
               } else if (paymentMethod === "opay") {
                   setIsSubmitted(true)
-                  setPaymentInstructions("Please proceed to pay NGN140,000 via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details with the emails and names of your group to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
+                  setPaymentInstructions("Please proceed to pay NGN70,000 via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details with the emails and names of your group to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
               } else if (paymentMethod === "mastercard") {
-                  router.replace('https://buy.stripe.com/7sY6oG0II37bdQ75fOc7u0f');
+                  router.replace('https://buy.stripe.com/6oU9AS4YY237bHZ5fOc7u0e');
               } else if (paymentMethod === "wise") {
                   router.replace('https://wise.com/pay/me/adewaleo251');
               }
@@ -74,7 +74,7 @@ export function EnrollDialog() {
                   router.replace('https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
               } else if (paymentMethod === "opay") {
                   setIsSubmitted(true)
-                  setPaymentInstructions("Please proceed to pay NGN60,000 via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
+                  setPaymentInstructions("Please proceed to pay NGN30,000 via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
               } else if (paymentMethod === "mastercard") {
                   router.replace('https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
               } else if (paymentMethod === "wise") {
@@ -107,14 +107,14 @@ export function EnrollDialog() {
             <DialogDescription>
               Enroll in the internship by filling out the form below and proceeding to pay.
               {bulk?(<span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> 
-                <p>$90</p> 
-                <p className="text-red-600 line-through text-xl">{`$120`}</p> 
-                <p className="text-red-600  text-xl">{`(25% off)`}</p>  
+                <p>$45</p> 
+                <p className="text-red-600 line-through text-xl">{`$60`}</p> 
+                <p className="text-red-600  text-xl">{`(62.5% off)`}</p>  
               </span>): 
               (<span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> 
-                <p>$40</p> 
-                <p className="text-red-600 line-through text-xl">{``}</p> 
-                <p className="text-red-600  text-sm">{`Early bird discount is now over`}</p>  
+                <p>$20</p> 
+                <p className="text-red-600 line-through text-xl">{`50%`}</p> 
+                <p className="text-red-600  text-sm">{`Early bird discount`}</p>  
               </span>)}
               <span className="flex flex-row gap-5"> <input className="" type="checkbox" onChange={(e) => setBulk(e.target.checked)} /> <p>Group of 3 Discount </p> </span>
 
@@ -196,19 +196,7 @@ export function EnrollDialog() {
                         <span className="mt-2 text-sm">Master Card</span>
                     </div>
                 </Label>
-                <Label className="flex flex-col items-start cursor-pointer">
-                    <input
-                        type="radio"
-                        name="payment"
-                        value="wise"
-                        className="peer sr-only"
-                        onClick={() => setPaymentMethod("wise")}
-                    />
-                    <div className="flex flex-col items-center border-2 border-gray-300 peer-checked:bg-green-200 peer-checked:border-green-600 rounded-lg p-2 transition">
-                        <PiFlagBanner className="text-2xl text-blue-900" />
-                        <span className="mt-2 text-sm">Wise </span>
-                    </div>
-                </Label>
+                
             </div>
           </div>
             {isSubmitted && (
