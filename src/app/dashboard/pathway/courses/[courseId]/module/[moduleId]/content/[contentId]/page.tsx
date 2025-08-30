@@ -442,18 +442,21 @@ function Page() {
         }
     }
 
+
+    const [mcqGraded, setMcqGraded] = useState(false);
     const handleMCQSubmit = async () => {
         //e.preventDefault();
         setLoading(true);
         try {
             const response = await api.post('/api/submit-mcq/', {
-                actual_answer: filteredContentList[0].actual_answer, // Assuming the content is in the first item of filteredContentList
+                actual_answer: filteredContentList[0].actual_answer, 
                 user_answer: selectedAnswer
             });
             if (response.status === 200) {
                 //console.log("Solution submitted successfully.: ", response.data.grade_response.grade);
                 setGrade(response.data.xp_earned); // Assuming the response contains a grade field
                 setLoading(false);
+                setMcqGraded(true);
                 toast.success(`Great! You earned ${response.data.xp_earned} XP 🎉`)
                 // Handle success, e.g., show a success message or redirect
             } else {
@@ -794,14 +797,13 @@ return (
                                     <Image src={content.video_url} alt="Schematic" width={300} height={300} className="rounded-md border-2 w-full max-w-3/5" /> 
                                 }
                                 <div className="flex flex-col gap-5 items-start justify-start pt-5">
-                                    <Button onClick={() => {handleMCQSubmit(); }} className='w-fit bg-hb-green font-bold text-xl py-6 border-2 border-black'>
+                                    <Button onClick={() => {handleMCQSubmit() }} className='w-fit bg-hb-green font-bold text-xl py-6 border-2 border-black'>
                                         SUBMIT
                                     </Button>
                                 </div>
-                                {!loading && (
-                                     <div>
+                                {!loading && mcqGraded && (
+                                    <div>
                                         <p>Grade: {grade}</p>
-                                        <p>Great! You earned 2 XP 🎉</p>
                                     </div>
                                 )}
                                 
