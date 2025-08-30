@@ -814,15 +814,15 @@ return (
                         <div className="w-full flex flex-row gap-10">
                             <div className="border-2 rounded-md border-hb-green prose prose-base p-5 flex flex-col  w-full">
                                 <p className="font-bold text-lg">
-                                    Project Details: Submit markdown or code solution to the project below
+                                    Project Details: Submit code solution to the project below
                                 </p>
                                 <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.project_data}</Markdown>
                                 <div className="grid gap-2">
                                     <Label htmlFor="solution" className='text-lg font-bold pt-5'>Your Solution</Label>
-                                    <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} placeholder="type your solution..." required  className='bg-green-950 text-white text-xs placeholder:text-xs p-3 h-screen font-mono border border-neutral-200'/>
+                                    <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} placeholder="type your solution..." required  className='bg-green-950 text-white text-xs placeholder:text-xs p-3 h-[400px] font-mono border border-neutral-200'/>
                                     <p className="text-sm text-gray-500">Note: Please ensure your solution is well documented and clear. We accept text and code!</p>
                                     <div className="flex flex-row gap-5 items-center justify-start pt-5">
-                                        <Button onClick={() => {handleSolutionSubmit(); handleMarkCompleted()}} className='w-fit bg-green-500 text-white text-xl py-6 hover:bg-green-600'>
+                                        <Button onClick={() => {handleSolutionSubmit(); }} className='w-fit bg-green-500 text-white text-xl py-6 hover:bg-green-600'>
                                             SUBMIT
                                         </Button>
                                         {loading ? (
