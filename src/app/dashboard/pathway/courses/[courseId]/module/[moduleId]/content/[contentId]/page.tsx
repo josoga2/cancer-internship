@@ -154,7 +154,7 @@ function Page() {
   const [solution, setSolution] = useState<string>("");
   const [grade, setGrade] = useState<number>(0);
   const [improve, setImprove] = useState<string>("waiting for review...");
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
       // State for toggling Jupyter and WebR widgets
     const [showJupyter, setShowJupyter] = useState(false);
     const [showWebR, setShowWebR] = useState(false);
