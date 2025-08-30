@@ -3,6 +3,10 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "../ui/button";
 import api from "@/api";
+import Markdown from "react-markdown";
+import rehypeKatex from "rehype-katex";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 
 interface QuestionBlockProps {
   question: string;
@@ -16,7 +20,7 @@ interface QuestionBlockProps {
 
 const QuestionBlock: React.FC<QuestionBlockProps> = ({ question, answer1, answer2, answer3, selectedAnswer, onanswerSelect }) => (
   <div className="border-2 rounded-lg p-3 space-y-4 text-lg prose prose-base">
-    <p className="text-xl font-bold ">{question}</p>
+    <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{question}</Markdown>
     <RadioGroup value={selectedAnswer} className="space-y-4" onValueChange={onanswerSelect}>
       {[answer1, answer2, answer3].map((answer, index) => (
         <div key={index} className="flex items-center space-x-2">
