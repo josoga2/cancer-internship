@@ -54,6 +54,7 @@ function Page() {
   const [totalContent, setTotalContent] = useState<number>(0);
   const [userPathwayId, setUserPathwayId] = useState<number[]>([]);
   const [userCoursesId, setUserCoursesId] = useState<number[]>([]);
+  const [hintClicked, setHintClicked] = useState<boolean>(false);
   const [pathwayList, setPathwayList] = useState<Array<{
         id?: string
         title?: string
@@ -123,6 +124,7 @@ function Page() {
     actual_answer: string
     project_data: string
     project_promote_channel: string
+    project_rubric: string
     jupyter_url: string
     course: number | string
     finished: boolean
@@ -142,6 +144,7 @@ function Page() {
         actual_answer: string
         project_data: string
         project_promote_channel : string
+        project_rubric: string
         jupyter_url: string
         course: number | string
         finished: boolean
@@ -804,6 +807,15 @@ return (
                                 {!loading && mcqGraded && (
                                     <div>
                                         <p>Grade: {grade}</p>
+                                    </div>
+                                )}
+                                <Button onClick={() => {setHintClicked(true) }} className='w-fit bg-yellow-500 font-bold text-xl py-2 border-2 border-black'>
+                                        HINT
+                                </Button>
+                                {hintClicked && (
+                                    <div className="mt-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
+                                        <h3 className="font-bold">Hint:</h3>
+                                        <p className="text-sm">{content.project_rubric || `No hint here 🤡`}</p>
                                     </div>
                                 )}
 
