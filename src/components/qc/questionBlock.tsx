@@ -15,8 +15,8 @@ interface QuestionBlockProps {
 
 
 const QuestionBlock: React.FC<QuestionBlockProps> = ({ question, answer1, answer2, answer3, selectedAnswer, onanswerSelect }) => (
-  <div className="border-2 rounded-lg p-3 space-y-4 text-lg">
-    <p className="text-xl font-bold prose prose-base">{question}</p>
+  <div className="border-2 rounded-lg p-3 space-y-4 text-lg prose prose-base">
+    <p className="text-xl font-bold ">{question}</p>
     <RadioGroup value={selectedAnswer} className="space-y-4" onValueChange={onanswerSelect}>
       {[answer1, answer2, answer3].map((answer, index) => (
         <div key={index} className="flex items-center space-x-2">
