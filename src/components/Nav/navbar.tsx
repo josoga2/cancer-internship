@@ -15,7 +15,7 @@ export default function Navbar() {
         <Link href='/'><Image src={hb_logo} alt='hb_log' width={40} height={40} /></Link>
         <div className='flex flex-row gap-10'>
           <a href='/internship'>Internships</a>
-          <a href='https://thehackbio.com/'>Courses</a>
+          <a href='/learning'>Courses</a>
           {/* <a href='/learning'>Career Paths</a> */}
         </div>
         <a href='/login'><button className='border-2  bg-hb-green rounded-lg px-5 text-white text-base font-semibold py-2'>Sign In/Up</button></a>
