@@ -56,10 +56,12 @@ function Page() {
   const [completedContent, setCompletedContent] = useState<string>('');
   const [uniqueContentId, setUniqueContentId] = useState<number>(0);
   const [totalContent, setTotalContent] = useState<number>(0);
+  const [mcqGraded, setMcqGraded] = useState(false);
   const [userInternshipId, setUserInternshipId] = useState<number[]>([]);
   const [improve, setImprove] = useState<string>("waiting for review...");
   const [userCoursesId, setUserCoursesId] = useState<number[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState("none");
+  const [hintClicked, setHintClicked] = useState<boolean>(false);
   const [internshipList, setInternshipList] = useState<Array<{
         id?: string
         title?: string
@@ -456,13 +458,14 @@ function Page() {
         setLoading(true);
         try {
             const response = await api.post('/api/submit-mcq/', {
-                actual_answer: filteredContentList[0].actual_answer, // Assuming the content is in the first item of filteredContentList
+                actual_answer: filteredContentList[0].actual_answer, 
                 user_answer: selectedAnswer
             });
             if (response.status === 200) {
                 //console.log("Solution submitted successfully.: ", response.data.grade_response.grade);
                 setGrade(response.data.xp_earned); // Assuming the response contains a grade field
                 setLoading(false);
+                setMcqGraded(true);
                 toast.success(`Great! You earned ${response.data.xp_earned} XP 🎉`)
                 // Handle success, e.g., show a success message or redirect
             } else {
@@ -867,14 +870,81 @@ return (
                                     <Image src={content.video_url} alt="Schematic" width={300} height={300} className="rounded-md border-2 w-full max-w-3/5" /> 
                                 }
                                 <div className="flex flex-col gap-5 items-start justify-start pt-5">
-                                    <Button onClick={() => {handleMCQSubmit(); }} className='w-fit bg-hb-green font-bold text-xl py-6 border-2 border-black'>
+                                    <Button onClick={() => {handleMCQSubmit() }} className='w-fit bg-hb-green font-bold text-xl py-6 border-2 border-black'>
                                         SUBMIT
                                     </Button>
                                 </div>
-                                {!loading && (
-                                     <div>
+                                {!loading && mcqGraded && (
+                                    <div>
                                         <p>Grade: {grade}</p>
-                                        <p>Great! You earned 2 XP 🎉</p>
+                                    </div>
+                                )}
+                                <Button onClick={() => {setHintClicked(true) }} className='w-fit bg-yellow-500 font-bold text-xl py-2 border-2 border-black'>
+                                        HINT
+                                </Button>
+                                {hintClicked && (
+                                    <div className="mt-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
+                                        <h3 className="font-bold">Hint:</h3>
+                                        <p className="text-sm">{content.project_rubric || `No hint here 🤡`}</p>
+                                    </div>
+                                )}
+
+                                {/* Floating action buttons */}
+                                <div className="fixed top-1/2 right-10 -translate-y-1/2 z-50 flex flex-col gap-3 text-sm">
+                                    {/* Python Button */}
+                                    <button
+                                        onClick={() => {
+                                        setShowJupyter(true);
+                                        setShowWebR(false);
+                                        }}
+                                        aria-label="Show Python (JupyterLite)"
+                                        type="button"
+                                        className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
+                                        ${showJupyter 
+                                            ? 'bg-hb-green scale-105 shadow-xl ring-2 ring-green-300'
+                                            : 'bg-hb-green hover:bg-green-600 hover:scale-105'
+                                        }`}
+                                    >
+                                        Python
+                                    </button>
+
+                                    {/* R Button */}
+                                    <button
+                                        onClick={() => {
+                                        setShowWebR(true);
+                                        setShowJupyter(false);
+                                        }}
+                                        aria-label="Show R (WebR Console)"
+                                        type="button"
+                                        className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
+                                        ${showWebR 
+                                            ? 'bg-blue-700 scale-105 shadow-xl ring-2 ring-blue-300'
+                                            : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'
+                                        }`}
+                                    >
+                                        R
+                                    </button>
+                                    </div>
+
+
+                                {/* Floating JupyterLite widget */}
+                                {showJupyter && (
+                                    <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
+                                        <iframe
+                                            src="https://josoga2.github.io/jpuyterlite-hb-dev/repl/index.html?showBanner=0&kernel=python&toolbar=1"
+                                            height={300}
+                                            width={300}
+                                            className="rounded-lg border border-gray-200"
+                                        />
+                                        <p className="text-xs pl-1 py-1 font-bold">▶︎ Shift+Enter to run code</p>
+                                    </div>
+                                )}
+
+                                {/* Floating WebRConsole widget */}
+                                {showWebR && (
+                                    <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
+                                        <WebRConsole />
+                                        <p className="text-xs pl-1 py-1 font-bold">▶︎ Press Enter to run code</p>
                                     </div>
                                 )}
                                 
