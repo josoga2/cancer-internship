@@ -19,6 +19,7 @@ import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
+import { Button } from "@/components/ui/button";
 
 
 
@@ -30,6 +31,7 @@ export default function Page() {
         description?: string
         overview?: string
         published?: boolean
+        free?: boolean
         image?: string
         courses?: Array<{
             id?: number | string
@@ -40,6 +42,7 @@ export default function Page() {
             title: "",
             description: "",
             overview: "",
+            free: true,
             published: false,
             image: "/",
             courses: [{ id: "" }]
@@ -150,7 +153,7 @@ export default function Page() {
             <div className="flex flex-col gap-5 max-w-2/5">
                 <p className="text-3xl font-bold text-start"> {coursesList[0].title} </p>
                 <p className="text-base "> {coursesList[0].overview} </p>
-                <EnrollCourseDialog />
+                {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
             
             </div>
             <Image src={keywords} alt="biology" className="w-2/5" />
@@ -172,7 +175,7 @@ export default function Page() {
                         <span className="flex flex-row gap-5 items-center justify-center">
                             <p className="text-base">{modulesList.length} Lessons</p>
                         </span>
-                        <EnrollCourseDialog />
+                        {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
 
                     </div>
                     <div className="flex flex-col gap-5 items-start justify-center w-full overflow-y-auto">
@@ -210,7 +213,7 @@ export default function Page() {
                                 <Markdown  remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{coursesList[0].description}</Markdown>
                             </div>
                             <p className="leading-7 text-lg"> </p>
-                            <EnrollCourseDialog />
+                            {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
 
                         </div>
 
@@ -249,7 +252,7 @@ export default function Page() {
         </div>
 
         <div className="w-full flex flex-col items-center justify-center py-10">
-            <EnrollCourseDialog />
+            {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
         </div>
         
 
@@ -267,7 +270,7 @@ export default function Page() {
                     <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Graded Certification </span></li>
                 </ul>
                 <p className="font-bold">* Active only for the duration of the internship</p>
-                <EnrollCourseDialog />
+                {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
 
             </div>
         </div>
@@ -285,7 +288,7 @@ export default function Page() {
             </div>
           </div>
             <div className="flex items-center justify-center">
-            <EnrollCourseDialog />
+            {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
             </div>
         </div>
 
@@ -300,7 +303,7 @@ export default function Page() {
         <div className="flex flex-col gap-5 py-10">
             <p className="text-2xl font-bold">{coursesList[0].title}</p>
             <p className="text-base text-gray-700">{coursesList[0].overview}</p>
-            <EnrollCourseDialog />
+            {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
         </div>
 
         {/* Course Overview */}
@@ -312,7 +315,7 @@ export default function Page() {
 
             <p className="text-sm">{modulesList.length} Lessons</p>
             <div className="mt-4">
-                <EnrollCourseDialog />
+                {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
             </div>
             </div>
         </div>
@@ -343,7 +346,7 @@ export default function Page() {
             <p className="text-base leading-7 mb-4">
                 {coursesList[0].description}
             </p>
-            <EnrollCourseDialog />
+            {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
         </div>
 
         {/* Audience Fit */}
@@ -383,7 +386,7 @@ export default function Page() {
                 <li>Unlimited number to final projects</li>
             </ul>
             <div className="mt-4">
-                <EnrollCourseDialog />
+                {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
             </div>
             </div>
         </div>
@@ -400,7 +403,7 @@ export default function Page() {
             <p className="text-sm font-bold pt-3">Winfred Gatua — University of Bristol, UK</p>
             </div>
             <div className="mt-6 flex justify-center">
-            <EnrollCourseDialog />
+            {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
             </div>
         </div>
         </div>

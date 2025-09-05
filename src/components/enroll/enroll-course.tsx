@@ -165,7 +165,7 @@ export function EnrollCourseDialog() {
           </div> */}
             <div className="flex flex-col gap-5">
               <div className="mt-4 p-4 bg-yellow-100 border border-yellow-300 rounded">
-                    <p className="text-base text-yellow-900">Enrollment for this course is currently only possible through the internship enrollment. Kindly visit <a href="/internship" className="font-bold underline">Open Internships</a> page.</p>
+                    <p className="text-base text-yellow-900">Enrollment for this course is currently only possible through the internship or Career path enrollment. Kindly visit <a href="/internship" className="font-bold underline">Open Internships</a> or <a href="/learning" className="font-bold underline">Career Paths</a> page.</p>
                 </div>
             </div>
             {isSubmitted && (
