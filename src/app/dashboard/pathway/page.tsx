@@ -92,6 +92,7 @@ function Page() {
         if (response.data && response.status == 200 || response.status == 201) {
           //console.log("User profile data:", response.data);
           const userProfile = response.data; 
+          console.log("User Profile:", userProfile);
           setUsername(userProfile.username);
           
         } else {
@@ -186,16 +187,37 @@ function Page() {
           <div className="">
         <p className="px-10 font-bold text-2xl"> {username.charAt(0).toUpperCase() + username.slice(1).toLocaleLowerCase()}'s Career Pathways </p>
         <div className="flex flex-col gap-10 w-full px-10 pt-10">
-          {pathwayList.map((pathway) => (
-            <div key={pathway.id}>
-              <UpcomingCourseCard
-                desc={pathway.overview ?? ""}
-                image={pathway.int_image ?? "/"}
-                directTo={'/dashboard/pathway/courses'}
-                title={pathway.title ?? ""}
-                weeks={pathway.lenght_in_weeks ?? 0} lessons={0} />
+          {pathwayList.length === 0 ? (
+            <div className="flex flex-col gap-5 items-start justify-start w-full">
+              <p className="text-gray-500">Nothing to see here yet.</p>
+              <a
+                onClick={async () => {
+                  try {
+                    await api.post('/api/add-free-pathway/');
+                    window.location.reload();
+                  } catch (error) {
+                    console.error("Error refreshing free course items:", error);
+                  }
+                }}
+                className="px-10 py-3 w-fit border-black rounded-md border-2 hover:bg-hb-green text-white font-bold text-xl bg-green-600"
+              >
+                <button>Refresh Free Course Items</button>
+              </a>
             </div>
-          ))}
+          ) : (
+            pathwayList.map((pathway) => (
+              <div key={pathway.id}>
+                <UpcomingCourseCard
+                  desc={pathway.overview ?? ""}
+                  image={pathway.int_image ?? "/"}
+                  directTo={'/dashboard/pathway/courses'}
+                  title={pathway.title ?? ""}
+                  weeks={pathway.lenght_in_weeks ?? 0}
+                  lessons={0}
+                />
+              </div>
+            ))
+          )}
         </div>
 
           </div>
@@ -283,18 +305,38 @@ function Page() {
           {username.charAt(0).toUpperCase() + username.slice(1).toLowerCase()}'s Learning Pathways
         </p>
 
-        <div className="flex flex-col gap-6 items-center pb-20 min-h-[100svh]">
-          {pathwayList.map((pathway) => (
-            <UpcomingCourseCard
-              key={pathway.id}
-              desc={pathway.overview ?? ""}
-              image={pathway.int_image ?? "/"}
-              directTo="/dashboard/pathway/courses"
-              title={pathway.title ?? ""}
-              weeks={pathway.lenght_in_weeks ?? 0}
-              lessons={0}
-            />
-          ))}
+        <div className="flex flex-col gap-10 w-full px-10 pt-10">
+          {pathwayList.length === 0 ? (
+            <div className="flex flex-col gap-5 items-start justify-start w-full">
+              <p className="text-gray-500">Nothing to see here yet.</p>
+              <a
+                onClick={async () => {
+                  try {
+                    await api.post('/api/add-free-pathway/');
+                    window.location.reload();
+                  } catch (error) {
+                    console.error("Error refreshing free course items:", error);
+                  }
+                }}
+                className="px-10 py-3 w-fit border-black rounded-md border-2 hover:bg-hb-green text-white font-bold text-xl bg-green-600"
+              >
+                <button>Refresh Free Course Items</button>
+              </a>
+            </div>
+          ) : (
+            pathwayList.map((pathway) => (
+              <div key={pathway.id}>
+                <UpcomingCourseCard
+                  desc={pathway.overview ?? ""}
+                  image={pathway.int_image ?? "/"}
+                  directTo={'/dashboard/pathway/courses'}
+                  title={pathway.title ?? ""}
+                  weeks={pathway.lenght_in_weeks ?? 0}
+                  lessons={0}
+                />
+              </div>
+            ))
+          )}
         </div>
       </div>
 

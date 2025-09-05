@@ -33,6 +33,7 @@ export default function Page() {
         published?: boolean
         start_date?: string
         overview?: string
+        free?: boolean
         lenght_in_weeks?: number
         int_image?: string
         courses?: Array<string | number>
@@ -44,12 +45,13 @@ export default function Page() {
             published: false,
             start_date: "",
             overview: "",
+            free: false,
             lenght_in_weeks: 0,
             int_image: "/",
             courses: [""]
         }
     ]);
-
+    //console.log(internship);
     // Prefill with empty items until useEffect is mounted
     const [coursesList, setCoursesList] = useState<Array<{
         id?: number | string
@@ -99,6 +101,10 @@ export default function Page() {
         fetchCourses();
     }, []);
 
+
+    const thisPathwayStatus = internship.find(int => Number(int.id) === Number(pathwayId))?.free;
+    //console.log(thisPathwayStatus);
+
     //console.log(coursesList.filter(course => course.published === true));
 
   return (
@@ -113,9 +119,8 @@ export default function Page() {
             <div className="flex flex-col gap-5">
                 <p className="text-3xl font-bold text-start">Career Path</p>
                 <p className="text-base">Build your career, completely, one step at a time! </p>
-                <EnrollDialog />
-
-                </div>
+                {thisPathwayStatus? <a href="/login"><button className="bg-hb-green px-10 py-3 rounded-md text-white font-bold text-xl">Enroll Now</button></a> : <EnrollDialog />}
+            </div>
             <Image src={keywords} alt="biology" className="w-2/5" />
         </div>
 
@@ -135,7 +140,7 @@ export default function Page() {
                             <span className="flex flex-row gap-5 items-center justify-center">
                                 <p className="text-base">{upcoming.lenght_in_weeks} Weeks</p>
                             </span>
-                            <EnrollDialog />
+                            {thisPathwayStatus? <a href="/login"><button className="bg-hb-green px-10 py-3 rounded-md text-white font-bold text-xl">Enroll Now</button></a> : <EnrollDialog />}
 
                         </div>
                         <div className="flex flex-col gap-5 items-start justify-center w-full overflow-y-auto">
@@ -166,7 +171,7 @@ export default function Page() {
                                     <div className="prose">
                                     <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{upcoming.description}</Markdown>
                                     </div>
-                                    <EnrollDialog />
+                                    {thisPathwayStatus? <a href="/login"><button className="bg-hb-green px-10 py-3 rounded-md text-white font-bold text-xl">Get Started</button></a> : <EnrollDialog />}
 
                                 </div>
                            
@@ -214,7 +219,7 @@ export default function Page() {
         </div>
 
         <div className="w-full flex flex-col items-center justify-center py-10">
-            <EnrollDialog />
+            <a href="/login"><button className="bg-hb-green px-10 py-3 rounded-md text-white font-bold text-xl">Get Started</button></a> 
         </div>
 
         {/** who is this internship for?*/}
@@ -244,7 +249,7 @@ export default function Page() {
         </div>
 
         <div className="w-full flex flex-col items-center justify-center py-10">
-            <EnrollDialog />
+           <a href="/login"><button className="bg-hb-green px-10 py-3 rounded-md text-white font-bold text-xl">Get Started</button></a> 
         </div>
         
         
@@ -291,7 +296,7 @@ export default function Page() {
                         <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> No Eviction from the internship </span></li>
                     </ul>
                     <p className="font-bold">* Active only for the duration of the internship</p>
-                    <EnrollDialog />
+                    {thisPathwayStatus? <a href="/login"><button className="bg-hb-green px-10 py-3 rounded-md text-white font-bold text-xl">Get Started</button></a> : <EnrollDialog />}
 
                 </div>
             </div>
@@ -310,7 +315,7 @@ export default function Page() {
             </div>
           </div>
             <div className="flex items-center justify-center">
-                <EnrollDialog />
+                {thisPathwayStatus? <a href="/login"><button className="bg-hb-green px-10 py-3 rounded-md text-white font-bold text-xl">Get Started</button></a> : <EnrollDialog />}
             </div>
         </div>
 
@@ -324,7 +329,7 @@ export default function Page() {
             <div className="flex flex-col gap-4">
                 <p className="text-2xl font-bold text-start">Career Path</p>
                 <p className="text-base">Build your career, completely, one step at a time! </p>
-                <EnrollDialog />
+                {thisPathwayStatus? <a href="/login"><button className="bg-hb-green px-10 py-3 rounded-md text-white font-bold text-xl">Get Started</button></a> : <EnrollDialog />}
             </div>
 
             
@@ -340,7 +345,7 @@ export default function Page() {
                     <p className="text-lg font-bold">{upcoming.title}</p>
                     <p className="text-sm">{upcoming.overview}</p>
                     <p className="text-sm">{upcoming.lenght_in_weeks} Weeks</p>
-                    <EnrollDialog />
+                    {thisPathwayStatus? <a href="/login"><button className="bg-hb-green px-10 py-3 rounded-md text-white font-bold text-xl">Get Started</button></a> : <EnrollDialog />}
                 </div>
 
                 <div className="flex flex-col gap-3">
@@ -363,7 +368,7 @@ export default function Page() {
                         <div className="prose">
                             <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{upcoming.description}</Markdown>
                         </div>
-                        <EnrollDialog />
+                        {thisPathwayStatus? <a href="/login"><button className="bg-hb-green px-10 py-3 rounded-md text-white font-bold text-xl">Get Started</button></a> : <EnrollDialog />}
 
                     </div>
 
@@ -402,7 +407,7 @@ export default function Page() {
             </div>
 
             <div className="w-full flex flex-col items-center justify-center py-10">
-                <EnrollDialog />
+                {thisPathwayStatus? <a href="/login"><button className="bg-hb-green px-10 py-3 rounded-md text-white font-bold text-xl">Get Started</button></a> : <EnrollDialog />}
             </div>
 
             <div className="flex flex-col gap-5 items-center">
@@ -432,7 +437,7 @@ export default function Page() {
             </div>
 
             <div className="flex flex-col items-center py-10">
-                <EnrollDialog />
+               {thisPathwayStatus? <a href="/login"><button className="bg-hb-green px-10 py-3 rounded-md text-white font-bold text-xl">Get Started</button></a> : <EnrollDialog />}
             </div>
 
             <div className="flex flex-col gap-6 border-2 border-hb-green p-5 rounded shadow-md">
@@ -465,7 +470,7 @@ export default function Page() {
                 <p className="text-md text-gray-700 italic text-center">"My HackBio experience (and preprint) was my leverage for grad school admissions."</p>
                 <p className="text-base font-bold">Winfred Gatua – University of Bristol</p>
                 </div>
-                <EnrollDialog />
+                {thisPathwayStatus? <a href="/login"><button className="bg-hb-green px-10 py-3 rounded-md text-white font-bold text-xl">Get Started</button></a> : <EnrollDialog />}
             </div>
             </div>
 

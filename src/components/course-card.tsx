@@ -14,7 +14,7 @@ type UpcomingCourseCardProps = {
 
 const UpcomingCourseCard = ({ image, title, desc, lessons, weeks, directTo }: UpcomingCourseCardProps) => {
   return (
-    <main className='max-w-1/2'>
+    <main className='md:max-w-1/2'>
       <div className="hidden md:flex flex-row gap-10 items-start justify-start  border-2 border-green-600 rounded-md px-5 py-5 w-[450px] h-fit bg-white">
         <img
           src={typeof image === 'string' ? image : image.src}
@@ -32,7 +32,7 @@ const UpcomingCourseCard = ({ image, title, desc, lessons, weeks, directTo }: Up
 
       {/**MOBILE */}
       <div className=" md:hidden w-full flex flex-col justify-center items-center">
-        <div className="flex flex-col gap-4 items-center justify-center relative border-2 border-green-600 rounded-md px-4 py-5 w-[250px] bg-white">
+        <div className="flex flex-col gap-4 items-center justify-center relative border-2 border-green-600 rounded-md px-4 py-5 max-w-[250px] bg-white">
           
           {/* Course image */}
           <img
