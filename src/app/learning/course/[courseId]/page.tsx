@@ -256,7 +256,7 @@ export default function Page() {
         </div>
         
 
-        <div className="flex flex-col gap-10 items-center justify-start w-full mx-auto px-5 py-20">
+        {/* <div className="flex flex-col gap-10 items-center justify-start w-full mx-auto px-5 py-20">
             <span className="flex flex-row items-start font-bold text-2xl gap-2"> <p>One time pricing, Lifetime Access</p> </span>
             <div className="flex flex-col gap-3 max-w-2/5 rounded border-2 p-5 px-10 border-green-500 shadow-2xl items-start justify-start  ">
                 <span className="flex flex-row items-start font-bold text-2xl gap-2 py-5"> <p>Premium Learning</p> </span>
@@ -273,7 +273,7 @@ export default function Page() {
                 {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
 
             </div>
-        </div>
+        </div> */}
 
 
         <div className="py-10 w-full h-full bg-green-50 flex flex-col gap-5 ">
@@ -374,7 +374,7 @@ export default function Page() {
         </div>
 
         {/* Pricing */}
-        <div className="py-10">
+        {/* <div className="py-10">
             <p className="text-2xl font-bold text-center mb-5">One time pricing, Lifetime Access</p>
             <div className="border border-green-500 rounded-lg p-5 shadow-lg">
             <p className="text-xl font-bold mb-2">Premium Learning</p>
@@ -389,7 +389,7 @@ export default function Page() {
                 {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
             </div>
             </div>
-        </div>
+        </div> */}
 
         {/* Testimonial */}
         <div className="bg-green-50 py-10 px-5">
