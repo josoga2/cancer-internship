@@ -18,23 +18,23 @@ export default function Footer() {
         </Link>
         <div className='flex flex-row gap-10'>
           <div className='flex flex-col gap-2'> 
-            <a href='/internship'>Internships</a>
-            <a href='/'>Hire our graduates</a>
+            <Link href='/internship'>Internships</Link>
+            <Link href='/'>Hire our graduates</Link>
           </div>
           <div className='flex flex-col gap-2'> 
-            <a href='/learning'>Career Pathways</a>
-            <a href='/learning'>Courses</a>
+            <Link href='/learning'>Career Pathways</Link>
+            <Link href='/learning'>Courses</Link>
           </div>
           <div className='flex flex-col gap-2'> 
-            <a href='/blog'>Blog and articles</a>
-            <a href='/'>Genomics</a>
-            <a href='/'>Biomedical AI</a>
-            <a href='/'>Drug Development</a>
+            <Link href='/blog'>Blog and articles</Link>
+            <Link href='/'>Genomics</Link>
+            <Link href='/'>Biomedical AI</Link>
+            <Link href='/'>Drug Development</Link>
           </div>
           <div className='flex flex-col gap-2'> 
-            <a href='/'>About Us</a>
-            <a href='/'>Partners and Sponsors</a>
-            <a href='/'>Contact Us</a>
+            <Link href='/'>About Us</Link>
+            <Link href='/'>Partners and Sponsors</Link>
+            <Link href='/'>Contact Us</Link>
           </div>
           
           
@@ -53,26 +53,26 @@ export default function Footer() {
         </Link>
         <div className='flex flex-col  pt-5 text-sm w-full'>
           <div className='flex flex-col gap-2'> 
-            <a href='/internship'>Internships</a>
-            <a href='/'>Hire our graduates</a>
+            <Link href='/internship'>Internships</Link>
+            <Link href='/'>Hire our graduates</Link>
           </div>
           <div className='flex flex-col gap-2 pt-3'>
             <hr /> 
-            <a href='/learning'>Career Pathways</a>
-            <a href='/learning'>Courses</a>
+            <Link href='/learning'>Career Pathways</Link>
+            <Link href='/learning'>Courses</Link>
           </div>
           <div className='flex flex-col gap-2 pt-3'>
             <hr />  
-            <a href='/blog'>Blog and articles</a>
-            <a href='/'>Genomics</a>
-            <a href='/'>Biomedical AI</a>
-            <a href='/'>Drug Development</a>
+            <Link href='/blog'>Blog and articles</Link>
+            <Link href='/'>Genomics</Link>
+            <Link href='/'>Biomedical AI</Link>
+            <Link href='/'>Drug Development</Link>
           </div>
           <div className='flex flex-col gap-2 pt-3'>
             <hr />  
-            <a href='/'>About Us</a>
-            <a href='/'>Partners and Sponsors</a>
-            <a href='/'>Contact Us</a>
+            <Link href='/'>About Us</Link>
+            <Link href='/'>Partners and Sponsors</Link>
+            <Link href='/'>Contact Us</Link>
           </div>
       </div>
       </div>
