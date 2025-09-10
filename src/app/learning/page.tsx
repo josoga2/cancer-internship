@@ -14,7 +14,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 import ayano from '../../../public/ayano.jpeg'
 import adekoya from '../../../public/adekoya.jpeg'
 import barve from '../../../public/barve.jpeg'
-import testimonials from '../../../public/testimonials.svg'
+import testimonials from '../../../public/Testimonials.svg'
 import sm_testimonial from '../../../public/sm_testimonial.svg'
 
 
