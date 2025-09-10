@@ -2,9 +2,14 @@
 import { useEffect, useState } from "react";
 import winfred from "../../../../../public/winfred.svg"
 import keywords from "../../../../../public/keywords.svg"
-import { GoDotFill } from "react-icons/go";
+
+import ayano from '../../../../../public/ayano.jpeg'
+import adekoya from '../../../../../public/adekoya.jpeg'
+import barve from '../../../../../public/barve.jpeg'
 import Image from "next/image";
 import { useRouter, useParams } from "next/navigation";
+import testimonial from "../../../../../public/Testimonials.svg"
+import sm_testimonial from "../../../../../public/sm_testimonial.svg"
 import {
     Accordion,
     AccordionContent,
@@ -20,6 +25,9 @@ import remarkGfm from 'remark-gfm'
 import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
 import { Button } from "@/components/ui/button";
+import { EnrollDialog } from "@/components/enroll/enroll";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
+import Footer from "@/components/Nav/footer";
 
 
 
@@ -145,7 +153,7 @@ export default function Page() {
   return (
     <section>
         <Navbar />
-        <div className="hidden md:flex md:max-w-screen-lg bg md:m-auto md:items-center pt-5 md:justify-between">
+        <div className="hidden md:flex md:max-w-screen-lg bg md:m-auto md:items-center pt-24 md:justify-between">
         
         <div className=" ">
 
@@ -224,7 +232,17 @@ export default function Page() {
             </div>
         </div>
         
-
+        {/* Organizations */}
+        <div className="flex flex-col items-center gap-5">
+          <p className="text-lg font-bold text-center">
+            100+ Organizations have hired our graduates
+          </p>
+          <img
+            src={testimonial.src}
+            alt="organizations-that-trust-hackbio"
+            className="w-full"
+          />
+        </div>
         {/** who is this internship for?*/}
         <div className="w-full flex flex-col items-center justify-center">
             <p className="text-3xl font-bold text-center p-10">Who is this course for?</p>
@@ -276,19 +294,66 @@ export default function Page() {
         </div> */}
 
 
-        <div className="py-10 w-full h-full bg-green-50 flex flex-col gap-5 ">
-          <p className="text-3xl font-bold text-center"> Join thousands of global learners</p>
-          <p className="text-center">For real, you will work and learn with people around the world.</p>
+        <div className="py-5 w-full h-full bg-hb-lightgreen flex flex-col gap-5 px-10">
+          <p className="text-xl font-bold text-center"> Join thousands of global learners</p>
+          <p className="text-center text-base">For real, you will work and learn with hundreds of people around the world.</p>
 
-          <div className="flex flex-row gap-10 items-center justify-center max-w-3/5 mx-auto py-5">
-            <Image src={winfred} alt="biology" className="rounded-full w-[120px] h-[120px] " />
-            <div className="flex flex-col gap-2 ">
-              <p className="text-base text-gray-700">{`"My HackBio experience (and preprint) was my leverage for an interesting conversation with my interview with my Graduate School Admission Team."`}</p>
-              <p className="text-base font-bold pt-5">{`Winfred Gatua (Now in University of Bristol, UK)`}</p>
-            </div>
-          </div>
-            <div className="flex items-center justify-center">
-            {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
+          <Carousel>
+            <CarouselContent>
+              <CarouselItem>
+                {/**1 */}
+                <div className="flex flex-row gap-10 items-center justify-center max-w-3/5 mx-auto py-5">
+                  <Image src={winfred} alt="biology" className="rounded-full w-[100px]" />
+                  <div className="flex flex-col gap-2 ">
+                    <p className="text-sm text-gray-700">{`"My HackBio experience (and preprint) was my leverage for an interesting conversation with my interview with my Graduate School Admission Team."`}</p>
+                    <p className="text-base font-bold pt-5">{`Winfred Gatua (Now a bioinformatician at in University of Bristol, UK)`}</p>
+                  </div>
+                </div>
+
+              </CarouselItem>
+
+              <CarouselItem>
+                {/**2 */}
+                <div className="flex flex-row gap-10 items-center justify-center max-w-3/5 mx-auto py-5">
+                  <Image src={ayano} alt="biology" className="rounded-full w-[100px]" />
+                  <div className="flex flex-col gap-2 ">
+                    <p className="text-sm text-gray-700">{`"Through the [internship], I was introduced to the world of genomics and bioinformatics, gaining hands-on experience with tools and pipeline development that gave me a strong foundation. That single event helped me clarify my interests and set me on the data-driven biomedica path I walk today. I will always be grateful to the access, exposure and direction that came from that one LinkedIn post."`}</p>
+                    <p className="text-base font-bold pt-5">{`Temitope Ayano (Now a Data Analyst at GFA Tech, Nigeria)`}</p>
+                  </div>
+                </div>
+
+              </CarouselItem>
+              <CarouselItem>
+                {/**3 */}
+                <div className="flex flex-row gap-10 items-center justify-center max-w-3/5 mx-auto py-5">
+                  <Image src={adekoya} alt="adekoya" className="rounded-full w-[100px]" />
+                  <div className="flex flex-col gap-2 ">
+                    <p className="text-sm text-gray-700">{`"HackBio provided me with my first real-world bioinformatics project, allowing me to apply the skills I had been learning in a meaningful way. The experience bridged the gap between theory and practice, and completing the project gave me a huge confidence boost. The training phase at HackBio was also highly motivating, with constant help from mentors. It reinforced the importance of community and mentorship in learning technical skills."`}</p>
+                    <p className="text-base font-bold pt-5">{`Aanuoluwa Adekoya (Now a bioinformatician at in University of Tennessee, Knoxville, USA.)`}</p>
+                  </div>
+                </div>
+
+              </CarouselItem>
+
+              <CarouselItem>
+                {/**4 */}
+                <div className="flex flex-row gap-10 items-center justify-center max-w-3/5 mx-auto py-5">
+                  <Image src={barve} alt="barve" className="rounded-full w-[100px]" />
+                  <div className="flex flex-col gap-2 ">
+                    <p className="text-sm text-gray-700">{`"[I] started without a programming background. HackBio played a crucial role in my growth in bioinformatics by giving me hands-on experince in metagenomics analysis, team collaboration and leadership. The internship was structured in multiple stages with a final project."`}</p>
+                    <p className="text-base font-bold pt-5">{`Isha Barve (Now a bioinformatician at Lubeck University, Germany)`}</p>
+                  </div>
+                </div>
+
+              </CarouselItem>
+            </CarouselContent>
+            <CarouselPrevious className="bg-hb-green text-white h-[75px] w-[75px] text-4xl" />
+            <CarouselNext className="bg-hb-green text-white h-[75px] w-[75px] text-4xl" />
+          </Carousel>
+
+          
+            <div className="flex items-start justify-center">
+                <EnrollDialog />
             </div>
         </div>
 
@@ -297,7 +362,7 @@ export default function Page() {
       
     </div>
     {/**Mobile Version */}
-      <div className="max-w-full p-4  block md:hidden">
+      <div className="max-w-full p-4 pt-16 block md:hidden">
 
         {/* Hero Section */}
         <div className="flex flex-col gap-5 py-10">
@@ -349,6 +414,18 @@ export default function Page() {
             {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
         </div>
 
+        {/* Organizations */}
+        <div className="flex flex-col items-center gap-5">
+          <p className="text-lg font-bold text-center">
+            100+ Organizations have hired our graduates
+          </p>
+          <img
+            src={sm_testimonial.src}
+            alt="organizations-that-trust-hackbio"
+            className="w-full"
+          />
+        </div>
+
         {/* Audience Fit */}
         <div className="py-10">
             <p className="text-3xl font-bold text-center mb-10">Who is this course for?</p>
@@ -392,21 +469,48 @@ export default function Page() {
         </div> */}
 
         {/* Testimonial */}
-        <div className="bg-green-50 py-10 px-5">
-            <p className="text-2xl font-bold text-center mb-4">Join thousands of global learners</p>
-            <p className="text-center text-sm mb-6">For real, you will work and learn with people around the world.</p>
-            <div className="flex flex-col items-center text-center">
-            <Image src={winfred} alt="testimonial" className="rounded-full w-24 h-24 mb-4" />
-            <p className="text-base italic text-gray-700">
-                "My HackBio experience (and preprint) was my leverage for an interesting conversation with my Graduate School Admission Team."
-            </p>
-            <p className="text-sm font-bold pt-3">Winfred Gatua — University of Bristol, UK</p>
+        <div className="flex flex-col gap-5 py-5 items-center justify-start w-full">
+            {/**1 */}
+            <div className="flex flex-col gap-10 items-center bg-hb-lightgreen justify-center w-full mx-auto py-5 px-5">
+              <Image src={winfred} alt="biology" className="rounded-full w-[100px]" />
+              <div className="flex flex-col gap-2 items-center justify-center">
+                <p className="text-sm text-gray-700">{`"My HackBio experience (and preprint) was my leverage for an interesting conversation with my interview with my Graduate School Admission Team."`}</p>
+                <p className="text-base font-bold pt-5  text-center">{`Winfred Gatua (Now a bioinformatician at in University of Bristol, UK)`}</p>
+              </div>
             </div>
-            <div className="mt-6 flex justify-center">
-            {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
+
+
+         
+            {/**2 */}
+            <div className="flex flex-col gap-10 items-center bg-hb-lightgreen justify-center w-full mx-auto py-5 px-5">
+              <Image src={ayano} alt="biology" className="rounded-full w-[100px]" />
+              <div className="flex flex-col gap-2 items-center justify-center">
+                <p className="text-sm text-gray-700">{`"Through the [internship], I was introduced to the world of genomics and bioinformatics, gaining hands-on experience with tools and pipeline development that gave me a strong foundation. That single event helped me clarify my interests and set me on the data-driven biomedica path I walk today. I will always be grateful to the access, exposure and direction that came from that one LinkedIn post."`}</p>
+                <p className="text-base font-bold pt-5  text-center">{`Temitope Ayano (Now a Data Analyst at GFA Tech, Nigeria)`}</p>
+              </div>
+
             </div>
+          
+            {/**3 */}
+            <div className="flex flex-col gap-10 items-center bg-hb-lightgreen justify-center w-full mx-auto py-5 px-5">
+              <Image src={adekoya} alt="adekoya" className="rounded-full w-[100px]" />
+              <div className="flex flex-col gap-2 items-center justify-center">
+                <p className="text-sm text-gray-700">{`"HackBio provided me with my first real-world bioinformatics project, allowing me to apply the skills I had been learning in a meaningful way. The experience bridged the gap between theory and practice, and completing the project gave me a huge confidence boost. The training phase at HackBio was also highly motivating, with constant help from mentors. It reinforced the importance of community and mentorship in learning technical skills."`}</p>
+                <p className="text-base font-bold pt-5  text-center">{`Aanuoluwa Adekoya (Now a bioinformatician at in University of Tennessee, Knoxville, USA.)`}</p>
+              </div>
+            </div>
+
+            {/**4 */}
+            <div className="flex flex-col gap-10 items-center bg-hb-lightgreen justify-center w-full mx-auto py-5 px-5">
+              <Image src={barve} alt="barve" className="rounded-full w-[100px]" />
+              <div className="flex flex-col gap-2 items-center justify-center ">
+                <p className="text-sm text-gray-700">{`"[I] started without a programming background. HackBio played a crucial role in my growth in bioinformatics by giving me hands-on experince in metagenomics analysis, team collaboration and leadership. The internship was structured in multiple stages with a final project."`}</p>
+                <p className="text-base font-bold pt-5 text-center">{`Isha Barve (Now a bioinformatician at Lubeck University, Germany)`}</p>
+              </div>
+          </div>
+          </div>
         </div>
-        </div>
+        <Footer />
     </section>
   );
 }

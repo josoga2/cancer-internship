@@ -75,6 +75,7 @@ export default function Page() {
             </div>
             <Image src={keywords} alt="biology" className="w-1/2" />
         </div>
+        
 
         {/** Learning Paths */}
 

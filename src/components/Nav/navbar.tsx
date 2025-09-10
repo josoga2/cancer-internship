@@ -10,12 +10,16 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   
   return (
-    <main className='w-full'>
+    <main className='w-full fixed top-0 left-0 bg-white shadow-md z-50 pb-2'>
     <div className="hidden md:flex md:max-w-screen-lg bg md:m-auto md:items-center pt-5 md:justify-between">
-        <Link href='/'><Image src={hb_logo} alt='hb_log' width={40} height={40} /></Link>
+        <Link href='/' className='flex flex-row gap-3 items-center'> 
+          <Image src={hb_logo} alt='hb_log' width={35} height={35} /> 
+          <p className='font-bold hover:text-hb-green text-lg'>HackBio</p>
+        </Link>
         <div className='flex flex-row gap-10'>
           <a href='/internship'>Internships</a>
           <a href='/learning'>Career Paths</a>
+          <a href='/blog'>Blog</a>
           {/* <a href='/learning'>Career Paths</a> */}
         </div>
         <a href='/login'><button className='border-2  bg-hb-green rounded-lg px-5 text-white text-base font-semibold py-2'>Sign In/Up</button></a>
@@ -38,7 +42,8 @@ export default function Navbar() {
         {isOpen && (
           <div className="absolute top-full left-0 w-full bg-white shadow-lg px-6 py-6 flex flex-col gap-4 z-40 transition-all">
             <a href="/internship" className="text-lg font-medium text-black">Internships</a>
-            <a href="https://thehackbio.com/" className="text-lg font-medium text-black">Courses</a>
+            <a href="/learning" className="text-lg font-medium text-black">Courses</a>
+            <a href="/blog" className="text-lg font-medium text-black">Blog</a>
             {/* <a href='/learning' className="text-lg font-medium text-black">Career Paths</a> */}
             <a href="/login">
               <button className="border-2 border-black bg-hb-green rounded-lg px-6 text-white text-lg font-semibold py-2 w-full">

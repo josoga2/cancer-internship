@@ -305,25 +305,27 @@ function Page() {
           {username.charAt(0).toUpperCase() + username.slice(1).toLowerCase()}'s Learning Pathways
         </p>
 
-        <div className="flex flex-col gap-10 w-full px-10 pt-10">
+        <div className="flex flex-col gap-10 w-full px-5 pt-10">
+          <a
+            onClick={async () => {
+              try {
+                await api.post('/api/add-free-pathway/');
+                window.location.reload();
+              } catch (error) {
+                console.error("Error refreshing free course items:", error);
+              }
+            }}
+            className="px-10 py-3 w-fit border-black rounded-md border-2 hover:bg-hb-green text-white font-bold text-xl bg-green-600"
+          >
+            <button className="text-base">Refresh to access free course items</button>
+          </a>
           {pathwayList.length === 0 ? (
             <div className="flex flex-col gap-5 items-start justify-start w-full">
               <p className="text-gray-500">Nothing to see here yet.</p>
-              <a
-                onClick={async () => {
-                  try {
-                    await api.post('/api/add-free-pathway/');
-                    window.location.reload();
-                  } catch (error) {
-                    console.error("Error refreshing free course items:", error);
-                  }
-                }}
-                className="px-10 py-3 w-fit border-black rounded-md border-2 hover:bg-hb-green text-white font-bold text-xl bg-green-600"
-              >
-                <button>Refresh Free Course Items</button>
-              </a>
+              
             </div>
           ) : (
+            
             pathwayList.map((pathway) => (
               <div key={pathway.id}>
                 <UpcomingCourseCard

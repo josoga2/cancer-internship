@@ -9,6 +9,8 @@ import molmed from '../../../public/molmed.webp'
 import animals from '../../../public/animals.webp'
 import plantAnim from '../../../public/plants.webp'
 import cancers from '../../../public/cancer.webp'
+import sm_testimonial from '../../../public/sm_testimonial.svg'
+import testimonials from '../../../public/testimonials.svg'
 import { GoDotFill } from "react-icons/go";
 import Image from "next/image";
 import publicApi from "../../publicApi"
@@ -18,7 +20,13 @@ import Markdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import { EnrollLiteDialog } from "@/components/enroll/enrollLite";
+
+import ayano from '../../../public/ayano.jpeg'
+import adekoya from '../../../public/adekoya.jpeg'
+import barve from '../../../public/barve.jpeg'
+import Footer from "@/components/Nav/footer";
+import { Button } from "@/components/ui/button";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 
 
 
@@ -110,11 +118,21 @@ export default function Page() {
         <div className="py-5 h-full w-full flex flex-row  pt-10 justify-between items-center">
             <div className="flex flex-col gap-5">
             <p className="text-3xl font-bold text-start">Open Internship</p>
-            <p className="text-lg">Fast, Fun and Complete Bioinformatics Training</p>
+            <p className="text-lg">Comprehensive Bioinformatics Training</p>
             <EnrollDialog />
 
             </div>
             <Image src={keywords} alt="biology" className="w-2/5" />
+        </div>
+        <div className="flex flex-col py-10 items-center gap-5">
+          <p className="text-lg font-bold text-center">
+            100+ Organizations have hired our graduates
+          </p>
+          <img
+            src={testimonials.src}
+            alt="organizations-that-trust-hackbio"
+            className="w-full"
+          />
         </div>
 
         {/** Learning Paths */}
@@ -180,9 +198,72 @@ export default function Page() {
             </div>
         ))}
 
+        <div className="py-5 w-full h-full bg-hb-lightgreen flex flex-col gap-5 px-10">
+          <p className="text-xl font-bold text-center"> Join thousands of global learners</p>
+          <p className="text-center text-base">For real, you will work and learn with hundreds of people around the world.</p>
+
+          <Carousel>
+            <CarouselContent>
+              <CarouselItem>
+                {/**1 */}
+                <div className="flex flex-row gap-10 items-center justify-center max-w-3/5 mx-auto py-5">
+                  <Image src={winfred} alt="biology" className="rounded-full w-[100px]" />
+                  <div className="flex flex-col gap-2 ">
+                    <p className="text-sm text-gray-700">{`"My HackBio experience (and preprint) was my leverage for an interesting conversation with my interview with my Graduate School Admission Team."`}</p>
+                    <p className="text-base font-bold pt-5">{`Winfred Gatua (Now a bioinformatician at in University of Bristol, UK)`}</p>
+                  </div>
+                </div>
+
+              </CarouselItem>
+
+              <CarouselItem>
+                {/**2 */}
+                <div className="flex flex-row gap-10 items-center justify-center max-w-3/5 mx-auto py-5">
+                  <Image src={ayano} alt="biology" className="rounded-full w-[100px]" />
+                  <div className="flex flex-col gap-2 ">
+                    <p className="text-sm text-gray-700">{`"Through the [internship], I was introduced to the world of genomics and bioinformatics, gaining hands-on experience with tools and pipeline development that gave me a strong foundation. That single event helped me clarify my interests and set me on the data-driven biomedica path I walk today. I will always be grateful to the access, exposure and direction that came from that one LinkedIn post."`}</p>
+                    <p className="text-base font-bold pt-5">{`Temitope Ayano (Now a Data Analyst at GFA Tech, Nigeria)`}</p>
+                  </div>
+                </div>
+
+              </CarouselItem>
+              <CarouselItem>
+                {/**3 */}
+                <div className="flex flex-row gap-10 items-center justify-center max-w-3/5 mx-auto py-5">
+                  <Image src={adekoya} alt="adekoya" className="rounded-full w-[100px]" />
+                  <div className="flex flex-col gap-2 ">
+                    <p className="text-sm text-gray-700">{`"HackBio provided me with my first real-world bioinformatics project, allowing me to apply the skills I had been learning in a meaningful way. The experience bridged the gap between theory and practice, and completing the project gave me a huge confidence boost. The training phase at HackBio was also highly motivating, with constant help from mentors. It reinforced the importance of community and mentorship in learning technical skills."`}</p>
+                    <p className="text-base font-bold pt-5">{`Aanuoluwa Adekoya (Now a bioinformatician at in University of Tennessee, Knoxville, USA.)`}</p>
+                  </div>
+                </div>
+
+              </CarouselItem>
+
+              <CarouselItem>
+                {/**4 */}
+                <div className="flex flex-row gap-10 items-center justify-center max-w-3/5 mx-auto py-5">
+                  <Image src={barve} alt="barve" className="rounded-full w-[100px]" />
+                  <div className="flex flex-col gap-2 ">
+                    <p className="text-sm text-gray-700">{`"[I] started without a programming background. HackBio played a crucial role in my growth in bioinformatics by giving me hands-on experince in metagenomics analysis, team collaboration and leadership. The internship was structured in multiple stages with a final project."`}</p>
+                    <p className="text-base font-bold pt-5">{`Isha Barve (Now a bioinformatician at Lubeck University, Germany)`}</p>
+                  </div>
+                </div>
+
+              </CarouselItem>
+            </CarouselContent>
+            <CarouselPrevious className="bg-hb-green text-white h-[75px] w-[75px] text-4xl" />
+            <CarouselNext className="bg-hb-green text-white h-[75px] w-[75px] text-4xl" />
+          </Carousel>
+
+          
+            <div className="flex items-start justify-center">
+                <EnrollDialog />
+            </div>
+        </div>
+
 
         {/**LEARNING TRACKS */}
-        <div className="w-full">
+        <div className="w-full pt-10">
             <p className="w-full pb-10 text-center text-4xl font-bold">Learning Tracks</p>
             <div className="grid grid-cols-3 gap-10 items-start justify-start w-full">
                 <div className=" flex flex-col w-56 p-5 justify-start items-start gap-5 min-h-40 border-2 border-hb-green rounded-md ">
@@ -297,33 +378,30 @@ export default function Page() {
         </div>
 
 
-        <div className="py-10 w-full h-full bg-hb-green/25 flex flex-col gap-5 ">
-          <p className="text-5xl font-bold text-center"> Join thousands of global learners</p>
-          <p className="text-center">For real, you will work and learn with people around the world.</p>
-
-          <div className="flex flex-row gap-10 items-center justify-center w-3/5 mx-auto py-5">
-            <Image src={winfred} alt="biology" className="rounded-full " />
-            <div className="flex flex-col gap-2 ">
-              <p className="text-lg text-gray-700">{`"My HackBio experience (and preprint) was my leverage for an interesting conversation with my interview with my Graduate School Admission Team."`}</p>
-              <p className="text-base font-bold pt-5">{`Winfred Gatua (Now in University of Bristol, UK)`}</p>
-            </div>
-          </div>
-            <div className="flex items-center justify-center">
-                <EnrollDialog />
-            </div>
-        </div>
+        
 
       </div>
       </main>
       
         {/**MOBILE */}
         <main>
-        <div className="flex md:hidden flex-col gap-10 w-full p-5">
+        <div className="flex md:hidden flex-col gap-10 pt-20 w-full p-5">
             <Image src={keywords} alt="biology" className="w-full" />
             <div className="flex flex-col gap-4">
                 <p className="text-2xl font-bold text-start">Open Internships</p>
-                <p className="text-base">Fast, Fun and Complete Bioinformatics Training</p>
+                <p className="text-base">Comprehensive Bioinformatics Training</p>
                 <EnrollDialog />
+            </div>
+
+            <div className="flex flex-col items-center gap-5 py-5">
+                <p className="text-lg font-bold text-center">
+                    100+ Organizations have hired our graduates
+                </p>
+                <img
+                    src={sm_testimonial.src}
+                    alt="organizations-that-trust-hackbio"
+                    className="w-full"
+                />
             </div>
 
             
@@ -351,9 +429,9 @@ export default function Page() {
                                     const courseIds = (upcoming.courses ?? []).filter((id): id is string | number => id !== undefined);
                                     return courseIds.includes(course.id as string | number);    
                                     }
-                                ).map((course) => (
+                                ).map((course, ndx) => (
                     <a key={course.id} href={`learning/course/${course.id}`} className="flex flex-row items-center min-h-24 gap-3 border border-hb-green rounded-lg px-5 py-4 hover:bg-green-50">
-                        <p className="text-base font-bold">{idx+1}. {course.title} → </p>
+                        <p className="text-base font-bold">{ndx+1}. {course.title}  </p>
                     </a>
                     ))}
 
@@ -371,9 +449,50 @@ export default function Page() {
                 </div>
             ))}
 
-            <div className="w-full">
-                <p className="w-full pb-10 text-start text-2xl font-bold">Learning Tracks</p>
-                <div className="grid grid-cols-1 gap-10 items-center justify-start ">
+            <div className="flex flex-col gap-5 py-5 items-center justify-start w-full">
+            {/**1 */}
+            <div className="flex flex-col gap-10 items-center bg-hb-lightgreen justify-center w-full mx-auto py-5 px-5">
+              <Image src={winfred} alt="biology" className="rounded-full w-[100px]" />
+              <div className="flex flex-col gap-2 items-center justify-center">
+                <p className="text-sm text-gray-700">{`"My HackBio experience (and preprint) was my leverage for an interesting conversation with my interview with my Graduate School Admission Team."`}</p>
+                <p className="text-base font-bold pt-5  text-center">{`Winfred Gatua (Now a bioinformatician at in University of Bristol, UK)`}</p>
+              </div>
+            </div>
+
+
+         
+            {/**2 */}
+            <div className="flex flex-col gap-10 items-center bg-hb-lightgreen justify-center w-full mx-auto py-5 px-5">
+              <Image src={ayano} alt="biology" className="rounded-full w-[100px]" />
+              <div className="flex flex-col gap-2 items-center justify-center">
+                <p className="text-sm text-gray-700">{`"Through the [internship], I was introduced to the world of genomics and bioinformatics, gaining hands-on experience with tools and pipeline development that gave me a strong foundation. That single event helped me clarify my interests and set me on the data-driven biomedica path I walk today. I will always be grateful to the access, exposure and direction that came from that one LinkedIn post."`}</p>
+                <p className="text-base font-bold pt-5  text-center">{`Temitope Ayano (Now a Data Analyst at GFA Tech, Nigeria)`}</p>
+              </div>
+
+            </div>
+          
+            {/**3 */}
+            <div className="flex flex-col gap-10 items-center bg-hb-lightgreen justify-center w-full mx-auto py-5 px-5">
+              <Image src={adekoya} alt="adekoya" className="rounded-full w-[100px]" />
+              <div className="flex flex-col gap-2 items-center justify-center">
+                <p className="text-sm text-gray-700">{`"HackBio provided me with my first real-world bioinformatics project, allowing me to apply the skills I had been learning in a meaningful way. The experience bridged the gap between theory and practice, and completing the project gave me a huge confidence boost. The training phase at HackBio was also highly motivating, with constant help from mentors. It reinforced the importance of community and mentorship in learning technical skills."`}</p>
+                <p className="text-base font-bold pt-5  text-center">{`Aanuoluwa Adekoya (Now a bioinformatician at in University of Tennessee, Knoxville, USA.)`}</p>
+              </div>
+            </div>
+
+            {/**4 */}
+            <div className="flex flex-col gap-10 items-center bg-hb-lightgreen justify-center w-full mx-auto py-5 px-5">
+              <Image src={barve} alt="barve" className="rounded-full w-[100px]" />
+              <div className="flex flex-col gap-2 items-center justify-center ">
+                <p className="text-sm text-gray-700">{`"[I] started without a programming background. HackBio played a crucial role in my growth in bioinformatics by giving me hands-on experince in metagenomics analysis, team collaboration and leadership. The internship was structured in multiple stages with a final project."`}</p>
+                <p className="text-base font-bold pt-5 text-center">{`Isha Barve (Now a bioinformatician at Lubeck University, Germany)`}</p>
+              </div>
+          </div>
+            </div>
+
+            <div className="w-full text-start items-center justify-center">
+                <p className="w-full pb-10 text-center text-2xl font-bold">Learning Tracks</p>
+                <div className="grid grid-cols-1 gap-10 items-start justify-center w-full ">
                     <div className=" flex flex-col w-56 p-5 justify-start items-start gap-5 min-h-40 border-2 border-hb-green rounded-md ">
                         <Image src={microbe.src} alt="microbe" width={50} height={50} />
                         <p className="font-bold">Microbes and Viruses</p>
@@ -457,19 +576,11 @@ export default function Page() {
                 <EnrollDialog />
             </div>
 
-            <div className="bg-hb-green/25 py-10 px-5 flex flex-col gap-4 items-center">
-                <p className="text-3xl font-bold text-center">Join thousands of global learners</p>
-                <p className="text-center">You’ll work with peers from around the world.</p>
-                <div className="flex flex-col gap-2 items-center">
-                <Image src={winfred} alt="learner" className="rounded-full w-24 h-24" />
-                <p className="text-md text-gray-700 italic text-center">"My HackBio experience (and preprint) was my leverage for grad school admissions."</p>
-                <p className="text-base font-bold">Winfred Gatua – University of Bristol</p>
-                </div>
-                <EnrollDialog />
-            </div>
+            
             </div>
 
     </main>
+    <Footer />
     </section>
   );
 }

@@ -3,6 +3,7 @@ import { DM_Sans, Manrope } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner"
 import { GoogleAnalytics } from '@next/third-parties/google'
+import Footer from "@/components/Nav/footer";
 
 
 

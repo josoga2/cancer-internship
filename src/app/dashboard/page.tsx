@@ -91,6 +91,8 @@ function Page() {
   const [username, setUsername] = useState("");
   const router = useRouter()
 
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -159,7 +161,7 @@ function Page() {
     </div>
 
     {/** Mobile */}
-    <div className="block md:hidden w-full pb-20 min-h-[100svh]">
+    <div className="block md:hidden w-full pb-28 min-h-[100svh]">
 
           {/* Top Navbar - Logo + Menu */}
           <div className="flex flex-row items-center justify-between px-4 py-4 border-b bg-white">
@@ -176,19 +178,67 @@ function Page() {
           </div>
 
           {/* Navigation Tabs (from sidebar) */}
-          <div className="flex flex-row w-full bg-white border-b gap-3 justify-center px-4 py-4 space-y-2">
-            {tab_items.map((tab_item) => (
-              <a key={tab_item.id} href={tab_item.link}>
-                <div className="flex flex-row items-center gap-1 py-2 border w-fit px-3 rounded-full text-green-900">
-                  <tab_item.iconImage />
-                  <p className="text-sm">{tab_item.name}</p>
-                </div>
-              </a>
-            ))}
+          {/* Navigation Tabs (from sidebar) */}
+          {/* Drawer Toggle Button */}
+          <div className="flex items-center py-4 px-4">
+            <button
+              onClick={() => setDrawerOpen(true)}
+              aria-label="Open navigation"
+              className="p-2 rounded-md border border-gray-300 bg-white shadow-sm"
+            >
+              {/* Hamburger Icon */}
+              <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Drawer Overlay */}
+          {drawerOpen && (
+            <div
+              className="fixed inset-0 z-40 bg-black bg-opacity-30"
+              onClick={() => setDrawerOpen(false)}
+              aria-label="Close navigation overlay"
+            />
+          )}
+
+          {/* Drawer Panel */}
+          <div
+            className={`fixed top-0 left-0 z-50 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ${
+              drawerOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
+            style={{ willChange: "transform" }}
+          >
+            <div className="flex flex-row items-center justify-between px-4 py-4 border-b">
+              <div className="flex flex-row items-center gap-2">
+                <Image src={hb_logo} alt="HackBio logo" width={32} height={32} />
+                <p className="font-bold text-lg">HackBio</p>
+              </div>
+              <button
+                onClick={() => setDrawerOpen(false)}
+                aria-label="Close navigation"
+                className="p-2 rounded-md"
+              >
+                {/* Close Icon */}
+                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M6 6l12 12M6 18L18 6" />
+                </svg>
+              </button>
+            </div>
+            <div className="flex flex-col gap-2 px-4 py-4">
+              {tab_items.map((tab_item) => (
+                <a key={tab_item.id} href={tab_item.link} onClick={() => setDrawerOpen(false)}>
+                  <div className={`flex flex-row items-center gap-2 py-2 px-3 rounded-md ${tab_item.isActive ? "bg-green-100 text-hb-green font-bold" : "text-green-900"}`}>
+                    <tab_item.iconImage />
+                    <p className="text-sm">{tab_item.name}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
           </div>
 
           {/* Main Content */}
-          <div className="flex flex-col bg-green-50 gap-8 h-screen px-4 py-6 min-h-[100svh]">
+          <div className="flex flex-col bg-green-50 gap-8 h-screen px-4 py-6  min-h-[100svh]">
             <p className="font-bold text-xl">
               👋 Welcome back, {username.charAt(0).toUpperCase() + username.slice(1).toLocaleLowerCase()}
             </p>
