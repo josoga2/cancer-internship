@@ -10,7 +10,7 @@ import animals from '../../../public/animals.webp'
 import plantAnim from '../../../public/plants.webp'
 import cancers from '../../../public/cancer.webp'
 import sm_testimonial from '../../../public/sm_testimonial.svg'
-import testimonials from '../../../public/testimonials.svg'
+import testimonials from '../../../public/Testimonials.svg'
 import { GoDotFill } from "react-icons/go";
 import Image from "next/image";
 import publicApi from "../../publicApi"
