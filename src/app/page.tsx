@@ -31,6 +31,7 @@ import Navbar from "@/components/Nav/navbar";
 import { BookOpenCheck, BrainCircuit, Cable, Pill, Tablets } from "lucide-react";
 import Footer from "@/components/Nav/footer";
 import Markdown from "react-markdown";
+import Link from "next/link";
 
 
 export default function Home() {
@@ -48,7 +49,7 @@ export default function Home() {
             {/* <img src={hb_flow.src} alt="hb_flow" className="w-[550px] h-full py-5"/> */}
             <div className="flex flex-row gap-5 py-5">
               <a href="/internship"><Button className="bg-green-600 text-lg py-6 px-7 font-bold">Join an Internship</Button></a>
-              <a href="/internship"><Button className="bg-white border-2 border-hb-green text-hb-green hover:text-white text-lg py-6 px-7 font-bold">Hire Talents</Button></a>
+              <a href="/hire-talents"><Button className="bg-white border-2 border-hb-green text-hb-green hover:text-white text-lg py-6 px-7 font-bold">Hire Talents</Button></a>
             </div>
           </div>
           
@@ -106,7 +107,7 @@ export default function Home() {
               <li className="list-disc">  Zero overhead on your side, flexible engagement </li>
             </ul>
             <div className="flex flex-row gap-5 py-5">
-              <a href="/internship"><Button className="bg-green-600 text-lg py-6 px-7 font-bold">Hire Talents →</Button></a>
+              <a href="/hire-talents"><Button className="bg-green-600 text-lg py-6 px-7 font-bold">Hire Talents →</Button></a>
 
             </div>
 
@@ -316,7 +317,7 @@ Thousands of students in 100+ countries have already used HackBio to sharpen the
                 Join an Internship
               </Button>
             </a>
-            <a href="/internship">
+            <a href="/hire-talents">
               <Button className="bg-white border-2 border-hb-green text-hb-green hover:text-white text-base py-4 px-6 font-bold w-full">
                 Hire Talents
               </Button>
@@ -383,7 +384,7 @@ Thousands of students in 100+ countries have already used HackBio to sharpen the
             <li>Hire PhD students, Full-time, Freelancers and Contract-interns</li>
             <li>Zero overhead, flexible engagement</li>
           </ul>
-          <a href="/internship">
+          <a href="/hire-talents">
             <Button className="bg-green-600 text-base py-4 px-6 font-bold w-full">
               Hire Talents →
             </Button>
@@ -506,9 +507,10 @@ Thousands of students in 100+ countries have already used HackBio to sharpen the
             <CarouselNext className="bg-hb-green text-white h-[75px] w-[75px] text-4xl" /> */}
         </div>
 
-          <Button className="bg-green-600 text-base py-4 px-8 font-bold w-fit">
+          
+          <a href='/hire-talents'> <Button className="bg-green-600 text-base py-4 px-8 font-bold w-fit">
             Start Learning
-          </Button>
+          </Button></a>
         </div>
       </div>
 
