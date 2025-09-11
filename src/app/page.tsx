@@ -508,7 +508,7 @@ Thousands of students in 100+ countries have already used HackBio to sharpen the
         </div>
 
           
-          <a href='/hire-talents'> <Button className="bg-green-600 text-base py-4 px-8 font-bold w-fit">
+          <a href='/internship'> <Button className="bg-green-600 text-base py-4 px-8 font-bold w-fit">
             Start Learning
           </Button></a>
         </div>
