@@ -353,7 +353,8 @@ export default function Page() {
 
           
             <div className="flex items-start justify-center">
-                <EnrollDialog />
+                {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
+            
             </div>
         </div>
 
@@ -508,6 +509,8 @@ export default function Page() {
                 <p className="text-base font-bold pt-5 text-center">{`Isha Barve (Now a bioinformatician at Lubeck University, Germany)`}</p>
               </div>
           </div>
+          {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
+            
           </div>
         </div>
         <Footer />
