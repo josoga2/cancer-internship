@@ -202,6 +202,7 @@ export function EnrollDialog() {
             {isSubmitted && (
                 <div className="mt-4 p-4 bg-yellow-100 border border-yellow-300 rounded">
                     <p className="text-sm text-yellow-900">{paymentInstructions}</p>
+                    <p> Please note: payment is non-refundable once the internship starts</p>
                 </div>
             )}
           <DialogFooter>
