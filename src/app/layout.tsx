@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner"
 import { GoogleAnalytics } from '@next/third-parties/google'
 import Footer from "@/components/Nav/footer";
+import Banner from "@/components/Nav/Banner";
 
 
 
@@ -83,6 +84,7 @@ export default function RootLayout({
       <body
         className={`${dmSans}`}
       >
+        <Banner />
         <div className="min-h-[100svh] flex items-start justify-center">
             {children}
             <Toaster />

@@ -4,6 +4,7 @@ import hb_logo from '../../../public/hb_logo.png'
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react'
 import Link from 'next/link';
+import Banner from './Banner';
 
 
 export default function Navbar() {
@@ -11,6 +12,7 @@ export default function Navbar() {
   
   return (
     <main className='w-full fixed top-0 left-0 bg-white shadow-md z-50 pb-2'>
+       <Banner />
     <div className="hidden md:flex md:max-w-screen-lg bg md:m-auto md:items-center pt-5 md:justify-between">
         <Link href='/' className='flex flex-row gap-3 items-center'> 
           <Image src={hb_logo} alt='hb_log' width={35} height={35} /> 

@@ -108,7 +108,7 @@ export default function ContentPage() {
                     <div className="flex flex-col gap-5 w-full">
                         <h2 className="text-2xl font-bold">Latest Notes</h2>
                         {articles__.map((article) => (
-                            <div key={article.id} onClick={()=>{router.replace(`blog/${article.slug}`)}} className="flex flex-row gap-5 p-5 border rounded-md justify-between border-gray-200 hover:shadow-lg transition-shadow duration-300">
+                            <div key={article.id} onClick={()=>{router.push(`blog/${article.slug}`)}} className="flex flex-row gap-5 p-5 border rounded-md justify-between border-gray-200 hover:shadow-lg transition-shadow duration-300">
                                 <div className="flex flex-col gap-5 w-[550px]">
                                     <h3 className="text-xl font-semibold hover:cursor-pointer">{article.title}</h3>
                                     <p className="text-gray-600">{article.excerpt}</p>
@@ -155,7 +155,7 @@ export default function ContentPage() {
                     {articles__.map((article) => (
                     <div 
                         key={article.id} 
-                        onClick={() => router.replace(`blog/${article.slug}`)} 
+                        onClick={() => router.push(`blog/${article.slug}`)} 
                         className="flex flex-col gap-3 p-4 border rounded-md border-gray-200 hover:shadow-lg transition-shadow duration-300"
                     >
                         {/* Image */}

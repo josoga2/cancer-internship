@@ -106,7 +106,7 @@ export default function ContentPage() {
         
         <main>
             <Navbar />
-            <section className="hidden md:flex md:max-w-screen-lg bg md:m-auto md:items-center pt-5 md:justify-between">
+            <section className="hidden md:flex md:max-w-screen-lg bg md:m-auto md:items-center pt-24 md:justify-between">
                 <div className="flex flex-col items-start justify-start gap-5  max-w-3xl min-w-3xl">
                     <Link href="/blog" className="flex flex-row gap-2 items-center font-bold text-xl hover:underline"> <BiArrowBack /> All Articles </Link>
                     <div className="flex flex-col gap-5 w-full">
@@ -158,7 +158,13 @@ export default function ContentPage() {
                                             )}
                                         </div>
                                     </div>
-                                    <div className="flex flex-col w-full pt-10 px-5 prose prose-base leading-tight">
+                                    <div className="flex items-center gap-5 pt-5 px-5">
+                                        {article.author?.avatar && (
+                                            <img src={article.author.avatar} alt={article.author.name} className="w-15 h-15 rounded-full  border-2 border-hb-green" />
+                                        )}
+                                        <span className="text-lg text-black font-bold">{article.author?.name}</span>
+                                    </div>
+                                    <div className="flex flex-col w-full pt-10 px-5 prose prose-base leading-relaxed">
                                         {article.content_type === "md" ? (
                                             <Markdown
                                             remarkPlugins={[
@@ -219,7 +225,7 @@ export default function ContentPage() {
                         </div>
 
                         {/* Content */}
-                        <div className="prose max-w-none text-sm prose-base leading-tight">
+                        <div className="prose max-w-none text-sm prose-base leading-relaxed">
                         {article.content_type === "md" ? (
                             <Markdown
                             remarkPlugins={[remarkGfm, remarkMath, remarkDeflist]}
