@@ -66,9 +66,9 @@ const ImageGenerator = () => {
           position: 'relative',
           overflow: 'hidden',
         }}
-        className='rounded-lg shadow-lg bg-gradient-to-b from-white via-hb-lightgreen to-hb-green'
+        className='rounded-lg shadow-lg bg-gradient-to-b from-white via-hb-lightgreen to-hb-green '
       >
-        <div className='w-full flex justify-center items-start absolute top-6 left-0'>
+        <div className='w-full flex justify-center items-start'>
           <div className='bg-[#27AE60] text-[#ffffff] px-2 py-2 text-xl rounded-full font-bold flex items-center justify-center'>
             HB
           </div>
