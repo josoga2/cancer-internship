@@ -6,7 +6,7 @@ import html2canvas from 'html2canvas-pro';
 const ImageGenerator = () => {
   const [name, setName] = useState('');
   const [program, setProgram] = useState('New Generation Sequencing (NGS)');
-  const [title, setTitle] = useState('I just got into the HackBio Program');
+  const [title, setTitle] = useState('I just got into HackBio 🎉!');
   const [announcement, setAnnouncement] = useState('I am excited to announce that I got into the Hackbio NGS Internship bioinformatics program 🎉');
   const [hashtag, setHashtag] = useState('#HackBioNGS25');
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
