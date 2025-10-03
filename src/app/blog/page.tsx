@@ -3,6 +3,7 @@ import publicApi from "@/publicApi";
 import Navbar from "@/components/Nav/navbar";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Footer from "@/components/Nav/footer";
 
 
 export default function ContentPage() {
@@ -98,7 +99,7 @@ export default function ContentPage() {
         
         <main>
             <Navbar />
-            <section className="hidden md:flex md:max-w-screen-lg bg md:m-auto md:items-center pt-5 md:justify-between">
+            <section className="hidden md:flex md:max-w-screen-lg bg md:m-auto md:items-center pt-5 md:justify-between py-20">
                 <div className="flex flex-col items-start justify-start gap-5  max-w-3xl min-w-3xl">
                     <div className="flex flex-col h-[280px] w-full gap-5 justify-center p-5 items-start bg-hb-lightgreen">
                         <h1 className="text-2xl font-bold">DNA and Dreams</h1>
@@ -196,7 +197,7 @@ export default function ContentPage() {
                     </div>
                     ))}
                 </div>
-                <div className="flex flex-col pt-5 px-3 gap-5">
+                <div className="flex flex-col pt-5 px-3 gap-5 pb-20">
                         <hr className="border-gray-300" />
                         <p className="text-lg font-bold">Subscribe</p>
                         <input type="text" placeholder="What should we call you" className="w-[250px] p-2 border text-sm border-gray-300 rounded-md" value={name} onChange={(e)=>setName(e.target.value)} />
@@ -204,7 +205,7 @@ export default function ContentPage() {
                         <button onClick={handleSubmit} className="bg-hb-green w-[125px] text-white  p-2 rounded-md  hover:bg-hb-lightgreen text-sm hover:text-hb-green cursor-pointer">Subscribe</button>
                     </div>
                 </section>
-
+            <Footer />
         </main>
     );
 }
