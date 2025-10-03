@@ -7,7 +7,7 @@ export default function Banner() {
         <span className="font-semibold">New Internship: </span>
         The Future of Genomics Is Single-Cell Genomics.{" "}
         <p className="underline inline-block">
-          Enroll For the Internship Now
+          Enroll For the Internship {"(Closes Oct 26)"}
         </p>
         </a>
       </div>

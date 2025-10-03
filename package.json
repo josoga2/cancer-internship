@@ -32,6 +32,8 @@
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.23.12",
     "highlight.js": "^11.11.1",
+    "html2canvas": "^1.4.1",
+    "html2canvas-pro": "^1.5.11",
     "jwt-decode": "^4.0.0",
     "katex": "^0.16.22",
     "lucide-react": "^0.511.0",
