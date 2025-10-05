@@ -1,48 +1,45 @@
+'use client';
 import Footer from "@/components/Nav/footer";
 import Navbar from "@/components/Nav/navbar";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
-
-const scholarships = [
-  {
-    id: 1,
-    title: "CMESBAHF Scholarship",
-    sponsor: "CMESBAHF",
-    logo: "https://cmesbahf.ng/wp-content/uploads/2024/10/Untitled-design-4.png",
-    type: "Full Funding",
-    location: "For Nigerian Students",
-    status: "Closed",
-    description:
-      "Covers full HackBio program fees for 10 interns focused on genomics and sequencing analytics.",
-    link: "https://cmesbahf.ng/",
-  },
-  {
-    id: 2,
-    title: "FolaChen Data Science in Biology Grant",
-    sponsor: "FolaChen Foundation",
-    logo: "https://scontent-fra3-1.xx.fbcdn.net/v/t39.30808-1/300222898_152954100677650_3786152531385876809_n.jpg?stp=dst-jpg_s480x480_tt6&_nc_cat=103&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=uuWnlXACIvsQ7kNvwGue062&_nc_oc=Adns4352dDTjvlqOotuDd5IfwnjvjAn1yLLJfWA3wqc82u769WkBJKGEsPQ3rU0asfk&_nc_zt=24&_nc_ht=scontent-fra3-1.xx&_nc_gid=tidCiE1HVZSq9WBd7FpVzw&oh=00_AffOAsYOx8s2m7hTWaLNswfquNgZopAGbDJri6pzcUaIKA&oe=68E60FED",
-    type: "Full Funding",
-    location: "Global",
-    status: "Closed",
-    description:"",
-    link: "https://www.linkedin.com/posts/folachen-foundation_weve-got-10-scholarship-slots-open-the-activity-7362043086966788097-0w8X?utm_source=share&utm_medium=member_desktop&rcm=ACoAABHW2ewB7z0YF8sawzQa7InBaBqrAzDXPUE",
-  },
-  {
-    id: 3,
-    title: "Akinjide Anifowose Grant",
-    sponsor: "Akinjide Anifowose",
-    logo: "https://media.licdn.com/dms/image/v2/D4E03AQFzPvI6NiHoow/profile-displayphoto-scale_200_200/B4EZg3RNBpGwAc-/0/1753273914632?e=1762387200&v=beta&t=73Akv96kaK43O2tLvhqHcrKy4k-WW-sgNamyjSZ1ym8",
-    type: "Full Funding",
-    location: "Global",
-    status: "Closed",
-    description:"",
-    link: "https://www.linkedin.com/posts/folachen-foundation_weve-got-10-scholarship-slots-open-the-activity-7362043086966788097-0w8X?utm_source=share&utm_medium=member_desktop&rcm=ACoAABHW2ewB7z0YF8sawzQa7InBaBqrAzDXPUE",
-  },
-];
+import { useState } from "react";
+import { useRouter } from 'next/navigation';
+import publicApi from "@/publicApi";
 
 export default function DocumentDownloader() {
-  // Sort scholarships in descending order by ID
-  const sortedScholarships = [...scholarships].sort((a, b) => b.id - a.id);
+
+    const [email, setEmail] = useState('');
+    const [name, setName] = useState('');
+    const [error, setError] = useState('');
+    const router = useRouter();
+
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+
+        try {
+            const submitResponse = await publicApi.post("/api/attempted-payment/", {
+                    name: name,
+                    email: email,
+                    payment_method: "job-report",
+                });
+            if (submitResponse.status === 200 || submitResponse.status === 201) {
+                // Handle successful registration, e.g., redirect to login page
+                setError('You are successfully registered.');
+                
+                
+                router.replace('https://zenodo.org/records/13944541/files/BFX_2024.pdf.pdf?download=1');
+            } else {
+                setError('You are successfully registered. Please check your email to verify your registeration.');
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            setError('Either a User with the same credentials exist or Invalid Email or Password.');
+        }
+    };
+
+
 
   return (
     <div>
@@ -54,7 +51,7 @@ export default function DocumentDownloader() {
           Trends, Top Locations and In-Demand Skills in Bioinformatics.
         </p>
         <p className="text-base max-w-2xl mx-auto py-2 text-black font-bold">
-          Authors: Flora Oladipupo, Paschal Ugwu, Zion Oluwasegun, HackBio
+          Authors: Flora Oladipupo, Paschal Ugwu, Zion Oluwasegun, HackBio Team
         </p>
       </section>
 
@@ -73,9 +70,9 @@ export default function DocumentDownloader() {
         <div className="pr-10 flex flex-col items-start gap-3">
             <img src="https://github.com/HackBio-Internship/2025_project_collection/blob/main/RoGsdCGIeXV.png?raw=true" alt="Bioinformatics Jobs 2024 Report Cover" className=" rounded-lg w-full h-full" />
             <label className="font-bold text-lg mb-2">Download the Full Report</label>
-            <input type="email" placeholder="Enter your email" className="w-full p-2 px-5 border border-gray-300 rounded-md mb-4" />
-            <input type="text" placeholder="Enter your name" className="w-full p-2 px-5 border border-gray-300 rounded-md mb-4" />
-            <Button className="w-full bg-hb-green hover:bg-green-700 text-white py-6 text-lg rounded-md flex items-center justify-center">
+            <input type="email" placeholder="Enter your email" className="w-full p-2 px-5 border border-gray-300 rounded-md mb-4" value={email} onChange={(e) => setEmail((e.target as HTMLInputElement).value)} required />
+            <input type="text" placeholder="Enter your name" className="w-full p-2 px-5 border border-gray-300 rounded-md mb-4" value={name} onChange={(e) => setName((e.target as HTMLInputElement).value)} required />
+            <Button className="w-full bg-hb-green hover:bg-green-700 text-white py-6 text-lg rounded-md flex items-center justify-center" onClick={handleLogin} >
                 Download Report <ExternalLink className="ml-2" />
             </Button>
             <p className="text-xs text-gray-500 mt-2">By providing your email, you agree to receive communications from HackBio. You can unsubscribe at any time.</p>
