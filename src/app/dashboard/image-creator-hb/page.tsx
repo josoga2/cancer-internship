@@ -55,8 +55,8 @@ const ImageGenerator = () => {
       <div
         ref={templateRef}
         style={{
-          width: '500px',
-          height: '600px',
+          width: '450px',
+          height: '570px',
           backgroundColor: '#f0f8ff',
           display: 'flex',
           flexDirection: 'column',
@@ -69,29 +69,40 @@ const ImageGenerator = () => {
         }}
         className='rounded-lg shadow-lg bg-gradient-to-b from-white via-hb-lightgreen to-hb-green '
       >
-        <div className='w-full flex justify-center items-start'>
-          <div className='bg-[#27AE60] text-[#ffffff] px-2 py-2 text-xl rounded-full font-bold flex items-center justify-center'>
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+          <div
+            style={{
+              backgroundColor: '#27AE60',
+              color: '#ffffff',
+              padding: '7px',
+              fontSize: '1.25rem',
+              borderRadius: '9px',
+              fontWeight: 'bold',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             HB
           </div>
         </div>
         
-        <h1 style={{ marginTop: '50px', textAlign: 'center', fontSize: '24px' }} className='font-bold'>{title}</h1>
+        <h1 style={{ marginTop: '24px', textAlign: 'center', fontSize: '24px' }} className='font-bold'>{title}</h1>
         
         <div style={{
           width: '200px',
           height: '200px',
           borderRadius: '50%',
           overflow: 'hidden',
-          margin: '20px 0',
           background: 'linear-gradient(to bottom, #34d399, #10b981, #047857)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
         }}>
           {uploadedImage ? (
-            <img src={uploadedImage} alt="Uploaded" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={uploadedImage} alt="Uploaded" style={{ width: '200px', height: '200px', objectFit: 'cover' }} />
           ) : (
-            <div style={{ textAlign: 'center' }}>Your Image Appears Here</div>
+            <div style={{ textAlign: 'center', color: 'white' }}>Your Image Appears Here</div>
           )}
         </div>
         
