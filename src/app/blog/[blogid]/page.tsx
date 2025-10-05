@@ -1,4 +1,5 @@
 "use client";
+import Footer from "@/components/Nav/footer";
 import Navbar from "@/components/Nav/navbar";
 import publicApi from "@/publicApi";
 import Link from "next/link";
@@ -265,6 +266,7 @@ export default function ContentPage() {
                     </div>
                     ))}
                 </section>
+                <Footer />
 
         </main>
     );

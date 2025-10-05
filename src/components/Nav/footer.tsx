@@ -23,13 +23,14 @@ export default function Footer() {
           </div>
           <div className='flex flex-col gap-2'> 
             <Link href='/learning'>Career Pathways</Link>
-            <Link href='/learning'>Courses</Link>
+            <Link href='/pathway/1'>Biocomputing</Link>
+            <Link href='/pathway/2'>Genome Data Science</Link>
+            
           </div>
           <div className='flex flex-col gap-2'> 
             <Link href='/blog'>Blog and articles</Link>
-            <Link href='/'>Genomics</Link>
-            <Link href='/'>Biomedical AI</Link>
-            <Link href='/'>Drug Development</Link>
+            <Link href='/job-report'>BFX Job Report 2024</Link>
+            <Link href='/blog/ai-revolution-at-hackbio-starts-with-ngs'>Our AI Revolution</Link>
           </div>
           <div className='flex flex-col gap-2'> 
             <Link href='/'>About Us</Link>

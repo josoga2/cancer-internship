@@ -19,6 +19,7 @@ import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import { useParams } from "next/navigation";
+import Footer from "@/components/Nav/footer";
 
 
 
@@ -475,6 +476,7 @@ export default function Page() {
             </div>
 
     </main>
+    <Footer />
     </section>
   );
 }
