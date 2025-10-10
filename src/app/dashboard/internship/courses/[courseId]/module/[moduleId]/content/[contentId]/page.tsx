@@ -1114,20 +1114,20 @@ return (
                 {/**Certificate */}
                 {content.content_type === 'certificate' && (
                     <div className="w-full flex flex-row gap-5">
-                        <div className="border-2 rounded-md border-hb-green p-10 flex flex-col gap-2 w-full">
-                            <p className="font-bold text-lg">
+                        <div className="border-2 rounded-md border-hb-green p-5 flex flex-col gap-2 w-[1500px]">
+                            <p className="font-bold text-base">
                                 Process Your Certificates
                             </p>
-                            <Card className='w-full border-none shadow-none'>
+                            <Card className='w-full border-none shadow-none text-sm'>
                                 <CardHeader className='text-center'>
                                     {/* <CardTitle className="text-base">Login</CardTitle> */}
                                 </CardHeader>
                                 <CardContent>
-                                    <form className="space-y-5" onSubmit={(e) => {e.preventDefault()}}>
+                                    <form className="space-y-3" onSubmit={(e) => {e.preventDefault()}}>
                                             
                                         <div className="grid gap-2">
-                                            <Label htmlFor="name" className='text-xl'>Your Full Name {`(Official order and Preference)`}</Label>
-                                            <Input id="name" type="text" placeholder="Your Name" required value={officialName} onChange={(e)=> setOfficialName(e.target.value)} className='bg-blue-50 text-xl placeholder:text-xl py-6' />
+                                            <Label htmlFor="name" className=''>Your Full Name {`(Official order and Preference)`}</Label>
+                                            <Input id="name" type="text" placeholder="Your Name" required value={officialName} onChange={(e)=> setOfficialName(e.target.value)} className='bg-blue-50 text-base placeholder:text-base py-6' />
                                         </div>
                                         
                                         <p>Your Total XP: {userXP}XP</p>
