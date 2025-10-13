@@ -575,8 +575,8 @@ return (
                         </div>
                         <div className="font-bold w-full p-3 text-lg border rounded-md border-hb-green"> 
                             {uniqueContentId >0 && totalContent>0 ? (<div className="flex flex-row gap-10 items-center max-w-full"> 
-                                <Progress value={Math.ceil((Number(uniqueContentId)/Number(totalContent))*100)} className=""/> 
-                                <p className="font-bold text-2xl rounded-full"> {Math.ceil((Number(uniqueContentId)/Number(totalContent))*100)}% </p> 
+                                <Progress value={(Math.min(Math.ceil((Number(uniqueContentId) / Number(totalContent)) * 100), 100))} className=""/> 
+                                <p className="font-bold text-2xl rounded-full"> {(Math.min(Math.ceil((Number(uniqueContentId) / Number(totalContent)) * 100), 100))}% </p> 
                             </div>) : <div className="h-3 w-10"></div>}
                         </div>
                         
@@ -1131,7 +1131,7 @@ return (
                                         </div>
                                         
                                         <p>Your Total XP: {userXP}XP</p>
-                                        <p>Your Total Internship Grade: {Math.ceil((Number(uniqueContentId)/Number(totalContent))*100)}%</p>
+                                        <p>Your Total Internship Grade: {(Math.min(Math.ceil((Number(uniqueContentId) / Number(totalContent)) * 100), 100))}%</p>
                                             
                                         
                                             {cert ? <Button disabled>Generate</Button>:
@@ -1208,8 +1208,8 @@ return (
                         {/* Progress */}
                         {uniqueContentId > 0 && totalContent > 0 && (
                             <div className="flex items-center gap-4 border-2 border-green-600 p-5 rounded-md">
-                                <Progress value={Math.ceil((Number(uniqueContentId)/Number(totalContent))*100)} />
-                                <p className="text-xs font-bold">{Math.ceil((Number(uniqueContentId)/Number(totalContent))*100)}%</p>
+                                <Progress value={(Math.min(Math.ceil((Number(uniqueContentId) / Number(totalContent)) * 100), 100))} />
+                                <p className="text-xs font-bold">{(Math.min(Math.ceil((Number(uniqueContentId) / Number(totalContent)) * 100), 100))}%</p>
                             </div>
                         )}
 
@@ -1410,7 +1410,7 @@ return (
                                 <Label htmlFor="name">Your Full Name</Label>
                                 <Input id="name" value={officialName} onChange={(e) => setOfficialName(e.target.value)} />
                                 <p>Total XP: {userXP}</p>
-                                <p>Grade: {Math.ceil((Number(uniqueContentId)/Number(totalContent))*100)}%</p>
+                                <p>Grade: {(Math.min(Math.ceil((Number(uniqueContentId) / Number(totalContent)) * 100), 100))}%</p>
                                 {cert ? <Button disabled>Generate</Button>:
                                  (<Button className='w-fit bg-green-600 text-white text-xl py-6 hover:bg-green-700' onClick={handleGenCertificate}>
                                                 GENERATE
