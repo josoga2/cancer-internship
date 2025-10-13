@@ -488,7 +488,7 @@ function Page() {
         try {
             const response = await api.post('/api/generate-certificate/', {
                 name: officialName,
-                xp: (Math.ceil((Number(uniqueContentId)/Number(totalContent))*100)).toString(),
+                xp: (Math.min(Math.ceil((Number(uniqueContentId) / Number(totalContent)) * 100), 100)).toString(),
                 internship_title: 'Next Generation Sequencing 2025 Internship',
             },
             {responseType: 'blob'} // Ensure the response is treated as a blob for file download
