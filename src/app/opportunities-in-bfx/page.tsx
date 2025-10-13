@@ -69,12 +69,21 @@ const scholarships = [
   },
   {
     id: 8,
-    title: "",
-    sponsor: "Government of Ireland Postgraduate Scholarship Programme",
+    title: "Government of Ireland Postgraduate Scholarship Programme",
+    sponsor: "Government of Ireland ",
     type: "MSc, PhD",
     location: "Ireland",
     status: "Open",
     link: "https://www.researchireland.ie/funding/government-ireland-postgraduate/",
+  },
+  {
+    id: 8,
+    title: "Understanding How Anaerobic Bacteria Cause Prostate Cancer",
+    sponsor: "Understanding How Anaerobic Bacteria Cause Prostate Cancer",
+    type: "PhD",
+    location: "UK",
+    status: "Open",
+    link: "https://www.uea.ac.uk/course/phd-doctorate/phd-from-microbiome-to-medicine-understanding-how-anaerobic-bacteria-cause-prostate-cancer-coopercu26medbcct-",
   },
 ];
 
