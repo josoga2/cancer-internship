@@ -77,7 +77,7 @@ const scholarships = [
     link: "https://www.researchireland.ie/funding/government-ireland-postgraduate/",
   },
   {
-    id: 8,
+    id: 9,
     title: "Understanding How Anaerobic Bacteria Cause Prostate Cancer",
     sponsor: "Understanding How Anaerobic Bacteria Cause Prostate Cancer",
     type: "PhD",
