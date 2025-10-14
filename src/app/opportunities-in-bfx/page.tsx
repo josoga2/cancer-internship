@@ -85,6 +85,42 @@ const scholarships = [
     status: "Open",
     link: "https://www.uea.ac.uk/course/phd-doctorate/phd-from-microbiome-to-medicine-understanding-how-anaerobic-bacteria-cause-prostate-cancer-coopercu26medbcct-",
   },
+  {
+    id: 10,
+    title: "Call for poster abstracts and applications for the start-up pitch",
+    sponsor: "INCATE, AMR Conference",
+    type: "Poster Award",
+    location: "UK",
+    status: "Open",
+    link: "https://amr-conference.com/call-for-abstracts/",
+  },
+  {
+    id: 11,
+    title: "Microbiota, gut-neuron signalling and ageing",
+    sponsor: "University of Glasgow",
+    type: "PhD",
+    location: "Scotland",
+    status: "Open",
+    link: "https://www.linkedin.com/posts/adam-dobson-4a05242b8_microbiota-ageing-activity-7383630481772281856-dXem?utm_source=share&utm_medium=member_desktop&rcm=ACoAABHW2ewB7z0YF8sawzQa7InBaBqrAzDXPUE",
+  },
+  {
+    id: 12,
+    title: "Mastercard Foundation Scholars Program at the University of Edinburgh",
+    sponsor: "MasterCard",
+    type: "MSc",
+    location: "UK",
+    status: "Open",
+    link: "https://www.linkedin.com/posts/mcfscholarsed_mastercard-foundation-scholars-program-edinburgh-ugcPost-7383574511922872320-HD15?utm_source=share&utm_medium=member_desktop&rcm=ACoAABHW2ewB7z0YF8sawzQa7InBaBqrAzDXPUE",
+  },
+  {
+    id: 13,
+    title: "Upsurge Grants",
+    sponsor: "Upsurge",
+    type: "Grant",
+    location: "Global",
+    status: "Open",
+    link: "https://grants.upsurge.io",
+  },
 ];
 
 export default function ScholarshipPage() {
