@@ -121,6 +121,15 @@ const scholarships = [
     status: "Open",
     link: "https://grants.upsurge.io",
   },
+  {
+    id: 14,
+    title: "SFD-RNA Institute Virtual Research Traineeship 2026",
+    sponsor: "University of Albany",
+    type: "Internship",
+    location: "Global",
+    status: "Open",
+    link: "https://www.linkedin.com/posts/stem-for-development_global-research-opportunity-virtual-research-activity-7385283745517588480-pD5d/?utm_source=share&utm_medium=member_ios&rcm=ACoAABHW2ewB7z0YF8sawzQa7InBaBqrAzDXPUE",
+  },
 ];
 
 export default function ScholarshipPage() {
