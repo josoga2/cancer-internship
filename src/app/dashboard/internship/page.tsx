@@ -185,16 +185,32 @@ function Page() {
           <div className="">
         <p className="px-10 font-bold text-2xl"> {username.charAt(0).toUpperCase() + username.slice(1).toLocaleLowerCase()}'s Internships </p>
         <div className="flex flex-col gap-10 w-full px-10 pt-10">
-          {internshipList.map((internship) => (
-            <div key={internship.id}>
+          {internshipList.length !== 0 ? (
+            internshipList.map((internship) => (
+              <div key={internship.id}>
+                <UpcomingCourseCard
+                  desc={internship.overview ?? ""}
+                  image={internship.int_image ?? "/"}
+                  directTo={'/dashboard/internship/courses'}
+                  title={internship.title ?? ""}
+                  weeks={internship.lenght_in_weeks ?? 0}
+                  lessons={0}
+                />
+              </div>
+            ))
+          ) : (
+            <div>
               <UpcomingCourseCard
-                desc={internship.overview ?? ""}
-                image={internship.int_image ?? "/"}
-                directTo={'/dashboard/internship/courses'}
-                title={internship.title ?? ""}
-                weeks={internship.lenght_in_weeks ?? 0} lessons={0} />
+                  desc={`If you are enrolled for an internship and this is still empty after 24 hours, please write to contact@thehackbio.com. We would fix it 😊.`}
+                  image={"https://internship.thehackbio.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhb_logo.a812b2f6.png&w=96&q=75"}
+                  directTo={'/dashboard/internship'}
+                  title={`Nothing to show here yet`}
+                  weeks={0}
+                  lessons={0}
+                />
             </div>
-          ))}
+            
+          )}
         </div>
 
           </div>
@@ -284,17 +300,32 @@ function Page() {
         </p>
 
         <div className="flex flex-col gap-6 items-center pb-20 min-h-[100svh]">
-          {internshipList.map((internship) => (
-            <UpcomingCourseCard
-              key={internship.id}
-              desc={internship.overview ?? ""}
-              image={internship.int_image ?? "/"}
-              directTo="/dashboard/internship/courses"
-              title={internship.title ?? ""}
-              weeks={internship.lenght_in_weeks ?? 0}
-              lessons={0}
-            />
-          ))}
+          {internshipList.length !== 0 ? (
+            internshipList.map((internship) => (
+              <div key={internship.id}>
+                <UpcomingCourseCard
+                  desc={internship.overview ?? ""}
+                  image={internship.int_image ?? "/"}
+                  directTo={'/dashboard/internship/courses'}
+                  title={internship.title ?? ""}
+                  weeks={internship.lenght_in_weeks ?? 0}
+                  lessons={0}
+                />
+              </div>
+            ))
+          ) : (
+            <div>
+              <UpcomingCourseCard
+                  desc={`If you are enrolled for an internship and this is still empty after 24 hours, please write to contact@thehackbio.com. We would fix it 😊.`}
+                  image={"https://internship.thehackbio.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhb_logo.a812b2f6.png&w=96&q=75"}
+                  directTo={'/dashboard/internship'}
+                  title={`Nothing to show here yet`}
+                  weeks={0}
+                  lessons={0}
+                />
+            </div>
+            
+          )}
         </div>
       </div>
 
