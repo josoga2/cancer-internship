@@ -130,6 +130,15 @@ const scholarships = [
     status: "Open",
     link: "https://www.linkedin.com/posts/stem-for-development_global-research-opportunity-virtual-research-activity-7385283745517588480-pD5d/?utm_source=share&utm_medium=member_ios&rcm=ACoAABHW2ewB7z0YF8sawzQa7InBaBqrAzDXPUE",
   },
+  {
+    id: 15,
+    title: "Exploring the frontiers of pandemic preparedness",
+    sponsor: "University of Cape Town",
+    type: "MSc, PhD",
+    location: "Global",
+    status: "Open",
+    link: "https://www.linkedin.com/posts/jinal-bhiman-705275104_we-are-looking-for-driven-passionate-and-activity-7384330644752941056-iiSB/?utm_source=share&utm_medium=member_ios&rcm=ACoAABHW2ewB7z0YF8sawzQa7InBaBqrAzDXPUE",
+  },
 ];
 
 export default function ScholarshipPage() {

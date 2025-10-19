@@ -51,52 +51,48 @@ export default function Login() {
     };
 
     return (
-        <main className='max-w-full w-full py-10   flex flex-col  items-center justify-center'>
-            <div className='hidden md:flex max-w-1/4 w-[1000px] py-2  flex-col gap-5 items-center justify-center'>
+        <main className="max-w-full w-full py-10 flex flex-col h-screen items-center justify-center bg-gradient-to-b from-white via-hb-lightgreen to-hb-lightgreen">
+            <div className='hidden md:flex w-[350px] py-5 bg-white  flex-col gap-2 items-center justify-center border-2 border-gray-200 rounded-lg shadow-lg px-5'>
                 
-                <div className='w-full flex justify-center flex-row gap-2 items-end'> 
-                    <Image src={hb_logo} alt='jisender-logo' height={50} width={50} /> 
-                </div>
-                
-                <div className='w-full flex justify-center items-center'>
-                    {<p className='text-lg font-bold'> HackBio </p>}
-                </div>
-                
-                <div className='w-full flex justify-start items-start text-lg'>
-                    <Card className='w-full border-none shadow-none'>
+                <div className='w-full flex justify-start items-start text-base'>
+                    <Card className='w-full  rounded-sm shadow-sm'>
                         <CardHeader className='text-center'>
                             {/* <CardTitle className="text-base">Login</CardTitle> */}
+                            <div className='w-full flex justify-center flex-col items-center'> 
+                                <Image src={hb_logo} alt='jisender-logo' height={40} width={40} /> 
+                                <p className='text-lg font-bold'> HackBio </p>
+                            </div>
                         </CardHeader>
                         <CardContent>
                             <form className="space-y-5">
-                                {error && <p className='text-red-500 text-center'>{error}</p>}
+                                {error && <p className='text-red-500 text-center text-xs'>{error}</p>}
                                 
-                                <div className="grid gap-2">
-                                    <Label className='text-lg'>Email</Label>
-                                    <Input id="email" type="text" placeholder="you@mail.com" value={email} onChange={(e) => setEmail((e.target as HTMLInputElement).value)} required className='bg-blue-50 text-lg placeholder:text-lg py-6' />
+                                <div className="grid gap-1">
+                                    <Label className='font-bold'>Email</Label>
+                                    <Input id="email" type="text" placeholder="you@mail.com" value={email} onChange={(e) => setEmail((e.target as HTMLInputElement).value)} required className='bg-blue-50 py-5' />
                                 </div>
 
-                                <div className="grid gap-2">
-                                    <Label className='text-lg'>Username</Label>
-                                    <Input id="username" type="text" placeholder="myUniqueUserName" value={username} onChange={(e)=>setUsername(e.target.value)} required className='bg-blue-50 text-lg placeholder:text-lg py-6' />
+                                <div className="grid gap-1">
+                                    <Label className='font-bold'>Username</Label>
+                                    <Input id="username" type="text" placeholder="myUniqueUserName" value={username} onChange={(e)=>setUsername(e.target.value)} required className='bg-blue-50 py-5' />
                                 </div>
                                 
-                                <div className="grid gap-2">
-                                    <Label htmlFor="password" className='text-lg'>Password</Label>
-                                    <Input  type="password" placeholder="Password" required value={password} onChange={(e)=>setPassword(e.target.value)}  className='bg-blue-50 text-lg placeholder:text-lg py-6'/>
+                                <div className="grid gap-1">
+                                    <Label htmlFor="password" className='font-bold'>Password</Label>
+                                    <Input  type="password" placeholder="Password" required value={password} onChange={(e)=>setPassword(e.target.value)}  className='bg-blue-50 py-5'/>
                                 </div>
 
-                                <div className="grid gap-2">
-                                    <Label htmlFor="password" className='text-lg'>Confirm Password</Label>
-                                    <Input  type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e)=>setConfirmPassword(e.target.value)} required  className='bg-blue-50 text-lg placeholder:text-lg py-6'/>
+                                <div className="grid gap-1">
+                                    <Label htmlFor="password" className='font-bold'>Confirm Password</Label>
+                                    <Input  type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e)=>setConfirmPassword(e.target.value)} required  className='bg-blue-50 py-5'/>
                                 </div>
                                 
                                 <a onClick={handleLogin} className='w-full'>
-                                    <Button className='w-full bg-green-600 text-white text-lg py-6 hover:bg-green-700'>
-                                        SIGN UP
+                                    <Button className='w-full bg-green-600 text-white py-5 hover:bg-green-700'>
+                                        Sign Up
                                     </Button>
                                 </a>
-                                <a href='/login'><p className='text-base text-center pt-5 text-blue-600 hover:underline'>  Already have an account? Sign In. </p></a>
+                                <a href='/login'><p className='text-sm text-center pt-5 text-blue-600 hover:underline'>  Already have an account? Sign In. </p></a>
 
                             </form>
                         </CardContent>
@@ -104,26 +100,24 @@ export default function Login() {
                 </div>
             </div>
 
-            <main className="md:hidden w-full max-w-md px-4 py-10 mx-auto flex flex-col gap-5 items-center justify-center">
-                <div className="w-full max-w-md px-4 py-2 mx-auto flex flex-col gap-2 items-center justify-center md:max-w-[400px]">
-                    <div className="w-full flex justify-center md:justify-start gap-2 items-end">
-                        <Image src={hb_logo} alt="hackbio-logo" height={50} width={50} />
-                    </div>
+            <main className="md:hidden w-full h-full items-center justify-center">
+                <div className="w-[300px] px-4 mx-auto flex flex-col  items-center justify-center">
 
-                    <div className="w-full text-center ">
-                        <p className="text-lg font-bold">HackBio</p>
-                    </div>
-
-                    <Card className="w-full border-none shadow-none">
-                        <CardHeader className="text-center"></CardHeader>
+                    <Card className="w-full border shadow-sm rounded-sm">
+                        <CardHeader className="text-center">
+                            <div className='w-full flex justify-center flex-col items-center'> 
+                                <Image src={hb_logo} alt='jisender-logo' height={40} width={40} /> 
+                                <p className='text-lg font-bold'> HackBio </p>
+                            </div>
+                        </CardHeader>
                         <CardContent>
-                        <form className="space-y-5">
+                        <form className="space-y-3 text-xs">
                             {error && (
-                            <p className="text-red-500 text-center">{error}</p>
+                            <p className="text-red-500 text-center text-xs">{error}</p>
                             )}
 
-                            <div className="grid gap-2">
-                            <Label htmlFor="email" className="text-lg">Email</Label>
+                            <div className="grid gap-1">
+                            <Label htmlFor="email" className="font-bold">Email</Label>
                             <Input
                                 id="email"
                                 type="text"
@@ -133,12 +127,12 @@ export default function Login() {
                                 setEmail((e.target as HTMLInputElement).value)
                                 }
                                 required
-                                className="bg-blue-50 text-lg placeholder:text-lg py-6"
+                                className="bg-blue-50 text-xs py-3"
                             />
                             </div>
 
-                            <div className="grid gap-2">
-                            <Label htmlFor="username" className="text-lg">Username</Label>
+                            <div className="grid gap-1">
+                            <Label htmlFor="username" className="font-bold">Username</Label>
                             <Input
                                 id="username"
                                 type="text"
@@ -146,12 +140,12 @@ export default function Login() {
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 required
-                                className="bg-blue-50 text-lg placeholder:text-lg py-6"
+                                className="bg-blue-50 text-xs py-3"
                             />
                             </div>
 
-                            <div className="grid gap-2">
-                            <Label htmlFor="password" className="text-lg">Password</Label>
+                            <div className="grid gap-1">
+                            <Label htmlFor="password" className="font-bold">Password</Label>
                             <Input
                                 id="password"
                                 type="password"
@@ -159,12 +153,12 @@ export default function Login() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                className="bg-blue-50 text-lg placeholder:text-lg py-6"
+                                className="bg-blue-50 text-xs py-3"
                             />
                             </div>
 
-                            <div className="grid gap-2">
-                            <Label htmlFor="confirmPassword" className="text-lg">Confirm Password</Label>
+                            <div className="grid gap-1 pb-3">
+                            <Label htmlFor="confirmPassword" className="font-bold">Confirm Password</Label>
                             <Input
                                 id="confirmPassword"
                                 type="password"
@@ -172,19 +166,19 @@ export default function Login() {
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 required
-                                className="bg-blue-50 text-lg placeholder:text-lg py-6"
+                                className="bg-blue-50 text-xs py-3"
                             />
                             </div>
 
                             <Button
                             onClick={handleLogin}
-                            className="w-full bg-green-600 text-white text-lg py-6 hover:bg-green-700"
+                            className="w-full bg-green-600 text-white py-3 hover:bg-green-700"
                             >
-                            SIGN UP
+                            Sign Up
                             </Button>
 
                             <a href="/login">
-                            <p className="text-base text-center pt-5 text-blue-600 hover:underline">
+                            <p className="text-sm text-center  text-blue-600 hover:underline">
                                 Already have an account? Sign In.
                             </p>
                             </a>

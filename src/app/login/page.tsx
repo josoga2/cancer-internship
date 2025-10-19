@@ -55,103 +55,86 @@ export default function Login() {
     };
 
     return (
-        <main className='max-w-full w-full py-10   flex flex-col  items-center justify-center'>
-            <div className='hidden md:flex max-w-1/4 w-[1000px] py-2  flex-col gap-5 items-center justify-center'>
+        <main className="max-w-full w-full py-10 flex flex-col h-screen items-center justify-center bg-gradient-to-b from-white via-hb-lightgreen to-hb-lightgreen">
+            <div className='hidden md:flex w-[350px] py-5 bg-white  flex-col gap-2 items-center justify-center border-2 border-gray-200 rounded-lg shadow-lg px-5'>
                 
-                <div className='w-full flex justify-center flex-row items-end'> 
-                    <Image src={hb_logo} alt='jisender-logo' height={50} width={50} /> 
-                </div>
-                
-                <div className='w-full flex justify-center items-center'>
-                    {<p className='text-lg font-bold'> HackBio </p>}
-                </div>
-                
-                <div className='w-full flex justify-start items-start text-lg'>
-                    <Card className='w-full border-none shadow-none'>
+                <div className='w-full flex justify-start items-start text-base'>
+                    <Card className='w-full rounded-sm shadow-sm '>
                         <CardHeader className='text-center'>
-                            {/* <CardTitle className="text-base">Login</CardTitle> */}
+                            <div className='w-full flex justify-center flex-col items-center'> 
+                                <Image src={hb_logo} alt='jisender-logo' height={40} width={40} /> 
+                                <p className='text-lg font-bold'> HackBio </p>
+                            </div>
+                            
                         </CardHeader>
                         <CardContent>
                             <form className="space-y-5">
-                                <p className='text-red-500 text-center'>{error}</p>
-                                
+                                <p className='text-red-500 text-center text-xs'>{error}</p>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="username" className='text-lg'>Username</Label>
-                                    <Input id="username" type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required className='bg-blue-50 text-lg placeholder:text-lg py-6' />
+                                    <Label htmlFor="username" className='font-bold'>Username</Label>
+                                    <Input id="username" type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required className='bg-blue-50 py-5' />
                                 </div>
-                                
                                 <div className="grid gap-2">
-                                    <Label htmlFor="password" className='text-lg'>Password</Label>
-                                    <Input id="password" type="password" placeholder="Password" value={password} onChange={(e)=> setPassword(e.target.value)} required  className='bg-blue-50 text-lg placeholder:text-lg py-6'/>
+                                    <Label htmlFor="password" className='font-bold'>Password</Label>
+                                    <Input id="password" type="password" placeholder="Password" value={password} onChange={(e)=> setPassword(e.target.value)} required  className='bg-blue-50  py-5'/>
                                 </div>
-                                
                                 <a onClick={handleLogin} className='w-full'>
-                                    <Button className='w-full bg-green-600 text-white text-lg py-6 hover:bg-green-700'>
-                                        SIGN IN
+                                    <Button className='w-full bg-green-600 text-white  py-5 hover:bg-green-700'>
+                                        Sign In
                                     </Button>
                                 </a>
-                                <a href='/register'><p className='text-base text-center pt-5 text-blue-600 hover:underline'>  New here? Register. </p></a>
-
+                                <a href='/register'><p className='text-sm text-center pt-5 text-blue-600 hover:underline'>New here? Register. </p></a>
                             </form>
                         </CardContent>
                     </Card>
                 </div>
-                
-                
             </div>
-
-            <main className="md:hidden w-full max-w-md px-4 py-10 mx-auto flex flex-col gap-10 items-center justify-center">
+            <main className="md:hidden w-full max-w-md px-4 mx-auto flex flex-col gap-10 items-center justify-center">
                 <div className="flex flex-col gap-4 w-full items-center md:items-start">
-                    
-                    <div className="w-full flex justify-center md:justify-start items-end gap-2">
-                    <Image src={hb_logo} alt="hackbio-logo" height={50} width={50} />
-                    </div>
-
-                    <p className="text-lg font-bold text-center md:text-left">HackBio</p>
-
-                    <Card className="w-full border-none shadow-none">
-                    <CardHeader className="text-center"></CardHeader>
-                    <CardContent>
-                        <form className="space-y-5">
-                        <p className="text-red-500 text-center">{error}</p>
-
-                        <div className="grid gap-2">
-                            <Label htmlFor="username" className="text-lg">Username</Label>
-                            <Input
-                            id="username"
-                            type="text"
-                            placeholder="Username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
-                            className="bg-blue-50 text-lg placeholder:text-lg py-6"
-                            />
-                        </div>
-
-                        <div className="grid gap-2">
-                            <Label htmlFor="password" className="text-lg">Password</Label>
-                            <Input
-                            id="password"
-                            type="password"
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            className="bg-blue-50 text-lg placeholder:text-lg py-6"
-                            />
-                        </div>
-
-                        <Button onClick={handleLogin} className="w-full bg-green-600 text-white text-lg py-6 hover:bg-green-700">
-                            SIGN IN
-                        </Button>
-
-                        <a href="/register">
-                            <p className="text-base text-center pt-5 text-blue-600 hover:underline">
-                            New here? Register.
-                            </p>
-                        </a>
-                        </form>
-                    </CardContent>
+                    <Card className="w-full shadow-sm rounded-sm">
+                        <CardHeader className="text-center">
+                            <div className='w-full flex justify-center flex-col items-center'> 
+                                <Image src={hb_logo} alt='jisender-logo' height={40} width={40} /> 
+                                <p className='text-lg font-bold'> HackBio </p>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <form className="space-y-3 text-sm">
+                                <p className="text-red-500 text-center">{error}</p>
+                                <div className="grid gap-1">
+                                    <Label htmlFor="username" className="font-bold">Username</Label>
+                                    <Input
+                                        id="username"
+                                        type="text"
+                                        placeholder="Username"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        required
+                                        className="bg-blue-50 py-3 text-sm placeholder:text-sm"
+                                    />
+                                </div>
+                                <div className="grid gap-1">
+                                    <Label htmlFor="password" className="font-bold">Password</Label>
+                                    <Input
+                                        id="password"
+                                        type="password"
+                                        placeholder="Password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        className="bg-blue-50 py-3 placeholder:text-sm"
+                                    />
+                                </div>
+                                <Button onClick={handleLogin} className="w-full bg-green-600 text-white py-5 font-bold hover:bg-green-700">
+                                    Sign In
+                                </Button>
+                                <a href="/register">
+                                    <p className="text-center  text-blue-600 hover:underline">
+                                        New here? Register.
+                                    </p>
+                                </a>
+                            </form>
+                        </CardContent>
                     </Card>
                 </div>
             </main>
