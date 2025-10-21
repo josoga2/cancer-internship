@@ -70,6 +70,7 @@ export default function Page() {
             published: false
         }
     ]);
+    const internshipStatus = 'close'
 
     // Fetch courses from the public API
     useEffect(() => {
@@ -119,7 +120,21 @@ export default function Page() {
             <div className="flex flex-col gap-5">
             <p className="text-3xl font-bold text-start">Open Internship</p>
             <p className="text-lg">Comprehensive Bioinformatics Training</p>
-            <EnrollDialog />
+            {internshipStatus === 'close' ? (
+                <Button
+                    onClick={() => {
+                        if (typeof window !== "undefined") {
+                            // Use the native browser alert as a simple toast substitute
+                            window.alert("Application closed");
+                        }
+                    }}
+                    className="bg-hb-green text-white"
+                >
+                    Join us next year! Application are now Closed.
+                </Button>
+            ) : (
+                <EnrollDialog />
+            )}
 
             </div>
             <Image src={keywords} alt="biology" className="w-2/5" />
@@ -152,7 +167,21 @@ export default function Page() {
                             <span className="flex flex-row gap-5 items-center justify-center">
                                 <p className="text-base">{upcoming.lenght_in_weeks} Weeks</p>
                             </span>
-                            <EnrollDialog />
+                            {internshipStatus === 'close' ? (
+                                <Button
+                                    onClick={() => {
+                                        if (typeof window !== "undefined") {
+                                            // Use the native browser alert as a simple toast substitute
+                                            window.alert("Application closed");
+                                        }
+                                    }}
+                                    className="bg-hb-green text-white"
+                                >
+                                    Join us next year! Application are now Closed.
+                                </Button>
+                            ) : (
+                                <EnrollDialog />
+                            )}
 
                         </div>
                         <div className="flex flex-col gap-5 items-start justify-center w-full overflow-y-auto">
@@ -183,7 +212,21 @@ export default function Page() {
                                     <div className="prose">
                                     <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{upcoming.description}</Markdown>
                                     </div>
-                                    <EnrollDialog />
+                                    {internshipStatus === 'close' ? (
+                                        <Button
+                                            onClick={() => {
+                                                if (typeof window !== "undefined") {
+                                                    // Use the native browser alert as a simple toast substitute
+                                                    window.alert("Application closed");
+                                                }
+                                            }}
+                                            className="bg-hb-green text-white"
+                                        >
+                                            Join us next year! Application are now Closed.
+                                        </Button>
+                                    ) : (
+                                        <EnrollDialog />
+                                    )}
 
                                 </div>
                            
@@ -257,7 +300,21 @@ export default function Page() {
 
           
             <div className="flex items-start justify-center">
-                <EnrollDialog />
+                {internshipStatus === 'close' ? (
+                    <Button
+                        onClick={() => {
+                            if (typeof window !== "undefined") {
+                                // Use the native browser alert as a simple toast substitute
+                                window.alert("Application closed");
+                            }
+                        }}
+                        className="bg-hb-green text-white"
+                    >
+                        Join us next year! Application are now Closed.
+                    </Button>
+                ) : (
+                    <EnrollDialog />
+                )}
             </div>
         </div>
 
@@ -294,7 +351,21 @@ export default function Page() {
         </div>
 
         <div className="w-full flex flex-col items-center justify-center py-10">
-            <EnrollDialog />
+            {internshipStatus === 'close' ? (
+                <Button
+                    onClick={() => {
+                        if (typeof window !== "undefined") {
+                            // Use the native browser alert as a simple toast substitute
+                            window.alert("Application closed");
+                        }
+                    }}
+                    className="bg-hb-green text-white"
+                >
+                    Join us next year! Application are now Closed.
+                </Button>
+            ) : (
+                <EnrollDialog />
+            )}
         </div>
 
         {/** who is this internship for?*/}
@@ -324,7 +395,21 @@ export default function Page() {
         </div>
 
         <div className="w-full flex flex-col items-center justify-center py-10">
-            <EnrollDialog />
+            {internshipStatus === 'close' ? (
+                <Button
+                    onClick={() => {
+                        if (typeof window !== "undefined") {
+                            // Use the native browser alert as a simple toast substitute
+                            window.alert("Application closed");
+                        }
+                    }}
+                    className="bg-hb-green text-white"
+                >
+                    Join us next year! Application are now Closed.
+                </Button>
+            ) : (
+                <EnrollDialog />
+            )}
         </div>
         
         
@@ -371,7 +456,21 @@ export default function Page() {
                         <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> No Eviction from the internship </span></li>
                     </ul>
                     <p className="font-bold">* Active only for the duration of the internship</p>
-                    <EnrollDialog />
+                    {internshipStatus === 'close' ? (
+                        <Button
+                            onClick={() => {
+                                if (typeof window !== "undefined") {
+                                    // Use the native browser alert as a simple toast substitute
+                                    window.alert("Application closed");
+                                }
+                            }}
+                            className="bg-hb-green text-white"
+                        >
+                            Join us next year! Application are now Closed.
+                        </Button>
+                    ) : (
+                        <EnrollDialog />
+                    )}
 
                 </div>
             </div>
@@ -390,7 +489,21 @@ export default function Page() {
             <div className="flex flex-col gap-4">
                 <p className="text-2xl font-bold text-start">Open Internships</p>
                 <p className="text-base">Comprehensive Bioinformatics Training</p>
-                <EnrollDialog />
+                {internshipStatus === 'close' ? (
+                    <Button
+                        onClick={() => {
+                            if (typeof window !== "undefined") {
+                                // Use the native browser alert as a simple toast substitute
+                                window.alert("Application closed");
+                            }
+                        }}
+                        className="bg-hb-green text-white"
+                    >
+                        Join us next year! Application are now Closed.
+                    </Button>
+                ) : (
+                    <EnrollDialog />
+                )}
             </div>
 
             <div className="flex flex-col items-center gap-5 py-5">
@@ -418,7 +531,21 @@ export default function Page() {
                     <p className="text-lg font-bold">{upcoming.title}</p>
                     <p className="text-sm">{upcoming.overview}</p>
                     <p className="text-sm">{upcoming.lenght_in_weeks} Weeks</p>
-                    <EnrollDialog />
+                    {internshipStatus === 'close' ? (
+                        <Button
+                            onClick={() => {
+                                if (typeof window !== "undefined") {
+                                    // Use the native browser alert as a simple toast substitute
+                                    window.alert("Application closed");
+                                }
+                            }}
+                            className="bg-hb-green text-white"
+                        >
+                            Join us next year! Application are now Closed.
+                        </Button>
+                    ) : (
+                        <EnrollDialog />
+                    )}
                 </div>
 
                 <div className="flex flex-col gap-3">
@@ -441,7 +568,21 @@ export default function Page() {
                         <div className="prose">
                         <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{upcoming.description}</Markdown>
                         </div>
-                        <EnrollDialog />
+                        {internshipStatus === 'close' ? (
+                            <Button
+                                onClick={() => {
+                                    if (typeof window !== "undefined") {
+                                        // Use the native browser alert as a simple toast substitute
+                                        window.alert("Application closed");
+                                    }
+                                }}
+                                className="bg-hb-green text-white"
+                            >
+                                Join us next year! Application are now Closed.
+                            </Button>
+                        ) : (
+                            <EnrollDialog />
+                        )}
 
                     </div>
 
@@ -521,7 +662,21 @@ export default function Page() {
             </div>
 
             <div className="w-full flex flex-col items-center justify-center py-10">
-                <EnrollDialog />
+                {internshipStatus === 'close' ? (
+                    <Button
+                        onClick={() => {
+                            if (typeof window !== "undefined") {
+                                // Use the native browser alert as a simple toast substitute
+                                window.alert("Application closed");
+                            }
+                        }}
+                        className="bg-hb-green text-white"
+                    >
+                        Join us next year! Application are now Closed.
+                    </Button>
+                ) : (
+                    <EnrollDialog />
+                )}
             </div>
 
             <div className="flex flex-col gap-5 items-center">
@@ -551,7 +706,21 @@ export default function Page() {
             </div>
 
             <div className="flex flex-col items-center py-10">
+                {internshipStatus === 'close' ? (
+                <Button
+                    onClick={() => {
+                        if (typeof window !== "undefined") {
+                            // Use the native browser alert as a simple toast substitute
+                            window.alert("Application closed");
+                        }
+                    }}
+                    className="bg-hb-green text-white"
+                >
+                    Join us next year! Application are now Closed.
+                </Button>
+            ) : (
                 <EnrollDialog />
+            )}
             </div>
 
             <div className="flex flex-col gap-6 border-2 border-hb-green p-5 rounded shadow-md">
@@ -573,7 +742,21 @@ export default function Page() {
                     <li>No Eviction from the internship</li>
                 </ul>
                 <p className="text-sm">*Server active only during internship</p>
-                <EnrollDialog />
+                {internshipStatus === 'close' ? (
+                    <Button
+                        onClick={() => {
+                            if (typeof window !== "undefined") {
+                                // Use the native browser alert as a simple toast substitute
+                                window.alert("Application closed");
+                            }
+                        }}
+                        className="bg-hb-green text-white"
+                    >
+                        Join us next year! Application are now Closed.
+                    </Button>
+                ) : (
+                    <EnrollDialog />
+                )}
             </div>
 
             

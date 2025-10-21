@@ -19,7 +19,6 @@ import { CgCircleci } from "react-icons/cg";
 import { useState } from "react";
 import publicApi from "@/publicApi";
 import { useRouter } from 'next/navigation';
-import { PiFlagBanner } from "react-icons/pi";
 
 //https://wise.com/pay/me/adewaleo251
 
