@@ -24,7 +24,7 @@ export default function Navbar() {
           <Link href='/blog'>Blog</Link>
           {/* <Link href='/learning'>Career Paths</Link> */}
         </div>
-        <Link href='/login'><button className='border-2  bg-hb-green rounded-lg px-5 text-white text-base font-semibold py-2'>Sign In/Up</button></Link>
+        <Link href='/dashboard'><button className='border-2  bg-hb-green rounded-lg px-5 text-white text-base font-semibold py-2'>Sign In/Up</button></Link>
     </div>
     
     
@@ -47,7 +47,7 @@ export default function Navbar() {
             <Link href="/learning" className="text-lg font-medium text-black">Courses</Link>
             <Link href="/blog" className="text-lg font-medium text-black">Blog</Link>
             {/* <Link href='/learning' className="text-lg font-medium text-black">Career Paths</Link> */}
-            <Link href="/login">
+            <Link href="/dashboard">
               <button className="border-2 border-black bg-hb-green rounded-lg px-6 text-white text-lg font-semibold py-2 w-full">
                 Sign In/Up
               </button>
