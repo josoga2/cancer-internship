@@ -70,7 +70,8 @@ export default function Page() {
             published: false
         }
     ]);
-    let internshipStatus = 'open'
+    const internshipStatus: string = 'open';
+
 
     // Fetch courses from the public API
     useEffect(() => {
