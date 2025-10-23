@@ -106,14 +106,14 @@ export function EnrollDialog() {
             <DialogDescription>
               Enroll in the internship by filling out the form below and proceeding to pay.
               {bulk?(<span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> 
-                <p>$45</p> 
-                <p className="text-red-600 line-through text-xl">{`$60`}</p> 
-                <p className="text-red-600  text-xl">{`(62.5% off)`}</p>  
+                <p>$90</p> 
+                <p className="text-red-600 line-through text-xl">{`$120`}</p> 
+                <p className="text-red-600  text-xl">{`(25% off)`}</p>  
               </span>): 
               (<span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> 
-                <p>$20</p> 
-                <p className="text-red-600 line-through text-xl">{`50%`}</p> 
-                <p className="text-red-600  text-sm">{`Early bird discount`}</p>  
+                <p>$40</p> 
+                <p className="text-red-600 line-through text-xl">{`40`}</p> 
+                <p className="text-red-600  text-sm">{`Early bird discount closed`}</p>  
               </span>)}
               <span className="flex flex-row gap-5"> <input className="" type="checkbox" onChange={(e) => setBulk(e.target.checked)} /> <p>Group of 3 Discount </p> </span>
 
