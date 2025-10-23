@@ -18,7 +18,7 @@ export default function Banner() {
       </button>
       <div>
         <a href="/internship" className=" font-medium hover:text-gray-100">
-          <span className="font-semibold">Our event calendar will be realeased Nov. 1, 2025. </span>
+          <span className="font-semibold">Our event calendar will be released Nov. 1, 2025. </span>
           Watch this space!{" "}
           <p className="underline inline-block">
             {/*Enroll For the Internship {"(Closes Oct 26)"}*/}

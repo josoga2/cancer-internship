@@ -1,6 +1,6 @@
 "use client"
 import { useParams, useRouter } from "next/navigation";
-import hb_logo from "@/../public/hb_logo.png";
+import hb_logo from "@/../../public/hb_logo.png";
 import { Progress } from "@/components/ui/progress"
 import Image from "next/image";
 
@@ -39,7 +39,7 @@ const tab_items = [
   {
     id: 3,
     name: "Internship Courses",
-    link: "/dashboard/internship/courses/",
+    link: `/dashboard/internship/1/courses/`,
     isActive: true,
     iconImage: BiDna
   },
@@ -68,6 +68,7 @@ function Page() {
 
   const params = useParams()
   const courseId = Number(params.courseId)
+  const globalInternshipId = Number(params.internshipId)
   const router = useRouter()
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -360,7 +361,7 @@ const scientistAdjectives = [
                                   .map((content) => (
                                       <div key={content.id} className="flex flex-col gap-2">
                                           <ul className="list-disc pl-5 text-lg" key={content.id}>
-                                              <a href={`/dashboard/internship/courses/${courseId}/module/${module.id}/content/${content.id}`} className="hover:underline">
+                                              <a href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${module.id}/content/${content.id}`} className="hover:underline">
                                                   <li>{content.title}</li>
                                               </a>
                                           </ul>

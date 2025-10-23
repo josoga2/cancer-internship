@@ -31,7 +31,7 @@ const tab_items = [
   {
     id: 3,
     name: "Internship Courses",
-    link: "/dashboard/internship/courses/",
+    link: "/dashboard/internship/1/courses/",
     isActive: false,
     iconImage: BiDna
   },
@@ -191,7 +191,7 @@ function Page() {
                 <UpcomingCourseCard
                   desc={internship.overview ?? ""}
                   image={internship.int_image ?? "/"}
-                  directTo={'/dashboard/internship/courses'}
+                  directTo={`/dashboard/internship/${internship.id}/courses`}
                   title={internship.title ?? ""}
                   weeks={internship.lenght_in_weeks ?? 0}
                   lessons={0}
@@ -306,7 +306,7 @@ function Page() {
                 <UpcomingCourseCard
                   desc={internship.overview ?? ""}
                   image={internship.int_image ?? "/"}
-                  directTo={'/dashboard/internship/courses'}
+                  directTo={`/dashboard/internship/${internship.id}/courses`}
                   title={internship.title ?? ""}
                   weeks={internship.lenght_in_weeks ?? 0}
                   lessons={0}

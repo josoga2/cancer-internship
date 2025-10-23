@@ -1,6 +1,6 @@
 "use client"
 import { Button } from "@/components/ui/button";
-import hb_logo from "../../../../../../../../../../public/hb_logo.png";
+import hb_logo from "../../../../../../../../../../../public/hb_logo.png";
 import { Progress } from "@/components/ui/progress"
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
@@ -31,9 +31,6 @@ import dynamic from "next/dynamic";
 
 // rehype plugins
 import rehypeHighlight from "rehype-highlight";
-import rehypeToc from "rehype-toc";
-import { channel } from "diagnostics_channel";
-import { WebR } from "webr";
 
 const WebRConsole = dynamic(() => import('@/components/webR/webRConsole'), {
   ssr: false,
@@ -46,6 +43,7 @@ function Page() {
   const params = useParams()
   const courseId = Number(params.courseId);
   const moduleId = Number(params.moduleId);
+  const globalInternshipId = Number(params.internshipId);
   const contentId = Number(params.contentId);
   const router = useRouter()
 
@@ -62,6 +60,7 @@ function Page() {
   const [userCoursesId, setUserCoursesId] = useState<number[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState("none");
   const [hintClicked, setHintClicked] = useState<boolean>(false);
+  const [totalXP, setTotalXP] = useState<number>(1);
   const [internshipList, setInternshipList] = useState<Array<{
         id?: string
         title?: string
@@ -162,6 +161,7 @@ function Page() {
   const [grade, setGrade] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
+
     //get username
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -172,12 +172,6 @@ function Page() {
           //console.log("User profile data:", response.data);
           const userProfile = response.data; 
           setUsername(userProfile.username);
-          setUserXP(userProfile.total_xp.toString());
-          setUserClicks(userProfile.no_clicks );
-          setCert(userProfile.certified)
-          setCompletedContent(userProfile.no_completed_contents ? userProfile.no_completed_contents : ""); 
-          const uniqItems = new Set(userProfile.no_completed_contents.split(","))
-          setUniqueContentId(uniqItems.size )
           
         } else {
           router.push("/login");
@@ -191,6 +185,45 @@ function Page() {
     };
 
     fetchUserProfile();
+  }, []);
+
+  //get user progress
+  useEffect(() => {
+    const fetchUserProgress = async () => {
+      try {
+        const response = await api.post('/api/get-user-progress/', {'internshipid': globalInternshipId}); // Adjust the endpoint as needed
+        //console.log("Response from get-user-profile:", response.data);
+        if (response.data && response.status == 200 || response.status == 201) {
+          //console.log("User progress data:", response.data);
+          const userProgress = response.data; 
+          setUserClicks(userProgress.no_clicks );
+          setCert(userProgress.certified)
+          setCompletedContent(userProgress.completed_contents ? userProgress.completed_contents : ""); 
+          const uniqItems = new Set(userProgress.completed_contents.split(","))
+          const allItemslength = userProgress.completed_contents.split(",").length
+          setUniqueContentId(uniqItems.size ) 
+          //console.log(allItemslength)
+          setUserXP(Math.ceil(userProgress.total_xp_earned * (uniqItems.size / allItemslength)).toString());
+
+          const totalXPResponse = await api.post('/api/get-total-xp/', {'internshipid': globalInternshipId});
+            if (totalXPResponse.status === 200) {
+                setTotalXP(totalXPResponse.data.total_xp);
+            } else {
+                console.error("Failed to fetch total XP.");
+            }
+          
+        } else {
+          router.push("/login");
+          console.error("No user profile found.");
+          
+        }
+      } catch (error) {
+        router.push("/login");
+        console.error("Error fetching user profile:", error);
+      }
+    };
+
+    fetchUserProgress();
   }, []);
 
   //get user internship id
@@ -276,11 +309,8 @@ function Page() {
                     const contentResponse = await api.get('/api/contents/');
                     if (contentResponse.status === 200) {
                         //setTotalContent(contentResponse.data.length);
-                        // Assuming you want to filter contents based on the courseId
-                        const allCourseContents = contentResponse.data.filter(
-                            (content: { id: number | string; course?: number | string }) =>
-                                [1, 2, 3].includes(Number(content.course))
-                        );
+
+                        const allCourseContents = contentResponse.data;
                         setTotalContent(allCourseContents.length);
 
                         const contents = contentResponse.data.filter((content: { id: number | string; module?: number | string }) =>
@@ -385,10 +415,13 @@ function Page() {
         setTitle(`${adjective} ${username}`);
     }, [username]);
 
+    //console.log("userInternshipId:", userInternshipId);
+
     const handleMarkCompleted = async () => {
         try {
             const response = await api.post('/api/mark-completed/', {
                 user: username,
+                internshipid: globalInternshipId,
                 content: contentId,
                 course: courseId,
                 module: moduleId
@@ -415,6 +448,7 @@ function Page() {
             const response = await api.post('/api/submit-solution/', {
                 content: filteredContentList[0].project_data, // Assuming the content is in the first item of filteredContentList
                 solution: solution,
+                internshipid: globalInternshipId,
                 channel: filteredContentList[0].project_promote_channel || "C09A477A43E", // Default channel if not provided
                 minimal_rubric: filteredContentList[0].project_rubric || "Use your best judgment to grade the solution based on the content provided." // Default minimal rubric if not provided
             });
@@ -437,7 +471,8 @@ function Page() {
         try {
             const response = await api.post('/api/submit-codetask/', {
                 content: filteredContentList[0].text_content, // Assuming the content is in the first item of filteredContentList
-                solution: solution
+                solution: solution,
+                internshipid: globalInternshipId
             });
             if (response.status === 200) {
                 //console.log("Solution submitted successfully.: ", response.data.grade_response.grade);
@@ -459,7 +494,8 @@ function Page() {
         try {
             const response = await api.post('/api/submit-mcq/', {
                 actual_answer: filteredContentList[0].actual_answer, 
-                user_answer: selectedAnswer
+                user_answer: selectedAnswer,
+                internshipid: globalInternshipId
             });
             if (response.status === 200) {
                 //console.log("Solution submitted successfully.: ", response.data.grade_response.grade);
@@ -488,8 +524,9 @@ function Page() {
         try {
             const response = await api.post('/api/generate-certificate/', {
                 name: officialName,
-                xp: (Math.min(Math.ceil((Number(uniqueContentId) / Number(totalContent)) * 100), 100)).toString(),
+                xp: (Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 100), 100)).toString(),
                 internship_title: 'Next Generation Sequencing 2025 Internship',
+                internship_id: globalInternshipId,
             },
             {responseType: 'blob'} // Ensure the response is treated as a blob for file download
         );
@@ -522,11 +559,11 @@ return (
             </div>
             <div className="flex flex-col gap-2 w-full items-start text-sm">
             
-                <a href={`/dashboard/internship/courses/${courseId}`} className="font-bold text-base py-2 hover:underline flex flex-row items-center gap-2"> <CiViewList /> <p> Table of Content </p></a>
+                <a href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}`} className="font-bold text-base py-2 hover:underline flex flex-row items-center gap-2"> <CiViewList /> <p> Table of Content </p></a>
                 
                 {previousModuleId > 0 ? (
                     <a 
-                        href={`/dashboard/internship/courses/${courseId}/module/${previousModuleId}/content/${previousContentId}`} 
+                        href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${previousModuleId}/content/${previousContentId}`} 
                         className="font-bold text-base py-5 hover:underline"
                     >
                         ← Previous Module
@@ -539,12 +576,12 @@ return (
                 {contentList
                     .map((content) => (
                         <div key={content.id} className={`w-full px-5 py-2 hover:underline ${Number(content.id) === contentId ? 'bg-hb-lightgreen text-hb-green font-bold rounded-l-md' : ''}`}>
-                            <li className="list-disc"> <a href={`/dashboard/internship/courses/${courseId}/module/${moduleId}/content/${content.id}`}> {content.title} </a> </li>
+                            <li className="list-disc"> <a href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${moduleId}/content/${content.id}`}> {content.title} </a> </li>
                         </div>
                 ))}
                 {nextModuleId > 0 ? (
                     <a 
-                        href={`/dashboard/internship/courses/${courseId}/module/${nextModuleId}/content/${nextContentId}`} 
+                        href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${nextModuleId}/content/${nextContentId}`} 
                         className="font-bold text-base  py-5 hover:underline"
                     >
                         Next Module →
@@ -570,13 +607,18 @@ return (
             <div className="px-10 pt-10 w-[800px]  flex flex-col gap-5">
                 {filteredContentList.length >0? (filteredContentList.map((content) => (
                     <div className="flex flex-col gap-10" key={content.id}>
-                        <div className="flex flex-row w-full justify-between"><p className="font-bold text-3xl "> {content.title} 
-                            </p> <Button className="font-bold text-xl py-5 border-2 border-black bg-hb-green px-5" onClick={handleMarkCompleted}>Mark Completed</Button>
+                        <div className="flex flex-row w-full justify-between">
+                            <p className="font-bold text-3xl "> {content.title} </p> 
+                            {content.content_type !== 'quiz' && content.content_type !== 'project' && content.content_type !== 'codeTask' && (
+                                <Button className="font-bold text-xl py-5 border-2 border-black bg-hb-green px-5" onClick={handleMarkCompleted}>
+                                    Mark Completed
+                                </Button>
+                            )}
                         </div>
                         <div className="font-bold w-full p-3 text-lg border rounded-md border-hb-green"> 
                             {uniqueContentId >0 && totalContent>0 ? (<div className="flex flex-row gap-10 items-center max-w-full"> 
-                                <Progress value={(Math.min(Math.ceil((Number(uniqueContentId) / Number(totalContent)) * 100), 100))} className=""/> 
-                                <p className="font-bold text-2xl rounded-full"> {(Math.min(Math.ceil((Number(uniqueContentId) / Number(totalContent)) * 100), 100))}% </p> 
+                                <Progress value={(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 100), 100))} className=""/> 
+                                <p className="font-bold text-2xl rounded-full"> {(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 100), 100))}% </p> 
                             </div>) : <div className="h-3 w-10"></div>}
                         </div>
                         
@@ -1131,7 +1173,7 @@ return (
                                         </div>
                                         
                                         <p>Your Total XP: {userXP}XP</p>
-                                        <p>Your Total Internship Grade: {(Math.min(Math.ceil((Number(uniqueContentId) / Number(totalContent)) * 100), 100))}%</p>
+                                        <p>Your Total Internship Grade: {(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 100), 100))}%</p>
                                             
                                         
                                             {cert ? <Button disabled>Generate</Button>:
@@ -1203,13 +1245,17 @@ return (
                         <div className="flex justify-between items-center">
                             <p className="font-bold text-lg">{content.title}</p>
                         </div>
-                        <Button onClick={handleMarkCompleted} className="text-base bg-hb-green border border-black">Mark Completed</Button>
+                        {content.content_type !== 'quiz' && content.content_type !== 'project' && content.content_type !== 'codeTask' && (
+                                <Button className="font-bold text-xl py-5 border-2 border-black bg-hb-green px-5" onClick={handleMarkCompleted}>
+                                    Mark Completed
+                                </Button>
+                            )}
 
                         {/* Progress */}
                         {uniqueContentId > 0 && totalContent > 0 && (
                             <div className="flex items-center gap-4 border-2 border-green-600 p-5 rounded-md">
-                                <Progress value={(Math.min(Math.ceil((Number(uniqueContentId) / Number(totalContent)) * 100), 100))} />
-                                <p className="text-xs font-bold">{(Math.min(Math.ceil((Number(uniqueContentId) / Number(totalContent)) * 100), 100))}%</p>
+                                <Progress value={(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 100), 100))} />
+                                <p className="text-xs font-bold">{(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 100), 100))}%</p>
                             </div>
                         )}
 
@@ -1410,7 +1456,7 @@ return (
                                 <Label htmlFor="name">Your Full Name</Label>
                                 <Input id="name" value={officialName} onChange={(e) => setOfficialName(e.target.value)} />
                                 <p>Total XP: {userXP}</p>
-                                <p>Grade: {(Math.min(Math.ceil((Number(uniqueContentId) / Number(totalContent)) * 100), 100))}%</p>
+                                <p>Grade: {(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 100), 100))}%</p>
                                 {cert ? <Button disabled>Generate</Button>:
                                  (<Button className='w-fit bg-green-600 text-white text-xl py-6 hover:bg-green-700' onClick={handleGenCertificate}>
                                                 GENERATE

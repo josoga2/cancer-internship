@@ -51,31 +51,31 @@ export function EnrollDialog() {
             //console.log("Enrollment successful:", response.data);
             if (bulk){
               if (paymentMethod === "paypal") {
-                  router.replace('https://www.paypal.com/ncp/payment/QRTQL4BM5HEG6');
+                  router.replace("https://www.paypal.com/ncp/payment/QRTQL4BM5HEG6")// 'https://www.paypal.com/ncp/payment/QRTQL4BM5HEG6');
               } else if (paymentMethod === "stripe") {
-                  router.replace('https://buy.stripe.com/6oU9AS4YY237bHZ5fOc7u0e');
+                  router.replace("https://buy.stripe.com/7sY6oG0II37bdQ75fOc7u0f")// 'https://buy.stripe.com/6oU9AS4YY237bHZ5fOc7u0e');
               } else if (paymentMethod === "visa") {
-                  router.replace('https://buy.stripe.com/6oU9AS4YY237bHZ5fOc7u0e');
+                  router.replace("https://buy.stripe.com/7sY6oG0II37bdQ75fOc7u0f")// 'https://buy.stripe.com/6oU9AS4YY237bHZ5fOc7u0e');
               } else if (paymentMethod === "opay") {
                   setIsSubmitted(true)
-                  setPaymentInstructions("Please proceed to pay NGN70,000 via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details with the emails and names of your group to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
+                  setPaymentInstructions("Please proceed to pay NGN150,000 via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details with the emails and names of your group to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
               } else if (paymentMethod === "mastercard") {
-                  router.replace('https://buy.stripe.com/6oU9AS4YY237bHZ5fOc7u0e');
+                  router.replace("https://buy.stripe.com/7sY6oG0II37bdQ75fOc7u0f")// 'https://buy.stripe.com/6oU9AS4YY237bHZ5fOc7u0e');
               } else if (paymentMethod === "wise") {
                   router.replace('https://wise.com/pay/me/adewaleo251');
               }
             }else{
               if (paymentMethod === "paypal") {
-                  router.replace('https://www.paypal.com/ncp/payment/L5SAYFKPRXJRC');
+                  router.replace("https://www.paypal.com/ncp/payment/C4HHW946W3Y2J")// 'https://www.paypal.com/ncp/payment/L5SAYFKPRXJRC');
               } else if (paymentMethod === "stripe") {
-                  router.replace('https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
+                  router.replace("https://buy.stripe.com/4gMcN4crq0Z38vN7nWc7u0g")// 'https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
               } else if (paymentMethod === "visa") {
-                  router.replace('https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
+                  router.replace("https://buy.stripe.com/4gMcN4crq0Z38vN7nWc7u0g")// 'https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
               } else if (paymentMethod === "opay") {
                   setIsSubmitted(true)
-                  setPaymentInstructions("Please proceed to pay NGN30,000 via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
+                  setPaymentInstructions("Please proceed to pay NGN60,000 via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
               } else if (paymentMethod === "mastercard") {
-                  router.replace('https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
+                  router.replace("https://buy.stripe.com/4gMcN4crq0Z38vN7nWc7u0g")// 'https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
               } else if (paymentMethod === "wise") {
                   router.replace('https://wise.com/pay/me/adewaleo251');
               }

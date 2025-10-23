@@ -1,6 +1,6 @@
 'use client';
 import UpcomingCourseCard from "@/components/course-card";
-import hb_logo from "../../../../../public/hb_logo.png";
+import hb_logo from "../../../../../../public/hb_logo.png";
 import Image from "next/image";
 import withAuth from "@/components/withAuth";
 import api from "@/api";
@@ -31,7 +31,7 @@ const tab_items = [
   {
     id: 3,
     name: "Internship Courses",
-    link: "/dashboard/internship/courses/",
+    link: "/dashboard/internship/1/courses/",
     isActive: true,
     iconImage: BiDna
   },
@@ -244,7 +244,7 @@ function Page() {
                           key={course.id}
                           desc={course.overview ?? ""}
                           image={course.image ?? "/"}
-                          directTo={`/dashboard/internship/courses/${course.id}/`}
+                          directTo={`/dashboard/internship/${internship.id}/courses/${course.id}/`}
                           title={course.title ?? ""}
                           weeks={0}
                           lessons={0}
@@ -387,7 +387,7 @@ function Page() {
                           key={course.id}
                           desc={course.overview ?? ""}
                           image={course.image ?? "/"}
-                          directTo={`/dashboard/internship/courses/${course.id}/`}
+                          directTo={`/dashboard/internship/${internship.id}/courses/${course.id}/`}
                           title={course.title ?? ""}
                           weeks={0}
                           lessons={0}

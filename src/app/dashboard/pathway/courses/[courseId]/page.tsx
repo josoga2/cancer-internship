@@ -40,7 +40,7 @@ const tab_items = [
   {
     id: 3,
     name: "Internship Courses",
-    link: "/dashboard/internship/courses/",
+    link: "/dashboard/internship/1/courses/",
     isActive: false,
     iconImage: BiDna
   },
