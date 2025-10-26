@@ -5,11 +5,11 @@ import html2canvas from 'html2canvas-pro';
 
 const ImageGenerator = () => {
   const [name, setName] = useState('');
-  const [program, setProgram] = useState('Next Generation Sequencing (NGS)');
-  const [title, setTitle] = useState('I just graduated from HackBio 🏆🎉!');
-  const [announcement, setAnnouncement] = useState('I am excited to announce that I just finished HackBio NGS Internship 🏆🎉');
-  //const [announcement, setAnnouncement] = useState('I am excited to announce that I got into the Hackbio NGS Internship bioinformatics program 🎉');
-  const [hashtag, setHashtag] = useState('#HackBioNGS25');
+  const [program, setProgram] = useState('Single Cell RNA-Seq');
+  const [title, setTitle] = useState('I just got into HackBio 🏆🎉!');
+  //const [announcement, setAnnouncement] = useState('I am excited to announce that I just finished HackBio NGS Internship 🏆🎉');
+  const [announcement, setAnnouncement] = useState('I am excited to announce that I got into the Hackbio Single Cell Internship Program 🎉');
+  const [hashtag, setHashtag] = useState('#HackBioSC25');
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const templateRef = useRef(null);
 
