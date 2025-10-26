@@ -508,7 +508,7 @@ const scientistAdjectives = [
                               .map((content) => (
                                 <ul className="list-disc pl-5" key={content.id}>
                                   <a
-                                    href={`/dashboard/internship/courses/${courseId}/module/${module.id}/content/${content.id}`}
+                                    href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${module.id}/content/${content.id}`}
                                     className="hover:underline"
                                   >
                                     <li>{content.title}</li>
