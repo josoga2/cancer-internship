@@ -1218,19 +1218,19 @@ return (
 
             {/* Navigation Links */}
             <div className="flex flex-col p-5 text-sm gap-3 ">
-                <a href={`/dashboard/internship/courses/${courseId}`} className="flex items-center gap-2 font-bold text-xl hover:underline"> <CiViewList className="text-3xl font-bold" /> Table of Content</a>
+                <a href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}`} className="flex items-center gap-2 font-bold text-xl hover:underline"> <CiViewList className="text-3xl font-bold" /> Table of Content</a>
             </div>
 
             {/* Module Navigation */}
             <div className="px-10 py-5 text-sm text-gray-700 text-center w-full items-center justify-between flex flex-row gap-5">
                 {previousModuleId > 0 ? (
-                    <a href={`/dashboard/internship/courses/${courseId}/module/${previousModuleId}/content/${previousContentId}`} className="font-bold text-base hover:underline border border-green-800 rounded-full px-2 py-2 ">← Previous Module</a>
+                    <a href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${previousModuleId}/content/${previousContentId}`} className="font-bold text-base hover:underline border border-green-800 rounded-full px-2 py-2 ">← Previous Module</a>
                 ) : (
                     <p className="text-gray-400 font-bold border border-zinc-500 rounded-full px-3 py-2">← Previous Module</p>
                 )}
 
                 {nextModuleId > 0 ? (
-                    <a href={`/dashboard/internship/courses/${courseId}/module/${nextModuleId}/content/${nextContentId}`} className="font-bold hover:underline border text-green-900 border-green-800 rounded-full px-2 py-2 ">Next Module →</a>
+                    <a href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${nextModuleId}/content/${nextContentId}`} className="font-bold hover:underline border text-green-900 border-green-800 rounded-full px-2 py-2 ">Next Module →</a>
                 ) : (
                     <p className="text-gray-400 font-bold border-zinc-500 rounded-full px-3 py-2">Next Module →</p>
                 )}
@@ -1473,7 +1473,7 @@ return (
                 <ul className="flex flex-row gap-3 overflow-x-auto list-inside w-full">
                     {contentList.map((content, idx) => (
                         <li key={content.id} className="py-3 hover:underline border border-green-900 w-full rounded-md px-3 flex flex-row items-center  justify-center">
-                            <a href={`/dashboard/internship/courses/${courseId}/module/${moduleId}/content/${content.id}`} className="flex min-w-24 items-center justify-center flex-row"> <p>✻</p> <p>Content </p> <p>{ idx+1} </p></a>
+                            <a href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${moduleId}/content/${content.id}`} className="flex min-w-24 items-center justify-center flex-row"> <p>✻</p> <p>Content </p> <p>{ idx+1} </p></a>
                         </li>
                     ))}
                 </ul>
