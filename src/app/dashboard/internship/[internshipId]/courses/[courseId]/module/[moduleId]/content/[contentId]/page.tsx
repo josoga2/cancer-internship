@@ -526,7 +526,7 @@ function Page() {
                 name: officialName,
                 xp: (Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 100), 100)).toString(),
                 internship_title: 'Next Generation Sequencing 2025 Internship',
-                internship_id: globalInternshipId,
+                internshipid: globalInternshipId,
             },
             {responseType: 'blob'} // Ensure the response is treated as a blob for file download
         );
