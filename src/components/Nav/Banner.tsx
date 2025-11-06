@@ -17,9 +17,8 @@ export default function Banner() {
         &times;
       </button>
       <div>
-        <a href="/internship" className=" font-medium hover:text-gray-100">
-          <span className="font-semibold">Our event calendar will be released Nov. 1, 2025. </span>
-          Watch this space!{" "}
+        <a href="https://internship.thehackbio.com/blog/hackbio-2026" className=" font-medium hover:text-gray-100">
+          <span className="font-semibold">AIxBio/Drugs 2026 🧬: Click here to see our list of upcoming internships  </span> 
           <p className="underline inline-block">
             {/*Enroll For the Internship {"(Closes Oct 26)"}*/}
           </p>
