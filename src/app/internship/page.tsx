@@ -70,7 +70,7 @@ export default function Page() {
             published: false
         }
     ]);
-    const internshipStatus: string = 'close';
+    const internshipStatus: string = 'open';
 
 
     // Fetch courses from the public API
