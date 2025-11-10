@@ -53,29 +53,29 @@ export function EnrollDialog() {
               if (paymentMethod === "paypal") {
                   router.replace("https://www.paypal.com/ncp/payment/QRTQL4BM5HEG6")// 'https://www.paypal.com/ncp/payment/QRTQL4BM5HEG6');
               } else if (paymentMethod === "stripe") {
-                  router.replace("https://buy.stripe.com/7sY6oG0II37bdQ75fOc7u0f")// 'https://buy.stripe.com/6oU9AS4YY237bHZ5fOc7u0e');
+                  router.replace("https://buy.stripe.com/7sYaEWaji4bf7rJ4bKc7u0h")// 'https://buy.stripe.com/6oU9AS4YY237bHZ5fOc7u0e');
               } else if (paymentMethod === "visa") {
-                  router.replace("https://buy.stripe.com/7sY6oG0II37bdQ75fOc7u0f")// 'https://buy.stripe.com/6oU9AS4YY237bHZ5fOc7u0e');
+                  router.replace("https://buy.stripe.com/7sYaEWaji4bf7rJ4bKc7u0h")// 'https://buy.stripe.com/6oU9AS4YY237bHZ5fOc7u0e');
               } else if (paymentMethod === "opay") {
                   setIsSubmitted(true)
-                  setPaymentInstructions("Please proceed to pay NGN150,000 via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details with the emails and names of your group to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
+                  setPaymentInstructions("Please proceed to pay NGN72,000 via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details with the emails and names of your group to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
               } else if (paymentMethod === "mastercard") {
-                  router.replace("https://buy.stripe.com/7sY6oG0II37bdQ75fOc7u0f")// 'https://buy.stripe.com/6oU9AS4YY237bHZ5fOc7u0e');
+                  router.replace("https://buy.stripe.com/7sYaEWaji4bf7rJ4bKc7u0h")// 'https://buy.stripe.com/6oU9AS4YY237bHZ5fOc7u0e');
               } else if (paymentMethod === "wise") {
                   router.replace('https://wise.com/pay/me/adewaleo251');
               }
             }else{
               if (paymentMethod === "paypal") {
-                  router.replace("https://www.paypal.com/ncp/payment/C4HHW946W3Y2J")// 'https://www.paypal.com/ncp/payment/L5SAYFKPRXJRC');
+                  router.replace("https://www.paypal.com/ncp/payment/L5SAYFKPRXJRC")// 'https://www.paypal.com/ncp/payment/C4HHW946W3Y2J');
               } else if (paymentMethod === "stripe") {
-                  router.replace("https://buy.stripe.com/4gMcN4crq0Z38vN7nWc7u0g")// 'https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
+                  router.replace("https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d")// 'https://buy.stripe.com/4gMcN4crq0Z38vN7nWc7u0g');
               } else if (paymentMethod === "visa") {
-                  router.replace("https://buy.stripe.com/4gMcN4crq0Z38vN7nWc7u0g")// 'https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
+                  router.replace("https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d")// 'https://buy.stripe.com/4gMcN4crq0Z38vN7nWc7u0g');
               } else if (paymentMethod === "opay") {
                   setIsSubmitted(true)
-                  setPaymentInstructions("Please proceed to pay NGN60,000 via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
+                  setPaymentInstructions("Please proceed to pay NGN30,000 via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com");
               } else if (paymentMethod === "mastercard") {
-                  router.replace("https://buy.stripe.com/4gMcN4crq0Z38vN7nWc7u0g")// 'https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d');
+                  router.replace("https://buy.stripe.com/00wdR8776bDH27p9w4c7u0d")// 'https://buy.stripe.com/4gMcN4crq0Z38vN7nWc7u0g');
               } else if (paymentMethod === "wise") {
                   router.replace('https://wise.com/pay/me/adewaleo251');
               }
@@ -106,14 +106,14 @@ export function EnrollDialog() {
             <DialogDescription>
               Enroll in the internship by filling out the form below and proceeding to pay.
               {bulk?(<span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> 
-                <p>$90</p> 
+                <p>$50</p> 
                 <p className="text-red-600 line-through text-xl">{`$120`}</p> 
-                <p className="text-red-600  text-xl">{`(25% off)`}</p>  
+                <p className="text-red-600  text-xl">{`(58% OFF)`}</p>  
               </span>): 
               (<span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> 
-                <p>$40</p> 
+                <p>$20</p> 
                 <p className="text-red-600 line-through text-xl">{`40`}</p> 
-                <p className="text-red-600  text-sm">{`Early bird discount closed`}</p>  
+                <p className="text-red-600  text-sm">{`50% OFF`}</p>  
               </span>)}
               <span className="flex flex-row gap-5"> <input className="" type="checkbox" onChange={(e) => setBulk(e.target.checked)} /> <p>Group of 3 Discount </p> </span>
 
