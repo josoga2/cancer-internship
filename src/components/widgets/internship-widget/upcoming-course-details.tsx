@@ -6,10 +6,10 @@ export default function UpcomingCourseDetails({ id, n, title }: { id: string; n:
 
   return (
     <main>
-      <div key={id} className="hidden w-full py-10  h-full md:flex flex-col gap-5  items-center justify-center border-r-hb-lightgreen border-r border-l border-l-hb-lightgreen">
+      <div key={id} className="hidden w-full  h-full md:flex flex-col gap-5  items-center justify-center">
         <div className="flex flex-col gap-5 items-start justify-center overflow-y-auto ">                          
-          <div key={id} className="flex flex-col gap-10 items-start  justify-start">
-              <div className="flex flex-col gap-10 items-start justify-start ">
+          <div key={id} className="flex flex-col items-start  justify-start">
+              <div className="flex flex-col  items-start justify-start ">
                   <a href={`learning/course/${id}`} className="flex flex-row gap-5 items-center justify-start  rounded-lg w-[500px] border border-hb-green px-7 py-5 min-h-24 hover:bg-green-50">
                       <p className="text-lg font-bold">{n+1}. </p>
                       <p className="text-lg font-bold">{title}</p>

@@ -26,7 +26,6 @@ import adekoya from '../../../public/adekoya.jpeg'
 import barve from '../../../public/barve.jpeg'
 import Footer from "@/components/Nav/footer";
 import { Button } from "@/components/ui/button";
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import UpcomingSection from "@/components/widgets/internship-widget/upcoming";
 import UpcomingCourseDetails from "@/components/widgets/internship-widget/upcoming-course-details";
 import UpcomingCourseDescription from "@/components/widgets/internship-widget/upcoming-course-description";
@@ -132,7 +131,7 @@ export default function Page() {
                     <div key={upcoming.id} className="flex flex-row items-start ">
                         <UpcomingSection id={upcoming.id || ""} start_date={upcoming.start_date || ""} int_image={upcoming.int_image || ""} title={upcoming.title || ""} overview={upcoming.overview || ""} lenght_in_weeks={upcoming.lenght_in_weeks || 1} internshipStatus={internshipStatus} />
                         <div className="flex flex-col gap-5 items-start justify-center w-full overflow-y-auto">
-                            <p className="text-2xl font-bold">What will you learn?</p>
+                            <p className="text-2xl font-bold pb-10">What will you learn?</p>
                             
                             {coursesList
                                 .filter(course =>{
@@ -175,7 +174,7 @@ export default function Page() {
                 <div className="flex flex-col gap-2 items-center justify-start w-full mx-auto px-5 py-20">
                     <span className="flex flex-row items-start font-bold text-2xl gap-2"> <p> Stay at the forefront of AI, Bioinformatics and Data</p> </span>
                     <div className="flex flex-row gap-2 items-start">
-                        <FreePrice />
+                        {/*<FreePrice /> */}
                         <PremiumPrice />
                     </div>
                 </div>
@@ -190,8 +189,6 @@ export default function Page() {
         <main>
             <div className="flex md:hidden flex-col gap-10 pt-20 w-full p-5">
                 <HeroSection id="hero-section-mobile" internshipStatus={internshipStatus} />
-
-                
 
                 {internship.filter(int => int.published === true).map((upcoming, idx) => (
                     <div key={upcoming.id} className="flex flex-col gap-5 w-full">

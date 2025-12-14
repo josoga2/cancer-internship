@@ -10,7 +10,7 @@ export default function UpcomingSection({ id, start_date, int_image, title, over
 
   return (
     <main>
-      <div key={id} className="hidden w-full py-10  h-full md:flex flex-col gap-5  items-center justify-center border-r-hb-lightgreen border-r border-l border-l-hb-lightgreen">
+      <div key={id} className="hidden w-full pb-10  h-full md:flex flex-col gap-5  items-center justify-center border-r-hb-lightgreen border-r border-l border-l-hb-lightgreen">
         <div className="flex flex-col gap-2 w-full items-start justify-start">
           <p className="text-3xl font-bold">Upcoming</p>
           <p className="text-lg">{start_date}</p>
