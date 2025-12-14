@@ -1,7 +1,5 @@
-import React from "react";
-import { ArrowRight } from "lucide-react";
+
 import { EnrollDialog } from "@/components/enroll/enroll";
-import { Button } from "@/components/ui/button";
 import Markdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
@@ -22,16 +20,16 @@ export default function ({ description, internshipStatus }: { description: strin
           <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{description}</Markdown>
         </div>
         {internshipStatus === 'close' && (
-                            <HbButton
-                                text="Application Closed."
-                                type="primary"
-                                onClick={() => {
-                                    if (typeof window !== "undefined") {
-                                        window.alert("Application closed! Join us next year");
-                                    }
-                                }}
-                            />
-                        )}
+          <HbButton
+              text="Application Closed."
+              type="primary"
+              onClick={() => {
+                  if (typeof window !== "undefined") {
+                      window.alert("Application closed! Join us next year");
+                  }
+              }}
+          />
+        )}
         {internshipStatus !== 'close' && <EnrollDialog />}
 
       </div>

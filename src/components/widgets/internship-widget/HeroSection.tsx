@@ -1,4 +1,3 @@
-import React from "react";
 import HbButtons from "../hb-buttons";
 import { EnrollDialog } from "@/components/enroll/enroll";
 import Image from "next/image";
