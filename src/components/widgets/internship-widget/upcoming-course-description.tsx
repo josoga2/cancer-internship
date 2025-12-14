@@ -9,7 +9,7 @@ import HbButton from "../hb-buttons";
 
 
 // Props: upcoming, coursesList, internshipStatus
-export default function ({ description, internshipStatus }: { description: string; internshipStatus: string }) {
+export default function UpcomingCourseDescription({ description, internshipStatus }: { description: string; internshipStatus: string }) {
 
   return (
     <div className="flex flex-col gap-5 items-start justify-center w-full overflow-y-auto">
