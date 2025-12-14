@@ -1,10 +1,9 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  webpack(config, options) {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  webpack(config) {
     config.module?.rules?.push({
       test: /\.whl$/,
-      use: "null-loader"
+      use: "null-loader",
     });
 
     return config;
@@ -14,7 +13,7 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "raw.githubusercontent.com",
-        pathname: "/**", // Important to allow any path
+        pathname: "/**",
       },
     ],
   },
