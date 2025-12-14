@@ -69,7 +69,7 @@ export default function TestimonialsEnroll({ InternshipStatus }: { InternshipSta
 
           
                     <div className="flex items-start justify-center">
-                        <div className="w-full flex flex-col items-center justify-center py-10">
+                        <div className="w-full flex flex-col items-center justify-center py-2">
                             {InternshipStatus === 'close' && (
                                 <HbButton
                                     text="Application Closed."
@@ -134,11 +134,24 @@ export default function TestimonialsEnroll({ InternshipStatus }: { InternshipSta
                 </div>
 
                     
-                <a href='/internship'> 
-                    <EnrollDialog /> 
-                </a>
+                <div className="flex items-start justify-center">
+                    <div className="w-full flex flex-col items-center justify-center py-2">
+                        {InternshipStatus === 'close' && (
+                            <HbButton
+                                text="Application Closed."
+                                type="primary"
+                                onClick={() => {
+                                    if (typeof window !== "undefined") {
+                                        window.alert("Application closed! Join us next year");
+                                    }
+                                }}
+                            />
+                        )}
+                        {InternshipStatus !== 'close' && <EnrollDialog />}
+                    </div>
                 </div>
             </div>
-        </main>
+        </div>
+    </main>
     )
 }

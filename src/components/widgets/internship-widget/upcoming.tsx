@@ -10,7 +10,7 @@ export default function UpcomingSection({ id, start_date, int_image, title, over
 
   return (
     <main>
-      <div key={id} className="hidden w-full pb-10  h-full md:flex flex-col gap-5  items-center justify-center border-r-hb-lightgreen border-r border-l border-l-hb-lightgreen">
+      <div key={id} className="hidden w-full pb-10  h-full md:flex flex-col gap-10 px-10 items-center justify-center border-r-hb-lightgreen border-r border-l border-l-hb-lightgreen">
         <div className="flex flex-col gap-2 w-full items-start justify-start">
           <p className="text-3xl font-bold">Upcoming</p>
           <p className="text-lg">{start_date}</p>
@@ -19,7 +19,7 @@ export default function UpcomingSection({ id, start_date, int_image, title, over
         <div className="flex flex-row gap-10 w-full justify-center">
           <div className=" gap-10 w-full items-start justify-start">
 
-            <div className="flex flex-col gap-7 items-start justify-start border-2 border-hb-green rounded-lg px-5 py-10 w-4/5 sticky top-0">
+            <div className="flex flex-col gap-7 items-start justify-start border-2 border-hb-green rounded-lg px-5 py-10 w-full sticky top-0">
               <img
                 src={int_image}
                 alt="upcoming_int"
