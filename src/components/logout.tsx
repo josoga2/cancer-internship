@@ -1,3 +1,5 @@
+import { Power } from "lucide-react";
+
 function Logout() {
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -7,9 +9,10 @@ function Logout() {
   return (
     <button
       onClick={handleLogout}
-      className="bg-red-300 text-white text-base px-4 py-2 rounded hover:bg-red-600"
+      className="text-gray-700 text-sm flex flex-row items-center gap-2 hover:text-red-600 transition-colors"
     >
-      ⏻ Logout
+      <Power className="text-sm h-4 w-4" />
+      Quit
     </button>
   );
 }

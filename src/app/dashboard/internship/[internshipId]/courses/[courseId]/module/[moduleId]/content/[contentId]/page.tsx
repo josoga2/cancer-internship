@@ -1,6 +1,5 @@
 "use client"
 import { Button } from "@/components/ui/button";
-import hb_logo from "../../../../../../../../../../../public/hb_logo.png";
 import { Progress } from "@/components/ui/progress"
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
@@ -15,27 +14,26 @@ import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
-import rehypeRaw from 'rehype-raw'
 import withAuth from "@/components/withAuth";
-import { CiViewList } from "react-icons/ci";
-import Logout from "@/components/logout";
 import 'katex/dist/katex.min.css';
 import 'highlight.js/styles/github.css'; // or another theme
 // remark plugins
-import remarkSlug from "remark-slug";
-import remarkAutolinkHeadings from "remark-autolink-headings";
-import remarkFootnotes from "remark-footnotes";
-import remarkDeflist from "remark-deflist";
 import { toast } from "sonner"
 import dynamic from "next/dynamic";
 
 // rehype plugins
-import rehypeHighlight from "rehype-highlight";
+import LeftSideBar from "@/components/widgets/dashboard-widgets/left-sidebar";
+import TocLink from "@/components/widgets/dashboard-widgets/toc-link";
+import Previous from "@/components/widgets/dashboard-widgets/previous";
+import TocList from "@/components/widgets/dashboard-widgets/toc-list";
+import Next from "@/components/widgets/dashboard-widgets/next";
+import MainScreenFlexIntXP from "@/components/widgets/dashboard-widgets/main-screen-intxp";
+import HbButton from "@/components/widgets/hb-buttons";
+import Video from "@/components/widgets/course-props-widgets/video";
+import TextContent from "@/components/widgets/course-props-widgets/text";
+import WebRPy from "@/components/widgets/course-props-widgets/webrpy";
+import JupyterContent from "@/components/widgets/course-props-widgets/jupyter-notebook";
 
-const WebRConsole = dynamic(() => import('@/components/webR/webRConsole'), {
-  ssr: false,
-  loading: () => <p>Loading webR console...</p>,
-});
 
 
 function Page() {
@@ -52,6 +50,7 @@ function Page() {
   const [userXP, setUserXP] = useState("");
   const [userClicks, setUserClicks] = useState<number>(1);
   const [completedContent, setCompletedContent] = useState<string>('');
+  const [uniqCContent, setUniqCContent] = useState<Set<string>>(new Set());
   const [uniqueContentId, setUniqueContentId] = useState<number>(0);
   const [totalContent, setTotalContent] = useState<number>(0);
   const [mcqGraded, setMcqGraded] = useState(false);
@@ -202,6 +201,7 @@ function Page() {
           const uniqItems = new Set(userProgress.completed_contents.split(","))
           const allItemslength = userProgress.completed_contents.split(",").length
           setUniqueContentId(uniqItems.size ) 
+          setUniqCContent(new Set(userProgress.completed_contents.split(",")))
           //console.log(allItemslength)
           setUserXP(Math.ceil(userProgress.total_xp_earned * (uniqItems.size / allItemslength)).toString());
 
@@ -225,6 +225,8 @@ function Page() {
 
     fetchUserProgress();
   }, []);
+
+  //console.log(uniqCContent)
 
   //get user internship id
   useEffect(() => {
@@ -359,8 +361,6 @@ function Page() {
                     }
                 }
             }
-
-                
         }
   
         } else {
@@ -427,7 +427,7 @@ function Page() {
                 module: moduleId
             });
             if (response.status === 200) {
-                console.log("Content marked as completed successfully.");
+                //console.log("Content marked as completed successfully.");
                 //setUserXP(prevXP => prevXP + 10); // Increment user XP by 10 or any desired value
                 //setUserClicks(prevClicks => prevClicks + 1); // Increment user clicks by 1
                 setCompletedContent(prevCompleted => prevCompleted.concat(',',String(contentId))); // Increment completed content count
@@ -531,7 +531,7 @@ function Page() {
             {responseType: 'blob'} // Ensure the response is treated as a blob for file download
         );
             if (response.status === 200) {
-                console.log("Certificate generated successfully.");
+                //console.log("Certificate generated successfully.");
                 // Handle success, e.g., show a success message or redirect
                 const link = document.createElement('a');
                 const url = window.URL.createObjectURL(response.data); // Create a URL for the PDF Blob
@@ -550,350 +550,70 @@ function Page() {
 
 return (
     <main className="w-full">
-    <div className="hidden md:flex flex-row w-full pl-5">
+    <div className="hidden md:flex flex-row w-full pl-2">
         {/**LEFT SIDE BAR */}
-        <div className="flex flex-col gap-10 text-base h-screen bg-white items-start w-[250px] border-r overflow-auto">
-            <div className="flex flex-row items-center gap-2 px-2 py-5">
-                <Image src={hb_logo} alt="logo" width={40} height={40} />
-                <p className="font-bold">HackBio</p>
-            </div>
-            <div className="flex flex-col gap-2 w-full items-start text-sm">
-            
-                <a href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}`} className="font-bold text-base py-2 hover:underline flex flex-row items-center gap-2"> <CiViewList /> <p> Table of Content </p></a>
-                
-                {previousModuleId > 0 ? (
-                    <a 
-                        href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${previousModuleId}/content/${previousContentId}`} 
-                        className="font-bold text-base py-5 hover:underline"
-                    >
-                        ← Previous Module
-                    </a>
-                ) : (
-                    <p className="font-bold text-base py-5 text-gray-400"> ← Previous Module</p>
-                )}
+        <LeftSideBar />
 
-                    <p className="font-bold text-base py-3">Module Content </p>
-                {contentList
-                    .map((content) => (
-                        <div key={content.id} className={`w-full px-5 py-2 hover:underline ${Number(content.id) === contentId ? 'bg-hb-lightgreen text-hb-green font-bold rounded-l-md' : ''}`}>
-                            <li className="list-disc"> <a href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${moduleId}/content/${content.id}`}> {content.title} </a> </li>
-                        </div>
-                ))}
-                {nextModuleId > 0 ? (
-                    <a 
-                        href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${nextModuleId}/content/${nextContentId}`} 
-                        className="font-bold text-base  py-5 hover:underline"
-                    >
-                        Next Module →
-                    </a>
-                ) : (
-                    <p className="font-bold text-base  py-5 text-gray-400">Next Module →</p>
-                )}
-            </div>
-        </div>
         {/** MAIN */}
         <div className="w-full bg-hb-lightgreen flex flex-col gap-10 text-lg overflow-y-auto h-screen pb-10">
-            <div className="flex flex-row gap-10 pl-10 pt-7 bg-white w-full pb-5 border-b text-base text-gray-600  items-center justify-between pr-10">
-                    <div className="flex flex-row gap-10 items-center">
-                        <a href="/internship" className="hover:underline font-bold">Internships</a>
-                        <a href="/learning" className="hover:underline font-bold">Courses</a>
-                    </div>
-                    <div className="flex flex-row gap-10 items-center text-black text-xl">
-                        <p className="font-bold"> 🎖️ {Number(userXP)} XP</p>
-                        <p className="font-bold"> {title}</p>
-                        <Logout />
-                    </div>
-            </div>
-            <div className="px-10 pt-10 w-[800px]  flex flex-col gap-5">
+            <MainScreenFlexIntXP  username={username} mini_desc="Your Internship Courses" userXP={userXP} title={title}/>
+            
+            <div className="px-10 pt-10 w-200  flex flex-col gap-5">
                 {filteredContentList.length >0? (filteredContentList.map((content) => (
                     <div className="flex flex-col gap-10" key={content.id}>
                         <div className="flex flex-row w-full justify-between">
-                            <p className="font-bold text-3xl "> {content.title} </p> 
+                            <p className=" text-2xl "> {content.title} </p> 
                             {content.content_type !== 'quiz' && content.content_type !== 'project' && content.content_type !== 'codeTask' && (
-                                <Button className="font-bold text-xl py-5 border-2 border-black bg-hb-green px-5" onClick={handleMarkCompleted}>
-                                    Mark Completed
-                                </Button>
+                                <HbButton type="primary" text="Mark Completed"  onClick={handleMarkCompleted}/>
                             )}
                         </div>
-                        <div className="font-bold w-full p-3 text-lg border rounded-md border-hb-green"> 
+                        <div className=" w-full p-3 text-lg border rounded-md border-hb-green"> 
                             {uniqueContentId >0 && totalContent>0 ? (<div className="flex flex-row gap-10 items-center max-w-full"> 
                                 <Progress value={(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 120), 100))} className=""/> 
-                                <p className="font-bold text-2xl rounded-full"> {(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 120), 100))}% </p> 
+                                <p className=" text-lg rounded-full"> {(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 120), 100))}% </p> 
                             </div>) : <div className="h-3 w-10"></div>}
+                            <p className="text-xs text-gray-500">🎖️XP and progress are computed from the entire internship/pathway content.</p>
                         </div>
                         
                         {/* Video */}
                     {content.content_type === 'video' && (
-                        
-                        <div className="w-full flex flex-row gap-10">
-                            <div className="w-full flex flex-col gap-5">
-                                <iframe height={400} src={content.video_url} className="rounded-md w-full border-2 border-hb-green" />
-                                <p className="text-lg pt-5 font-bold">⛭ Remember to Use the gear icon to select your desired video quality</p>
-                                <p className="text-lg pt-5 font-bold">{`</> Source Code`}</p>
-                                <div className=" bg-white p-5 border border-gray-200 rounded-md text-sm prose prose-base leading-tight">
-                                    <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.text_content}</Markdown>
-                                </div>
-                            </div>
-
-                            {/* Floating action buttons */}
-                            <div className="fixed top-1/2 right-10 -translate-y-1/2 z-50 flex flex-col gap-3 text-sm">
-                                {/* Python Button */}
-                                <button
-                                    onClick={() => {
-                                    setShowJupyter(true);
-                                    setShowWebR(false);
-                                    }}
-                                    aria-label="Show Python (JupyterLite)"
-                                    type="button"
-                                    className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
-                                    ${showJupyter 
-                                        ? 'bg-hb-green scale-105 shadow-xl ring-2 ring-green-300'
-                                        : 'bg-hb-green hover:bg-green-600 hover:scale-105'
-                                    }`}
-                                >
-                                    Python
-                                </button>
-
-                                {/* R Button */}
-                                <button
-                                    onClick={() => {
-                                    setShowWebR(true);
-                                    setShowJupyter(false);
-                                    }}
-                                    aria-label="Show R (WebR Console)"
-                                    type="button"
-                                    className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
-                                    ${showWebR 
-                                        ? 'bg-blue-700 scale-105 shadow-xl ring-2 ring-blue-300'
-                                        : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'
-                                    }`}
-                                >
-                                    R
-                                </button>
-                                </div>
-
-
-                            {/* Floating JupyterLite widget */}
-                            {showJupyter && (
-                                <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
-                                    <iframe
-                                        src="https://josoga2.github.io/jpuyterlite-hb-dev/repl/index.html?showBanner=0&kernel=python&toolbar=1"
-                                        height={300}
-                                        width={300}
-                                        className="rounded-lg border border-gray-200"
-                                    />
-                                    <p className="text-xs pl-1 py-1 font-bold">▶︎ Shift+Enter to run code</p>
-                                </div>
-                            )}
-
-                            {/* Floating WebRConsole widget */}
-                            {showWebR && (
-                                <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
-                                    <WebRConsole />
-                                    <p className="text-xs pl-1 py-1 font-bold">▶︎ Press Enter to run code</p>
-                                </div>
-                            )}
-                        </div>
+                        <Video video_url={content.video_url} text_content={content.text_content} />
                     )}
 
-                    {/**Code Task */}
-                    {/**Code Task */}
                     {content.content_type === 'codeTask' && (
                         <div className="w-full flex flex-col text-sm">
-                            <div className="border-2 rounded-md border-hb-green p-10 flex flex-col w-full prose ">
-                                <Markdown
-                                    remarkPlugins={[
-                                        remarkGfm,
-                                        remarkMath,
-                                        remarkDeflist
-                                    ]}
-                                    rehypePlugins={[
-                                        rehypeRaw,
-                                        rehypeKatex,
-                                        rehypeHighlight
-                                    ]}
-                                    >
-                                    {content.text_content}
-                                </Markdown>
-                                <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} placeholder="type your solution..." required  className='bg-green-950 text-white text-xs placeholder:text-xs p-3 h-[400px] rounded-md font-mono border border-neutral-200'/>
-                                <div className="flex flex-col gap-5 items-start justify-start pt-5">
-                                    <Button onClick={() => {handleCodeTaskSubmit(); }} className='w-fit bg-green-500 text-white text-xl py-6 hover:bg-green-600'>
-                                        SUBMIT
-                                    </Button>
+                            <div className="rounded-md  flex flex-col w-full prose gap-5">
+                                <TextContent text_content={content.text_content} />
+                                
+                                <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} placeholder="Type your solution here. We accept code & text..." required  className='bg-green-950 text-white text-xs placeholder:text-xs p-5 w-full  h-100 rounded-md font-mono border border-neutral-200'/>
+                                <div className="flex flex-row gap-5 items-center justify-start ">
+                                    <HbButton onClick={() => {handleCodeTaskSubmit(); }} type="primary" text="Submit" />
                                     {loading ? (
                                         <svg className="animate-spin h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                                         </svg>
-                                    ): (<div> <p>Your grade is: {grade} XP</p> <p className="leading-7 text-sm">Suggested Improvements: {improve} </p> </div>)}
-
+                                    ): (<div className="text-sm">  </div>)}
+                                </div>
+                                <div>
+                                    {loading ? (
+                                        <div className="text-sm"> <p>Your grade is: {grade} XP</p> <p className="leading-7 text-sm">Suggested Improvements: {improve} </p> </div>
+                                    ): (<div className="text-sm"> <p>Your grade is: {grade} XP</p> <p className="leading-7 text-sm">Suggested Improvements: {improve} </p> </div>)}
                                 </div>
                                 
                             </div>
 
                             {/* Floating action buttons */}
-                            <div className="fixed top-1/2 right-10 -translate-y-1/2 z-50 flex flex-col gap-3 text-sm">
-                                {/* Python Button */}
-                                <button
-                                    onClick={() => {
-                                    setShowJupyter(true);
-                                    setShowWebR(false);
-                                    }}
-                                    aria-label="Show Python (JupyterLite)"
-                                    type="button"
-                                    className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
-                                    ${showJupyter 
-                                        ? 'bg-hb-green scale-105 shadow-xl ring-2 ring-green-300'
-                                        : 'bg-hb-green hover:bg-green-600 hover:scale-105'
-                                    }`}
-                                >
-                                    Python
-                                </button>
-
-                                {/* R Button */}
-                                <button
-                                    onClick={() => {
-                                    setShowWebR(true);
-                                    setShowJupyter(false);
-                                    }}
-                                    aria-label="Show R (WebR Console)"
-                                    type="button"
-                                    className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
-                                    ${showWebR 
-                                        ? 'bg-blue-700 scale-105 shadow-xl ring-2 ring-blue-300'
-                                        : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'
-                                    }`}
-                                >
-                                    R
-                                </button>
-                                </div>
-
-
-                            {/* Floating JupyterLite widget */}
-                            {showJupyter && (
-                                <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
-                                    <iframe
-                                        src="https://josoga2.github.io/jpuyterlite-hb-dev/repl/index.html?showBanner=0&kernel=python&toolbar=1"
-                                        height={300}
-                                        width={300}
-                                        className="rounded-lg border border-gray-200"
-                                    />
-                                    <p className="text-xs pl-1 py-1 font-bold">▶︎ Shift+Enter to run code</p>
-                                </div>
-                            )}
-
-                            {/* Floating WebRConsole widget */}
-                            {showWebR && (
-                                <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
-                                    <WebRConsole />
-                                    <p className="text-xs pl-1 py-1 font-bold">▶︎ Press Enter to run code</p>
-                                </div>
-                            )}
+                            <WebRPy />
                         </div>
                     )}
                     {/**Text */}
                     {content.content_type === 'text' && (
-                        <div className="w-full flex flex-row gap-10">
-                            <div className="w-full border-2 rounded-md border-hb-green p-5 bg-white prose prose-base leading-tight ">
-                                <p className="font-bold text-lg"></p>
-                                <article> <Markdown
-                                    remarkPlugins={[
-                                        remarkGfm,
-                                        remarkMath,
-                                        remarkDeflist
-                                    ]}
-                                    rehypePlugins={[
-                                        rehypeRaw,
-                                        rehypeKatex,
-                                        rehypeHighlight
-                                    ]}
-                                    >
-                                    {content.text_content}
-                                </Markdown>
-                                </article>
-                            </div>
-                            {/* Floating action buttons */}
-                            <div className="fixed top-1/2 right-10 -translate-y-1/2 z-50 flex flex-col gap-3 text-sm">
-                                {/* Python Button */}
-                                <button
-                                    onClick={() => {
-                                    setShowJupyter(true);
-                                    setShowWebR(false);
-                                    }}
-                                    aria-label="Show Python (JupyterLite)"
-                                    type="button"
-                                    className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
-                                    ${showJupyter 
-                                        ? 'bg-hb-green scale-105 shadow-xl ring-2 ring-green-300'
-                                        : 'bg-hb-green hover:bg-green-600 hover:scale-105'
-                                    }`}
-                                >
-                                    Python
-                                </button>
-
-                                {/* R Button */}
-                                <button
-                                    onClick={() => {
-                                    setShowWebR(true);
-                                    setShowJupyter(false);
-                                    }}
-                                    aria-label="Show R (WebR Console)"
-                                    type="button"
-                                    className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
-                                    ${showWebR 
-                                        ? 'bg-blue-700 scale-105 shadow-xl ring-2 ring-blue-300'
-                                        : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'
-                                    }`}
-                                >
-                                    R
-                                </button>
-                                </div>
-
-
-                            {/* Floating JupyterLite widget */}
-                            {showJupyter && (
-                                <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
-                                    <iframe
-                                        src="https://josoga2.github.io/jpuyterlite-hb-dev/repl/index.html?showBanner=0&kernel=python&toolbar=1"
-                                        height={300}
-                                        width={300}
-                                        className="rounded-lg border border-gray-200"
-                                    />
-                                    <p className="text-xs pl-1 py-1 font-bold">▶︎ Shift+Enter to run code</p>
-                                </div>
-                            )}
-
-                            {/* Floating WebRConsole widget */}
-                            {showWebR && (
-                                <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
-                                    <WebRConsole />
-                                    <p className="text-xs pl-1 py-1 font-bold">▶︎ Press Enter to run code</p>
-                                </div>
-                            )}
-                        </div>
+                        <TextContent text_content={content.text_content} />
                     )}
                     {/**Jupyter */}
                     {content.content_type === 'jupyter' && (
-                        <div className="w-full flex flex-row gap-10">
-                            <div className="w-full min-h-screen over border-2 rounded-md border-hb-green p-10 flex flex-col gap-2">
-                                <div className="flex flex-row gap-10 items-center ">
-                                    <a href="http://192.168.42.99/"  target="_blank"> 
-                                        <Button className="bg-hb-green text-white text-xl font-bold border-black border-2"> 
-                                            Notebook on HackBio 
-                                        </Button> 
-                                    </a>
-                                    <a href={content.jupyter_url}  target="_blank"> 
-                                        <Button className="bg-amber-500 text-white text-xl font-bold border-black border-2"> 
-                                            Notebook on Colab 
-                                        </Button> 
-                                    </a>
-                                </div>
-                                <p className="font-bold">
-                                    If you need an account to run python on HackBio, you can request for access from your HackBio Manager on Slack
-                                </p>
-                                {typeof content.text_content === 'string' && <NotebookViewer url={content.jupyter_url} />}
-                            </div>
-                        </div>
+                        <JupyterContent text_content={content.text_content} jupyter_url={content.jupyter_url} />
                     )}
                     {/**Test */}
                     {/**Test */}
@@ -912,85 +632,23 @@ return (
                                     <Image src={content.video_url} alt="Schematic" width={300} height={300} className="rounded-md border-2 w-full max-w-3/5" /> 
                                 }
                                 <div className="flex flex-col gap-5 items-start justify-start pt-5">
-                                    <Button onClick={() => {handleMCQSubmit() }} className='w-fit bg-hb-green font-bold text-xl py-6 border-2 border-black'>
-                                        SUBMIT
-                                    </Button>
+                                    <HbButton text="SUBMIT" type="primary"  onClick={() => {handleMCQSubmit() }} />
+                                    <HbButton type="outline" onClick={() => {setHintClicked(true) }} text="HINT" />
                                 </div>
                                 {!loading && mcqGraded && (
                                     <div>
                                         <p>Grade: {grade}</p>
                                     </div>
                                 )}
-                                <Button onClick={() => {setHintClicked(true) }} className='w-fit bg-yellow-500 font-bold text-xl py-2 border-2 border-black'>
-                                        HINT
-                                </Button>
+                                
                                 {hintClicked && (
                                     <div className="mt-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
                                         <h3 className="font-bold">Hint:</h3>
                                         <p className="text-sm">{content.project_rubric || `No hint here 🤡`}</p>
                                     </div>
                                 )}
-
-                                {/* Floating action buttons */}
-                                <div className="fixed top-1/2 right-10 -translate-y-1/2 z-50 flex flex-col gap-3 text-sm">
-                                    {/* Python Button */}
-                                    <button
-                                        onClick={() => {
-                                        setShowJupyter(true);
-                                        setShowWebR(false);
-                                        }}
-                                        aria-label="Show Python (JupyterLite)"
-                                        type="button"
-                                        className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
-                                        ${showJupyter 
-                                            ? 'bg-hb-green scale-105 shadow-xl ring-2 ring-green-300'
-                                            : 'bg-hb-green hover:bg-green-600 hover:scale-105'
-                                        }`}
-                                    >
-                                        Python
-                                    </button>
-
-                                    {/* R Button */}
-                                    <button
-                                        onClick={() => {
-                                        setShowWebR(true);
-                                        setShowJupyter(false);
-                                        }}
-                                        aria-label="Show R (WebR Console)"
-                                        type="button"
-                                        className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
-                                        ${showWebR 
-                                            ? 'bg-blue-700 scale-105 shadow-xl ring-2 ring-blue-300'
-                                            : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'
-                                        }`}
-                                    >
-                                        R
-                                    </button>
-                                    </div>
-
-
-                                {/* Floating JupyterLite widget */}
-                                {showJupyter && (
-                                    <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
-                                        <iframe
-                                            src="https://josoga2.github.io/jpuyterlite-hb-dev/repl/index.html?showBanner=0&kernel=python&toolbar=1"
-                                            height={300}
-                                            width={300}
-                                            className="rounded-lg border border-gray-200"
-                                        />
-                                        <p className="text-xs pl-1 py-1 font-bold">▶︎ Shift+Enter to run code</p>
-                                    </div>
-                                )}
-
-                                {/* Floating WebRConsole widget */}
-                                {showWebR && (
-                                    <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
-                                        <WebRConsole />
-                                        <p className="text-xs pl-1 py-1 font-bold">▶︎ Press Enter to run code</p>
-                                    </div>
-                                )}
-                                
                             </div>
+                            <WebRPy />
                         </div>
                     )}
                     {/**Project */}
@@ -1000,7 +658,7 @@ return (
                                 <p className="font-bold text-lg">
                                     Project Details: Submit markdown or code solution to the project below
                                 </p>
-                                <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.project_data}</Markdown>
+                                <TextContent text_content={content.project_data} />
                                 <div className="grid gap-2">
                                     <Label htmlFor="solution" className='text-lg font-bold pt-5'>Your Solution</Label>
                                     <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} placeholder="type your solution..." required  className='bg-green-950 text-white text-xs placeholder:text-xs p-3 h-screen font-mono border border-neutral-200'/>
@@ -1020,102 +678,10 @@ return (
                                 </div>
 
                             </div>
-                            {/* Floating action buttons */}
-                            <div className="fixed top-1/2 right-10 -translate-y-1/2 z-50 flex flex-col gap-3 text-sm">
-                                {/* Python Button */}
-                                <button
-                                    onClick={() => {
-                                    setShowJupyter(true);
-                                    setShowWebR(false);
-                                    }}
-                                    aria-label="Show Python (JupyterLite)"
-                                    type="button"
-                                    className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
-                                    ${showJupyter 
-                                        ? 'bg-hb-green scale-105 shadow-xl ring-2 ring-green-300'
-                                        : 'bg-hb-green hover:bg-green-600 hover:scale-105'
-                                    }`}
-                                >
-                                    Python
-                                </button>
-
-                                {/* R Button */}
-                                <button
-                                    onClick={() => {
-                                    setShowWebR(true);
-                                    setShowJupyter(false);
-                                    }}
-                                    aria-label="Show R (WebR Console)"
-                                    type="button"
-                                    className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
-                                    ${showWebR 
-                                        ? 'bg-blue-700 scale-105 shadow-xl ring-2 ring-blue-300'
-                                        : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'
-                                    }`}
-                                >
-                                    R
-                                </button>
-                                </div>
-
-
-                            {/* Floating JupyterLite widget */}
-                            {showJupyter && (
-                                <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
-                                    <iframe
-                                        src="https://josoga2.github.io/jpuyterlite-hb-dev/repl/index.html?showBanner=0&kernel=python&toolbar=1"
-                                        height={300}
-                                        width={300}
-                                        className="rounded-lg border border-gray-200"
-                                    />
-                                    <p className="text-xs pl-1 py-1 font-bold">▶︎ Shift+Enter to run code</p>
-                                </div>
-                            )}
-
-                            {/* Floating WebRConsole widget */}
-                            {showWebR && (
-                                <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
-                                    <WebRConsole />
-                                    <p className="text-xs pl-1 py-1 font-bold">▶︎ Press Enter to run code</p>
-                                </div>
-                            )}
+                            <WebRPy />
                         </div>
                     )}
-                    {/**Carousel3 */}
-                    {/*content.content_type === 'Carousel3' && (
-                        <div className="w-full flex flex-row gap-10">
-                            <div className="border-2 rounded-md border-hb-green p-10 flex flex-col gap-2 w-fit">
-                                <p className="font-bold text-lg">A Quick Summary</p>
-                                <Carousel className="w-fit max-w-2/5 px-10">
-                                    <CarouselContent>
-                                        <CarouselCard content={content.carousel1 || ""} />
-                                        <CarouselCard content={content.carousel2 || ""} />
-                                        <CarouselCard content={content.carousel3 || ""} />
-                                    </CarouselContent>
-                                    <CarouselPrevious />
-                                    <CarouselNext />
-                                </Carousel>
-                            </div>
-                        </div>
-                    )*/}
-                    {/**Carousel5 */}
-                    {/*content.content_type === 'Carousel5' && (
-                        <div className="w-full flex flex-row ">
-                            <div className="border-2 rounded-md border-hb-green p-10 flex flex-col gap-10 w-fit">
-                                <p className="font-bold text-lg">A Quick Summary</p>
-                                <Carousel className="w-fit max-w-2/5 px-10">
-                                    <CarouselContent>
-                                        <CarouselCard content={content.carousel1 || ""} />
-                                        <CarouselCard content={content.carousel2 || ""} />
-                                        <CarouselCard content={content.carousel3 || ""} />
-                                        <CarouselCard content={content.carousel4 || ""} />
-                                        <CarouselCard content={content.carousel5 || ""} />
-                                    </CarouselContent>
-                                    <CarouselPrevious className="w-20 h-20"/>
-                                    <CarouselNext  className="w-20 h-20"/>
-                                </Carousel>
-                            </div>
-                        </div>
-                    )*/}
+                    
                     {/**Submit */}
                     {content.content_type === 'submit' && (
                         <div className="w-full flex flex-row gap-5">
@@ -1156,7 +722,7 @@ return (
                 {/**Certificate */}
                 {content.content_type === 'certificate' && (
                     <div className="w-full flex flex-row gap-5">
-                        <div className="border-2 rounded-md border-hb-green p-5 flex flex-col gap-2 w-[1500px]">
+                        <div className="border-2 rounded-md border-hb-green p-5 flex flex-col gap-2 w-375">
                             <p className="font-bold text-base">
                                 Process Your Certificates
                             </p>
@@ -1186,10 +752,10 @@ return (
                                 </CardContent>
                             </Card>
                         </div>
-                        <div className="border-2 p-5 rounded-md border-hb-green flex flex-col gap-2 ">
-                            <p className="font-bold text-xl">Guideline for Submissions </p>
-                            <p>You can only generate your certificate once. Please note that “Your Internship Grade - in percentage -  will be recorded on your certificate. </p>
-                            <p> Please ensure you have attained enough points before requesting for your certificate. Once you process, it cannot be generated again.</p>
+                        <div className="border-2 p-5 rounded-md border-hb-green flex flex-col text-justify-start prose prose-base">
+                            <p className="font-bold text-lg">Guideline for Submissions </p>
+                            <p className="text-sm">You can only generate your certificate once. Please note that “Your Internship Grade - in percentage -  will be recorded on your certificate. </p>
+                            <p className="text-sm"> Please ensure you have attained enough points before requesting for your certificate. Once you process, it cannot be generated again.</p>
                         </div>
                     </div>
                 )}
@@ -1197,119 +763,81 @@ return (
             ))) : (<p>Loading content...</p>)}
             </div>
         </div>
+
+        {/** Content Navigation */}
+        <div className="flex flex-col text-base h-screen bg-white items-start w-100 border-r overflow-auto">
+            
+            <TocLink tocHref={`/dashboard/internship/${globalInternshipId}/courses/${courseId}`} />
+            <Previous previous={previousModuleId > 0} PREVIOUSLINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${previousModuleId}/content/${previousContentId}`} /> 
+            <p className="text-xs text-gray-500 p-5 ">CONTENT</p>
+            <div className="flex flex-col gap-2">
+                {contentList.map((content) => {
+                    const isActive = Number(content.id) === Number(contentId);
+                    const isCompleted = uniqCContent.has(String(content.id))
+                    //console.log(content.id ,'is completed', isCompleted)
+                    //console.log('active content id:', uniqCContent)
+
+                    return (
+                        <TocList isCompleted={isCompleted} COURSELINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${moduleId}/content/${content.id}`} id={String(content.id)} isActive={isActive} title={content.title} />  
+                    );
+                })}
+            </div>
+            
+            <Next NEXTLINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${nextModuleId}/content/${nextContentId}`} nextModuleId={nextModuleId} />
+            
+        </div>
     </div>     
 
     {/**MOBILE */}
 
-    <div className="md:hidden w-full flex flex-col pb-20 min-h-[100svh] ">
+    <div className="md:hidden w-full flex flex-col px-2 py-5 min-h-svh bg-hb-lightgreen">
             {/* Header */}
-            <div className="flex flex-row items-center justify-between px-4 py-4 border-b bg-white">
-                <div className="flex flex-row items-center gap-2">
-                <Image src={hb_logo} alt="HackBio logo" width={32} height={32} />
-                <p className="font-bold text-lg">HackBio</p>
-                </div>
-
-                {/* Simple hamburger or nav toggle — can be replaced with mobile menu logic */}
-                <div className="flex flex-row gap-4 text-sm font-bold">
-                
-                <Logout />
-                </div>
-            </div>
 
             {/* Navigation Links */}
-            <div className="flex flex-col p-5 text-sm gap-3 ">
-                <a href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}`} className="flex items-center gap-2 font-bold text-xl hover:underline"> <CiViewList className="text-3xl font-bold" /> Table of Content</a>
-            </div>
-
-            {/* Module Navigation */}
-            <div className="px-10 py-5 text-sm text-gray-700 text-center w-full items-center justify-between flex flex-row gap-5">
-                {previousModuleId > 0 ? (
-                    <a href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${previousModuleId}/content/${previousContentId}`} className="font-bold text-base hover:underline border border-green-800 rounded-full px-2 py-2 ">← Previous Module</a>
-                ) : (
-                    <p className="text-gray-400 font-bold border border-zinc-500 rounded-full px-3 py-2">← Previous Module</p>
-                )}
-
-                {nextModuleId > 0 ? (
-                    <a href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${nextModuleId}/content/${nextContentId}`} className="font-bold hover:underline border text-green-900 border-green-800 rounded-full px-2 py-2 ">Next Module →</a>
-                ) : (
-                    <p className="text-gray-400 font-bold border-zinc-500 rounded-full px-3 py-2">Next Module →</p>
-                )}
-            </div>
-
+            {/* <div className="flex flex-row gap-5 overflow-x-auto p-5 px-2">
+                <TocLink tocHref={`/dashboard/internship/${globalInternshipId}/courses/${courseId}`} />
+            </div> */}
+            <LeftSideBar />
             
-
             {/* Main Content */}
-            <div className="flex flex-col gap-5 px-4  bg-green-50 py-10 w-full pb-20 ">
+            <div className="flex flex-col gap-5 px-2 py-5 w-full ">
                 {filteredContentList.length > 0 ? filteredContentList.map((content) => (
-                    <div key={content.id} className="flex flex-col gap-5  scroll-pb-20 overflow-auto">
+                    <div key={content.id} className="flex flex-col gap-5 overflow-auto">
                         <div className="flex justify-between items-center">
-                            <p className="font-bold text-lg">{content.title}</p>
+                            <p className="font-bold text-base">{content.title}</p>
                         </div>
-                        {content.content_type !== 'quiz' && content.content_type !== 'project' && content.content_type !== 'codeTask' && (
-                                <Button className="font-bold text-xl py-5 border-2 border-black bg-hb-green px-5" onClick={handleMarkCompleted}>
+                        {content.content_type !== 'project' &&  (
+                            <div className="flex flex-row gap-5 items-center w-full justify-between">
+                                <Button className=" w-fit font-semibold text-sm py-2 border-2 border-black bg-hb-green px-5" onClick={handleMarkCompleted}>
                                     Mark Completed
                                 </Button>
-                            )}
-
-                        {/* Progress */}
-                        {uniqueContentId > 0 && totalContent > 0 && (
-                            <div className="flex items-center gap-4 border-2 border-green-600 p-5 rounded-md">
-                                <Progress value={(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 120), 100))} />
-                                <p className="text-xs font-bold">{(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 120), 100))}%</p>
+                                {uniqueContentId > 0 && totalContent > 0 && (
+                                    <div className="h-fit rounded-full border-hb-green p-1.5 text-base font-bold border-2 w-fit"> {(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 120), 100))}%</div>
+                                )}
                             </div>
                         )}
 
                         {/* Video */}
                         {content.content_type === 'video' && (
-                            <>
-                                <div>
-                                    <div className="flex flex-col gap-5">
-                                        <iframe height={200} src={content.video_url} className="rounded-md w-full border border-hb-green" />
-                                        <p className="text-xs pt-2">⛭ Use the gear icon to set video quality</p>
-                                        <div className=" border-hb-green border-2 p-7  pb-24 rounded-md text-sm prose prose-base leading-tight">
-                                            <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.text_content}</Markdown>
-                                        </div>
-                                        <iframe src="https://jupyterlite.github.io/demo/repl/index.html?showBanner=0&kernel=python&toolbar=1" height={150} width={150} />
-                                    </div>
-                                    <div>
-                                        <iframe src="https://jupyterlite.github.io/demo/repl/index.html?showBanner=0&kernel=python&toolbar=1" height={150} width={150} />
-                                    </div>
-                                </div>
-                                
-                            </>
+                            <div>
+                                <Video video_url={content.video_url} text_content={content.text_content} />
+                            </div>
+                            
                         )}
 
                         {/* Text */}
                         {content.content_type === 'text' && (
-                            <div className=" border-hb-green border-2 p-7  pb-24 rounded-md text-sm prose prose-base leading-tight">
-                                <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.text_content}</Markdown>
-                            </div>
+                            <TextContent text_content={content.text_content} />
                         )}
 
                         {/**Code Task */}
-                        {/**Code Task */}
                         {content.content_type === 'codeTask' && (
                             <div className="w-full flex flex-col text-sm">
-                                <div className="border-2 rounded-md border-hb-green p-10 flex flex-col w-full prose ">
-                                    <Markdown
-                                        remarkPlugins={[
-                                            remarkGfm,
-                                            remarkMath,
-                                            remarkDeflist
-                                        ]}
-                                        rehypePlugins={[
-                                            rehypeRaw,
-                                            rehypeKatex,
-                                            rehypeHighlight
-                                        ]}
-                                        >
-                                        {content.text_content}
-                                    </Markdown>
-                                    <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} placeholder="type your solution..." required  className='bg-green-950 text-white text-xs placeholder:text-xs p-3 h-[400px] rounded-md font-mono border border-neutral-200'/>
+                                <div className="rounded-md flex flex-col w-full prose gap-5">
+                                    <TextContent text_content={content.text_content} />
+                                    <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} placeholder="type your solution..." required  className='bg-green-950 text-white text-xs placeholder:text-xs p-3 h-100 rounded-md font-mono border border-neutral-200'/>
                                     <div className="flex flex-col gap-5 items-start justify-start pt-5">
-                                        <Button onClick={() => {handleCodeTaskSubmit(); }} className='w-fit bg-green-500 text-white text-xl py-6 hover:bg-green-600'>
-                                            SUBMIT
-                                        </Button>
+                                        <HbButton onClick={() => {handleCodeTaskSubmit(); }} type="primary" text="SUBMIT" />
                                         {loading ? (
                                             <svg className="animate-spin h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -1320,65 +848,6 @@ return (
                                     </div>
                                     
                                 </div>
-    
-                                {/* Floating action buttons */}
-                                <div className="fixed top-1/2 right-10 -translate-y-1/2 z-50 flex flex-col gap-3 text-sm">
-                                    {/* Python Button */}
-                                    <button
-                                        onClick={() => {
-                                        setShowJupyter(true);
-                                        setShowWebR(false);
-                                        }}
-                                        aria-label="Show Python (JupyterLite)"
-                                        type="button"
-                                        className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
-                                        ${showJupyter 
-                                            ? 'bg-hb-green scale-105 shadow-xl ring-2 ring-green-300'
-                                            : 'bg-hb-green hover:bg-green-600 hover:scale-105'
-                                        }`}
-                                    >
-                                        Python
-                                    </button>
-    
-                                    {/* R Button */}
-                                    <button
-                                        onClick={() => {
-                                        setShowWebR(true);
-                                        setShowJupyter(false);
-                                        }}
-                                        aria-label="Show R (WebR Console)"
-                                        type="button"
-                                        className={`flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white shadow-lg transform transition-all duration-200
-                                        ${showWebR 
-                                            ? 'bg-blue-700 scale-105 shadow-xl ring-2 ring-blue-300'
-                                            : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'
-                                        }`}
-                                    >
-                                        R
-                                    </button>
-                                    </div>
-    
-    
-                                {/* Floating JupyterLite widget */}
-                                {showJupyter && (
-                                    <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
-                                        <iframe
-                                            src="https://josoga2.github.io/jpuyterlite-hb-dev/repl/index.html?showBanner=0&kernel=python&toolbar=1"
-                                            height={300}
-                                            width={300}
-                                            className="rounded-lg border border-gray-200"
-                                        />
-                                        <p className="text-xs pl-1 py-1 font-bold">▶︎ Shift+Enter to run code</p>
-                                    </div>
-                                )}
-    
-                                {/* Floating WebRConsole widget */}
-                                {showWebR && (
-                                    <div className="fixed top-1/2 right-36 -translate-y-1/2 z-50 shadow-lg rounded-xl bg-white p-1">
-                                        <WebRConsole />
-                                        <p className="text-xs pl-1 py-1 font-bold">▶︎ Press Enter to run code</p>
-                                    </div>
-                                )}
                             </div>
                         )}
                         
@@ -1399,8 +868,8 @@ return (
                         {/* Quiz */}
                         {/**Test */}
                         {content.content_type === 'quiz' && (
-                            <div className="w-full flex flex-row gap-10">
-                                <div className="border-2 rounded-md border-hb-green p-10 flex flex-col gap-2 w-full">
+                            <div className="w-full flex flex-row ">
+                                <div className="border-2 rounded-md border-hb-green flex flex-col gap-2 w-full">
                                     <QuestionBlock 
                                         question={content.quiz_question || "No question provided"}
                                         answer1={content.quiz_answer_a || "No answer provided"} 
@@ -1412,13 +881,11 @@ return (
                                     { content.video_url && 
                                         <Image src={content.video_url} alt="Schematic" width={300} height={300} className="rounded-md border-2 w-full max-w-3/5" /> 
                                     }
-                                    <div className="flex flex-col gap-5 items-start justify-start pt-5">
-                                        <Button onClick={() => {handleMCQSubmit(); }} className='w-fit bg-hb-green font-bold text-xl py-6 border-2 border-black'>
-                                            SUBMIT
-                                        </Button>
+                                    <div className="flex flex-col gap-5 items-start justify-start p-5">
+                                        <HbButton onClick={() => {handleMCQSubmit(); }} text="SUBMIT" type="primary"/>
                                     </div>
                                     {!loading && (
-                                        <div>
+                                        <div className="px-5 pb-5">
                                             <p>Grade: {grade}</p>
                                             <p>Great! You earned 2 XP 🎉</p>
                                         </div>
@@ -1430,10 +897,10 @@ return (
 
                         {/* Project */}
                         {content.content_type === 'project' && (
-                            <div className="flex flex-col prose leading-tight gap-3 pb-24">
-                                <Markdown  remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.project_data}</Markdown>
-                                <Label htmlFor="solution">Your Solution</Label>
-                                <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} className="text-xs font-mono h-[300px] p-2 bg-green-900 text-white" />
+                            <div className="flex flex-col prose leading-tight gap-3 ">
+                                <TextContent text_content={content.project_data} />
+                                <Label htmlFor="solution" className="text-sm font-bold">Your Solution</Label>
+                                <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} className="text-xs font-mono h-75 p-2 bg-green-900 text-white" />
                                 <Button onClick={() => {handleSolutionSubmit(); }} className="bg-hb-green text-white">SUBMIT</Button>
                                 {loading ? (<p>Loading grade...</p>) : (<p>Your score is: {grade}</p>)}
                             </div>
@@ -1468,15 +935,28 @@ return (
                 )) : <p className="text-center">Loading content...</p>}
             </div>
             {/* Content List */}
-            <div className="px-5 py-2 text-sm flex flex-col gap-5 border-t bottom-0 pb-20  bg-white w-full fixed">
-                <p className="font-bold text-xl">Module Content </p>
-                <ul className="flex flex-row gap-3 overflow-x-auto list-inside w-full">
-                    {contentList.map((content, idx) => (
-                        <li key={content.id} className="py-3 hover:underline border border-green-900 w-full rounded-md px-3 flex flex-row items-center  justify-center">
-                            <a href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${moduleId}/content/${content.id}`} className="flex min-w-24 items-center justify-center flex-row"> <p>✻</p> <p>Content </p> <p>{ idx+1} </p></a>
+            <div className="text-sm flex flex-col  border rounded-lg bg-white p-5 w-full max-h-1/3">
+                <div className="flex flex-row gap-5 overflow-x-auto pb-5">
+                    <TocLink tocHref={`/dashboard/internship/${globalInternshipId}/courses/${courseId}`} />
+                </div>
+                <div className="flex flex-row items-center justify-between ">
+                    <Previous previous={previousModuleId > 0} PREVIOUSLINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${previousModuleId}/content/${previousContentId}`} />
+                </div>
+                <p className="font-bold text-base">CONTENT </p>
+                <ul className="flex flex-col  overflow-x-auto list-inside w-full items-start">
+                    {contentList.map((content, idx) => {
+                        const isActive = Number(content.id) === contentId;
+                        const isCompleted = uniqCContent.has(String(contentId))
+                        return (
+                        <li key={content.id} className="text-sm w-full rounded-md flex flex-col items-start justify-start">
+                            <TocList isCompleted={isCompleted} COURSELINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${moduleId}/content/${content.id}`} id={String(content.id)} isActive={isActive} title={content.title} /> 
                         </li>
-                    ))}
+                        );
+                    })}
                 </ul>
+                <div className="flex flex-row items-center justify-between ">
+                    <Next NEXTLINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${nextModuleId}/content/${nextContentId}`} nextModuleId={nextModuleId} />
+                </div>
                 
             </div>
         </div>         

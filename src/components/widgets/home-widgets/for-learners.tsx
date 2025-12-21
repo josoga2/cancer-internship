@@ -19,12 +19,12 @@ export default function ForLearners() {
                                 <li className="list-disc">  Complete real world projects in in-demand topics </li>
                             </ul>
                             <div className="flex flex-row gap-5 py-5">
-                                <a href="/internship"> <HbButtons text="Join Next Internship →" type="primary"/> </a>
-                                <a href="/learning"><HbButtons text="Self paced learning" type="primary"/> </a>
+                                <a href="/learning"> <HbButtons text="Explore Career Paths →" type="primary"/> </a>
+                                {/*<a href="/learning"><HbButtons text="Self paced learning" type="primary"/> </a>*/}
                             </div>
                         </div>
                         <div className="flex flex-row gap-5 py-10 items-center justify-center">
-                            <img src={learners.src} alt="biology" className="w-[800px]" />
+                            <img src={learners.src} alt="biology" className="w-800" />
                         </div>
                     </div>
                 </div>

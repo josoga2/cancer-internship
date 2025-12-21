@@ -1,43 +1,20 @@
 "use client";
 import React, {  useEffect, useState } from "react";
-import { ArrowRight } from 'lucide-react';
-import winfred from "../../../public/winfred.svg"
-import keywords from "../../../public/keywords.svg"
-import microbe from "../../../public/microbe.webp"
-import phealth from "../../../public/phealth.jpg"
-import molmed from '../../../public/molmed.webp'
-import animals from '../../../public/animals.webp'
-import plantAnim from '../../../public/plants.webp'
-import cancers from '../../../public/cancer.webp'
-import sm_testimonial from '../../../public/sm_testimonial.svg'
-import testimonials from '../../../public/Testimonials.svg'
-import { GoDotFill } from "react-icons/go";
-import Image from "next/image";
 import publicApi from "../../publicApi"
 import { EnrollDialog } from "@/components/enroll/enroll";
 import  Navbar  from "@/components/Nav/navbar";
-import Markdown from "react-markdown";
-import rehypeKatex from "rehype-katex";
-import remarkGfm from "remark-gfm";
-import remarkMath from "remark-math";
-
-import ayano from '../../../public/ayano.jpeg'
-import adekoya from '../../../public/adekoya.jpeg'
-import barve from '../../../public/barve.jpeg'
 import Footer from "@/components/Nav/footer";
 import { Button } from "@/components/ui/button";
 import UpcomingSection from "@/components/widgets/internship-widget/upcoming";
 import UpcomingCourseDetails from "@/components/widgets/internship-widget/upcoming-course-details";
 import UpcomingCourseDescription from "@/components/widgets/internship-widget/upcoming-course-description";
 import HeroSection from "@/components/widgets/internship-widget/HeroSection";
-import TestimonialsInterns from "@/components/widgets/home-widgets/testimonials-interns";
 import HbButton from "@/components/widgets/hb-buttons";
 import LearningTracks from "@/components/widgets/internship-widget/LearningTracks";
 import TestimonialsEnroll from "@/components/widgets/internship-widget/testimonials-enroll";
 import LearningExperience from "@/components/widgets/internship-widget/LearningExperience";
 import FreePrice from "@/components/widgets/internship-widget/PricingFree";
 import PremiumPrice from "@/components/widgets/internship-widget/PricingPremium";
-
 
 
 export default function Page() {

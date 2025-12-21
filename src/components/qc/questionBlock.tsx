@@ -19,13 +19,13 @@ interface QuestionBlockProps {
 
 
 const QuestionBlock: React.FC<QuestionBlockProps> = ({ question, answer1, answer2, answer3, selectedAnswer, onanswerSelect }) => (
-  <div className="border-2 rounded-lg p-3 space-y-4 text-lg prose prose-base">
+  <div className="border-2 rounded-lg p-3 space-y-4 text-base prose prose-base">
     <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{question}</Markdown>
     <RadioGroup value={selectedAnswer} className="space-y-4" onValueChange={onanswerSelect}>
       {[answer1, answer2, answer3].map((answer, index) => (
         <div key={index} className="flex items-center space-x-2">
           <RadioGroupItem value={answer} id={`option-${index + 1}`} />
-          <Label htmlFor={`option-${index + 1}`} className="text-lg">{answer}</Label>
+          <Label htmlFor={`option-${index + 1}`} className="text-sm">{answer}</Label>
         </div>
       ))}
     </RadioGroup>
