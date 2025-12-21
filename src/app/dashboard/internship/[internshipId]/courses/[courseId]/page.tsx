@@ -314,16 +314,16 @@ const scientistAdjectives = [
                       <div className="flex flex-col gap-5 items-center justify-start max-w-200 rounded-lg border border-hb-green px-7 py-3 bg-white">
                       <Accordion type="multiple" className="w-full flex flex-col gap-5 ">
                       <AccordionItem value={module.id.toString()}>
-                          <AccordionTrigger className="text-2xl font-bold">
+                          <AccordionTrigger className="text-xl font-bold">
                               {module.title}
                           </AccordionTrigger> 
-                          <AccordionContent className="text-xl">
-                          <div className="flex flex-col gap-5 text-gray-600 text-xl pl-5">
+                          <AccordionContent className="text-sm">
+                          <div className="flex flex-col gap-5 text-gray-600 text-base pl-5">
                               {contentList
                               .filter((content) => Number(content.module) === Number(module.id))
                               .map((content) => (
                                 <div key={content.id} className="flex flex-col gap-2">
-                                    <ul className="list-disc pl-5 text-lg" key={content.id}>
+                                    <ul className="list-disc pl-5 text-base" key={content.id}>
                                         <Link href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${module.id}/content/${content.id}`} className="hover:underline">
                                             <li>{content.title}</li>
                                         </Link>
@@ -393,7 +393,7 @@ const scientistAdjectives = [
                           {module.title}
                         </AccordionTrigger>
                         <AccordionContent>
-                          <div className="flex flex-col gap-3 text-base text-gray-600 pl-2">
+                          <div className="flex flex-col gap-3 text-sm text-gray-600 pl-2">
                             {contentList
                               .filter((content) => Number(content.module) === Number(module.id))
                               .map((content) => (

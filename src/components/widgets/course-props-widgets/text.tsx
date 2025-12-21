@@ -15,7 +15,7 @@ export default function TextContent({text_content}: {text_content: string}) {
                 
                 <div className="w-full flex flex-row text-sm">
                     <div className="w-full border-2 rounded-md border-hb-green p-5 bg-white prose prose-base leading-tight text-sm">
-                        <article> <Markdown
+                        <article className="w-full"> <Markdown
                             remarkPlugins={[
                                 remarkGfm,
                                 remarkMath,
