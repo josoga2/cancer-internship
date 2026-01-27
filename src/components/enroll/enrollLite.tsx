@@ -19,6 +19,7 @@ import { CgCircleci } from "react-icons/cg";
 import { useState } from "react";
 import publicApi from "@/publicApi";
 import { useRouter } from 'next/navigation';
+import HbButton from "../widgets/hb-buttons";
 
 
 
@@ -76,9 +77,9 @@ export function EnrollLiteDialog() {
     <Dialog>
       <form>
         <DialogTrigger asChild>
-          <Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button>
+          <HbButton type="primary" text="Start Learning" />
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-106.25">
           <DialogHeader>
             <DialogTitle className="text-xl">Enroll for this internship.</DialogTitle>
             <DialogDescription>

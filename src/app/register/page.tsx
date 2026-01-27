@@ -29,7 +29,7 @@ export default function Login() {
         setError('');
 
         try {
-            const registerResponse = await publicApi.post('/api/auth/register/', {username, email, password} );
+            const registerResponse = await publicApi.post('/api/auth/register/', {username: username.trim().toLowerCase(), email: email.trim().toLowerCase(), password} );
             if (registerResponse.status === 200 || registerResponse.status === 201) {
                 // Handle successful registration, e.g., redirect to login page
                 setError('You are successfully registered. Please check your email to verify your registeration.');
@@ -51,8 +51,8 @@ export default function Login() {
     };
 
     return (
-        <main className="max-w-full w-full py-10 flex flex-col h-screen items-center justify-center bg-gradient-to-b from-white via-hb-lightgreen to-hb-lightgreen">
-            <div className='hidden md:flex w-[350px] py-5 bg-white  flex-col gap-2 items-center justify-center border-2 border-gray-200 rounded-lg shadow-lg px-5'>
+        <main className="max-w-full w-full py-10 flex flex-col h-screen items-center justify-center bg-linear-to-b from-white via-hb-lightgreen to-hb-lightgreen">
+            <div className='hidden md:flex w-87.5 py-5 bg-white  flex-col gap-2 items-center justify-center border-2 border-gray-200 rounded-lg shadow-lg px-5'>
                 
                 <div className='w-full flex justify-start items-start text-base'>
                     <Card className='w-full  rounded-sm shadow-sm'>
@@ -101,7 +101,7 @@ export default function Login() {
             </div>
 
             <main className="md:hidden w-full h-full items-center justify-center">
-                <div className="w-[300px] px-4 mx-auto flex flex-col  items-center justify-center">
+                <div className="w-75 px-4 mx-auto flex flex-col  items-center justify-center">
 
                     <Card className="w-full border shadow-sm rounded-sm">
                         <CardHeader className="text-center">

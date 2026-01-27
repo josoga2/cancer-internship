@@ -48,7 +48,7 @@ function Page() {
     </div>
 
     {/** Mobile */}
-      <div className="block md:hidden w-full min-h-[100svh]">
+      <div className="block md:hidden w-full min-h-svh">
 
           <LeftSideBar />
 

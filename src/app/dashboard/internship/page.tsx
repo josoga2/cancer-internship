@@ -113,6 +113,8 @@ function Page() {
     fetchUserProfile();
   }, []);
 
+  console.log(internshipList)
+
   return (
     <main className="w-full">
     <div className="hidden md:flex flex-row w-full pl-5">

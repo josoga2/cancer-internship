@@ -34,7 +34,7 @@ export default function Home() {
     <main>
       <Navbar />
     <div className="w-full">
-      <div className="hidden md:flex w-full flex-col md:max-w-screen-lg bg md:m-auto md:items-center pt-10 md:justify-between">
+      <div className="hidden md:flex w-full flex-col md:max-w-5xl bg md:m-auto md:items-center pt-10 md:justify-between">
         {/* Hero Section */}
         
         <Hero />

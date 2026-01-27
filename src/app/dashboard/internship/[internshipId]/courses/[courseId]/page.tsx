@@ -1,5 +1,5 @@
 "use client"
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Progress } from "@/components/ui/progress"
 
 import {
@@ -23,7 +23,11 @@ function Page() {
   const globalInternshipId = Number(params.internshipId)
   const router = useRouter()
 
+  const searchParams = useSearchParams();
+  const progType = searchParams.get("type");
+
   const [username, setUsername] = useState("");
+  const [subscriptionIntStatus, setSubscriptionIntStatus] = useState(false);
   const [userXP, setUserXP] = useState("");
   const [title, setTitle] = useState("");
   const [userClicks, setUserClicks] = useState<number>(1);
@@ -117,29 +121,50 @@ function Page() {
     fetchUserProfile();
   }, []);
 
+  //console.log('program type:', progType);
+  //console.log('global internship id:', globalInternshipId);
+
   //get user progress
   useEffect(() => {
     const fetchUserProgress = async () => {
       try {
-        const response = await api.post('/api/get-user-progress/', {'internshipid': globalInternshipId}); // Adjust the endpoint as needed
+        let response;
+        if(progType === "single" && globalInternshipId === 0){ 
+          response = await api.post('/api/user-course-progress/', {'courseid': courseId}); // Adjust the endpoint as needed
+        }else{
+          response = await api.post('/api/get-user-progress/', {'internshipid': globalInternshipId}); // Adjust the endpoint as needed
+        }
         //console.log("Response from get-user-profile:", response.data);
         if (response.data && response.status == 200 || response.status == 201) {
           //console.log("User progress data:", response.data);
           const userProgress = response.data; 
           setUserClicks(userProgress.no_clicks );
           setCompletedContent(userProgress.completed_contents ? userProgress.completed_contents : ""); 
+          const subscriptionEnd = new Date(userProgress.current_period_end)
+          const now = new Date()
+          const msLeft = subscriptionEnd.getTime() - now.getTime()
+          const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24))
+          const isActive = daysLeft > 0
+          setSubscriptionIntStatus(isActive );
+
           const uniqItems = new Set(userProgress.completed_contents.split(","))
           const allItemslength = userProgress.completed_contents.split(",").length
           setUniqueContentId(uniqItems.size ) 
           //console.log(allItemslength)
           setUserXP(Math.ceil(userProgress.total_xp_earned * (uniqItems.size / allItemslength)).toString());
 
-          const totalXPResponse = await api.post('/api/get-total-xp/', {'internshipid': globalInternshipId});
-            if (totalXPResponse.status === 200) {
-                setTotalXP(totalXPResponse.data.total_xp);
-            } else {
-                console.error("Failed to fetch total XP.");
-            }
+          let totalXPResponse;
+          if(progType === "single" && globalInternshipId === 0){ 
+            totalXPResponse = await api.post('/api/get-total-course-xp/', {'courseid': courseId});
+          }else{
+            totalXPResponse = await api.post('/api/get-total-xp/', {'internshipid': globalInternshipId});
+          }
+          
+          if (totalXPResponse.status === 200) {
+              setTotalXP(totalXPResponse.data.total_xp);
+          } else {
+              console.error("Failed to fetch total XP.");
+          }
           
         } else {
           router.push("/login");
@@ -174,23 +199,39 @@ function Page() {
 
           //make the internship list
           const internshipResponse = await api.get('/api/internships/');
+          //console.log("Internship Response:", internshipResponse);
 
-          if (internshipResponse.status === 200) {
-            const internships = internshipResponse.data.filter((internship: { id: string }) => 
-              userProfile.Internships.includes(Number(internship.id))
-            );
-            setInternshipList(internships);
+          let internships: number[] = [];
+          if (internshipResponse.status === 200 ) {
+            
+            if(progType === "single" && globalInternshipId === 0){
+              internships = [];
+
+            }else{
+              internships = internshipResponse.data.filter((internship: { id: string }) => 
+              userProfile.Internships.includes(Number(internship.id)));
+            }
+            
+            //setInternshipList(internships);
 
             //make the courses list
             const coursesResponse = await api.get('/api/courses/');
             if (coursesResponse.status === 200) {
                 
-                const allCourseIds = internships
+              //make a let here
+              let allCourseIds: number[] = [];
+              if(progType === "single" && globalInternshipId === 0){
+                allCourseIds = [courseId];
+                //console.log("Single Course Mode - Course IDs:", allCourseIds);
+              } else{
+                allCourseIds = internships
                 .flatMap((internship: any) => 
                     Array.isArray(internship.courses)
                     ? internship.courses.map((c: any) => Number(c)) // each c is already an ID
                     : []
                 );
+              } 
+              
                 //console.log("filtered internships:", internships);
                 const courses = coursesResponse.data.filter((course: { id: number | string }) =>
                 allCourseIds.includes(Number(course.id))
@@ -227,6 +268,8 @@ function Page() {
                     }
                 }
             }
+
+
 
                 
         }
@@ -307,6 +350,10 @@ const scientistAdjectives = [
                       </div>
                     </div>
                   )}
+
+                  {/**Subscription Notice */}
+                  <p className="mb-10 text-sm text-red-600">{subscriptionIntStatus ? "" : <span> <p>"Your subscription to this program has expired."  <Link className="font-bold hover:underline" href={`/dashboard/checkout?prog=internship&id=${globalInternshipId}`}> Click here to subscribe Now</Link> </p> </span>}</p>
+                  {/* Modules Accordion */}
               
               {modulesList.map((module) => (
                 <div key={module.id} className="flex flex-col gap-5 pb-5">
@@ -324,7 +371,7 @@ const scientistAdjectives = [
                               .map((content) => (
                                 <div key={content.id} className="flex flex-col gap-2">
                                     <ul className="list-disc pl-5 text-base" key={content.id}>
-                                        <Link href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${module.id}/content/${content.id}`} className="hover:underline">
+                                        <Link href={subscriptionIntStatus ? `/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${module.id}/content/${content.id}?type=single` : `/dashboard/checkout?prog=${Number(globalInternshipId) > 0 ? `internship` : `course`}&id=${Number(globalInternshipId) > 0 ? globalInternshipId : courseId}`} className="hover:underline">
                                             <li>{content.title}</li>
                                         </Link>
                                     </ul>
@@ -383,7 +430,9 @@ const scientistAdjectives = [
                     </div>
                   </div>
                 )}
-
+                
+                {/**Subscription Notice */}
+                <p className="mb-10 text-sm text-red-600">{subscriptionIntStatus ? "" : <span> <p>"Your subscription to this program has expired."  <Link className="font-bold hover:underline" href={`/dashboard/checkout?prog=internship&id=${globalInternshipId}`}> Click here to subscribe Now</Link> </p> </span>}</p>
                 {/* Modules Accordion */}
                 {modulesList.map((module) => (
                   <div key={module.id} className="w-full border border-hb-green rounded-lg bg-white px-4 py-3 ">
@@ -399,7 +448,7 @@ const scientistAdjectives = [
                               .map((content) => (
                                 <ul className="list-disc pl-5" key={content.id}>
                                   <Link
-                                    href={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${module.id}/content/${content.id}`}
+                                    href={subscriptionIntStatus ? `/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${module.id}/content/${content.id}?type=single` : `/dashboard/checkout?prog=internship&id=${globalInternshipId}`}
                                     className="hover:underline"
                                   >
                                     <li>{content.title}</li>

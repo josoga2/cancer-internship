@@ -1,0 +1,35 @@
+{
+    "success": true,
+    "data": [
+        {
+            "id": "120363398305810872@g.us",
+            "name": "HackBio Admins",
+            "imgUrl": null
+        },
+        {
+            "id": "120363407160166671@g.us",
+            "name": "HackBio DataViz Notifications",
+            "imgUrl": null
+        },
+        {
+            "id": "120363419919806835@g.us",
+            "name": "General",
+            "imgUrl": null
+        },
+        {
+            "id": "120363420009171500@g.us",
+            "name": "Technical Mentors",
+            "imgUrl": null
+        },
+        {
+            "id": "120363420035494820@g.us",
+            "name": "HackBio",
+            "imgUrl": null
+        },
+        {
+            "id": "120363421543977947@g.us",
+            "name": "HackBio",
+            "imgUrl": null
+        }
+    ]
+}

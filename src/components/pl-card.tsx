@@ -18,14 +18,14 @@ type UpcomingCourseCardProps = {
 
 const PLCard = ({ image, title, desc, lessons, weeks, directTo }: UpcomingCourseCardProps) => {
   return (
-    <main className='w-[300px]'>
-      <div className="hidden md:flex flex-col gap-10 items-start justify-start  border-2 border-green-600 rounded-md px-5 py-5 w-[300px] h-fit bg-white">
+    <main className='w-75'>
+      <div className="hidden md:flex flex-col gap-10 items-start justify-start  border-2 border-green-600 rounded-md px-5 py-5 w-75 h-fit bg-white">
         <img
           src={typeof image === 'string' ? image : image.src}
           alt={title}
           width={75}
           height={75}
-          className="border-2 rounded-md max-w-[150px] max-h-[150px] object-contain"
+          className="border-2 rounded-md max-w-37.5 max-h-37.5 object-contain"
         />
         <div className='flex flex-col  w-full prose prose-sm leading-5'>
           <p className="text-lg font-bold">{title}</p>
@@ -35,7 +35,7 @@ const PLCard = ({ image, title, desc, lessons, weeks, directTo }: UpcomingCourse
 
       {/**MOBILE */}
       <div className=" md:hidden w-full flex flex-col justify-center items-center">
-        <div className="flex flex-col gap-4 items-center justify-center relative border-2 border-green-600 rounded-md px-4 py-5 w-[250px] bg-white">
+        <div className="flex flex-col gap-4 items-center justify-center relative border-2 border-green-600 rounded-md px-4 py-5 w-62.5 bg-white">
           
           {/* Course image */}
           <img

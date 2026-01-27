@@ -11,7 +11,7 @@ export default function Footer() {
   
   return (
     <main className='w-full  bottom-0 left-0 bg-white pb-2 px-5 border-t-2 border-gray-200'>
-    <div className="hidden md:flex md:max-w-screen-lg bg md:m-auto md:items-start py-10  gap-20">
+    <div className="hidden md:flex md:max-w-5xl bg md:m-auto md:items-start py-10  gap-20">
         <Link href='/' className='flex flex-row gap-3 items-center'> 
           <Image src={hb_logo} alt='hb_log' width={35} height={35} /> 
           <p className='font-bold hover:text-hb-green text-lg'>HackBio</p>

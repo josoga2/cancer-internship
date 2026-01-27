@@ -1,33 +1,32 @@
 "use client";
 import { useEffect, useState } from "react";
-import winfred from "../../../../../public/winfred.svg"
 import keywords from "../../../../../public/keywords.svg"
-
-import ayano from '../../../../../public/ayano.jpeg'
-import adekoya from '../../../../../public/adekoya.jpeg'
-import barve from '../../../../../public/barve.jpeg'
 import Image from "next/image";
-import { useRouter, useParams } from "next/navigation";
-import testimonial from "../../../../../public/Testimonials.svg"
-import sm_testimonial from "../../../../../public/sm_testimonial.svg"
+import {useParams } from "next/navigation";
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
   } from "@/components/ui/accordion"
-import React from "react";
 import publicApi from "@/publicApi";
-import { EnrollCourseDialog } from "@/components/enroll/enroll-course";
 import Navbar from "@/components/Nav/navbar";
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
 import { Button } from "@/components/ui/button";
-import { EnrollDialog } from "@/components/enroll/enroll";
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import Footer from "@/components/Nav/footer";
+import OrganizationsTestimonials from "@/components/widgets/home-widgets/org-testimonial-carousel";
+import LearningTracks from "@/components/widgets/internship-widget/LearningTracks";
+import TestimonialsEnroll from "@/components/widgets/internship-widget/testimonials-enroll";
+import React from "react";
+import LearningExperience from "@/components/widgets/internship-widget/LearningExperience";
+import HbPrices from "@/components/all-pricings/preview";
+import Link from "next/link";
+import HbButton from "@/components/widgets/hb-buttons";
+import api from "@/api";
+import { useRouter } from "next/navigation";
 
 
 
@@ -86,6 +85,7 @@ export default function Page() {
     //const router = useRouter();
     const params = useParams();
     const  courseId = Number(params.courseId);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchCourses = async () => {
@@ -146,14 +146,33 @@ export default function Page() {
         fetchContents();
     }, []);
 
-    console.log(coursesList);
+    const handleFreeEnroll = async () => {
+        try {
+            const response = await api.post('/api/free-enroll-course/', {
+                courseid: courseId,
+            });
+            if (response.status === 200) {
+                alert('Successfully enrolled in the course!');
+                router.push('/dashboard');
+            } else {
+                alert('You have to sign in to enroll in this course.');
+                router.push('/login');
+            }
+        } catch (error) {
+            alert('You have to sign in to enroll in this course. You will be redirected to the login page. Kindly come back to enroll after logging in.');
+            router.push('/login');
+        }
+    }
+
+    //console.log(coursesList);
+    const internshipStatus: string = 'open';
 
 
 
   return (
     <section>
         <Navbar />
-        <div className="hidden md:flex md:max-w-screen-lg bg md:m-auto md:items-center pt-24 md:justify-between">
+        <div className="hidden md:flex md:max-w-5xl bg md:m-auto md:items-center pt-24 md:justify-between">
         
         <div className=" ">
 
@@ -161,13 +180,14 @@ export default function Page() {
             <div className="flex flex-col gap-5 max-w-2/5">
                 <p className="text-3xl font-bold text-start"> {coursesList[0].title} </p>
                 <p className="text-base "> {coursesList[0].overview} </p>
-                {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
+                {coursesList[0].free? <div><HbButton text="Enroll For Free" type="primary" onClick={()=>handleFreeEnroll()} /> </div> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'course', id:courseId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
             
             </div>
             <Image src={keywords} alt="biology" className="w-2/5" />
         </div>
 
         {/** Learning Paths */}
+        <OrganizationsTestimonials />
 
 
         <div  className="py-5 w-full flex flex-col gap-5 justify-center items-center pb-10">
@@ -183,7 +203,7 @@ export default function Page() {
                         <span className="flex flex-row gap-5 items-center justify-center">
                             <p className="text-base">{modulesList.length} Lessons</p>
                         </span>
-                        {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
+                        {coursesList[0].free? <div><HbButton text="Enroll For Free" type="primary" onClick={()=>handleFreeEnroll()} /> </div> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'course', id:courseId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
 
                     </div>
                     <div className="flex flex-col gap-5 items-start justify-center w-full overflow-y-auto">
@@ -221,7 +241,7 @@ export default function Page() {
                                 <Markdown  remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{coursesList[0].description}</Markdown>
                             </div>
                             <p className="leading-7 text-lg"> </p>
-                            {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
+                            {coursesList[0].free? <div><HbButton text="Enroll For Free" type="primary" onClick={()=>handleFreeEnroll()} /> </div> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'course', id:courseId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
 
                         </div>
 
@@ -232,130 +252,25 @@ export default function Page() {
             </div>
         </div>
         
-        {/* Organizations */}
-        <div className="flex flex-col items-center gap-5">
-          <p className="text-lg font-bold text-center">
-            100+ Organizations have hired our graduates
-          </p>
-          <img
-            src={testimonial.src}
-            alt="organizations-that-trust-hackbio"
-            className="w-full"
-          />
-        </div>
         {/** who is this internship for?*/}
+        <TestimonialsEnroll InternshipStatus={internshipStatus}/>
         <div className="w-full flex flex-col items-center justify-center">
-            <p className="text-3xl font-bold text-center p-10">Who is this course for?</p>
+            <LearningTracks />
+            {coursesList[0].free? <div><HbButton text="Enroll For Free" type="primary" onClick={()=>handleFreeEnroll()} /> </div> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'course', id:courseId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
         </div>
 
-        <div className="flex flex-row gap-24 items-start justify-center w-full mx-auto px-5">
-            <div className="flex flex-col gap-5 max-w-2/5 rounded border-2 p-10  border-green-500 shadow-md shadow-green-300 items-start justify-start  ">
-            <span className="flex flex-row items-start font-bold text-2xl gap-2 flex-wrap"> <p>You are a</p> <p className="text-green-600 underline">great</p> <p>fit if:</p> </span>
-            <ul className="flex flex-col gap-5 items-start justify-start w-full list-disc pl-5">
-                <li className="text-base"> Self-taught learners who are tired of piecing together YouTube videos and random tutorials, and want <strong>  a structured, real-world learning experience.</strong> </li>
-                <li className="text-base"> Ambitious beginners in bioinformatics, data science, or computational biology who are ready to roll up their sleeves and <strong> get hands-on.</strong> </li>
-                <li className="text-base"> Researchers or postgrads who want to learn how to analyze biological data, <strong> build pipelines, or publish with confidence.</strong> </li>
-                <li className="text-base"> Anyone ready to put in the work, follow the roadmap, and build a real portfolio they can proudly show <strong> employers or grad schools.</strong> </li>
-            </ul>
-        </div>
-        <div className="flex flex-col gap-5 max-w-2/5 rounded border-2 p-10 border-zinc-500 shadow-2xl shadow-zinc-300 items-start justify-start ">
-            <span className="flex flex-row items-start font-bold text-2xl gap-2 flex-wrap"> <p>You are</p> <p className="text-red-600 underline">not </p> <p>a fit if:</p> </span>
-            <ul className="flex flex-col gap-5 items-start justify-start w-full list-disc pl-5">
-                <li className="text-base"> Those looking for a  <strong> “watch-and-passively-consume”</strong> experience — this is hands-on, project-based learning. </li>
-                <li className="text-base"> People expecting <strong> instant results. </strong> - We believe growth is earned, not gifted </li>
-                <li className="text-base"> Folks <strong> unwilling to collaborate</strong> — HackBio thrives on peer-to-peer support, team challenges, and real-world interactions. </li>
-                <li className="text-base"> Advanced experts looking for deep academic theory — we focus on practical skills, tools, and industry application.</li>
-            </ul>
-            </div>
-        </div>
-
-        <div className="w-full flex flex-col items-center justify-center py-10">
-            {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
-        </div>
         
-
-        {/* <div className="flex flex-col gap-10 items-center justify-start w-full mx-auto px-5 py-20">
-            <span className="flex flex-row items-start font-bold text-2xl gap-2"> <p>One time pricing, Lifetime Access</p> </span>
-            <div className="flex flex-col gap-3 max-w-2/5 rounded border-2 p-5 px-10 border-green-500 shadow-2xl items-start justify-start  ">
-                <span className="flex flex-row items-start font-bold text-2xl gap-2 py-5"> <p>Premium Learning</p> </span>
-                <span className="flex flex-row items-start font-bold text-xl gap-2 pb-5"> <p>$20</p> <p className="text-red-600 line-through text-base">{`$40`}</p> <p className="text-red-600  text-xl">{`(50% off)`}</p>  </span>
-                <ul className="flex flex-col gap-2 items-start justify-start ">
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Complete Training Pack </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> AI-Assisted Training and Mentorship </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Weekly Graded Tasks + Feedback </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> 1-on-1 troubleshooting meetings </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Unlimited access to final project phase </span></li>
-                    <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Graded Certification </span></li>
-                </ul>
-                <p className="font-bold">* Active only for the duration of the internship</p>
-                {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
-
-            </div>
-        </div> */}
-
-
-        <div className="py-5 w-full h-full bg-hb-lightgreen flex flex-col gap-5 px-10">
-          <p className="text-xl font-bold text-center"> Join thousands of global learners</p>
-          <p className="text-center text-base">For real, you will work and learn with hundreds of people around the world.</p>
-
-          <Carousel>
-            <CarouselContent>
-              <CarouselItem>
-                {/**1 */}
-                <div className="flex flex-row gap-10 items-center justify-center max-w-3/5 mx-auto py-5">
-                  <Image src={winfred} alt="biology" className="rounded-full w-[100px]" />
-                  <div className="flex flex-col gap-2 ">
-                    <p className="text-sm text-gray-700">{`"My HackBio experience (and preprint) was my leverage for an interesting conversation with my interview with my Graduate School Admission Team."`}</p>
-                    <p className="text-base font-bold pt-5">{`Winfred Gatua (Now a bioinformatician at in University of Bristol, UK)`}</p>
-                  </div>
-                </div>
-
-              </CarouselItem>
-
-              <CarouselItem>
-                {/**2 */}
-                <div className="flex flex-row gap-10 items-center justify-center max-w-3/5 mx-auto py-5">
-                  <Image src={ayano} alt="biology" className="rounded-full w-[100px]" />
-                  <div className="flex flex-col gap-2 ">
-                    <p className="text-sm text-gray-700">{`"Through the [internship], I was introduced to the world of genomics and bioinformatics, gaining hands-on experience with tools and pipeline development that gave me a strong foundation. That single event helped me clarify my interests and set me on the data-driven biomedica path I walk today. I will always be grateful to the access, exposure and direction that came from that one LinkedIn post."`}</p>
-                    <p className="text-base font-bold pt-5">{`Temitope Ayano (Now a Data Analyst at GFA Tech, Nigeria)`}</p>
-                  </div>
-                </div>
-
-              </CarouselItem>
-              <CarouselItem>
-                {/**3 */}
-                <div className="flex flex-row gap-10 items-center justify-center max-w-3/5 mx-auto py-5">
-                  <Image src={adekoya} alt="adekoya" className="rounded-full w-[100px]" />
-                  <div className="flex flex-col gap-2 ">
-                    <p className="text-sm text-gray-700">{`"HackBio provided me with my first real-world bioinformatics project, allowing me to apply the skills I had been learning in a meaningful way. The experience bridged the gap between theory and practice, and completing the project gave me a huge confidence boost. The training phase at HackBio was also highly motivating, with constant help from mentors. It reinforced the importance of community and mentorship in learning technical skills."`}</p>
-                    <p className="text-base font-bold pt-5">{`Aanuoluwa Adekoya (Now a bioinformatician at in University of Tennessee, Knoxville, USA.)`}</p>
-                  </div>
-                </div>
-
-              </CarouselItem>
-
-              <CarouselItem>
-                {/**4 */}
-                <div className="flex flex-row gap-10 items-center justify-center max-w-3/5 mx-auto py-5">
-                  <Image src={barve} alt="barve" className="rounded-full w-[100px]" />
-                  <div className="flex flex-col gap-2 ">
-                    <p className="text-sm text-gray-700">{`"[I] started without a programming background. HackBio played a crucial role in my growth in bioinformatics by giving me hands-on experince in metagenomics analysis, team collaboration and leadership. The internship was structured in multiple stages with a final project."`}</p>
-                    <p className="text-base font-bold pt-5">{`Isha Barve (Now a bioinformatician at Lubeck University, Germany)`}</p>
-                  </div>
-                </div>
-
-              </CarouselItem>
-            </CarouselContent>
-            <CarouselPrevious className="bg-hb-green text-white h-[75px] w-[75px] text-4xl" />
-            <CarouselNext className="bg-hb-green text-white h-[75px] w-[75px] text-4xl" />
-          </Carousel>
-
-          
-            <div className="flex items-start justify-center">
-                {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
+        <LearningExperience internshipStatus={internshipStatus}/>
+        <div className="w-full flex flex-col items-center justify-center">
+            {coursesList[0].free? <div><HbButton text="Enroll For Free" type="primary" onClick={()=>handleFreeEnroll()} /> </div> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'course', id:courseId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
+        </div>
+        <p className="font-bold pt-5 text-center w-full">Gain full access to all our courses and internships (including future ones).</p>
+        <div className="flex flex-row gap-2 items-center justify-center">
+              {/*<FreePrice /> */}
+              {/*<PremiumPrice />*/}
             
-            </div>
+            <HbPrices plan="Become a Pro" discount={0.5}  prog="course" progId={String(courseId)}/>
+            <HbPrices plan="Course Access" discount={0.5} prog="course" progId={String(courseId)}/>
         </div>
 
       </div>
@@ -363,15 +278,16 @@ export default function Page() {
       
     </div>
     {/**Mobile Version */}
-      <div className="max-w-full p-4 pt-16 block md:hidden">
+      <div className="max-w-full p-4 pt-16 flex flex-col gap-5 md:hidden">
 
         {/* Hero Section */}
         <div className="flex flex-col gap-5 py-10">
             <p className="text-2xl font-bold">{coursesList[0].title}</p>
             <p className="text-base text-gray-700">{coursesList[0].overview}</p>
-            {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
+            {coursesList[0].free? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'course', id:courseId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
         </div>
 
+        <OrganizationsTestimonials />
         {/* Course Overview */}
         <div className="flex flex-col gap-5 py-5">
             <p className="text-lg font-bold">Start Now</p>
@@ -381,7 +297,7 @@ export default function Page() {
 
             <p className="text-sm">{modulesList.length} Lessons</p>
             <div className="mt-4">
-                {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
+                {coursesList[0].free? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'course', id:courseId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
             </div>
             </div>
         </div>
@@ -412,106 +328,24 @@ export default function Page() {
             <p className="text-base leading-7 mb-4">
                 {coursesList[0].description}
             </p>
-            {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
+            {coursesList[0].free? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'course', id:courseId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
         </div>
 
-        {/* Organizations */}
-        <div className="flex flex-col items-center gap-5">
-          <p className="text-lg font-bold text-center">
-            100+ Organizations have hired our graduates
-          </p>
-          <img
-            src={sm_testimonial.src}
-            alt="organizations-that-trust-hackbio"
-            className="w-full"
-          />
-        </div>
-
-        {/* Audience Fit */}
-        <div className="py-10">
-            <p className="text-3xl font-bold text-center mb-10">Who is this course for?</p>
-            <div className="flex flex-col gap-10">
-            <div className="border border-green-500 rounded-lg p-5 shadow-md">
-                <p className="text-xl font-bold text-green-600 mb-3">You are a great fit if:</p>
-                <ul className="list-disc pl-5 text-sm">
-                <li>Self-taught learners tired of piecing together random tutorials.</li>
-                <li>Ambitious beginners in bioinformatics or data science.</li>
-                <li>Researchers/postgrads wanting to build confidence in data analysis.</li>
-                <li>Anyone ready to follow a roadmap and build a real portfolio.</li>
-                </ul>
-            </div>
-            <div className="border border-zinc-500 rounded-lg p-5 shadow-md">
-                <p className="text-xl font-bold text-red-600 mb-3">You are not a fit if:</p>
-                <ul className="list-disc pl-5 text-sm">
-                <li>Looking for passive consumption — this is hands-on.</li>
-                <li>Expecting instant results — growth is earned.</li>
-                <li>Experts seeking deep theory — we focus on applied skills.</li>
-                </ul>
-            </div>
-            </div>
-        </div>
-
-        {/* Pricing */}
-        {/* <div className="py-10">
-            <p className="text-2xl font-bold text-center mb-5">One time pricing, Lifetime Access</p>
-            <div className="border border-green-500 rounded-lg p-5 shadow-lg">
-            <p className="text-xl font-bold mb-2">Premium Learning</p>
-            <span className="flex flex-row items-start font-bold text-4xl gap-2 pb-5"> <p>$20</p> <p className="text-red-600 line-through text-xl">{`$40`}</p> <p className="text-red-600  text-xl">{`(50% off)`}</p>  </span>
-            <ul className="list-disc pl-5 mt-4 text-sm">
-                <li>Complete Training Pack</li>
-                <li>AI-Assisted Training</li>
-                <li>Projects + grading + feedback</li>
-                <li>Unlimited number to final projects</li>
-            </ul>
-            <div className="mt-4">
-                {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
-            </div>
-            </div>
-        </div> */}
-
-        {/* Testimonial */}
-        <div className="flex flex-col gap-5 py-5 items-center justify-start w-full">
-            {/**1 */}
-            <div className="flex flex-col gap-10 items-center bg-hb-lightgreen justify-center w-full mx-auto py-5 px-5">
-              <Image src={winfred} alt="biology" className="rounded-full w-[100px]" />
-              <div className="flex flex-col gap-2 items-center justify-center">
-                <p className="text-sm text-gray-700">{`"My HackBio experience (and preprint) was my leverage for an interesting conversation with my interview with my Graduate School Admission Team."`}</p>
-                <p className="text-base font-bold pt-5  text-center">{`Winfred Gatua (Now a bioinformatician at in University of Bristol, UK)`}</p>
-              </div>
+            {/* Organizations */}
+            <TestimonialsEnroll InternshipStatus={internshipStatus}/>
+            <div className="w-full flex flex-col items-center justify-center">
+                <LearningTracks />
             </div>
 
-
-         
-            {/**2 */}
-            <div className="flex flex-col gap-10 items-center bg-hb-lightgreen justify-center w-full mx-auto py-5 px-5">
-              <Image src={ayano} alt="biology" className="rounded-full w-[100px]" />
-              <div className="flex flex-col gap-2 items-center justify-center">
-                <p className="text-sm text-gray-700">{`"Through the [internship], I was introduced to the world of genomics and bioinformatics, gaining hands-on experience with tools and pipeline development that gave me a strong foundation. That single event helped me clarify my interests and set me on the data-driven biomedica path I walk today. I will always be grateful to the access, exposure and direction that came from that one LinkedIn post."`}</p>
-                <p className="text-base font-bold pt-5  text-center">{`Temitope Ayano (Now a Data Analyst at GFA Tech, Nigeria)`}</p>
-              </div>
-
+            <LearningExperience internshipStatus={internshipStatus}/>
+            <p className="font-bold pt-5 text-center w-full">Gain full access to all our courses and internships (including future ones).</p>
+            <div className="flex flex-col gap-2 items-center justify-center">
+                {/*<FreePrice /> */}
+                {/*<PremiumPrice />*/}
+                
+                <HbPrices plan="Become a Pro" discount={0.5} prog="course" progId={String(courseId)} />
+                <HbPrices plan="Course Access" discount={0.5}  prog="course" progId={String(courseId)}/>
             </div>
-          
-            {/**3 */}
-            <div className="flex flex-col gap-10 items-center bg-hb-lightgreen justify-center w-full mx-auto py-5 px-5">
-              <Image src={adekoya} alt="adekoya" className="rounded-full w-[100px]" />
-              <div className="flex flex-col gap-2 items-center justify-center">
-                <p className="text-sm text-gray-700">{`"HackBio provided me with my first real-world bioinformatics project, allowing me to apply the skills I had been learning in a meaningful way. The experience bridged the gap between theory and practice, and completing the project gave me a huge confidence boost. The training phase at HackBio was also highly motivating, with constant help from mentors. It reinforced the importance of community and mentorship in learning technical skills."`}</p>
-                <p className="text-base font-bold pt-5  text-center">{`Aanuoluwa Adekoya (Now a bioinformatician at in University of Tennessee, Knoxville, USA.)`}</p>
-              </div>
-            </div>
-
-            {/**4 */}
-            <div className="flex flex-col gap-10 items-center bg-hb-lightgreen justify-center w-full mx-auto py-5 px-5">
-              <Image src={barve} alt="barve" className="rounded-full w-[100px]" />
-              <div className="flex flex-col gap-2 items-center justify-center ">
-                <p className="text-sm text-gray-700">{`"[I] started without a programming background. HackBio played a crucial role in my growth in bioinformatics by giving me hands-on experince in metagenomics analysis, team collaboration and leadership. The internship was structured in multiple stages with a final project."`}</p>
-                <p className="text-base font-bold pt-5 text-center">{`Isha Barve (Now a bioinformatician at Lubeck University, Germany)`}</p>
-              </div>
-          </div>
-          {coursesList[0].free? <a href="/login"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></a> : <EnrollCourseDialog />}
-            
-          </div>
         </div>
         <Footer />
     </section>

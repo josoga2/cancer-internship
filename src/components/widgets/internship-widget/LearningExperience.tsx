@@ -68,20 +68,7 @@ export default function LearningExperience({ internshipStatus }: { internshipSta
           </div>
         </div>
 
-        <div className="w-full flex flex-col items-center justify-center py-10">
-            {internshipStatus === 'close' && (
-                <HbButton
-                    text="Application Closed."
-                    type="primary"
-                    onClick={() => {
-                        if (typeof window !== "undefined") {
-                            window.alert("Application closed! Join us next year");
-                        }
-                    }}
-                />
-            )}
-            {internshipStatus !== 'close' && <EnrollDialog />}
-        </div>
+        
       </div>
 
       {/*mobile*/}

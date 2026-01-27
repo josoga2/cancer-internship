@@ -53,7 +53,7 @@ export default function MainScreenFlex({ username, mini_desc }: { username: stri
                     </div>
                     <div className="px-10 ">
                         <p className="font-bold text-2xl"> 👋 Welcome back,  {username.charAt(0).toUpperCase() + username.slice(1).toLocaleLowerCase()} </p>
-                        <p className="py-5 text-xs text-gray-500">-- {mini_desc} </p>
+                        <p className="py-5 text-xs text-gray-500">-- {mini_desc} (scroll down for your courses) </p>
                     </div>
                 </div>
             </div>

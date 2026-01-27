@@ -13,45 +13,6 @@ import LeftSideBar from "@/components/widgets/dashboard-widgets/left-sidebar";
 import MainScreenFlex from "@/components/widgets/dashboard-widgets/main-screen-flex";
 
 
-const tab_items = [
-  {
-    id: 1,
-    name: "Dashboard",
-    link: "/dashboard/",
-    isActive: false,
-    iconImage: MdOutlineDashboard
-  },
-  {
-    id: 2,
-    name: "Internships",
-    link: "/dashboard/internship/",
-    isActive: false,
-    iconImage: BiDna
-  },
-  {
-    id: 3,
-    name: "Internship Courses",
-    link: "/dashboard/internship/1/courses/",
-    isActive: true,
-    iconImage: BiDna
-  },
-  {
-    id: 4,
-    name: "Career Paths",
-    link: "/dashboard/pathway/",
-    isActive: false,
-    iconImage: BiAtom
-  },
-  
-  {
-    id: 5,
-    name: "CP Courses",
-    link: "/dashboard/pathway/courses/",
-    isActive: false,
-    iconImage: BiAtom
-  }
-]
-
 
 function Page() {
 
@@ -59,9 +20,6 @@ function Page() {
   const [username, setUsername] = useState("");
   const [userInternshipId, setUserInternshipId] = useState<number[]>([]);
   const [userCoursesId, setUserCoursesId] = useState<number[]>([]);
-  const [userXP, setUserXP] = useState("");
-  const [title, setTitle] = useState("");
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [internshipList, setInternshipList] = useState<Array<{
         id?: string
         title?: string
@@ -89,6 +47,24 @@ function Page() {
     ]);
 
   const [coursesList, setCoursesList] = useState<Array<{
+    id?: number | string
+    title?: string
+    overview?: string
+    description?: string
+    published?: boolean
+    image?: string
+  }>>([
+      {
+        id: "",
+        title: "",
+        overview: "",
+        description: "",
+        published: false,
+        image: "/"
+      }
+  ]);
+
+  const [singleCoursesList, setSingleCoursesList] = useState<Array<{
     id?: number | string
     title?: string
     overview?: string
@@ -140,6 +116,7 @@ function Page() {
         if (response.data && response.status == 200 || response.status == 201) {
           //console.log("User profile data:", response.data[0].Internships);
           const userProfile = response.data; // Assuming you want the first profile
+          //console.log("User profile data internships:", userProfile);
           setUserInternshipId(
             Array.isArray(userProfile.Internships)
               ? userProfile.Internships.map((id: any) => Number(id))
@@ -169,13 +146,29 @@ function Page() {
               );
               //console.log("filtered internships:", internships);
               const courses = coursesResponse.data.filter((course: { id: number | string }) =>
-              allCourseIds.includes(Number(course.id))
+                allCourseIds.includes(Number(course.id))
               );
               //console.log("Courses List:", courses);
               setCoursesList(courses)
             }
+
+            if (coursesResponse.status === 200) {
+              const enrolledCourses = userProfile.Courses
+
+              const singleCourses = coursesResponse.data.filter((course: { id: number | string }) =>
+                enrolledCourses.includes(Number(course.id))
+              );
+
+              console.log("Single Courses List:", singleCourses);
+              setSingleCoursesList(singleCourses)
+
+              setUserCoursesId(enrolledCourses);
+              
+            }
           }
 
+          //const coursesResponse = await api.get('/api/courses/');
+          //console.log('courses response: ', coursesResponse)
           
           
         } else {
@@ -193,6 +186,7 @@ function Page() {
   //console.log("User Internship IDs:", internshipList);
 
   console.log("Course List:", coursesList);
+  //console.log('course list west: ', userCoursesId)
 
   return (
     <main className="w-full ">
@@ -256,6 +250,34 @@ function Page() {
               />
             </div>
           )}
+        
+          <p className=" text-base font-bold text-start text-gray-700">-- Your Single Course Subscriptions </p>
+          {userCoursesId.length !== 0  ? (
+            <div className="flex flex-col gap-6" id="single-courses">
+              {singleCoursesList.map((course) => (
+                <UpcomingCourseCard
+                  key={course.id}
+                  desc={course.overview ?? ""}
+                  image={course.image ?? "/"}
+                  directTo={`/dashboard/internship/${0}/courses/${course.id}?type=single`}
+                  title={course.title ?? ""}
+                  weeks={0}
+                  lessons={0}
+                />
+              ))}
+            </div>) : 
+            (<div>
+              <UpcomingCourseCard
+                desc="If you are enrolled for an internship or a course and this is still empty after 24 hours, please write to contact@thehackbio.com. We would fix it 😊."
+                image="https://internship.thehackbio.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhb_logo.a812b2f6.png&w=96&q=75"
+                directTo="/dashboard/internship"
+                title="Nothing to show here yet"
+                weeks={0}
+                lessons={0}
+              />
+            </div>
+          )}
+               
         </div>
       </div>
     </div>
@@ -269,61 +291,88 @@ function Page() {
       {/* Main Content */}
       <MainScreenFlex username={username} mini_desc="Your Internship Courses"/>
 
-        <div className="flex flex-col gap-6  items-center">
-          {internshipList.length !== 0 && internshipList[0].id !== "" ? (
-            internshipList.map((internship) => {
-              // Get course IDs for this internship
-              const internshipCourseIds = internship.courses?.map((c) => Number(c.id ?? c)) ?? [];
-              // Filter courses that belong to this internship
-              const coursesForInternship = coursesList.filter((course) =>
-                internshipCourseIds.includes(Number(course.id))
-              );
-              return (
-                <div key={internship.id} className="mb-10">
-                  <p className="font-bold text-lg mb-4">{internship.title}</p>
-                  {coursesForInternship.length > 0 ? (
-                    <div className="flex flex-col gap-6">
-                      {coursesForInternship.map((course) => (
-                        <UpcomingCourseCard
-                          key={course.id}
-                          desc={course.overview ?? ""}
-                          image={course.image ?? "/"}
-                          directTo={`/dashboard/internship/${internship.id}/courses/${course.id}/`}
-                          title={course.title ?? ""}
-                          weeks={0}
-                          lessons={0}
-                        />
-                      ))}
-                    </div>
-                  ) : (
-                    <div>
+      <div className="flex flex-col gap-6  items-center">
+        {internshipList.length !== 0 && internshipList[0].id !== "" ? (
+          internshipList.map((internship) => {
+            // Get course IDs for this internship
+            const internshipCourseIds = internship.courses?.map((c) => Number(c.id ?? c)) ?? [];
+            // Filter courses that belong to this internship
+            const coursesForInternship = coursesList.filter((course) =>
+              internshipCourseIds.includes(Number(course.id))
+            );
+            return (
+              <div key={internship.id} className="mb-10">
+                <p className="font-bold text-lg mb-4">{internship.title}</p>
+                {coursesForInternship.length > 0 ? (
+                  <div className="flex flex-col gap-6">
+                    {coursesForInternship.map((course) => (
                       <UpcomingCourseCard
-                        desc="No courses found for this internship."
-                        image="https://internship.thehackbio.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhb_logo.a812b2f6.png&w=96&q=75"
-                        directTo="/dashboard/internship"
-                        title="Nothing to show here yet"
+                        key={course.id}
+                        desc={course.overview ?? ""}
+                        image={course.image ?? "/"}
+                        directTo={`/dashboard/internship/${internship.id}/courses/${course.id}/`}
+                        title={course.title ?? ""}
                         weeks={0}
                         lessons={0}
                       />
-                    </div>
-                  )}
-                </div>
-              );
-            })
-          ) : (
-            <div>
+                    ))}
+                  </div>
+                ) : (
+                  <div>
+                    <UpcomingCourseCard
+                      desc="No courses found for this internship."
+                      image="https://internship.thehackbio.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhb_logo.a812b2f6.png&w=96&q=75"
+                      directTo="/dashboard/internship"
+                      title="Nothing to show here yet"
+                      weeks={0}
+                      lessons={0}
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })
+        ) : (
+          <div>
+            <UpcomingCourseCard
+              desc={`If you are enrolled for an internship or a course and this is still empty after 24 hours, please write to contact@thehackbio.com. We would fix it 😊.`}
+              image={"https://internship.thehackbio.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhb_logo.a812b2f6.png&w=96&q=75"}
+              directTo={'/dashboard/internship'}
+              title={`Nothing to show here yet`}
+              weeks={0}
+              lessons={0}
+            />
+          </div>
+        )}
+
+        <p className="py-5 text-base text-start text-gray-700">-- Your Single Course Subscriptions </p>
+          {userCoursesId.length !== 0  ? (
+            <div className="flex flex-col gap-6" id="single-courses">
+              {singleCoursesList.map((course) => (
+                <UpcomingCourseCard
+                  key={course.id}
+                  desc={course.overview ?? ""}
+                  image={course.image ?? "/"}
+                  directTo={`/dashboard/internship/${0}/courses/${course.id}?type=single`}
+                  title={course.title ?? ""}
+                  weeks={0}
+                  lessons={0}
+                />
+              ))}
+            </div>) : 
+            (<div>
               <UpcomingCourseCard
-                desc={`If you are enrolled for an internship or a course and this is still empty after 24 hours, please write to contact@thehackbio.com. We would fix it 😊.`}
-                image={"https://internship.thehackbio.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhb_logo.a812b2f6.png&w=96&q=75"}
-                directTo={'/dashboard/internship'}
-                title={`Nothing to show here yet`}
+                desc="If you are enrolled for an internship or a course and this is still empty after 24 hours, please write to contact@thehackbio.com. We would fix it 😊."
+                image="https://internship.thehackbio.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhb_logo.a812b2f6.png&w=96&q=75"
+                directTo="/dashboard/internship"
+                title="Nothing to show here yet"
                 weeks={0}
                 lessons={0}
               />
             </div>
           )}
-        </div>
       </div>
+    </div>
 
     </main>
   )

@@ -48,7 +48,7 @@ export default function ScholarshipPage() {
     <div>
         <Navbar />
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-[#27AE60] to-green-300 text-white py-16 pt-40 px-6 text-center">
+      <section className="bg-linear-to-r from-hb-green to-green-300 text-white py-16 pt-40 px-6 text-center">
         <h1 className="text-4xl font-bold mb-4">HackBio Scholarships</h1>
         <p className="text-lg max-w-2xl mx-auto">
           Browse scholarships from our partners and sponsors. Apply today to support your HackBio internship journey.

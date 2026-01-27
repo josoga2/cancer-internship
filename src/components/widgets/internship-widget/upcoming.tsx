@@ -2,15 +2,17 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { EnrollDialog } from "@/components/enroll/enroll";
 import HbButtons from "../hb-buttons";
+import HbButton from "../hb-buttons";
+import Link from "next/link";
 
 
 
 // Props: upcoming, coursesList, internshipStatus
-export default function UpcomingSection({ id, start_date, int_image, title, overview, lenght_in_weeks, internshipStatus }: { id: string; start_date: string; int_image: string; title: string; overview: string; lenght_in_weeks: number; internshipStatus: string }) {
+export default function UpcomingSection({ id, start_date, int_image, title, overview, lenght_in_weeks, internshipStatus, status}: { id: string; start_date: string; int_image: string; title: string; overview: string; lenght_in_weeks: number; internshipStatus: string; status:boolean; }) {
 
   return (
     <main>
-      <div key={id} className="hidden w-full pb-10  h-full md:flex flex-col gap-10 px-10 items-center justify-center border-r-hb-lightgreen border-r border-l border-l-hb-lightgreen">
+      <div key={id} className="hidden w-full pb-10  h-full md:flex flex-col gap-10  items-center justify-center ">
         <div className="flex flex-col gap-2 w-full items-start justify-start">
           <p className="text-3xl font-bold">Upcoming</p>
           <p className="text-lg">{start_date}</p>
@@ -35,20 +37,7 @@ export default function UpcomingSection({ id, start_date, int_image, title, over
                 <p className="text-base">{lenght_in_weeks} Weeks</p>
               </span>
 
-              {internshipStatus === "close" ? (
-                <Button
-                  onClick={() => {
-                    if (typeof window !== "undefined") {
-                      window.alert("Application closed! Join us next year");
-                    }
-                  }}
-                  className="bg-hb-green text-white"
-                >
-                  Application Closed.
-                </Button>
-              ) : (
-                <EnrollDialog />
-              )}
+              {status? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:id } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
             </div>
           </div>
         </div>
@@ -66,19 +55,7 @@ export default function UpcomingSection({ id, start_date, int_image, title, over
           <p className="text-lg font-bold">{title}</p>
           <p className="text-sm">{overview}</p>
           <p className="text-sm">{lenght_in_weeks} Weeks</p>
-          {internshipStatus === 'close' && (
-              <Button
-                  onClick={() => {
-                      if (typeof window !== "undefined") {
-                          window.alert("Application closed! Join us next year");
-                      }
-                  }}
-                  className="bg-hb-green text-white"
-              >
-                  Application Closed.
-              </Button>
-          )}
-          {internshipStatus !== 'close' && <EnrollDialog />}
+          {status? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:id } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
         </div>
       </div>
 

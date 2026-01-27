@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress"
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import NotebookViewer from "@/components/nbc/notebook";
 import QuestionBlock from "@/components/qc/questionBlock";
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
@@ -19,7 +19,6 @@ import 'katex/dist/katex.min.css';
 import 'highlight.js/styles/github.css'; // or another theme
 // remark plugins
 import { toast } from "sonner"
-import dynamic from "next/dynamic";
 
 // rehype plugins
 import LeftSideBar from "@/components/widgets/dashboard-widgets/left-sidebar";
@@ -33,6 +32,8 @@ import Video from "@/components/widgets/course-props-widgets/video";
 import TextContent from "@/components/widgets/course-props-widgets/text";
 import WebRPy from "@/components/widgets/course-props-widgets/webrpy";
 import JupyterContent from "@/components/widgets/course-props-widgets/jupyter-notebook";
+import Link from "next/link";
+import { content } from "html2canvas-pro/dist/types/css/property-descriptors/content";
 
 
 
@@ -130,6 +131,7 @@ function Page() {
     jupyter_url: string
     course: number | string
     finished: boolean
+    project_solution?: string
   }>>([]);
 
   const [filteredContentList, setFilteredContentList] = useState<Array<{
@@ -150,6 +152,7 @@ function Page() {
         jupyter_url: string
         course: number | string
         finished: boolean
+        project_solution?: string
     }>>([]);
 
   const [previousModuleId, setPreviousModuleId] = useState<number>(0);
@@ -159,6 +162,9 @@ function Page() {
   const [solution, setSolution] = useState<string>("");
   const [grade, setGrade] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [subscriptionIntStatus, setSubscriptionIntStatus] = useState<boolean>(false);
+  const searchParams = useSearchParams();
+  const progType = searchParams.get("type");
 
 
     //get username
@@ -190,12 +196,18 @@ function Page() {
   useEffect(() => {
     const fetchUserProgress = async () => {
       try {
-        const response = await api.post('/api/get-user-progress/', {'internshipid': globalInternshipId}); // Adjust the endpoint as needed
+        let response;
+        if(progType === "single" && globalInternshipId === 0){ 
+          response = await api.post('/api/user-course-progress/', {'courseid': courseId}); // Adjust the endpoint as needed
+          //console.log("fetching course progress: ", response)
+        }else{
+          response = await api.post('/api/get-user-progress/', {'internshipid': globalInternshipId}); // Adjust the endpoint as needed
+        }
         //console.log("Response from get-user-profile:", response.data);
         if (response.data && response.status == 200 || response.status == 201) {
           //console.log("User progress data:", response.data);
           const userProgress = response.data; 
-          setUserClicks(userProgress.no_clicks );
+          setUserClicks(userProgress.no_clicks);
           setCert(userProgress.certified)
           setCompletedContent(userProgress.completed_contents ? userProgress.completed_contents : ""); 
           const uniqItems = new Set(userProgress.completed_contents.split(","))
@@ -205,12 +217,25 @@ function Page() {
           //console.log(allItemslength)
           setUserXP(Math.ceil(userProgress.total_xp_earned * (uniqItems.size / allItemslength)).toString());
 
-          const totalXPResponse = await api.post('/api/get-total-xp/', {'internshipid': globalInternshipId});
-            if (totalXPResponse.status === 200) {
-                setTotalXP(totalXPResponse.data.total_xp);
-            } else {
-                console.error("Failed to fetch total XP.");
-            }
+          const subscriptionEnd = new Date(userProgress.current_period_end)
+          const now = new Date()
+          const msLeft = subscriptionEnd.getTime() - now.getTime()
+          const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24))
+          const isActive = daysLeft > 0
+          setSubscriptionIntStatus(isActive );
+
+          let totalXPResponse;
+          if(progType === "single" && globalInternshipId === 0){ 
+            totalXPResponse = await api.post('/api/get-total-course-xp/', {'courseid': courseId});
+          }else{
+            totalXPResponse = await api.post('/api/get-total-xp/', {'internshipid': globalInternshipId});
+         }
+        
+        if (totalXPResponse.status === 200) {
+            setTotalXP(totalXPResponse.data.total_xp);
+        } else {
+            console.error("Failed to fetch total XP.");
+        }
           
         } else {
           router.push("/login");
@@ -419,13 +444,25 @@ function Page() {
 
     const handleMarkCompleted = async () => {
         try {
-            const response = await api.post('/api/mark-completed/', {
-                user: username,
-                internshipid: globalInternshipId,
-                content: contentId,
-                course: courseId,
-                module: moduleId
-            });
+            let response;
+            if(progType === "single" && globalInternshipId === 0){
+                response = await api.post('/api/mark-completed-course/', {
+                    user: username,
+                    courseid: courseId,
+                    content: contentId,
+                    course: courseId,
+                    module: moduleId
+                });
+            }else{
+                response = await api.post('/api/mark-completed/', {
+                    user: username,
+                    internshipid: globalInternshipId,
+                    content: contentId,
+                    course: courseId,
+                    module: moduleId
+                });
+            }
+            
             if (response.status === 200) {
                 //console.log("Content marked as completed successfully.");
                 //setUserXP(prevXP => prevXP + 10); // Increment user XP by 10 or any desired value
@@ -441,20 +478,33 @@ function Page() {
         }
     }
 
+    //come back and fix the project solution for courses
     const handleSolutionSubmit = async () => {
         //e.preventDefault();
         setLoading(true);
         try {
-            const response = await api.post('/api/submit-solution/', {
-                content: filteredContentList[0].project_data, // Assuming the content is in the first item of filteredContentList
-                solution: solution,
-                internshipid: globalInternshipId,
-                channel: filteredContentList[0].project_promote_channel || "C09A477A43E", // Default channel if not provided
-                minimal_rubric: filteredContentList[0].project_rubric || "Use your best judgment to grade the solution based on the content provided." // Default minimal rubric if not provided
-            });
+            let response;
+            if(progType === "single" && globalInternshipId === 0){
+                response = await api.post('/api/submit-solution-course/', {
+                    solution: solution,
+                    courseid: courseId,
+                    contentid: contentId,
+                    minimal_rubric: filteredContentList[0].project_rubric || "Use your best judgment to grade the solution based on the content provided." // Default minimal rubric if not provided
+                });
+            }else{
+                response = await api.post('/api/submit-solution/', {
+                    solution: solution,
+                    internshipid: globalInternshipId,
+                    contentid: contentId,
+                    channel: filteredContentList[0].project_promote_channel || "C09A477A43E", // Default channel if not provided
+                    minimal_rubric: filteredContentList[0].project_rubric || "",// Default minimal rubric if not provided
+                    project_solution: filteredContentList[0].project_solution || "" // Default project solution if not provided
+                });
+            }
+            
             if (response.status === 200) {
                 //console.log("Solution submitted successfully.: ", response.data);
-                setGrade(Number(response.data.grade_response)); // Assuming the response contains a grade field
+                setGrade((response.data.grade_response)); // Assuming the response contains a grade field
                 setLoading(false);
                 // Handle success, e.g., show a success message or redirect
             } else {
@@ -469,15 +519,29 @@ function Page() {
         //e.preventDefault();
         setLoading(true);
         try {
-            const response = await api.post('/api/submit-codetask/', {
-                content: filteredContentList[0].text_content, // Assuming the content is in the first item of filteredContentList
-                solution: solution,
-                internshipid: globalInternshipId
-            });
+            let response;
+            if(progType === "single" && globalInternshipId === 0){
+                response = await api.post('/api/submit-solution-course/', {
+                    solution: solution,
+                    courseid: courseId,
+                    contentid: contentId,
+                    minimal_rubric: filteredContentList[0].project_rubric 
+                });
+            }else{
+                response = await api.post('/api/submit-solution/', {
+                    solution: solution,
+                    internshipid: globalInternshipId,
+                    contentid: contentId,
+                    channel: filteredContentList[0].project_promote_channel || "C09A477A43E", // Default channel if not provided
+                    minimal_rubric: filteredContentList[0].project_rubric || "",// Default minimal rubric if not provided
+                    project_solution: filteredContentList[0].project_solution || "" // Default project solution if not provided
+                });
+            }
+            
             if (response.status === 200) {
                 //console.log("Solution submitted successfully.: ", response.data.grade_response.grade);
                 setGrade(response.data.grade_response); // Assuming the response contains a grade field
-                setImprove(response.data.suggestions);
+                setImprove(filteredContentList[0].project_solution || "No feedback provided.");
                 setLoading(false);
                 // Handle success, e.g., show a success message or redirect
             } else {
@@ -492,11 +556,23 @@ function Page() {
         //e.preventDefault();
         setLoading(true);
         try {
-            const response = await api.post('/api/submit-mcq/', {
-                actual_answer: filteredContentList[0].actual_answer, 
-                user_answer: selectedAnswer,
-                internshipid: globalInternshipId
-            });
+            let response;
+            if(progType === "single" && globalInternshipId === 0){
+                response = await api.post('/api/submit-mcq-course/', {
+                    actual_answer: filteredContentList[0].actual_answer, 
+                    user_answer: selectedAnswer,
+                    courseid: courseId,
+                    contentid: contentId
+                });
+            }else{
+                response = await api.post('/api/submit-mcq/', {
+                    actual_answer: filteredContentList[0].actual_answer, 
+                    user_answer: selectedAnswer,
+                    internshipid: globalInternshipId,
+                    contentid: contentId
+                });
+            }
+            
             if (response.status === 200) {
                 //console.log("Solution submitted successfully.: ", response.data.grade_response.grade);
                 setGrade(response.data.xp_earned); // Assuming the response contains a grade field
@@ -522,14 +598,28 @@ function Page() {
     const handleGenCertificate = async () => {
         //e.preventDefault()
         try {
-            const response = await api.post('/api/generate-certificate/', {
-                name: officialName,
-                xp: (Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 120), 100)).toString(),
-                internship_title: 'Next Generation Sequencing 2025 Internship',
-                internshipid: globalInternshipId,
-            },
-            {responseType: 'blob'} // Ensure the response is treated as a blob for file download
-        );
+            let response;
+            if(progType === "single" && globalInternshipId === 0){
+                response = await api.post('/api/generate-certificate-course/', {
+                    name: officialName,
+                    xp: (Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 120), 100)).toString(),
+                    course_title: coursesList.find(course => Number(course.id) === courseId)?.title || 'Course',
+                    courseid: courseId,
+                    },
+                    {responseType: 'blob'} // Ensure the response is treated as a blob for file download
+                );
+            }else{
+                response = await api.post('/api/generate-certificate/', {
+                    name: officialName,
+                    xp: (Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 120), 100)).toString(),
+                    internship_title: internshipList.find(internship => Number(internship.id) === globalInternshipId)?.title || 'Internship',
+                    internshipid: globalInternshipId,
+                    },
+                    {responseType: 'blob'} // Ensure the response is treated as a blob for file download
+                );
+            }
+            
+        
             if (response.status === 200) {
                 //console.log("Certificate generated successfully.");
                 // Handle success, e.g., show a success message or redirect
@@ -576,6 +666,7 @@ return (
                         </div>
                         
                         {/* Video */}
+                    {subscriptionIntStatus? (<div>
                     {content.content_type === 'video' && (
                         <Video video_url={content.video_url} text_content={content.text_content} />
                     )}
@@ -653,15 +744,15 @@ return (
                     )}
                     {/**Project */}
                     {content.content_type === 'project' && (
-                        <div className="w-full flex flex-row gap-10">
+                        <div className="w-full flex flex-row gap-5">
                             <div className="border-2 rounded-md border-hb-green prose prose-base p-5 flex flex-col leading-tight w-full">
                                 <p className="font-bold text-lg">
                                     Project Details: Submit markdown or code solution to the project below
                                 </p>
                                 <TextContent text_content={content.project_data} />
                                 <div className="grid gap-2">
-                                    <Label htmlFor="solution" className='text-lg font-bold pt-5'>Your Solution</Label>
-                                    <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} placeholder="type your solution..." required  className='bg-green-950 text-white text-xs placeholder:text-xs p-3 h-screen font-mono border border-neutral-200'/>
+                                    <Label htmlFor="solution" className='text-base font-bold pt-5'>Your Solution</Label>
+                                    <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} placeholder="type your solution..." required  className='bg-green-950 text-white text-xs placeholder:text-xs p-3 h-100 font-mono border border-neutral-200'/>
                                     <p className="text-sm text-gray-500">Note: Please ensure your solution is well documented and clear. We accept text and code!</p>
                                     <div className="flex flex-row gap-5 items-center justify-start pt-5">
                                         <Button onClick={() => {handleSolutionSubmit()}} className='w-fit bg-green-500 text-white text-xl py-6 hover:bg-green-600'>
@@ -759,6 +850,7 @@ return (
                         </div>
                     </div>
                 )}
+                </div>): (<div><p className="mb-10 text-sm text-red-600">{subscriptionIntStatus ? "" : <span> <p>"Your subscription to this program has expired."  <Link className="font-bold hover:underline" href={`/dashboard/checkout?prog=internship&id=${globalInternshipId}`}> Click here to subscribe Now</Link> </p> </span>}</p></div>)}
                 </div>
             ))) : (<p>Loading content...</p>)}
             </div>
@@ -768,7 +860,7 @@ return (
         <div className="flex flex-col text-base h-screen bg-white items-start w-100 border-r overflow-auto">
             
             <TocLink tocHref={`/dashboard/internship/${globalInternshipId}/courses/${courseId}`} />
-            <Previous previous={previousModuleId > 0} PREVIOUSLINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${previousModuleId}/content/${previousContentId}`} /> 
+            <Previous previous={previousModuleId > 0} PREVIOUSLINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${previousModuleId}/content/${previousContentId}?type=single`} /> 
             <p className="text-xs text-gray-500 p-5 ">CONTENT</p>
             <div className="flex flex-col gap-2">
                 {contentList.map((content) => {
@@ -778,12 +870,12 @@ return (
                     //console.log('active content id:', uniqCContent)
 
                     return (
-                        <TocList isCompleted={isCompleted} COURSELINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${moduleId}/content/${content.id}`} id={String(content.id)} isActive={isActive} title={content.title} />  
+                        <TocList isCompleted={isCompleted} COURSELINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${moduleId}/content/${content.id}?type=single`} id={String(content.id)} isActive={isActive} title={content.title} />  
                     );
                 })}
             </div>
             
-            <Next NEXTLINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${nextModuleId}/content/${nextContentId}`} nextModuleId={nextModuleId} />
+            <Next NEXTLINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${nextModuleId}/content/${nextContentId}?type=single`} nextModuleId={nextModuleId} />
             
         </div>
     </div>     
@@ -900,7 +992,7 @@ return (
                             <div className="flex flex-col prose leading-tight gap-3 ">
                                 <TextContent text_content={content.project_data} />
                                 <Label htmlFor="solution" className="text-sm font-bold">Your Solution</Label>
-                                <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} className="text-xs font-mono h-75 p-2 bg-green-900 text-white" />
+                                <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} className="text-xs font-mono h-100 p-2 bg-green-900 text-white" />
                                 <Button onClick={() => {handleSolutionSubmit(); }} className="bg-hb-green text-white">SUBMIT</Button>
                                 {loading ? (<p>Loading grade...</p>) : (<p>Your score is: {grade}</p>)}
                             </div>
@@ -940,7 +1032,7 @@ return (
                     <TocLink tocHref={`/dashboard/internship/${globalInternshipId}/courses/${courseId}`} />
                 </div>
                 <div className="flex flex-row items-center justify-between ">
-                    <Previous previous={previousModuleId > 0} PREVIOUSLINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${previousModuleId}/content/${previousContentId}`} />
+                    <Previous previous={previousModuleId > 0} PREVIOUSLINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${previousModuleId}/content/${previousContentId}?type=single`} />
                 </div>
                 <p className="font-bold text-base">CONTENT </p>
                 <ul className="flex flex-col  overflow-x-auto list-inside w-full items-start">
@@ -949,13 +1041,13 @@ return (
                         const isCompleted = uniqCContent.has(String(contentId))
                         return (
                         <li key={content.id} className="text-sm w-full rounded-md flex flex-col items-start justify-start">
-                            <TocList isCompleted={isCompleted} COURSELINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${moduleId}/content/${content.id}`} id={String(content.id)} isActive={isActive} title={content.title} /> 
+                            <TocList isCompleted={isCompleted} COURSELINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${moduleId}/content/${content.id}?type=single`} id={String(content.id)} isActive={isActive} title={content.title} /> 
                         </li>
                         );
                     })}
                 </ul>
                 <div className="flex flex-row items-center justify-between ">
-                    <Next NEXTLINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${nextModuleId}/content/${nextContentId}`} nextModuleId={nextModuleId} />
+                    <Next NEXTLINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${nextModuleId}/content/${nextContentId}?type=single`} nextModuleId={nextModuleId} />
                 </div>
                 
             </div>

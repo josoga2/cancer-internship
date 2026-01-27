@@ -84,7 +84,7 @@ export default function RootLayout({
         className={`${dmSans}`}
       >
         <Banner />
-        <div className="min-h-[100svh] flex items-start justify-center">
+        <div className="min-h-svh flex items-start justify-center">
             {children}
             <Toaster />
             <GoogleAnalytics gaId={gaId} />

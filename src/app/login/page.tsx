@@ -26,7 +26,7 @@ export default function Login() {
         setError('');
 
         try {
-            const loginResponse = await publicApi.post('/api/auth/login/', { username, password } );
+            const loginResponse = await publicApi.post('/api/auth/login/', { username: username.trim().toLowerCase(), password } );
             if (loginResponse.status === 200 || loginResponse.status === 201) {
                 localStorage.setItem(ACCESS_TOKEN, loginResponse.data.access);
                 localStorage.setItem(REFRESH_TOKEN, loginResponse.data.refresh);
@@ -55,8 +55,8 @@ export default function Login() {
     };
 
     return (
-        <main className="max-w-full w-full py-10 flex flex-col h-screen items-center justify-center bg-gradient-to-b from-white via-hb-lightgreen to-hb-lightgreen">
-            <div className='hidden md:flex w-[350px] py-5 bg-white  flex-col gap-2 items-center justify-center border-2 border-gray-200 rounded-lg shadow-lg px-5'>
+        <main className="max-w-full w-full py-10 flex flex-col h-screen items-center justify-center bg-linear-to-b from-white via-hb-lightgreen to-hb-lightgreen">
+            <div className='hidden md:flex w-87.5 py-5 bg-white  flex-col gap-2 items-center justify-center border-2 border-gray-200 rounded-lg shadow-lg px-5'>
                 
                 <div className='w-full flex justify-start items-start text-base'>
                     <Card className='w-full rounded-sm shadow-sm '>
@@ -84,6 +84,7 @@ export default function Login() {
                                     </Button>
                                 </a>
                                 <a href='/register'><p className='text-sm text-center pt-5 text-blue-600 hover:underline'>New here? Register. </p></a>
+                                <a href='/forgot-password'><p className='text-sm text-center pt-5 text-blue-600 hover:underline'>Forgot password? Reset here. </p></a>
                             </form>
                         </CardContent>
                     </Card>
@@ -133,6 +134,7 @@ export default function Login() {
                                         New here? Register.
                                     </p>
                                 </a>
+                                <a href='/forgot-password'><p className='text-sm text-center pt-5 text-blue-600 hover:underline'>Forgot password? Reset here. </p></a>
                             </form>
                         </CardContent>
                     </Card>

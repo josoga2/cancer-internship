@@ -38,7 +38,7 @@ export default function TextContent({text_content}: {text_content: string}) {
 {/**Mobile View */}
             <div className="flex flex-col w-full md:hidden gap-5 rounded-xl">
                 <div className="w-full flex flex-row text-sm">
-                    <div className="w-full border-2 rounded-md border-hb-green p-3 bg-white prose prose-base text-sm">
+                    <div className="w-full border-2 rounded-md border-hb-green p-5 bg-white prose prose-base text-sm">
                         <article> <Markdown
                             remarkPlugins={[
                                 remarkGfm,
