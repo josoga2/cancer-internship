@@ -1,16 +1,6 @@
 'use client'
-import publicApi from "@/publicApi";
-import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-
-
 
 export default function CheckStatus() {
-
-
-    
-
-    
 
    
     return (
