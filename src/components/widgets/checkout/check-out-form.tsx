@@ -12,7 +12,7 @@ import {
 import NavbarPay from "@/components/Nav/navbar-pay";
 import publicApi from "@/publicApi";
 
-export const stripePromise = loadStripe(
+const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST!
 );
 
