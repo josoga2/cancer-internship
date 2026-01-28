@@ -8,11 +8,13 @@ import { useSearchParams } from "next/navigation";
 import publicApi from "@/publicApi";
 
 
-export const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
-);
 
 export default function Page() {
+
+    const stripePromise = loadStripe(
+        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+    );
+
     
     const searchParams = useSearchParams();
 
