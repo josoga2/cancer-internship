@@ -12,15 +12,17 @@ import {
 import NavbarPay from "@/components/Nav/navbar-pay";
 import publicApi from "@/publicApi";
 
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST!
-);
+
 
 export default function CheckOutForm({title, desc, progId, curr, discount, plan}:{ title:string; desc:string; progId:number, curr:string, discount:number; plan:string }) {
 
     const [clientSecret, setClientSecret] = useState<string | null>(null);
     const [priceType, setPriceType] = useState('')
     const [refCode, setRefCode] = useState('')
+
+    const stripePromise = loadStripe(
+        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST!
+    );
 
     
     //dropdown for length of subscription / one-time payment
