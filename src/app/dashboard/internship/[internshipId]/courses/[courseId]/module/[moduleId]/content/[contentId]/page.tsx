@@ -33,7 +33,7 @@ import TextContent from "@/components/widgets/course-props-widgets/text";
 import WebRPy from "@/components/widgets/course-props-widgets/webrpy";
 import JupyterContent from "@/components/widgets/course-props-widgets/jupyter-notebook";
 import Link from "next/link";
-import { content } from "html2canvas-pro/dist/types/css/property-descriptors/content";
+
 
 
 
