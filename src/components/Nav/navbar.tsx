@@ -108,14 +108,14 @@ export default function Navbar() {
               <ul className="grid w-75 gap-4">
                 <li>
 
-                  <NavigationMenuLink asChild>
+                  {/* <NavigationMenuLink asChild>
                     <Link href="/pricing">
                       <div className="font-bold">Pricing</div>
                       <div className="text-muted-foreground ">
                         See how to pay for what matters to you
                       </div>
                     </Link>
-                  </NavigationMenuLink>
+                  </NavigationMenuLink> */}
 
                   <NavigationMenuLink asChild>
                     <Link href="/blog">
