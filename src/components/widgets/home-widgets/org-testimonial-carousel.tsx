@@ -12,7 +12,7 @@ export default function OrganizationsTestimonials() {
                     <img
                         src={lg_testimonial.src}
                         alt="organizations-that-trust-hackbio"
-                        className="w-full"
+                        className="w-5/6"
                     />
                 </div>
             </div>

@@ -9,8 +9,8 @@ export default function Hero() {
                         <p className= 'text-5xl font-bold leading-16'>We train the next generation of bioinformatics talent </p>
                         <p className=" text-xl w-2/3 text-gray-700">... and connect them to the organizations that need them.</p>
                         <div className="flex flex-row gap-5 py-5">
-                            <a href="/internship"> <HbButtons type="primary" text="Join an Internship"/> </a>
-                            <a href="/hire-talents"> <HbButtons type="outline" text="Hire Talents"/> </a>
+                            <a href="/learning"> <HbButtons type="primary" text="Start your career journey"/> </a>
+                            {/* <a href="/hire-talents"> <HbButtons type="outline" text="Hire Talents"/> </a> */}
                         </div>
                     </div>
                     
@@ -26,12 +26,8 @@ export default function Hero() {
                         ... and connect them to the organizations that need them.
                     </p>
                     <div className="flex flex-col gap-3">
-                        <a href="/internship">
-                        <HbButtons text="Join an Internship" type="primary" />
-                        </a>
-                        <a href="/hire-talents">
-                        <HbButtons text="Hire Talents" type="outline" />
-                        </a>
+                        <a href="/learning"> <HbButtons type="primary" text="Start your career journey"/> </a>
+                        {/* <a href="/hire-talents"> <HbButtons type="outline" text="Hire Talents"/> </a> */}
                     </div>
                 </div>
             </div>

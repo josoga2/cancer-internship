@@ -7,7 +7,7 @@ import Image from "next/image";
 import Navbar from "@/components/Nav/navbar";
 import Footer from "@/components/Nav/footer";
 import OrganizationsTestimonials from "@/components/widgets/home-widgets/org-testimonial-carousel";
-import { Sparkle } from "lucide-react";
+import { ArrowDown, ArrowRight, Sparkle } from "lucide-react";
 import TestimonialsInterns from "@/components/widgets/home-widgets/testimonials-interns";
 import HbPrices from "@/components/all-pricings/preview";
 import React from "react";
@@ -47,6 +47,7 @@ export default function Learning() {
         published?: boolean
         overview?: string
         image?: string
+        free?: boolean
     }>>([
         {
             id: "",
@@ -54,7 +55,8 @@ export default function Learning() {
             description: "",
             overview: "",
             published: false,
-            image: "https://hbapi.jisender.com/media/course_images/biology.png"
+            image: "https://hbapi.jisender.com/media/course_images/biology.png",
+            free: false
         }
     ]);
     //console.log(pathway);
@@ -100,128 +102,164 @@ export default function Learning() {
         <div className="hidden md:flex md:max-w-5xl bg md:m-auto md:items-center pt-24 md:justify-between ">
 
         <div className=" p-5 ">
-            <div className="py-5 h-full w-full flex flex-row justify-between items-center">
+            <div className="py-5 h-full w-full flex flex-row justify-center items-center">
                 <div className="flex flex-col gap-5">
-                <p className="text-3xl font-bold text-start">This is where to start!</p>
-                <p className="text-lg">Build your career, Step by step, one skill at a time</p>
+                <p className="text-3xl font-bold text-center">Career Pathways.</p>
+                <p className="text-lg text-center">Build your career, Step by step, one skill at a time</p>
                 </div>
-                <Image src={keywords} alt="biology" className="w-2/4" />
+                
             </div>
 
-          {/* Organizations */}
-          <OrganizationsTestimonials />
 
           {/** Learning Paths */}
           {/**Beginners */}
-          <div className="flex flex-col bg-hb-lightgreen">
-            <hr className="border-t  pt-10" />
-            <div className="bg-hb-lightgreen">
-              <span className="text-4xl font-extralight text-gray-500 pl-10 pb-10 flex flex-row gap-5">Beginners <Sparkle className="text-base" /> </span> 
+          <div className="flex flex-col items-center  ">
+            <hr className=" pt-10" />
+            <div className="">
+            <div className="flex flex-col flex-nowrap gap-4">
+              <span className="text-sm font-bold text-gray-500 flex pl-5 flex-row gap-5">BEGINNER </span> 
               {pathway
                 .filter(pw => pw.complexity_level === "Beginner")
                 .map((learning) => (
-                <div key={learning.id} className="py-5 w-full flex flex-row gap-5 justify-start items-center p-10">
-                  <div className="flex flex-col gap-10 w-full">
-                    <div className="flex flex-row gap-10 hover:underline hover:cursor-pointer" onClick={() => router.push(`/pathway/${learning.id}`)}>
+                <div key={learning.id} className="py-5 w-full flex flex-row gap-5 justify-start items-center ">
+                  <div className="flex flex-col gap-10 w-full  rounded p-5">
+                    <div className="flex flex-row gap-5 hover:underline hover:cursor-pointer" onClick={() => router.push(`/pathway/${learning.id}`)}>
                       <img src={learning.int_image} alt="learning_image" width={64} height={64} className="w-24 h-24" />
                       <div className="flex flex-col gap-2 items-start justify-center">
-                        <p className="text-2xl font-bold">{learning.title}</p>
-                        <p className="text-base">{learning.overview}</p>
+                        <p className="text-base font-bold">{learning.title}</p>
+                        <p className="text-sm">{learning.overview}</p>
                       </div>
                     </div>
                 
-                    <div className=" w-full  rounded-xl h-full flex flex-row flex-nowrap gap-10 items-start ">
+                    <div className="flex border p-2 flex-row flex-nowrap gap-4 overflow-x-auto w-220 scrollbar-thin">
                       {coursesList
                         .filter(course => {
                         const courseIds = (learning.courses ?? []).filter((id): id is string | number => id !== undefined);
                         return courseIds.includes(course.id as string | number);
                         })
-                        .map(course => (
-                        <div className="flex flex-col h-45 w-40 gap-2 items-start border p-2 hover:shadow rounded-lg bg-zinc-100 justify-start hover:cursor-pointer hover:underline" key={course.id} onClick={() => router.push(`/pathway/${learning.id}`)}>
-                          <img src={course.image} alt="biology" className="rounded-md h-20 w-20 object-cover border"/>
-                          <p className="text-sm w-full">{course.title}</p>
+                        .map((course, ind) => (
+                          <div key={course.id} className=" flex items-center gap-4">
+                            <div className="w-64 shrink-0 flex gap-2 items-center border p-2 rounded-lg bg-zinc-100 hover:shadow cursor-pointer" key={course.id} onClick={() => router.push(`/pathway/${learning.id}`)}>
+                              <img src={course.image} alt="biology" className="rounded-md h-20 w-20 object-cover border"/>
+                              <div className="flex flex-col gap-2">
+                                <p className="text-sm w-fit hover:cursor-pointer hover:underline">{course.title}</p>
+                                <p className="text-xs w-fit bg-hb-lightgreen text-hb-green">{course.free ? "Free" : "Paid"}</p>
+                              </div>
+                              
+                            </div>
+                            {ind !== ((learning.courses?.length ?? 1) -1) && (
+                              <div> <ArrowRight className="text-hb-green" /> </div>
+                            )}
                         </div>
+
                       ))}
                     </div>
-                    <hr className="border-t  pt-10" />
                   </div>
                 </div> 
               ))}
             </div>
+              
+              
+          </div>
 
           {/**Intermediate */}
-          <div className="bg-white">
-          <hr className="border-t  pt-10" />
-            <span className="text-4xl font-extralight text-gray-500 pl-10 pb-10 flex flex-row gap-1">Intermediate <Sparkle className="text-base" /> <Sparkle className="text-base" /></span> 
-            {pathway
-              .filter(pw => pw.complexity_level === "Intermediate")
-              .map((learning) => (
-              <div key={learning.id} className="py-5 w-full flex flex-row gap-5 justify-start items-center p-10">
-                <div className="flex flex-col gap-10 w-full">
-                  <div className="flex flex-row gap-10 hover:underline hover:cursor-pointer" onClick={() => router.push(`/pathway/${learning.id}`)}>
-                    <img src={learning.int_image} alt="learning_image" width={64} height={64} className="w-24 h-24" />
-                    <div className="flex flex-col gap-2 items-start justify-center">
-                      <p className="text-2xl font-bold">{learning.title}</p>
-                      <p className="text-base">{learning.overview}</p>
-                    </div>
-                  </div>
-              
-                  <div className=" w-full  rounded-xl h-full flex flex-row flex-nowrap gap-10 items-start ">
-                    {coursesList
-                      .filter(course => {
-                      const courseIds = (learning.courses ?? []).filter((id): id is string | number => id !== undefined);
-                      return courseIds.includes(course.id as string | number);
-                      })
-                      .map(course => (
-                      <div className="flex flex-col h-45 w-40 gap-2 items-start border p-2 hover:shadow rounded-lg bg-hb-lightgreen justify-start hover:cursor-pointer hover:underline" key={course.id} onClick={() => router.push(`/pathway/${learning.id}`)}>
-                        <img src={course.image} alt="biology" className="rounded-md h-20 w-20 object-cover border"/>
-                        <p className="text-sm w-full">{course.title}</p>
+          <div className="flex flex-col items-center  ">
+            <hr className=" pt-10" />
+            <div className="flex flex-col flex-nowrap gap-4">
+              <span className="text-sm font-bold text-gray-500 flex pl-5 flex-row gap-5">INTERMEDIATE </span> 
+              {pathway
+                .filter(pw => pw.complexity_level === "Intermediate")
+                .map((learning) => (
+                <div key={learning.id} className="py-5 w-full flex flex-row gap-5 justify-start items-center ">
+                  <div className="flex flex-col gap-10 w-full  rounded p-5">
+                    <div className="flex flex-row gap-5 hover:underline hover:cursor-pointer" onClick={() => router.push(`/pathway/${learning.id}`)}>
+                      <img src={learning.int_image} alt="learning_image" width={64} height={64} className="w-24 h-24" />
+                      <div className="flex flex-col gap-2 items-start justify-center">
+                        <p className="text-base font-bold">{learning.title}</p>
+                        <p className="text-sm">{learning.overview}</p>
                       </div>
-                    ))}
-                  </div>
-                  <hr className="border-t  " />
-                </div>
-                <hr className="border" />
-              </div> 
-            ))}
-            </div>
+                    </div>
+                
+                    <div className="flex border p-2 flex-row flex-nowrap gap-4 overflow-x-auto w-220 scrollbar-thin">
+                      {coursesList
+                        .filter(course => {
+                        const courseIds = (learning.courses ?? []).filter((id): id is string | number => id !== undefined);
+                        return courseIds.includes(course.id as string | number);
+                        })
+                        .map((course, ind) => (
+                          <div key={course.id} className=" flex items-center gap-4">
+                            <div className="w-64 shrink-0 flex gap-2 items-center border p-2 rounded-lg bg-zinc-100 hover:shadow cursor-pointer" key={course.id} onClick={() => router.push(`/pathway/${learning.id}`)}>
+                              <img src={course.image} alt="biology" className="rounded-md h-20 w-20 object-cover border"/>
+                              <div className="flex flex-col gap-2">
+                                <p className="text-sm w-fit hover:cursor-pointer hover:underline">{course.title}</p>
+                                <p className="text-xs w-fit bg-hb-lightgreen text-hb-green">{course.free ? "Free" : "Paid"}</p>
+                              </div>
+                              
+                            </div>
+                            {ind !== ((learning.courses?.length ?? 1) -1) && (
+                              <div> <ArrowRight className="text-hb-green" /> </div>
+                            )}
+                        </div>
 
-          {/**Advanced */}
-          <div className="bg-hb-lightgreen">
-          <hr className="border-t  pt-10" />
-            <span className="text-4xl font-extralight text-gray-500 pl-10 pb-10 flex flex-row gap-1">Advanced <Sparkle className="text-base" /><Sparkle className="text-base" /><Sparkle className="text-base" /> </span> 
-            {pathway
-              .filter(pw => pw.complexity_level === "Advanced")
-              .map((learning) => (
-              <div key={learning.id} className="py-5 w-full flex flex-row gap-5 justify-start items-center p-10">
-                <div className="flex flex-col gap-10 w-full">
-                  <div className="flex flex-row gap-10 hover:underline hover:cursor-pointer" onClick={() => router.push(`/pathway/${learning.id}`)}>
-                    <img src={learning.int_image} alt="learning_image" width={64} height={64} className="w-24 h-24" />
-                    <div className="flex flex-col gap-2 items-start justify-center">
-                      <p className="text-2xl font-bold">{learning.title}</p>
-                      <p className="text-base">{learning.overview}</p>
+                      ))}
                     </div>
                   </div>
-              
-                  <div className=" w-full  rounded-xl h-full flex flex-row flex-nowrap gap-10 items-start ">
-                    {coursesList
-                      .filter(course => {
-                      const courseIds = (learning.courses ?? []).filter((id): id is string | number => id !== undefined);
-                      return courseIds.includes(course.id as string | number);
-                      })
-                      .map(course => (
-                      <div className="flex flex-col h-45 w-40 gap-2 items-start bg-zinc-100 border p-2 hover:shadow rounded-lg justify-start hover:cursor-pointer hover:underline" key={course.id} onClick={() => router.push(`/pathway/${learning.id}`)}>
-                        <img src={course.image} alt="biology" className="rounded-md h-20 w-20 object-cover border"/>
-                        <p className="text-sm w-full">{course.title}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div> 
-            ))}
-            
+                </div> 
+              ))}
             </div>
           </div>
+
+          {/**Advanced */}
+          <div className="flex flex-col items-center  ">
+            <hr className=" pt-10" />
+            <div className="">
+            <div className="flex flex-col flex-nowrap gap-4">
+              <span className="text-sm font-bold text-gray-500 flex pl-5 flex-row gap-5">ADVANCED </span> 
+              {pathway
+                .filter(pw => pw.complexity_level === "Advanced")
+                .map((learning) => (
+                <div key={learning.id} className="py-5 w-full flex flex-row gap-5 justify-start items-center ">
+                  <div className="flex flex-col gap-10 w-full  rounded p-5">
+                    <div className="flex flex-row gap-5 hover:underline hover:cursor-pointer" onClick={() => router.push(`/pathway/${learning.id}`)}>
+                      <img src={learning.int_image} alt="learning_image" width={64} height={64} className="w-24 h-24" />
+                      <div className="flex flex-col gap-2 items-start justify-center">
+                        <p className="text-base font-bold">{learning.title}</p>
+                        <p className="text-sm">{learning.overview}</p>
+                      </div>
+                    </div>
+                
+                    <div className="flex border p-2 flex-row flex-nowrap gap-4 overflow-x-auto w-220 scrollbar-thin">
+                      {coursesList
+                        .filter(course => {
+                        const courseIds = (learning.courses ?? []).filter((id): id is string | number => id !== undefined);
+                        return courseIds.includes(course.id as string | number);
+                        })
+                        .map((course, ind) => (
+                          <div key={course.id} className=" flex items-center gap-4">
+                            <div className="w-64 shrink-0 flex gap-2 items-center border p-2 rounded-lg bg-zinc-100 hover:shadow cursor-pointer" key={course.id} onClick={() => router.push(`/pathway/${learning.id}`)}>
+                              <img src={course.image} alt="biology" className="rounded-md h-20 w-20 object-cover border"/>
+                              <div className="flex flex-col gap-2">
+                                <p className="text-sm w-fit hover:cursor-pointer hover:underline">{course.title}</p>
+                                <p className="text-xs w-fit bg-hb-lightgreen text-hb-green">{course.free ? "Free" : "Paid"}</p>
+                              </div>
+                              
+                            </div>
+                            {ind !== ((learning.courses?.length ?? 1) -1) && (
+                              <div> <ArrowRight className="text-hb-green" /> </div>
+                            )}
+                        </div>
+
+                      ))}
+                    </div>
+                  </div>
+                </div> 
+              ))}
+            </div>
+              
+              
+          </div>
+          </div>
+        </div>
 
           <TestimonialsInterns />
 
@@ -237,122 +275,159 @@ export default function Learning() {
         {/* Mobile View */}
         <div className="block md:hidden px-4 py-20 space-y-8">
           <div className="flex flex-col items-center text-center gap-5">
-              <Image src={keywords} alt="biology" className="w-full pt-5" />
-              <p className="text-2xl font-bold">Career Paths</p>
-              <p className="text-base text-gray-600">Step by step, one skill at a time</p>
+              <p className="text-2xl font-bold">Career Pathways</p>
+              <p className="text-base text-gray-600">Build your career, Step by step, one skill at a time</p>
           </div>
 
-          {/* Organizations */}
-          <OrganizationsTestimonials />
           
-          <div className="flex flex-col bg-hb-lightgreen p-2">
-            <hr className="border-t " />
-            <div className="bg-hb-lightgreen">
-              <span className="text-2xl p-2 font-extralight text-gray-500  flex flex-row gap-5">Beginners <Sparkle className="text-base" /> </span> 
+          {/**Beginners */}
+          <div className="flex flex-col items-center  ">
+            <hr className=" pt-10" />
+            <div className="">
+            <div className="flex flex-col flex-nowrap gap-4">
+              <span className="text-sm font-bold text-gray-500 flex pl-5 flex-row gap-5">BEGINNER </span> 
               {pathway
                 .filter(pw => pw.complexity_level === "Beginner")
                 .map((learning) => (
-                <div key={learning.id} className="py-5 w-full flex flex-col gap-5 justify-start items-center px-2">
-                  <div className="flex flex-col gap-10 w-full">
-                    <div className="flex flex-col gap-10 hover:underline hover:cursor-pointer" onClick={() => router.push(`/pathway/${learning.id}`)}>
-                      <img src={learning.int_image} alt="learning_image" width={40} height={40} className="w-16 h-16" />
+                <div key={learning.id} className="py-5 w-full flex flex-col gap-5 justify-start items-center ">
+                  <div className="flex flex-col gap-10 w-full  rounded p-5">
+                    <div className="flex flex-row gap-5 hover:underline hover:cursor-pointer" onClick={() => router.push(`/pathway/${learning.id}`)}>
                       <div className="flex flex-col gap-2 items-start justify-center">
                         <p className="text-base font-bold">{learning.title}</p>
                         <p className="text-sm">{learning.overview}</p>
                       </div>
                     </div>
                 
-                    <div className=" w-full  rounded-xl h-full flex flex-col flex-nowrap gap-5 items-center justify-center ">
+                    <div className="flex border p-2 flex-col flex-nowrap gap-4   scrollbar-thin">
                       {coursesList
                         .filter(course => {
                         const courseIds = (learning.courses ?? []).filter((id): id is string | number => id !== undefined);
                         return courseIds.includes(course.id as string | number);
                         })
-                        .map(course => (
-                        <div className="flex flex-col h-fit w-45 gap-5 items-center border p-2 hover:shadow rounded-lg bg-zinc-100 justify-start hover:cursor-pointer hover:underline" key={course.id} onClick={() => router.push(`/pathway/${learning.id}`)}>
-                          <img src={course.image} alt="biology" className="rounded-md h-35 w-40 object-cover border"/>
-                          <p className="text-sm text-center w-full">{course.title}</p>
+                        .map((course, ind) => (
+                          <div key={course.id} className=" flex flex-col items-center gap-4">
+                            <div className="w-64 shrink-0 flex gap-2 items-center border p-2 rounded-lg bg-zinc-100 hover:shadow cursor-pointer" key={course.id} onClick={() => router.push(`/pathway/${learning.id}`)}>
+                              <img src={course.image} alt="biology" className="rounded-md h-20 w-20 object-cover border"/>
+                              <div className="flex flex-col gap-2">
+                                <p className="text-sm w-fit hover:cursor-pointer hover:underline">{course.title}</p>
+                                <p className="text-xs w-fit bg-hb-lightgreen text-hb-green">{course.free ? "Free" : "Paid"}</p>
+                              </div>
+                              
+                            </div>
+                            {ind !== ((learning.courses?.length ?? 1) -1) && (
+                              <div> <ArrowDown className="text-hb-green" /> </div>
+                            )}
                         </div>
+
                       ))}
                     </div>
-                    <hr className="border-t  pt-10" />
                   </div>
                 </div> 
               ))}
             </div>
+              
+              
+          </div>
 
           {/**Intermediate */}
-          <div className="bg-white">
-          <hr className="border-t  p-2" />
-            <span className="text-2xl font-extralight text-gray-500 items-start flex flex-row gap-1 p-2">Intermediate <Sparkle className="text-xs" /> <Sparkle className="text-xs" /></span> 
-            {pathway
-              .filter(pw => pw.complexity_level === "Intermediate")
-              .map((learning) => (
-              <div key={learning.id} className="py-5 w-full flex flex-col gap-5 justify-center items-center p-2">
-                <div className="flex flex-col gap-10 w-full">
-                  <div className="flex flex-col gap-10 hover:underline hover:cursor-pointer" onClick={() => router.push(`/pathway/${learning.id}`)}>
-                    <img src={learning.int_image} alt="learning_image" width={40} height={40} className="w-16 h-16" />
-                    <div className="flex flex-col gap-2 items-start justify-center">
-                      <p className="text-base font-bold">{learning.title}</p>
-                      <p className="text-sm">{learning.overview}</p>
-                    </div>
-                  </div>
-              
-                  <div className=" w-full rounded-xl h-full flex flex-col flex-nowrap gap-5 items-center ">
-                    {coursesList
-                      .filter(course => {
-                      const courseIds = (learning.courses ?? []).filter((id): id is string | number => id !== undefined);
-                      return courseIds.includes(course.id as string | number);
-                      })
-                      .map(course => (
-                      <div className="flex flex-col h-fit w-45 gap-5 items-center border p-2 hover:shadow rounded-lg bg-hb-lightgreen justify-start hover:cursor-pointer hover:underline" key={course.id} onClick={() => router.push(`/pathway/${learning.id}`)}>
-                        <img src={course.image} alt="biology" className="rounded-md h-35 w-40 object-cover border"/>
-                        <p className="text-sm text-center w-full">{course.title}</p>
+          <div className="flex flex-col items-center  ">
+            <hr className=" pt-10" />
+            <div className="">
+            <div className="flex flex-col flex-nowrap gap-4">
+              <span className="text-sm font-bold text-gray-500 flex pl-5 flex-row gap-5">INTERMEDIATE </span> 
+              {pathway
+                .filter(pw => pw.complexity_level === "Intermediate")
+                .map((learning) => (
+                <div key={learning.id} className="py-5 w-full flex flex-col gap-5 justify-start items-center ">
+                  <div className="flex flex-col gap-10 w-full  rounded p-5">
+                    <div className="flex flex-row gap-5 hover:underline hover:cursor-pointer" onClick={() => router.push(`/pathway/${learning.id}`)}>
+                      <div className="flex flex-col gap-2 items-start justify-center">
+                        <p className="text-base font-bold">{learning.title}</p>
+                        <p className="text-sm">{learning.overview}</p>
                       </div>
-                    ))}
-                  </div>
-                  <hr className="border-t  " />
-                </div>
-                <hr className="border" />
-              </div> 
-            ))}
-            </div>
+                    </div>
+                
+                    <div className="flex border p-2 flex-col flex-nowrap gap-4   scrollbar-thin">
+                      {coursesList
+                        .filter(course => {
+                        const courseIds = (learning.courses ?? []).filter((id): id is string | number => id !== undefined);
+                        return courseIds.includes(course.id as string | number);
+                        })
+                        .map((course, ind) => (
+                          <div key={course.id} className=" flex flex-col items-center gap-4">
+                            <div className="w-64 shrink-0 flex gap-2 items-center border p-2 rounded-lg bg-zinc-100 hover:shadow cursor-pointer" key={course.id} onClick={() => router.push(`/pathway/${learning.id}`)}>
+                              <img src={course.image} alt="biology" className="rounded-md h-20 w-20 object-cover border"/>
+                              <div className="flex flex-col gap-2">
+                                <p className="text-sm w-fit hover:cursor-pointer hover:underline">{course.title}</p>
+                                <p className="text-xs w-fit bg-hb-lightgreen text-hb-green">{course.free ? "Free" : "Paid"}</p>
+                              </div>
+                              
+                            </div>
+                            {ind !== ((learning.courses?.length ?? 1) -1) && (
+                              <div> <ArrowDown className="text-hb-green" /> </div>
+                            )}
+                        </div>
 
-          {/**Advanced */}
-          <div className="bg-hb-lightgreen">
-          <hr className="border-t " />
-            <span className="text-2xl p-2 font-extralight text-gray-500 flex flex-row gap-1">Advanced <Sparkle className="text-base" /><Sparkle className="text-base" /><Sparkle className="text-base" /> </span> 
-            {pathway
-              .filter(pw => pw.complexity_level === "Advanced")
-              .map((learning) => (
-              <div key={learning.id} className="py-5 w-full flex flex-col gap-5 justify-start items-center ">
-                <div className="flex flex-col gap-10 w-full">
-                  <div className="flex flex-col gap-10 hover:underline hover:cursor-pointer" onClick={() => router.push(`/pathway/${learning.id}`)}>
-                    <img src={learning.int_image} alt="learning_image" width={40} height={40} className="w-16 h-16" />
-                    <div className="flex flex-col gap-2 items-start justify-center">
-                      <p className="text-base font-bold">{learning.title}</p>
-                      <p className="text-sm">{learning.overview}</p>
+                      ))}
                     </div>
                   </div>
-              
-                  <div className=" w-full items-center rounded-xl h-full flex flex-col flex-nowrap gap-10  ">
-                    {coursesList
-                      .filter(course => {
-                      const courseIds = (learning.courses ?? []).filter((id): id is string | number => id !== undefined);
-                      return courseIds.includes(course.id as string | number);
-                      })
-                      .map(course => (
-                      <div className="flex flex-col h-fit w-45 gap-5 items-center bg-zinc-100 border p-2 hover:shadow rounded-lg justify-start hover:cursor-pointer hover:underline" key={course.id} onClick={() => router.push(`/pathway/${learning.id}`)}>
-                        <img src={course.image} alt="biology" className="rounded-md h-40 w-50 object-cover border"/>
-                        <p className="text-sm w-full">{course.title}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div> 
-            ))}
-            
+                </div> 
+              ))}
             </div>
+              
+              
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center  ">
+            <hr className=" pt-10" />
+            <div className="">
+            <div className="flex flex-col flex-nowrap gap-4">
+              <span className="text-sm font-bold text-gray-500 flex pl-5 flex-row gap-5">ADVANCED </span> 
+              {pathway
+                .filter(pw => pw.complexity_level === "Advanced")
+                .map((learning) => (
+                <div key={learning.id} className="py-5 w-full flex flex-col gap-5 justify-start items-center ">
+                  <div className="flex flex-col gap-10 w-full  rounded p-5">
+                    <div className="flex flex-row gap-5 hover:underline hover:cursor-pointer" onClick={() => router.push(`/pathway/${learning.id}`)}>
+                      <div className="flex flex-col gap-2 items-start justify-center">
+                        <p className="text-base font-bold">{learning.title}</p>
+                        <p className="text-sm">{learning.overview}</p>
+                      </div>
+                    </div>
+                
+                    <div className="flex border p-2 flex-col flex-nowrap gap-4   scrollbar-thin">
+                      {coursesList
+                        .filter(course => {
+                        const courseIds = (learning.courses ?? []).filter((id): id is string | number => id !== undefined);
+                        return courseIds.includes(course.id as string | number);
+                        })
+                        .map((course, ind) => (
+                          <div key={course.id} className=" flex flex-col items-center gap-4">
+                            <div className="w-64 shrink-0 flex gap-2 items-center border p-2 rounded-lg bg-zinc-100 hover:shadow cursor-pointer" key={course.id} onClick={() => router.push(`/pathway/${learning.id}`)}>
+                              <img src={course.image} alt="biology" className="rounded-md h-20 w-20 object-cover border"/>
+                              <div className="flex flex-col gap-2">
+                                <p className="text-sm w-fit hover:cursor-pointer hover:underline">{course.title}</p>
+                                <p className="text-xs w-fit bg-hb-lightgreen text-hb-green">{course.free ? "Free" : "Paid"}</p>
+                              </div>
+                              
+                            </div>
+                            {ind !== ((learning.courses?.length ?? 1) -1) && (
+                              <div> <ArrowDown className="text-hb-green" /> </div>
+                            )}
+                        </div>
+
+                      ))}
+                    </div>
+                  </div>
+                </div> 
+              ))}
+            </div>
+              
+              
+          </div>
+          </div>
+
           </div>
 
           <TestimonialsInterns />
@@ -361,7 +436,7 @@ export default function Learning() {
               {/*<FreePrice /> */}
               {/*<PremiumPrice />*/}
               <p className="font-bold pt-5">Gain full access to all our courses and internships (including future ones).</p>
-              <HbPrices plan="Become a Pro" discount={0.5} progId="" prog=""/>
+              <HbPrices plan="Become a Pro" discount={0.5} progId="pathway" prog="2"/>
           </div>
           
         
