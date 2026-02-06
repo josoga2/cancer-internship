@@ -1,13 +1,10 @@
 "use client";
 import publicApi from "@/publicApi";
 import { useState, useEffect } from "react";
-import keywords from "../../../public/keywords.svg"
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Navbar from "@/components/Nav/navbar";
 import Footer from "@/components/Nav/footer";
-import OrganizationsTestimonials from "@/components/widgets/home-widgets/org-testimonial-carousel";
-import { ArrowDown, ArrowRight, Sparkle } from "lucide-react";
+import { ArrowDown, ArrowRight } from "lucide-react";
 import TestimonialsInterns from "@/components/widgets/home-widgets/testimonials-interns";
 import HbPrices from "@/components/all-pricings/preview";
 import React from "react";

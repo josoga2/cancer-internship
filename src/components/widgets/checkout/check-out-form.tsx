@@ -109,6 +109,7 @@ export default function CheckOutForm({title, desc, progId, curr, discount, plan}
     // 1. Call your Django backend to create the order
 
         try{
+
             const res = await publicApi.post(
                 "/api/create-paypal-order/",
                 { priceType: priceType, title:title, desc:desc, progId:progId, subscriptionLength:subscriptionLength, refCode:refCode  }
