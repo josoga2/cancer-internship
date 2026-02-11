@@ -328,7 +328,7 @@ export default function Page() {
             <p className="text-base leading-7 mb-4">
                 {coursesList[0].description}
             </p>
-            {coursesList[0].free? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'course', id:courseId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
+            {coursesList[0].free? <div><HbButton text="Enroll For Free" type="primary" onClick={()=>handleFreeEnroll()} /> </div> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'course', id:courseId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
         </div>
 
             {/* Organizations */}
