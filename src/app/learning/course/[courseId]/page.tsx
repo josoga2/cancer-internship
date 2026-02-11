@@ -284,7 +284,7 @@ export default function Page() {
         <div className="flex flex-col gap-5 py-10">
             <p className="text-2xl font-bold">{coursesList[0].title}</p>
             <p className="text-base text-gray-700">{coursesList[0].overview}</p>
-            {coursesList[0].free? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'course', id:courseId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
+            {coursesList[0].free? <div><HbButton text="Enroll For Free" type="primary" onClick={()=>handleFreeEnroll()} /> </div> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'course', id:courseId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
         </div>
 
         <OrganizationsTestimonials />
@@ -297,7 +297,7 @@ export default function Page() {
 
             <p className="text-sm">{modulesList.length} Lessons</p>
             <div className="mt-4">
-                {coursesList[0].free? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'course', id:courseId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
+                {coursesList[0].free? <div><HbButton text="Enroll For Free" type="primary" onClick={()=>handleFreeEnroll()} /> </div> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'course', id:courseId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
             </div>
             </div>
         </div>
