@@ -153,6 +153,15 @@ export default function Navbar() {
                     </Link>
                   </NavigationMenuLink>
 
+                  <NavigationMenuLink asChild>
+                    <Link href="/testimonial">
+                      <div className="font-bold">Testimonials</div>
+                      <div className="text-muted-foreground ">
+                        Stories from learners who completed HackBio programs
+                      </div>
+                    </Link>
+                  </NavigationMenuLink>
+
                 </li>
               </ul>
             </NavigationMenuContent>
@@ -191,6 +200,7 @@ export default function Navbar() {
             <Link href='/learning'>Explore Careers Tracks</Link>
             <Link href='/hire-talents'>Hire Talents</Link>
             <Link href='/blog'>Blog</Link>
+            <Link href='/testimonial'>Testimonials</Link>
             {/* <Link href='/learning' className="text-lg font-medium text-black">Career Paths</Link> */}
             {loginStatus ?
               <Link href="/dashboard">
