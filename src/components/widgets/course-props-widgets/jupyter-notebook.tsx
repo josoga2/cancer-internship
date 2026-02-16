@@ -3,7 +3,6 @@ import Markdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import WebRPy from "./webrpy";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import remarkDeflist from "remark-deflist";
@@ -29,7 +28,6 @@ export default function JupyterContent({text_content, jupyter_url}: {text_conten
                                 {typeof text_content === 'string' && <NotebookViewer url={jupyter_url} />}
                             </div>
                         </div>
-                    <WebRPy />
                 </div>
             </div>
 

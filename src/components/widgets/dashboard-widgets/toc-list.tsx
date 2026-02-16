@@ -1,13 +1,5 @@
 "use client";
-import HbButtons from "@/components/widgets/hb-buttons";
-import { BiDna, BiAtom } from "react-icons/bi";
-import { MdOutlineDashboard } from "react-icons/md";
-import hb_logo from "@/../public/hb_logo.png";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Hash, Menu, PanelRightClose, PanelRightOpen, X } from "lucide-react";
-import { useState } from "react";
 
 export type SidebarContentItem = {
   id: number;
@@ -38,7 +30,7 @@ export default function TocList({ id, COURSELINK, isActive, title, isCompleted }
     return (
         <main>
             <div className={`hidden w-full  h-full md:flex flex-col items-center justify-center`}>
-                <div className="w-full flex flex-col px-5 text-sm gap-2"> 
+                <div className="w-full flex flex-col px-5 text-sm gap-1"> 
                     <span key={id}>
                         <Link
                         href={COURSELINK}
@@ -58,7 +50,7 @@ export default function TocList({ id, COURSELINK, isActive, title, isCompleted }
 
             {/**Mobile */}
 
-            <div className="flex flex-col w-full md:hidden gap-5 p-2  rounded-xl">
+            <div className="flex flex-col w-full md:hidden gap-1 text-xs rounded-xl">
                 <li key={id}>
                     <Link
                     href={COURSELINK}

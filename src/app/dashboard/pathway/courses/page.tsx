@@ -36,14 +36,6 @@ const tab_items = [
     iconImage: BiDna
   },
   {
-    id: 4,
-    name: "Career Paths",
-    link: "/dashboard/pathway/",
-    isActive: false,
-    iconImage: BiAtom
-  },
-  
-  {
     id: 5,
     name: "CP Courses",
     link: "/dashboard/pathway/courses/",

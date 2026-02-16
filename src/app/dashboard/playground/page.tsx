@@ -3,7 +3,6 @@ import UpcomingCourseCard from "@/components/pl-card";
 import hb_logo from "../../../../public/hb_logo.png";
 import internship from '../../../../public/internships.jpg'
 import playground from '../../../../public/playground.jpg'
-import learning_pathway from '../../../../public/learning_path.jpg'
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import api from "@/api";
@@ -35,13 +34,6 @@ const tab_items = [
     link: "/dashboard/internship/1/courses/",
     isActive: false,
     iconImage: BiDna
-  },
-  {
-    id: 4,
-    name: "Career Paths",
-    link: "/dashboard/pathway/",
-    isActive: false,
-    iconImage: BiAtom
   },
   {
     id: 5,

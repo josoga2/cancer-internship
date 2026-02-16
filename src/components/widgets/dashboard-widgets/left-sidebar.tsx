@@ -7,7 +7,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Menu, PanelRightClose, PanelRightOpen, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Logout from "@/components/logout";
 
 const tab_items = [
@@ -20,26 +20,14 @@ const tab_items = [
   {
     id: 2,
     name: "Internships",
-    link: "/dashboard/internship",
-    iconImage: BiDna
-  },
-  {
-    id: 3,
-    name: "Internship Courses",
     link: "/dashboard/internship/1/courses",
     iconImage: BiDna
   },
   {
-    id: 4,
+    id: 3,
     name: "Career Paths",
-    link: "/dashboard/pathway",
-    iconImage: BiAtom
-  },
-  {
-    id: 5,
-    name: "CP Courses",
-    link: "/dashboard/pathway/courses",
-    iconImage: BiAtom
+    link: "/dashboard/internship/1/courses",
+    iconImage: BiDna
   }
 ];
 
@@ -49,10 +37,25 @@ export default function LeftSideBar() {
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(true);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [hasMounted, setHasMounted] = useState(false);
+    const storageKey = "hb.sidebar.open";
+
+    useEffect(() => {
+        const stored = localStorage.getItem(storageKey);
+        if (stored !== null) {
+            setIsOpen(stored === "true");
+        }
+        setHasMounted(true);
+    }, []);
+
+    useEffect(() => {
+        if (!hasMounted) return;
+        localStorage.setItem(storageKey, String(isOpen));
+    }, [isOpen, hasMounted]);
 
     return (
         <main>
-            <div className={`hidden w-full  h-full md:flex flex-col gap-5  items-center justify-center transition-all duration-300 ease-in-out border-r-hb-lightgreen border-r border-l border-l-hb-lightgreen`}>
+            <div className={`hidden w-full  h-full md:flex flex-col gap-5  items-center justify-center transition-all duration-300 ease-in-out `}>
                 <div className={`flex flex-col gap-5 text-base h-screen bg-white items-start  border-r transition-all duration-300 ease-in-out ${isOpen ? "w-55" : "w-18"} `}>
                     <div className="flex flex-row items-center justify-between w-full gap-2  py-5">
                         <div className="flex flex-row items-center gap-2">

@@ -32,12 +32,6 @@ const tab_items = [
   },
   {
     id: 4,
-    name: "Career Paths",
-    link: "/dashboard/pathway",
-    iconImage: BiAtom
-  },
-  {
-    id: 5,
     name: "CP Courses",
     link: "/dashboard/pathway/courses",
     iconImage: BiAtom

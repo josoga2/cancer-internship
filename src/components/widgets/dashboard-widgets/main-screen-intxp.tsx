@@ -10,7 +10,6 @@ export default function MainScreenFlexIntXP({ username, mini_desc, userXP, title
                     <div className="flex  flex-row gap-10 pl-10 pt-7 bg-white  pb-5 border-b text-base text-gray-600 items-center justify-between pr-10">
                         <div className="flex flex-row items-center gap-10">
                             <a href="/internship" className="hover:underline font-bold">Upcoming Internships</a>
-                            <a href="/learning" className="hover:underline font-bold">Explore Career Paths</a>
                         </div>
                         <div className="flex flex-row gap-10 items-center text-gray-600 text-base">
                             <p className="font-bold"> 🎖️ {Math.ceil(Number(userXP))} XP</p>

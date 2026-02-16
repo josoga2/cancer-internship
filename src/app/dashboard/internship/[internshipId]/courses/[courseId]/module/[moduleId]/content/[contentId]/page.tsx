@@ -61,6 +61,10 @@ function Page() {
   const [selectedAnswer, setSelectedAnswer] = useState("none");
   const [hintClicked, setHintClicked] = useState<boolean>(false);
   const [totalXP, setTotalXP] = useState<number>(1);
+  const [certSkill, setCertSkill] = useState("");
+  const [certPreparedness, setCertPreparedness] = useState("");
+  const [certImprovement, setCertImprovement] = useState("");
+  const [certError, setCertError] = useState("");
   const [internshipList, setInternshipList] = useState<Array<{
         id?: string
         title?: string
@@ -87,6 +91,67 @@ function Page() {
         }
     ]);
     const [title, setTitle] = useState("");
+
+  const countWords = (text: string) =>
+    text.trim().split(/\s+/).filter(Boolean).length;
+
+  const formatBackendError = (error: any) => {
+    const data = error?.response?.data;
+    if (!data) return "Failed to save feedback. Please try again.";
+    if (typeof data === "string") return data;
+    if (data.detail) return data.detail;
+    if (Array.isArray(data.non_field_errors)) {
+      return data.non_field_errors.join(" ");
+    }
+    if (typeof data === "object") {
+      const messages = Object.entries(data).flatMap(([key, value]) => {
+        const label = key.replace(/_/g, " ");
+        if (Array.isArray(value)) {
+          return value.map((msg) => `${label}: ${msg}`);
+        }
+        if (typeof value === "string") {
+          return [`${label}: ${value}`];
+        }
+        return [];
+      });
+      if (messages.length > 0) return messages.join(" ");
+    }
+    return "Failed to save feedback. Please try again.";
+  };
+
+  const handleCertificateSubmit = async () => {
+    setCertError("");
+    if (certSkill.trim().length < 10) {
+      setCertError("Skill response must be at least 10 characters.");
+      return;
+    }
+    const prep = Number(certPreparedness);
+    if (!certPreparedness || Number.isNaN(prep) || prep < 1 || prep > 10) {
+      setCertError("Preparedness must be between 1 and 10.");
+      return;
+    }
+    if (countWords(certImprovement) < 25) {
+      setCertError("Improvement response must be at least 25 words.");
+      return;
+    }
+    try {
+      const payload: Record<string, unknown> = {
+        skill_gained: certSkill.trim(),
+        preparedness_score: prep,
+        improvement_suggestion: certImprovement.trim(),
+      };
+      if (progType === "single" && globalInternshipId === 0) {
+        payload.course = courseId;
+      } else {
+        payload.internship = globalInternshipId;
+      }
+      await api.post('/api/certificate-feedback/', payload);
+    } catch (error) {
+      setCertError(formatBackendError(error));
+      return;
+    }
+    await handleGenCertificate();
+  };
 
   const [coursesList, setCoursesList] = useState<Array<{
     id?: number | string
@@ -694,8 +759,6 @@ return (
                                 
                             </div>
 
-                            {/* Floating action buttons */}
-                            <WebRPy />
                         </div>
                     )}
                     {/**Text */}
@@ -739,7 +802,6 @@ return (
                                     </div>
                                 )}
                             </div>
-                            <WebRPy />
                         </div>
                     )}
                     {/**Project */}
@@ -769,7 +831,6 @@ return (
                                 </div>
 
                             </div>
-                            <WebRPy />
                         </div>
                     )}
                     
@@ -812,41 +873,92 @@ return (
                 )}
                 {/**Certificate */}
                 {content.content_type === 'certificate' && (
-                    <div className="w-full flex flex-row gap-5">
-                        <div className="border-2 rounded-md border-hb-green p-5 flex flex-col gap-2 w-375">
-                            <p className="font-bold text-base">
-                                Process Your Certificates
-                            </p>
-                            <Card className='w-full border-none shadow-none text-sm'>
-                                <CardHeader className='text-center'>
-                                    {/* <CardTitle className="text-base">Login</CardTitle> */}
-                                </CardHeader>
-                                <CardContent>
-                                    <form className="space-y-3" onSubmit={(e) => {e.preventDefault()}}>
-                                            
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="name" className=''>Your Full Name {`(Official order and Preference)`}</Label>
-                                            <Input id="name" type="text" placeholder="Your Name" required value={officialName} onChange={(e)=> setOfficialName(e.target.value)} className='bg-blue-50 text-base placeholder:text-base py-6' />
-                                        </div>
-                                        
-                                        <p>Your Total XP: {userXP}XP</p>
-                                        <p>Your Total Internship Grade: {(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 120), 100))}%</p>
-                                            
-                                        
-                                            {cert ? <Button disabled>Generate</Button>:
-                                 (<Button className='w-fit bg-green-600 text-white text-xl py-6 hover:bg-green-700' onClick={handleGenCertificate}>
-                                                GENERATE
-                                            </Button>) }
-                                            <p className="font-bold text-red-500">Can only be generated once!</p>
-
-                                    </form>
-                                </CardContent>
-                            </Card>
+                    <div className="w-full grid grid-cols-2 gap-6">
+                        <div className="rounded-lg border border-green-200 bg-white p-6 shadow-sm">
+                            <p className="font-bold text-lg text-hb-green">Certificate Request</p>
+                            <form className="space-y-4 pt-4" onSubmit={(e) => {e.preventDefault()}}>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="name" className='text-sm'>Your Full Name {`(Official order and Preference)`}</Label>
+                                    <Input
+                                        id="name"
+                                        type="text"
+                                        placeholder="Your Name"
+                                        required
+                                        value={officialName}
+                                        onChange={(e)=> setOfficialName(e.target.value)}
+                                        className='bg-blue-50 text-sm placeholder:text-sm py-4'
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="cert-skill" className='text-sm'>
+                                        What was the most valuable skill or concept you gained during this internship?
+                                    </Label>
+                                    <Input
+                                        id="cert-skill"
+                                        type="text"
+                                        placeholder="At least 10 characters"
+                                        required
+                                        minLength={10}
+                                        value={certSkill}
+                                        onChange={(e)=> setCertSkill(e.target.value)}
+                                        className='bg-blue-50 text-sm placeholder:text-sm py-4'
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="cert-prep" className='text-sm'>
+                                        On a scale of 1–10, how prepared do you feel to apply these skills independently?
+                                    </Label>
+                                    <select
+                                        id="cert-prep"
+                                        required
+                                        value={certPreparedness}
+                                        onChange={(e)=> setCertPreparedness(e.target.value)}
+                                        className="bg-blue-50 text-sm py-3 rounded-md border border-gray-200"
+                                    >
+                                        <option value="">Select 1–10</option>
+                                        {Array.from({ length: 10 }).map((_, i) => (
+                                            <option key={i + 1} value={i + 1}>{i + 1}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="cert-improve" className='text-sm'>
+                                        If you could improve one thing about the internship experience, what would it be?
+                                    </Label>
+                                    <textarea
+                                        id="cert-improve"
+                                        required
+                                        value={certImprovement}
+                                        onChange={(e)=> setCertImprovement(e.target.value)}
+                                        placeholder="Minimum 25 words"
+                                        className="bg-blue-50 text-sm placeholder:text-sm p-3 rounded-md border border-gray-200 h-28"
+                                    />
+                                    <p className="text-xs text-gray-500">
+                                        Word count: {countWords(certImprovement)} / 25
+                                    </p>
+                                </div>
+                                <div className="text-sm text-gray-700">
+                                    <p>Your Total XP: <span className="font-semibold">{userXP}XP</span></p>
+                                    <p>Your Total Internship Grade: <span className="font-semibold">{(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 120), 100))}%</span></p>
+                                </div>
+                                {cert ? (
+                                    <Button disabled className="text-sm px-4 py-2">Generate</Button>
+                                ) : (
+                                    <Button className='w-fit bg-green-600 text-white text-sm px-4 py-2 hover:bg-green-700' onClick={handleCertificateSubmit}>
+                                        GENERATE
+                                    </Button>
+                                )}
+                                {certError && <p className="text-xs font-semibold text-red-500">{certError}</p>}
+                                <p className="text-xs font-semibold text-red-500">Can only be generated once!</p>
+                            </form>
                         </div>
-                        <div className="border-2 p-5 rounded-md border-hb-green flex flex-col text-justify-start prose prose-base">
-                            <p className="font-bold text-lg">Guideline for Submissions </p>
-                            <p className="text-sm">You can only generate your certificate once. Please note that “Your Internship Grade - in percentage -  will be recorded on your certificate. </p>
-                            <p className="text-sm"> Please ensure you have attained enough points before requesting for your certificate. Once you process, it cannot be generated again.</p>
+                        <div className="rounded-lg border border-green-200 bg-white p-6 shadow-sm">
+                            <p className="font-bold text-lg text-hb-green">Guidelines</p>
+                            <ul className="pt-3 text-sm text-gray-700 list-disc pl-5 space-y-2">
+                                <li>You can only generate your certificate once.</li>
+                                <li>Your internship grade (percentage) will be recorded on your certificate.</li>
+                                <li>Ensure you have enough points before requesting. Once processed, it cannot be generated again.</li>
+                            </ul>
                         </div>
                     </div>
                 )}
@@ -874,8 +986,11 @@ return (
                     );
                 })}
             </div>
-            
+
             <Next NEXTLINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${nextModuleId}/content/${nextContentId}?type=single`} nextModuleId={nextModuleId} />
+            <div className="w-full px-5 pt-2 pb-6">
+                <WebRPy />
+            </div>
             
         </div>
     </div>     
@@ -1011,17 +1126,73 @@ return (
 
                         {/* Certificate */}
                         {content.content_type === 'certificate' && (
-                            <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
-                                <Label htmlFor="name">Your Full Name</Label>
-                                <Input id="name" value={officialName} onChange={(e) => setOfficialName(e.target.value)} />
-                                <p>Total XP: {userXP}</p>
-                                <p>Grade: {(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 120), 100))}%</p>
-                                {cert ? <Button disabled>Generate</Button>:
-                                 (<Button className='w-fit bg-green-600 text-white text-xl py-6 hover:bg-green-700' onClick={handleGenCertificate}>
-                                                GENERATE
-                                            </Button>) }
-                                <p className="text-red-500">Can only be generated once!</p>
-                            </form>
+                            <div className="rounded-lg border border-green-200 bg-white p-4 shadow-sm">
+                                <p className="font-bold text-base text-hb-green">Certificate Request</p>
+                                <form className="flex flex-col gap-3 pt-3" onSubmit={(e) => e.preventDefault()}>
+                                    <Label htmlFor="name" className="text-sm">Your Full Name</Label>
+                                    <Input id="name" value={officialName} onChange={(e) => setOfficialName(e.target.value)} className="bg-blue-50 text-sm py-3" />
+                                    <Label htmlFor="cert-skill" className="text-sm">
+                                        Most valuable skill or concept gained (min 10 characters)
+                                    </Label>
+                                    <Input
+                                        id="cert-skill"
+                                        value={certSkill}
+                                        onChange={(e) => setCertSkill(e.target.value)}
+                                        minLength={10}
+                                        required
+                                        className="bg-blue-50 text-sm py-3"
+                                    />
+                                    <Label htmlFor="cert-prep" className="text-sm">
+                                        On a scale of 1–10, how prepared do you feel to apply these skills independently? (1–10)
+                                    </Label>
+                                    <select
+                                        id="cert-prep"
+                                        required
+                                        value={certPreparedness}
+                                        onChange={(e)=> setCertPreparedness(e.target.value)}
+                                        className="bg-blue-50 text-sm py-3 rounded-md border border-gray-200"
+                                    >
+                                        <option value="">Select 1–10</option>
+                                        {Array.from({ length: 10 }).map((_, i) => (
+                                            <option key={i + 1} value={i + 1}>{i + 1}</option>
+                                        ))}
+                                    </select>
+                                    <Label htmlFor="cert-improve" className="text-sm">
+                                        Improve one thing (min 25 words)
+                                    </Label>
+                                    <textarea
+                                        id="cert-improve"
+                                        value={certImprovement}
+                                        onChange={(e)=> setCertImprovement(e.target.value)}
+                                        required
+                                        className="bg-blue-50 text-sm p-3 rounded-md border border-gray-200 h-28"
+                                    />
+                                    <p className="text-xs text-gray-500">
+                                        Word count: {countWords(certImprovement)} / 25
+                                    </p>
+                                    <div className="text-sm text-gray-700">
+                                        <p>Total XP: <span className="font-semibold">{userXP}XP</span></p>
+                                        <p>Grade: <span className="font-semibold">{(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 120), 100))}%</span></p>
+                                    </div>
+                                    {cert ? (
+                                        <Button disabled className="text-sm px-4 py-2">Generate</Button>
+                                    ) : (
+                                        <Button className='w-fit bg-green-600 text-white text-sm px-4 py-2 hover:bg-green-700' onClick={handleCertificateSubmit}>
+                                            GENERATE
+                                        </Button>
+                                    )}
+                                    {certError && <p className="text-xs font-semibold text-red-500">{certError}</p>}
+                                    <p className="text-xs font-semibold text-red-500">Can only be generated once!</p>
+                                </form>
+                                <div className="pt-4 text-xs text-gray-700">
+                                    <p className="font-semibold text-hb-green">Guidelines</p>
+                                    <ul className="list-disc pl-4 space-y-1 pt-2">
+                                        <li>One-time generation only.</li>
+                                        <li>Your grade will be recorded on the certificate.</li>
+                                        <li>Ensure you have enough points before requesting.</li>
+                                    </ul>
+                                </div>
+                            </div>
                         )}
                     </div>
                 )) : <p className="text-center">Loading content...</p>}
@@ -1038,7 +1209,7 @@ return (
                 <ul className="flex flex-col  overflow-x-auto list-inside w-full items-start">
                     {contentList.map((content, idx) => {
                         const isActive = Number(content.id) === contentId;
-                        const isCompleted = uniqCContent.has(String(contentId))
+                        const isCompleted = uniqCContent.has(String(content.id))
                         return (
                         <li key={content.id} className="text-sm w-full rounded-md flex flex-col items-start justify-start">
                             <TocList isCompleted={isCompleted} COURSELINK={`/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${moduleId}/content/${content.id}?type=single`} id={String(content.id)} isActive={isActive} title={content.title} /> 

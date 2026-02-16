@@ -3,7 +3,6 @@ import Markdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import WebRPy from "./webrpy";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import remarkDeflist from "remark-deflist";
@@ -31,7 +30,6 @@ export default function TextContent({text_content}: {text_content: string}) {
                         </Markdown>
                         </article>
                     </div>
-                    <WebRPy />
                 </div>
             </div>
 

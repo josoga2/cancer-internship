@@ -1,14 +1,9 @@
 'use client';
 import UpcomingCourseCard from "@/components/course-card";
-import hb_logo from "../../../../../../public/hb_logo.png";
-import Image from "next/image";
 import withAuth from "@/components/withAuth";
 import api from "@/api";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { MdOutlineDashboard } from "react-icons/md";
-import { BiAtom, BiDna } from "react-icons/bi";
-import Logout from "@/components/logout";
 import LeftSideBar from "@/components/widgets/dashboard-widgets/left-sidebar";
 import MainScreenFlex from "@/components/widgets/dashboard-widgets/main-screen-flex";
 
@@ -197,7 +192,135 @@ function Page() {
       <div className="w-full bg-green-50 flex flex-col gap-10 overflow-y-auto h-screen pb-10">
         <MainScreenFlex username={username} mini_desc="Your Internship Courses"/>
         <div className="flex flex-col gap-10 w-full px-10 ">
+          <nav aria-label="Table of contents" className="w-full bg-white border border-green-100 rounded-lg p-4 text-sm">
+            <p className="font-semibold text-gray-700">Table of Contents</p>
+            <ul className="flex flex-col gap-2 pt-2">
+              <li>
+                <a href="#internship-courses-desktop" className="text-hb-green hover:underline">
+                  Internship/Pathway Courses
+                </a>
+              </li>
+              <li>
+                <a href="#single-courses-desktop" className="text-hb-green hover:underline">
+                  Single Courses
+                </a>
+              </li>
+            </ul>
+          </nav>
 
+          <section id="internship-courses-desktop">
+            {internshipList.length !== 0 && internshipList[0].id !== "" ? (
+              internshipList.map((internship) => {
+                // Get course IDs for this internship
+                const internshipCourseIds = internship.courses?.map((c) => Number(c.id ?? c)) ?? [];
+                // Filter courses that belong to this internship
+                const coursesForInternship = coursesList.filter((course) =>
+                  internshipCourseIds.includes(Number(course.id))
+                );
+                return (
+                  <div key={internship.id} className="mb-10">
+                    <p className="font-bold text-lg mb-4">{internship.title}</p>
+                    {coursesForInternship.length > 0 ? (
+                      <div className="flex flex-col gap-6">
+                        {coursesForInternship.map((course) => (
+                          <UpcomingCourseCard
+                            key={course.id}
+                            desc={course.overview ?? ""}
+                            image={course.image ?? "/"}
+                            directTo={`/dashboard/internship/${internship.id}/courses/${course.id}/`}
+                            title={course.title ?? ""}
+                            weeks={0}
+                            lessons={0}
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <div>
+                        <UpcomingCourseCard
+                          desc="No courses found for this internship."
+                          image="https://internship.thehackbio.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhb_logo.a812b2f6.png&w=96&q=75"
+                          directTo="/dashboard/internship"
+                          title="Nothing to show here yet"
+                          weeks={0}
+                          lessons={0}
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            ) : (
+              <div>
+                <UpcomingCourseCard
+                  desc={`If you are enrolled for an internship or a course and this is still empty after 24 hours, please write to contact@thehackbio.com. We would fix it 😊.`}
+                  image={"https://internship.thehackbio.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhb_logo.a812b2f6.png&w=96&q=75"}
+                  directTo={'/dashboard/internship'}
+                  title={`Nothing to show here yet`}
+                  weeks={0}
+                  lessons={0}
+                />
+              </div>
+            )}
+          </section>
+        
+          <p className=" text-base font-bold text-start text-gray-700">-- Your Single Course Subscriptions </p>
+          {userCoursesId.length !== 0  ? (
+            <div className="flex flex-col gap-6" id="single-courses-desktop">
+              {singleCoursesList.map((course) => (
+                <UpcomingCourseCard
+                  key={course.id}
+                  desc={course.overview ?? ""}
+                  image={course.image ?? "/"}
+                  directTo={`/dashboard/internship/${0}/courses/${course.id}?type=single`}
+                  title={course.title ?? ""}
+                  weeks={0}
+                  lessons={0}
+                />
+              ))}
+            </div>) : 
+            (<div>
+              <UpcomingCourseCard
+                desc="If you are enrolled for an internship or a course and this is still empty after 24 hours, please write to contact@thehackbio.com. We would fix it 😊."
+                image="https://internship.thehackbio.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhb_logo.a812b2f6.png&w=96&q=75"
+                directTo="/dashboard/internship"
+                title="Nothing to show here yet"
+                weeks={0}
+                lessons={0}
+              />
+            </div>
+          )}
+               
+        </div>
+      </div>
+    </div>
+
+    {/** MOBILE */}
+    <div className="block md:hidden w-full pb-20 ">
+
+      {/* Header */}
+      <LeftSideBar />
+
+      {/* Main Content */}
+      <MainScreenFlex username={username} mini_desc="Your Internship Courses"/>
+
+      <div className="flex flex-col w-full gap-6 items-center px-4">
+        <nav aria-label="Table of contents" className="w-full bg-white border border-green-100 rounded-lg p-4 text-sm">
+          <p className="font-semibold text-gray-700">Table of Contents</p>
+          <ul className="flex flex-col gap-2 pt-2">
+            <li>
+              <a href="#internship-courses-mobile" className="text-hb-green hover:underline">
+                Internship/Pathway Courses
+              </a>
+            </li>
+            <li>
+              <a href="#single-courses-mobile" className="text-hb-green hover:underline">
+                Single Courses
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <section id="internship-courses-mobile" className="w-full">
           {internshipList.length !== 0 && internshipList[0].id !== "" ? (
             internshipList.map((internship) => {
               // Get course IDs for this internship
@@ -250,104 +373,11 @@ function Page() {
               />
             </div>
           )}
-        
-          <p className=" text-base font-bold text-start text-gray-700">-- Your Single Course Subscriptions </p>
+        </section>
+
+        <p className="py-5 text-base text-start text-gray-700 w-full">-- Your Single Course Subscriptions </p>
           {userCoursesId.length !== 0  ? (
-            <div className="flex flex-col gap-6" id="single-courses">
-              {singleCoursesList.map((course) => (
-                <UpcomingCourseCard
-                  key={course.id}
-                  desc={course.overview ?? ""}
-                  image={course.image ?? "/"}
-                  directTo={`/dashboard/internship/${0}/courses/${course.id}?type=single`}
-                  title={course.title ?? ""}
-                  weeks={0}
-                  lessons={0}
-                />
-              ))}
-            </div>) : 
-            (<div>
-              <UpcomingCourseCard
-                desc="If you are enrolled for an internship or a course and this is still empty after 24 hours, please write to contact@thehackbio.com. We would fix it 😊."
-                image="https://internship.thehackbio.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhb_logo.a812b2f6.png&w=96&q=75"
-                directTo="/dashboard/internship"
-                title="Nothing to show here yet"
-                weeks={0}
-                lessons={0}
-              />
-            </div>
-          )}
-               
-        </div>
-      </div>
-    </div>
-
-    {/** MOBILE */}
-    <div className="block md:hidden w-full pb-20 ">
-
-      {/* Header */}
-      <LeftSideBar />
-
-      {/* Main Content */}
-      <MainScreenFlex username={username} mini_desc="Your Internship Courses"/>
-
-      <div className="flex flex-col gap-6  items-center">
-        {internshipList.length !== 0 && internshipList[0].id !== "" ? (
-          internshipList.map((internship) => {
-            // Get course IDs for this internship
-            const internshipCourseIds = internship.courses?.map((c) => Number(c.id ?? c)) ?? [];
-            // Filter courses that belong to this internship
-            const coursesForInternship = coursesList.filter((course) =>
-              internshipCourseIds.includes(Number(course.id))
-            );
-            return (
-              <div key={internship.id} className="mb-10">
-                <p className="font-bold text-lg mb-4">{internship.title}</p>
-                {coursesForInternship.length > 0 ? (
-                  <div className="flex flex-col gap-6">
-                    {coursesForInternship.map((course) => (
-                      <UpcomingCourseCard
-                        key={course.id}
-                        desc={course.overview ?? ""}
-                        image={course.image ?? "/"}
-                        directTo={`/dashboard/internship/${internship.id}/courses/${course.id}/`}
-                        title={course.title ?? ""}
-                        weeks={0}
-                        lessons={0}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div>
-                    <UpcomingCourseCard
-                      desc="No courses found for this internship."
-                      image="https://internship.thehackbio.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhb_logo.a812b2f6.png&w=96&q=75"
-                      directTo="/dashboard/internship"
-                      title="Nothing to show here yet"
-                      weeks={0}
-                      lessons={0}
-                    />
-                  </div>
-                )}
-              </div>
-            );
-          })
-        ) : (
-          <div>
-            <UpcomingCourseCard
-              desc={`If you are enrolled for an internship or a course and this is still empty after 24 hours, please write to contact@thehackbio.com. We would fix it 😊.`}
-              image={"https://internship.thehackbio.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhb_logo.a812b2f6.png&w=96&q=75"}
-              directTo={'/dashboard/internship'}
-              title={`Nothing to show here yet`}
-              weeks={0}
-              lessons={0}
-            />
-          </div>
-        )}
-
-        <p className="py-5 text-base text-start text-gray-700">-- Your Single Course Subscriptions </p>
-          {userCoursesId.length !== 0  ? (
-            <div className="flex flex-col gap-6" id="single-courses">
+            <div className="flex flex-col gap-6 w-full" id="single-courses-mobile">
               {singleCoursesList.map((course) => (
                 <UpcomingCourseCard
                   key={course.id}

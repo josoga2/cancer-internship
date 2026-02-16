@@ -3,7 +3,6 @@ import Markdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import WebRPy from "./webrpy";
 import HbButton from "@/components/widgets/hb-buttons";
 import TextContent from "./text";
 import { useState } from "react";
@@ -83,7 +82,6 @@ export default function CodeTask({
                         )}
                     </div>
                 </div>
-                <WebRPy />
             </div>
 
 {/**Mobile View */}

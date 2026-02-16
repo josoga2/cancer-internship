@@ -2,22 +2,26 @@
 import Link from "next/link";
 
 export default function Previous({previous, PREVIOUSLINK}: {previous: boolean, PREVIOUSLINK: string}) {
+    const activeClass = "bg-hb-green rounded-md text-white hover:bg-hb-green-dark px-4 sm:px-6 text-base sm:text-lg py-1 font-bold border-2 border-hb-green inline-flex items-center gap-2 justify-center w-full";
+    const disabledClass = "bg-white rounded-md text-gray-400 border-2 border-gray-200 px-4 sm:px-6 text-base sm:text-lg py-1 font-bold inline-flex items-center gap-2 justify-center w-full";
 
     return (
         <main>
-            <div className={`hidden w-full  h-full md:flex flex-col gap-5 pb-5 items-center justify-center transition-all duration-300 ease-in-out`}>
-                <aside className="w-full flex flex-col gap-6 px-5 text-sm">
+            <div className={`hidden w-full h-full md:flex flex-col gap-3 pb-5 items-center justify-center transition-all duration-300 ease-in-out`}>
+                <aside className="w-full flex flex-col gap-3 px-5 text-sm">
                     {/* Previous module */}
                     {previous ? (
                         <Link
                         href={PREVIOUSLINK}
-                        className="text-base font-medium hover:underline"
+                        className={activeClass}
                         >
-                            <span className="flex flex-row gap-5 items-center justify-center"> <p> ←  </p>  <p className="text-xs font-bold"> PREVIOUS MODULE </p> </span>
+                            <span className="text-lg">←</span>
+                            <span className="text-xs font-bold">PREVIOUS MODULE</span>
                         </Link>
                     ) : (
-                        <span className="text-base font-medium text-gray-400">
-                            <span className="flex flex-row gap-5 items-center justify-center"> <p> ←  </p>  <p className="text-xs"> PREVIOUS MODULE </p> </span>
+                        <span className={disabledClass}>
+                            <span className="text-lg">←</span>
+                            <span className="text-xs font-bold">PREVIOUS MODULE</span>
                         </span>
                     )}
                 </aside>
@@ -25,19 +29,21 @@ export default function Previous({previous, PREVIOUSLINK}: {previous: boolean, P
 
             {/**Mobile */}
 
-            <div className="flex flex-col w-full md:hidden gap-5 pb-5 rounded-xl">
-                <div className="w-full flex flex-col text-sm text-white">
+            <div className="flex flex-col w-full md:hidden gap-3 pb-5 rounded-xl">
+                <div className="w-full flex flex-col text-sm">
                     {/* Previous module */}
                     {previous ? (
                         <Link
                         href={PREVIOUSLINK}
-                        className="text-base font-medium hover:underline min-w-full bg-hb-green px-5 py-2 rounded-sm"
+                        className={activeClass}
                         >
-                            <span className="flex flex-row gap-5 items-center justify-center">  <p className="text-sm font-bold">PREVIOUS MODULE </p> </span>
+                            <span className="text-lg">←</span>
+                            <span className="text-xs font-bold">PREVIOUS MODULE</span>
                         </Link>
                     ) : (
-                        <span className="text-base font-medium text-gray-400 bg-gray-300 px-5 py-2 rounded-sm">
-                            <span className="flex flex-row gap-5 items-center justify-center "> <p className="text-sm">PREVIOUS MODULE </p> </span>
+                        <span className={disabledClass}>
+                            <span className="text-lg">←</span>
+                            <span className="text-xs font-bold">PREVIOUS MODULE</span>
                         </span>
                     )}
                 </div>
