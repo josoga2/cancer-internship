@@ -32,6 +32,7 @@ export default function Footer() {
             <Link href='/blog'>Blog and articles</Link>
             <Link href='/job-report'>BFX Job Report 2024</Link>
             <Link href='/blog/ai-revolution-at-hackbio-starts-with-ngs'>Our AI Revolution</Link>
+            <Link href='/testimonial'>Testimonials</Link>
           </div>
           <div className='flex flex-col gap-2'> 
             <Link href='/'>About Us</Link>
@@ -71,6 +72,7 @@ export default function Footer() {
             <Link href='/'>Genomics</Link>
             <Link href='/'>Biomedical AI</Link>
             <Link href='/'>Drug Development</Link>
+            <Link href='/testimonial'>Testimonials</Link>
           </div>
           <div className='flex flex-col gap-2 pt-3'>
             <hr />  
