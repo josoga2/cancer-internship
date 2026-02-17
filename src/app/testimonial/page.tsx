@@ -1,6 +1,7 @@
 import Navbar from "@/components/Nav/navbar";
 import Footer from "@/components/Nav/footer";
 import Image from "next/image";
+import TestimonialVideoCarousel from "@/components/widgets/testimonial-video-carousel";
 
 const testimonials = [
   
@@ -122,6 +123,26 @@ export default function TestimonialPage() {
             data science, and computational biology. Here are real stories from
             those who have completed our courses and internships.
           </p>
+        </div>
+      </section>
+
+      {/* Videos */}
+      <section className="w-full bg-white">
+        <div className="max-w-6xl mx-auto px-6 py-12 md:py-14">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+            <div>
+              <p className="text-hb-green text-sm font-semibold">{`>_ Video Stories`}</p>
+              <h2 className="text-2xl md:text-3xl font-bold pt-2">
+                Hear From Our Learners
+              </h2>
+              <p className="text-sm text-gray-700 pt-2 max-w-2xl">
+                Short videos from learners describing their experience and growth.
+              </p>
+            </div>
+            <p className="text-xs text-gray-500">Swipe on mobile · Use arrows on desktop</p>
+          </div>
+
+          <TestimonialVideoCarousel />
         </div>
       </section>
 
