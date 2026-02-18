@@ -15,7 +15,7 @@ type UpcomingCourseCardProps = {
   directTo?: string; // Optional prop for navigation
 };
 
-const UpcomingCourseCard = ({ image, title, desc, lessons, weeks, directTo, progressPercent }: UpcomingCourseCardProps) => {
+const InternshipCourseCard = ({ image, title, desc, lessons, weeks, directTo, progressPercent }: UpcomingCourseCardProps) => {
   const pct = Math.max(0, Math.min(100, Number(progressPercent) || 0));
 
   const CircleProgress = ({ value, size = 44, stroke = 5 }: { value: number; size?: number; stroke?: number }) => {
@@ -77,7 +77,7 @@ const UpcomingCourseCard = ({ image, title, desc, lessons, weeks, directTo, prog
           <p className="text-sm text-gray-500">{desc}</p>
           <div className='flex flex-row items-center justify-between'>
             {directTo && <Link href={directTo}> <HbButton type='primary' text='Proceed' /> </Link>}
-            <CircleProgress value={pct} />
+            {/* <CircleProgress value={pct} /> */}
           </div>
         </div>
       </div>
@@ -107,7 +107,7 @@ const UpcomingCourseCard = ({ image, title, desc, lessons, weeks, directTo, prog
                   {directTo && <Link href={directTo}> <HbButton type='primary' text='Proceed' /> </Link>}
                 </a>
               )}
-              <CircleProgress value={pct} size={40} stroke={5} />
+              {/* <CircleProgress value={pct} size={40} stroke={5} /> */}
             </div>
           </div>
         </div>
@@ -117,4 +117,4 @@ const UpcomingCourseCard = ({ image, title, desc, lessons, weeks, directTo, prog
   );
 };
 
-export default UpcomingCourseCard;
+export default InternshipCourseCard;

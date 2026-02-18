@@ -62,6 +62,7 @@ function Page() {
   const [hintClicked, setHintClicked] = useState<boolean>(false);
   const [totalXP, setTotalXP] = useState<number>(1);
   const [certSkill, setCertSkill] = useState("");
+   const [progressPercent, setProgressPercent] = useState<number>(0);
   const [certPreparedness, setCertPreparedness] = useState("");
   const [certImprovement, setCertImprovement] = useState("");
   const [certError, setCertError] = useState("");
@@ -256,6 +257,44 @@ function Page() {
 
     fetchUserProfile();
   }, []);
+
+   // Fetch completion percent (internship mode uses internship progress; single-course mode uses course progress)
+useEffect(() => {
+  const fetchProgressPercent = async () => {
+    try {
+      // Single course subscription mode (internshipId == 0)
+      if (progType === "single" && globalInternshipId === 0) {
+        const res = await api.post("/api/progress/course/", { courseid: courseId });
+        const percent =
+          typeof res?.data?.completion_percent === "number"
+            ? res.data.completion_percent
+            : 0;
+        setProgressPercent(percent);
+        return;
+      }
+
+      // Internship mode
+      if (globalInternshipId > 0) {
+        const res = await api.post("/api/progress/internship/", {
+          internshipid: globalInternshipId,
+        });
+        const percent =
+          typeof res?.data?.completion_percent === "number"
+            ? res.data.completion_percent
+            : 0;
+        setProgressPercent(percent);
+        return;
+      }
+
+      setProgressPercent(0);
+      } catch (error) {
+        console.error("Error fetching progress percent:", error);
+        setProgressPercent(0);
+      }
+    };
+
+    fetchProgressPercent();
+  }, [courseId, globalInternshipId, progType]);
 
   //get user progress
   useEffect(() => {
@@ -723,10 +762,15 @@ return (
                             )}
                         </div>
                         <div className=" w-full p-3 text-lg border rounded-md border-hb-green"> 
+                            {globalInternshipId > 0 ? (
+                                <p className="text-sm text-gray-600">Overall Internship Progress</p>
+                              ) : (
+                                <p className="text-sm text-gray-600">Course Progress</p>
+                            )}
                             {uniqueContentId >0 && totalContent>0 ? (<div className="flex flex-row gap-10 items-center max-w-full"> 
-                                <Progress value={(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 120), 100))} className=""/> 
-                                <p className=" text-lg rounded-full"> {(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 120), 100))}% </p> 
-                            </div>) : <div className="h-3 w-10"></div>}
+                                <Progress value={Math.ceil(progressPercent)} className="" />
+                                <p className="font-bold text-2xl rounded-full">{Math.ceil(progressPercent)}%</p> 
+                            </div>) : <div className="h-3 w-10"></div>} 
                             <p className="text-xs text-gray-500">🎖️XP and progress are computed from the entire internship/pathway content.</p>
                         </div>
                         
@@ -1019,7 +1063,7 @@ return (
                                     Mark Completed
                                 </Button>
                                 {uniqueContentId > 0 && totalContent > 0 && (
-                                    <div className="h-fit rounded-full border-hb-green p-1.5 text-base font-bold border-2 w-fit"> {(Math.min(Math.ceil((Number(userXP) / Number(totalXP)) * 120), 100))}%</div>
+                                    <div className="h-fit rounded-full border-hb-green p-1.5 text-base font-bold border-2 w-fit"> {Math.ceil(progressPercent)}%</div>  
                                 )}
                             </div>
                         )}

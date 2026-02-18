@@ -35,6 +35,7 @@ function Page() {
   const [totalContent, setTotalContent] = useState<number>(0);
   const [totalXP, setTotalXP] = useState<number>(1);
    const [completedContent, setCompletedContent] = useState<string>('');
+   const [progressPercent, setProgressPercent] = useState<number>(0);
   const [userInternshipId, setUserInternshipId] = useState<number[]>([]);
   const [userCoursesId, setUserCoursesId] = useState<number[]>([]);
   const [internshipList, setInternshipList] = useState<Array<{
@@ -179,6 +180,44 @@ function Page() {
 
     fetchUserProgress();
   }, []);
+
+  // Fetch completion percent (internship mode uses internship progress; single-course mode uses course progress)
+useEffect(() => {
+  const fetchProgressPercent = async () => {
+    try {
+      // Single course subscription mode (internshipId == 0)
+      if (progType === "single" && globalInternshipId === 0) {
+        const res = await api.post("/api/progress/course/", { courseid: courseId });
+        const percent =
+          typeof res?.data?.completion_percent === "number"
+            ? res.data.completion_percent
+            : 0;
+        setProgressPercent(percent);
+        return;
+      }
+
+      // Internship mode
+      if (globalInternshipId > 0) {
+        const res = await api.post("/api/progress/internship/", {
+          internshipid: globalInternshipId,
+        });
+        const percent =
+          typeof res?.data?.completion_percent === "number"
+            ? res.data.completion_percent
+            : 0;
+        setProgressPercent(percent);
+        return;
+      }
+
+      setProgressPercent(0);
+      } catch (error) {
+        console.error("Error fetching progress percent:", error);
+        setProgressPercent(0);
+      }
+    };
+
+    fetchProgressPercent();
+  }, [courseId, globalInternshipId, progType]);
 
   //get user internship id
   useEffect(() => {
@@ -341,11 +380,17 @@ const scientistAdjectives = [
                   {course.image && (
                     <div className="flex flex-row items-end gap-5 mb-10 max-w-200">    
                       <img src={course.image} alt="course image" className="w-48 h-48 border-2 rounded-md border-neutral-400" />
-                      <div className="flex flex-col gap-5 w-full">
+                      <div className="flex flex-col gap-2 w-full">
                           <p className="font-bold text-3xl ">{course.title}</p>
-                          <div className="flex flex-row gap-10 items-center border w-full rounded-md border-hb-green px-5 py-3">
-                            <Progress value={Math.ceil((Number(uniqueContentId)/Number(totalContent))*100)} className="" />
-                            <p className="font-bold text-2xl rounded-full">{Math.ceil((Number(uniqueContentId)/Number(totalContent))*100)}%</p>
+                          {globalInternshipId > 0 ? (
+                                <p className="text-sm text-gray-600">Overall Internship Progress</p>
+                              ) : (
+                                <p className="text-sm text-gray-600">Course Progress</p>
+                            )}
+                          <div className="flex flex-row gap-10 items-center justify-between border w-full rounded-md border-hb-green px-5 py-3">
+                              
+                            <Progress value={Math.ceil(progressPercent)} className="" />
+                            <p className="font-bold text-2xl rounded-full">{Math.ceil(progressPercent)}%</p>
                           </div>
                       </div>
                     </div>
@@ -423,10 +468,13 @@ const scientistAdjectives = [
                     <p className="font-bold text-xl text-center">{course.title}</p>
 
                     <div className="w-full border border-hb-green px-4 py-2 rounded-md bg-white flex items-center justify-between">
-                      <Progress value={Math.ceil((Number(uniqueContentId) / Number(totalContent)) * 100)} />
-                      <p className="font-bold text-lg">
-                        {Math.ceil((Number(uniqueContentId) / Number(totalContent)) * 100)}%
-                      </p>
+                      {globalInternshipId > 0 ? (
+                        <p className="text-sm text-gray-600">Internship Progress</p>
+                      ) : (
+                        <p className="text-sm text-gray-600">Course Progress</p>
+                      )}
+                      <Progress value={Math.ceil(progressPercent)} />
+                      <p className="font-bold text-lg">{Math.ceil(progressPercent)}%</p>
                     </div>
                   </div>
                 )}

@@ -6,6 +6,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import LeftSideBar from "@/components/widgets/dashboard-widgets/left-sidebar";
 import MainScreenFlex from "@/components/widgets/dashboard-widgets/main-screen-flex";
+import { Progress } from "@/components/ui/progress";
+import InternshipCourseCard from "@/components/internship-course-card";
 
 
 
@@ -76,6 +78,9 @@ function Page() {
         image: "/"
       }
   ]);
+
+  const [internshipProgressMap, setInternshipProgressMap] = useState<Record<number, number>>({});
+  const [courseProgressMap, setCourseProgressMap] = useState<Record<number, number>>({});
 
     //get username
   useEffect(() => {
@@ -183,6 +188,72 @@ function Page() {
   console.log("Course List:", coursesList);
   //console.log('course list west: ', userCoursesId)
 
+  // Fetch progress for visible internships
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        const internshipIds = internshipList
+          .map((i) => Number(i.id))
+          .filter((id) => !Number.isNaN(id) && id !== 0);
+
+        if (internshipIds.length === 0) return;
+
+        const internshipProgressEntries: Array<[number, number]> = [];
+        for (const iid of internshipIds) {
+          const res = await api.post('/api/progress/internship/', { internshipid: iid });
+          const percent = typeof res?.data?.completion_percent === 'number' ? res.data.completion_percent : 0;
+          internshipProgressEntries.push([iid, percent]);
+        }
+
+        if (internshipProgressEntries.length > 0) {
+          setInternshipProgressMap((prev) => ({
+            ...prev,
+            ...Object.fromEntries(internshipProgressEntries),
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching progress:', error);
+      }
+    };
+
+    fetchProgress();
+  }, [internshipList]);
+
+  // Fetch progress for visible courses (internship courses + single courses)
+  useEffect(() => {
+    const fetchCourseProgress = async () => {
+      try {
+        const courseIds = Array.from(
+          new Set(
+            [...coursesList, ...singleCoursesList]
+              .map((c) => Number(c.id))
+              .filter((id) => !Number.isNaN(id) && id !== 0)
+          )
+        );
+
+        if (courseIds.length === 0) return;
+
+        const courseProgressEntries: Array<[number, number]> = [];
+        for (const cid of courseIds) {
+          const res = await api.post('/api/progress/course/', { courseid: cid });
+          const percent = typeof res?.data?.completion_percent === 'number' ? res.data.completion_percent : 0;
+          courseProgressEntries.push([cid, percent]);
+        }
+
+        if (courseProgressEntries.length > 0) {
+          setCourseProgressMap((prev) => ({
+            ...prev,
+            ...Object.fromEntries(courseProgressEntries),
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching course progress:', error);
+      }
+    };
+
+    fetchCourseProgress();
+  }, [coursesList, singleCoursesList]);
+
   return (
     <main className="w-full ">
     <div className="hidden md:flex flex-row w-full pl-5">
@@ -242,20 +313,35 @@ function Page() {
                 );
                 return (
                   <div key={internship.id} className="mb-10">
-                    <p className="font-bold text-lg mb-4">{internship.title}</p>
+                    <div className="mb-4">
+                      <p className="font-bold text-lg">{internship.title}</p>
+                    </div>
                     {coursesForInternship.length > 0 ? (
                       <div className="flex flex-col gap-6">
+                        {internship.id && internshipProgressMap[Number(internship.id)] !== undefined && (
+                          <div className="w-96 border border-hb-green rounded-md p-4">
+                            <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+                              <span>Progress</span>
+                              <span>{internshipProgressMap[Number(internship.id)].toFixed(0)}%</span>
+                            </div>
+                            <Progress value={internshipProgressMap[Number(internship.id)]} />
+                          </div>
+                        )}
                         {coursesForInternship.map((course, courseIndex) => {
                           const courseAnchor = `course-${internship.id ?? "internship"}-${course.id ?? courseIndex}`;
                           return (
                             <div key={courseAnchor} id={courseAnchor}>
-                              <UpcomingCourseCard
+                              <div className="mb-2">
+                                <p className="font-semibold text-gray-700">{course.title ?? ""}</p>
+                              </div>
+                              <InternshipCourseCard
                                 desc={course.overview ?? ""}
                                 image={course.image ?? "/"}
                                 directTo={`/dashboard/internship/${internship.id}/courses/${course.id}/`}
                                 title={course.title ?? ""}
                                 weeks={0}
                                 lessons={0}
+                                progressPercent={courseProgressMap[Number(course.id)] ?? 0}
                               />
                             </div>
                           );
@@ -263,7 +349,7 @@ function Page() {
                       </div>
                     ) : (
                       <div>
-                        <UpcomingCourseCard
+                        <InternshipCourseCard
                           desc="No courses found for this internship."
                           image="https://internship.thehackbio.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhb_logo.a812b2f6.png&w=96&q=75"
                           directTo="/dashboard/internship"
@@ -278,7 +364,7 @@ function Page() {
               })
             ) : (
               <div>
-                <UpcomingCourseCard
+                <InternshipCourseCard
                   desc={`If you are enrolled for an internship or a course and this is still empty after 24 hours, please write to contact@thehackbio.com. We would fix it 😊.`}
                   image={"https://internship.thehackbio.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhb_logo.a812b2f6.png&w=96&q=75"}
                   directTo={'/dashboard/internship'}
@@ -294,15 +380,19 @@ function Page() {
           {userCoursesId.length !== 0  ? (
             <div className="flex flex-col gap-6" id="single-courses-desktop">
               {singleCoursesList.map((course) => (
-                <UpcomingCourseCard
-                  key={course.id}
-                  desc={course.overview ?? ""}
-                  image={course.image ?? "/"}
-                  directTo={`/dashboard/internship/${0}/courses/${course.id}?type=single`}
-                  title={course.title ?? ""}
-                  weeks={0}
-                  lessons={0}
-                />
+                <div key={course.id} className="w-full">
+                  <div className="mb-2">
+                    <p className="font-semibold text-gray-700">{course.title ?? ""}</p>
+                  </div>
+                  <UpcomingCourseCard
+                    desc={course.overview ?? ""}
+                    image={course.image ?? "/"}
+                    directTo={`/dashboard/internship/${0}/courses/${course.id}?type=single`}
+                    title={course.title ?? ""}
+                    weeks={0}
+                    lessons={0}
+                  />
+                </div>
               ))}
             </div>) : 
             (<div>
@@ -381,20 +471,32 @@ function Page() {
               );
               return (
                 <div key={internship.id} className="mb-10">
-                  <p className="font-bold text-lg mb-4">{internship.title}</p>
+                  <div className="mb-4">
+                    <p className="font-bold text-lg">{internship.title}</p>
+                  </div>
                   {coursesForInternship.length > 0 ? (
                     <div className="flex flex-col gap-6">
+                      {internship.id && internshipProgressMap[Number(internship.id)] !== undefined && (
+                        <div className="w-full">
+                          <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+                            <span>Progress</span>
+                            <span>{internshipProgressMap[Number(internship.id)].toFixed(0)}%</span>
+                          </div>
+                          <Progress value={internshipProgressMap[Number(internship.id)]} />
+                        </div>
+                      )}
                       {coursesForInternship.map((course, courseIndex) => {
                         const courseAnchor = `course-${internship.id ?? "internship"}-${course.id ?? courseIndex}`;
                         return (
                           <div key={courseAnchor} id={courseAnchor}>
-                            <UpcomingCourseCard
+                            <InternshipCourseCard 
                               desc={course.overview ?? ""}
                               image={course.image ?? "/"}
                               directTo={`/dashboard/internship/${internship.id}/courses/${course.id}/`}
                               title={course.title ?? ""}
                               weeks={0}
                               lessons={0}
+                              progressPercent={courseProgressMap[Number(course.id)] ?? 0}
                             />
                           </div>
                         );
@@ -402,7 +504,7 @@ function Page() {
                     </div>
                   ) : (
                     <div>
-                      <UpcomingCourseCard
+                      <InternshipCourseCard
                         desc="No courses found for this internship."
                         image="https://internship.thehackbio.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhb_logo.a812b2f6.png&w=96&q=75"
                         directTo="/dashboard/internship"
@@ -417,7 +519,7 @@ function Page() {
             })
           ) : (
             <div>
-              <UpcomingCourseCard
+              <InternshipCourseCard
                 desc={`If you are enrolled for an internship or a course and this is still empty after 24 hours, please write to contact@thehackbio.com. We would fix it 😊.`}
                 image={"https://internship.thehackbio.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhb_logo.a812b2f6.png&w=96&q=75"}
                 directTo={'/dashboard/internship'}
@@ -433,15 +535,19 @@ function Page() {
           {userCoursesId.length !== 0  ? (
             <div className="flex flex-col gap-6 w-full" id="single-courses-mobile">
               {singleCoursesList.map((course) => (
-                <UpcomingCourseCard
-                  key={course.id}
-                  desc={course.overview ?? ""}
-                  image={course.image ?? "/"}
-                  directTo={`/dashboard/internship/${0}/courses/${course.id}?type=single`}
-                  title={course.title ?? ""}
-                  weeks={0}
-                  lessons={0}
-                />
+                <div key={course.id} className="w-full">
+                  <div className="mb-2">
+                    <p className="font-semibold text-gray-700">{course.title ?? ""}</p>
+                  </div>
+                  <UpcomingCourseCard
+                    desc={course.overview ?? ""}
+                    image={course.image ?? "/"}
+                    directTo={`/dashboard/internship/${0}/courses/${course.id}?type=single`}
+                    title={course.title ?? ""}
+                    weeks={0}
+                    lessons={0}
+                  />
+                </div>
               ))}
             </div>) : 
             (<div>
