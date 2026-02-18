@@ -1,6 +1,7 @@
 import UpcomingCourseCard from "@/components/course-card";
 import Logout from "@/components/logout";
 import internship from '@/../public/internships.jpg'
+import InternshipCourseCard from "@/components/internship-course-card";
 
 const course_list = [
   {
@@ -44,7 +45,7 @@ export default function MainScreen({ username }: { username: string }) {
                         <div className="flex flex-row gap-10 w-full  pt-5">
                             {course_list.filter(course_item => course_item.sub).map((course_item) => (
                                 <div key={course_item.id}>
-                                <UpcomingCourseCard desc={course_item.desc} image={course_item.image} directTo={course_item.directTo} title={course_item.title} lessons={course_item.lessons} weeks={course_item.weeks}/>
+                                <InternshipCourseCard desc={course_item.desc} image={course_item.image} directTo={course_item.directTo} title={course_item.title} lessons={course_item.lessons} weeks={course_item.weeks}/>
                                 </div>
                             ))}
                         </div>
@@ -61,7 +62,7 @@ export default function MainScreen({ username }: { username: string }) {
 
                     <div className="flex flex-col gap-6 items-center min-h-svh ">
                         {course_list.filter(course_item => course_item.sub).map((course_item) => (
-                            <UpcomingCourseCard
+                            <InternshipCourseCard
                             key={course_item.id}
                             desc={course_item.desc}
                             image={course_item.image}
