@@ -63,7 +63,7 @@ export default function Login() {
                         <CardHeader className='text-center'>
                             <div className='w-full flex justify-center flex-col items-center'> 
                                 <Image src={hb_logo} alt='jisender-logo' height={40} width={40} /> 
-                                <p className='text-lg font-bold'> HackBio </p>
+                                <p className='text-base font-bold'> HackBio </p>
                             </div>
                             
                         </CardHeader>
@@ -83,8 +83,8 @@ export default function Login() {
                                         Sign In
                                     </Button>
                                 </a>
-                                <a href='/register'><p className='text-sm text-center pt-5 text-blue-600 hover:underline'>New here? Register. </p></a>
-                                <a href='/forgot-password'><p className='text-sm text-center pt-5 text-blue-600 hover:underline'>Forgot password? Reset here. </p></a>
+                                <a href='/register'><p className='text-base text-center pt-5 text-blue-600 hover:underline'>New here? Register. </p></a>
+                                <a href='/forgot-password'><p className='text-base text-center pt-5 text-blue-600 hover:underline'>Forgot password? Reset here. </p></a>
                             </form>
                         </CardContent>
                     </Card>
@@ -96,11 +96,11 @@ export default function Login() {
                         <CardHeader className="text-center">
                             <div className='w-full flex justify-center flex-col items-center'> 
                                 <Image src={hb_logo} alt='jisender-logo' height={40} width={40} /> 
-                                <p className='text-lg font-bold'> HackBio </p>
+                                <p className='text-base font-bold'> HackBio </p>
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <form className="space-y-3 text-sm">
+                            <form className="space-y-3 text-base">
                                 <p className="text-red-500 text-center">{error}</p>
                                 <div className="grid gap-1">
                                     <Label htmlFor="username" className="font-bold">Username</Label>
@@ -111,7 +111,7 @@ export default function Login() {
                                         value={username}
                                         onChange={(e) => setUsername(e.target.value)}
                                         required
-                                        className="bg-blue-50 py-3 text-sm placeholder:text-sm"
+                                        className="bg-blue-50 py-3 text-base placeholder:text-base"
                                     />
                                 </div>
                                 <div className="grid gap-1">
@@ -123,7 +123,7 @@ export default function Login() {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
-                                        className="bg-blue-50 py-3 placeholder:text-sm"
+                                        className="bg-blue-50 py-3 placeholder:text-base"
                                     />
                                 </div>
                                 <Button onClick={handleLogin} className="w-full bg-green-600 text-white py-5 font-bold hover:bg-green-700">
@@ -134,7 +134,7 @@ export default function Login() {
                                         New here? Register.
                                     </p>
                                 </a>
-                                <a href='/forgot-password'><p className='text-sm text-center pt-5 text-blue-600 hover:underline'>Forgot password? Reset here. </p></a>
+                                <a href='/forgot-password'><p className='text-base text-center pt-5 text-blue-600 hover:underline'>Forgot password? Reset here. </p></a>
                             </form>
                         </CardContent>
                     </Card>

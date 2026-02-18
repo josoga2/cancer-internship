@@ -118,7 +118,7 @@ export default function TestimonialPage() {
           <h1 className="text-3xl md:text-5xl font-bold pt-4">
             What Learners Say About HackBio
           </h1>
-          <p className="text-base md:text-base text-gray-700 pt-4 max-w-3xl mx-auto">
+          <p className="text-base text-gray-700 pt-4 max-w-3xl mx-auto">
             We are honored to train thousands of learners in bioinformatics,
             data science, and computational biology. Here are real stories from
             those who have completed our courses and internships.
@@ -131,11 +131,11 @@ export default function TestimonialPage() {
         <div className="max-w-6xl mx-auto px-6 py-12 md:py-14">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
             <div>
-              <p className="text-hb-green text-sm font-semibold">{`>_ Video Stories`}</p>
+              <p className="text-hb-green text-base font-semibold">{`>_ Video Stories`}</p>
               <h2 className="text-2xl md:text-3xl font-bold pt-2">
                 Hear From Our Learners
               </h2>
-              <p className="text-sm text-gray-700 pt-2 max-w-2xl">
+              <p className="text-base text-gray-700 pt-2 max-w-2xl">
                 Short videos from learners describing their experience and growth.
               </p>
             </div>
@@ -155,7 +155,7 @@ export default function TestimonialPage() {
                 key={item.id}
                 className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition"
               >
-                <p className="text-sm md:text-base text-gray-700 leading-relaxed">
+                <p className="text-base text-gray-700 leading-relaxed">
                   “{item.quote}”
                 </p>
                 <div className="flex items-center gap-4 pt-6">
@@ -168,7 +168,7 @@ export default function TestimonialPage() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="text-sm">
+                  <div className="text-base">
                     <p className="font-bold">{item.name}</p>
                     <p className="text-gray-600">
                       {item.role} · {item.company}

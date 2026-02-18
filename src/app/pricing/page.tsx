@@ -50,18 +50,18 @@ export default function PricingPage() {
             <div className="w-full">
                 <div className="p-5 h-full w-full flex flex-row justify-between items-center  bg-hb-green-dark text-white">
                     <div className="flex flex-col gap-5 text-center w-full">
-                        <p className="text-lg font-bold w-full ">Stay at the forefront of AI, Data and Bioinformatics with a HackBio membership</p>
-                        <p className="text-sm">Build your career, Step by step, one skill at a time</p>
+                        <p className="text-2xl font-bold w-full ">Stay at the forefront of AI, Data and Bioinformatics with a HackBio membership</p>
+                        <p className="text-base">Build your career, Step by step, one skill at a time</p>
                     </div>
                 </div>
 
                 <div className="py-5">
-                    <p className="text-center font-bold w-full">Explore pricing model that fits your learning style</p>
+                    <p className="text-base font-bold text-center w-full">Explore pricing model that fits your learning style</p>
                     <PricingSelector />
                 </div>
 
                 <div className="py-5">
-                    <p className="text-center font-bold w-full">Or See Full Pricing Table</p>
+                    <p className="text-base font-bold text-center w-full">Or See Full Pricing Table</p>
                 </div>
 
                 <div className="flex flex-col gap-2 items-center justify-center">
@@ -72,7 +72,7 @@ export default function PricingPage() {
                 </div>
                 <div className="flex flex-col gap-2 p-10 max-w-4/5">
                     <div className="flex flex-col gap-5 text-start w-full ">
-                        <p className="text-3xl font-bold  ">Are you a University or Large Institution looking to partner with us for custom access and training?</p>
+                        <p className="text-2xl font-bold  ">Are you a University or Large Institution looking to partner with us for custom access and training?</p>
                         <HbButton text="Partner with us" type="primary" />
                     </div>
                 </div>

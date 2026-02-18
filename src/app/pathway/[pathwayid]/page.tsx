@@ -183,7 +183,7 @@ export default function Page() {
             </div>
 
             <div className="w-full flex flex-col items-center justify-center">
-                {thisPathwayStatus? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:pathwayId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
+                {thisPathwayStatus? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-base bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:pathwayId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
             </div>
 
             {/** who is this internship for?*/}
@@ -208,8 +208,8 @@ export default function Page() {
                 <Image src={keywords} alt="biology" className="w-full" />
                 <div className="flex flex-col gap-4">
                     <p className="text-2xl font-bold text-start">{CPathName} </p>
-                    <p className="text-sm">{CPathOverview} </p>
-                    {thisPathwayStatus? <Link href="/dashboard"><Button className=" py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:pathwayId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
+                    <p className="text-base">{CPathOverview} </p>
+                    {thisPathwayStatus? <Link href="/dashboard"><Button className=" py-6 text-white font-bold text-base bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:pathwayId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
                 </div>
 
                 
@@ -244,23 +244,23 @@ export default function Page() {
                 <LearningTracks />
 
                 <div className="w-full flex flex-col items-center justify-center">
-                    {thisPathwayStatus? <Link href="/dashboard"><Button className=" py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:pathwayId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
+                    {thisPathwayStatus? <Link href="/dashboard"><Button className=" py-6 text-white font-bold text-base bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:pathwayId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
                 </div>
 
                 <LearningExperience internshipStatus={internshipStatus} />
 
                 <div className="flex flex-col items-center py-10">
-                    {thisPathwayStatus? <Link href="/dashboard"><Button className=" py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:pathwayId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
+                    {thisPathwayStatus? <Link href="/dashboard"><Button className=" py-6 text-white font-bold text-base bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:pathwayId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
                 </div>
 
                 <div className="flex flex-col gap-2 items-center justify-start w-full  ">
                     <span className="flex flex-col items-start font-bold text-2xl gap-2"> <p> The smartest investment for your career journey</p> </span>
-                    <p className="text-sm font-bold pt-5">Gain full access to all our courses and internships (including future ones)</p>
+                    <p className="text-base font-bold pt-5">Gain full access to all our courses and internships (including future ones)</p>
                     <div className="flex flex-col gap-2 items-start">
                         {/*<FreePrice /> */}
                         {/*<PremiumPrice />*/}
                         <HbPrices plan="Become a Pro" discount={0.5} prog="career" progId={String(pathwayId)}/>
-                        <p className="font-bold text-sm">... Or just this pathway</p>
+                        <p className="font-bold text-base">... Or just this pathway</p>
                         <HbPrices plan="Career Pathway" discount={0.5} prog="career" progId={String(pathwayId)}/>
                     </div>
                 </div>

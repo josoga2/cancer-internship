@@ -111,15 +111,15 @@ export default function ContentPage() {
                         {articles__.map((article) => (
                             <div key={article.id} onClick={()=>{router.push(`blog/${article.slug}`)}} className="flex flex-row gap-5 p-5 border rounded-md justify-between border-gray-200 hover:shadow-lg transition-shadow duration-300">
                                 <div className="flex flex-col gap-5 w-[550px]">
-                                    <h3 className="text-xl font-semibold hover:cursor-pointer">{article.title}</h3>
+                                    <h3 className="text-base font-bold hover:cursor-pointer">{article.title}</h3>
                                     <p className="text-gray-600">{article.excerpt}</p>
                                     <div className="flex items-center gap-5">
                                         {article.author?.avatar && (
                                             <img src={article.author.avatar} alt={article.author.name} className="w-8 h-8 rounded-full border border-hb-green" />
                                         )}
-                                        <span className="text-sm text-gray-500">{article.author?.name}</span>
+                                        <span className="text-base text-gray-500">{article.author?.name}</span>
                                     </div>
-                                    <div className="flex items-center gap-2 text-sm text-gray-400 ">
+                                    <div className="flex items-center gap-2 text-base text-gray-400 ">
                                         <span>{new Date(article.published_at ?? "").toLocaleDateString()}</span>
                                         <span>•</span>
                                         <span>{article.reading_time} min read</span>
@@ -133,10 +133,10 @@ export default function ContentPage() {
                     </div>
                     <div className="flex flex-col pt-5 w-full px-3 gap-2">
                         <hr className="border-gray-300" />
-                        <p className="text-lg font-bold">Subscribe</p>
-                        <input type="text" placeholder="What should we call you" className="w-[250px] p-2 border text-sm border-gray-300 rounded-md" value={name} onChange={(e)=>setName(e.target.value)} />
-                        <input type="text" placeholder="Your Email" className="w-[250px] p-2 border text-sm border-gray-300 rounded-md" value={email} onChange={(e)=>setEmail(e.target.value)} />
-                        <button onClick={handleSubmit} className="bg-hb-green w-[125px] text-white  p-2 rounded-md  hover:bg-hb-lightgreen text-sm hover:text-hb-green cursor-pointer">Subscribe</button>
+                        <p className="text-base font-bold">Subscribe</p>
+                        <input type="text" placeholder="What should we call you" className="w-[250px] p-2 border text-base border-gray-300 rounded-md" value={name} onChange={(e)=>setName(e.target.value)} />
+                        <input type="text" placeholder="Your Email" className="w-[250px] p-2 border text-base border-gray-300 rounded-md" value={email} onChange={(e)=>setEmail(e.target.value)} />
+                        <button onClick={handleSubmit} className="bg-hb-green w-[125px] text-white  p-2 rounded-md  hover:bg-hb-lightgreen text-base hover:text-hb-green cursor-pointer">Subscribe</button>
                     </div>
                 </div>
             </section>
@@ -145,7 +145,7 @@ export default function ContentPage() {
                 {/* Header Section */}
                 <div className="flex flex-col gap-4 justify-center p-5 items-start bg-hb-lightgreen rounded-md">
                     <h1 className="text-xl font-bold">DNA and Dreams</h1>
-                    <p className="text-gray-500 text-sm">HackBio's Technical Blog</p>
+                    <p className="text-gray-500 text-base">HackBio's Technical Blog</p>
                     <div className="flex flex-col sm:flex-row gap-3 w-full pt-3">
                     </div>
                 </div>
@@ -172,8 +172,8 @@ export default function ContentPage() {
 
                         {/* Title & Excerpt */}
                         <div className="flex flex-col gap-2">
-                        <h3 className="text-lg font-semibold">{article.title}</h3>
-                        <p className="text-gray-600 text-sm">{article.excerpt}</p>
+                        <h3 className="text-base font-bold">{article.title}</h3>
+                        <p className="text-gray-600 text-base">{article.excerpt}</p>
                         </div>
 
                         {/* Author */}
@@ -185,7 +185,7 @@ export default function ContentPage() {
                             className="w-8 h-8 rounded-full border border-hb-green" 
                             />
                         )}
-                        <span className="text-sm text-gray-500">{article.author?.name}</span>
+                        <span className="text-base text-gray-500">{article.author?.name}</span>
                         </div>
 
                         {/* Meta */}
@@ -199,10 +199,10 @@ export default function ContentPage() {
                 </div>
                 <div className="flex flex-col pt-5 px-3 gap-5 pb-20">
                         <hr className="border-gray-300" />
-                        <p className="text-lg font-bold">Subscribe</p>
-                        <input type="text" placeholder="What should we call you" className="w-[250px] p-2 border text-sm border-gray-300 rounded-md" value={name} onChange={(e)=>setName(e.target.value)} />
-                        <input type="text" placeholder="Your Email" className="w-[250px] p-2 border text-sm border-gray-300 rounded-md" value={email} onChange={(e)=>setEmail(e.target.value)} />
-                        <button onClick={handleSubmit} className="bg-hb-green w-[125px] text-white  p-2 rounded-md  hover:bg-hb-lightgreen text-sm hover:text-hb-green cursor-pointer">Subscribe</button>
+                        <p className="text-base font-bold">Subscribe</p>
+                        <input type="text" placeholder="What should we call you" className="w-[250px] p-2 border text-base border-gray-300 rounded-md" value={name} onChange={(e)=>setName(e.target.value)} />
+                        <input type="text" placeholder="Your Email" className="w-[250px] p-2 border text-base border-gray-300 rounded-md" value={email} onChange={(e)=>setEmail(e.target.value)} />
+                        <button onClick={handleSubmit} className="bg-hb-green w-[125px] text-white  p-2 rounded-md  hover:bg-hb-lightgreen text-base hover:text-hb-green cursor-pointer">Subscribe</button>
                     </div>
                 </section>
             <Footer />

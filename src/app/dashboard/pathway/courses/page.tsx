@@ -241,11 +241,11 @@ function Page() {
           <div className="flex flex-row items-center justify-between px-4 py-4 border-b bg-white">
             <div className="flex flex-row items-center gap-2">
               <Image src={hb_logo} alt="HackBio logo" width={32} height={32} />
-              <p className="font-bold text-lg">HackBio</p>
+              <p className="font-bold text-base">HackBio</p>
             </div>
 
             {/* Simple hamburger or nav toggle — can be replaced with mobile menu logic */}
-            <div className="flex flex-row gap-4 text-sm font-bold">
+            <div className="flex flex-row gap-4 text-base font-bold">
               
               <Logout />
             </div>
@@ -285,7 +285,7 @@ function Page() {
             <div className="flex flex-row items-center justify-between px-4 py-4 border-b">
               <div className="flex flex-row items-center gap-2">
                 <Image src={hb_logo} alt="HackBio logo" width={32} height={32} />
-                <p className="font-bold text-lg">HackBio</p>
+                <p className="font-bold text-base">HackBio</p>
               </div>
               <button
                 onClick={() => setDrawerOpen(false)}
@@ -303,7 +303,7 @@ function Page() {
                 <a key={tab_item.id} href={tab_item.link} onClick={() => setDrawerOpen(false)}>
                   <div className={`flex flex-row items-center gap-2 py-2 px-3 rounded-md ${tab_item.isActive ? "bg-green-100 text-hb-green font-bold" : "text-green-900"}`}>
                     <tab_item.iconImage />
-                    <p className="text-sm">{tab_item.name}</p>
+                    <p className="text-base">{tab_item.name}</p>
                   </div>
                 </a>
               ))}

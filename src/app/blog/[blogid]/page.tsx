@@ -109,7 +109,7 @@ export default function ContentPage() {
             <Navbar />
             <section className="hidden md:flex md:max-w-screen-lg bg md:m-auto md:items-center pt-24 md:justify-between">
                 <div className="flex flex-col items-start justify-start gap-5  max-w-3xl min-w-3xl">
-                    <Link href="/blog" className="flex flex-row gap-2 items-center font-bold text-xl hover:underline"> <BiArrowBack /> All Articles </Link>
+                    <Link href="/blog" className="flex flex-row gap-2 items-center font-bold text-base hover:underline"> <BiArrowBack /> All Articles </Link>
                     <div className="flex flex-col gap-5 w-full">
                         {articles__
                             .filter((article__: {
@@ -163,7 +163,7 @@ export default function ContentPage() {
                                         {article.author?.avatar && (
                                             <img src={article.author.avatar} alt={article.author.name} className="w-15 h-15 rounded-full  border-2 border-hb-green" />
                                         )}
-                                        <span className="text-lg text-black font-bold">{article.author?.name}</span>
+                                        <span className="text-base text-black font-bold">{article.author?.name}</span>
                                     </div>
                                     <div className="flex flex-col w-full pt-10 px-5 prose prose-base leading-relaxed">
                                         {article.content_type === "md" ? (
@@ -186,10 +186,10 @@ export default function ContentPage() {
                                     </div>
                                     <div className="flex flex-col pt-5 px-3 gap-5">
                                         <hr className="border-gray-300" />
-                                        <p className="text-lg font-bold">Subscribe</p>
-                                        <input type="text" placeholder="What should we call you" className="w-[250px] p-2 border text-sm border-gray-300 rounded-md" value={name} onChange={(e)=>setName(e.target.value)} />
-                                        <input type="text" placeholder="Your Email" className="w-[250px] p-2 border text-sm border-gray-300 rounded-md" value={email} onChange={(e)=>setEmail(e.target.value)} />
-                                        <button onClick={handleSubmit} className="bg-hb-green w-[125px] text-white  p-2 rounded-md  hover:bg-hb-lightgreen text-sm hover:text-hb-green cursor-pointer">Subscribe</button>
+                                        <p className="text-base font-bold">Subscribe</p>
+                                        <input type="text" placeholder="What should we call you" className="w-[250px] p-2 border text-base border-gray-300 rounded-md" value={name} onChange={(e)=>setName(e.target.value)} />
+                                        <input type="text" placeholder="Your Email" className="w-[250px] p-2 border text-base border-gray-300 rounded-md" value={email} onChange={(e)=>setEmail(e.target.value)} />
+                                        <button onClick={handleSubmit} className="bg-hb-green w-[125px] text-white  p-2 rounded-md  hover:bg-hb-lightgreen text-base hover:text-hb-green cursor-pointer">Subscribe</button>
                                     </div>
                                 </div>
                             ))}
@@ -201,7 +201,7 @@ export default function ContentPage() {
             <section className="flex flex-col md:hidden w-full px-4 pt-5 gap-5">
                 <Link 
                     href="/blog" 
-                    className="flex flex-row gap-2 items-center font-bold text-lg hover:underline"
+                    className="flex flex-row gap-2 items-center font-bold text-base hover:underline"
                 > 
                     <BiArrowBack /> All Articles 
                 </Link>
@@ -226,7 +226,7 @@ export default function ContentPage() {
                         </div>
 
                         {/* Content */}
-                        <div className="prose max-w-none text-sm prose-base leading-relaxed">
+                        <div className="prose max-w-none text-base prose-base leading-relaxed">
                         {article.content_type === "md" ? (
                             <Markdown
                             remarkPlugins={[remarkGfm, remarkMath, remarkDeflist]}
@@ -245,20 +245,20 @@ export default function ContentPage() {
                         <input 
                             type="text" 
                             placeholder="What should we call you" 
-                            className="w-full p-2 border text-sm border-gray-300 rounded-md" 
+                            className="w-full p-2 border text-base border-gray-300 rounded-md" 
                             value={name} 
                             onChange={(e)=>setName(e.target.value)} 
                         />
                         <input 
                             type="email" 
                             placeholder="Your Email" 
-                            className="w-full p-2 border text-sm border-gray-300 rounded-md" 
+                            className="w-full p-2 border text-base border-gray-300 rounded-md" 
                             value={email} 
                             onChange={(e)=>setEmail(e.target.value)} 
                         />
                         <button 
                             onClick={handleSubmit} 
-                            className="bg-hb-green w-full text-white p-2 rounded-md hover:bg-hb-lightgreen text-sm hover:text-hb-green"
+                            className="bg-hb-green w-full text-white p-2 rounded-md hover:bg-hb-lightgreen text-base hover:text-hb-green"
                         >
                             Subscribe
                         </button>

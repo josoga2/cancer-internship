@@ -123,7 +123,7 @@ export default function Page() {
                 <div key={upcoming.id} className="py-5 w-full flex flex-col gap-5 justify-center items-center pb-10">
                     <div className="flex flex-col gap-2 w-full items-start justify-start">
                         <p className="text-3xl font-bold">Upcoming</p>
-                        <p className="text-lg">{upcoming.start_date}</p>
+                        <p className="text-base">{upcoming.start_date}</p>
                     </div>
                     <div className="flex flex-row gap-10 w-full justify-center">
                         <div className="grid grid-cols-2 gap-10 w-full items-start justify-start ">
@@ -151,8 +151,8 @@ export default function Page() {
                                         <div key={course.id} className="flex flex-col gap-10 items-start justify-start w-full">
                                             <div className="flex flex-col gap-10 items-start justify-start w-full">
                                                 <a href={`learning/course/${course.id}`} className="flex flex-row gap-5 items-center justify-start w-full rounded-lg border border-hb-green px-7 py-5 min-h-24 hover:bg-green-50">
-                                                    <p className="text-lg font-bold">{course.id}. </p>
-                                                    <p className="text-lg font-bold">{course.title}</p>
+                                                    <p className="text-base font-bold">{course.id}. </p>
+                                                    <p className="text-base font-bold">{course.title}</p>
                                                     <ArrowRight className="ml-auto text-hb-green" />
                                                 </a>
                                             </div>
@@ -274,7 +274,7 @@ export default function Page() {
                     </div> */}
                     <div className="flex flex-col gap-5 rounded border-2 p-5 px-10 border-hb-green shadow-2xl items-start justify-center  ">
                         <span className="flex flex-row items-start font-bold text-2xl gap-2 py-5"> <p>Premium Learning</p> </span>
-                        <span className="flex flex-row items-start font-bold text-2xl gap-2 pb-5"> <p>$20</p> <p className="text-red-600 line-through text-base">{`$40`}</p> <p className="text-red-600  text-xl">{`(50% off)`}</p>  </span>
+                        <span className="flex flex-row items-start font-bold text-2xl gap-2 pb-5"> <p>$20</p> <p className="text-red-600 line-through text-base">{`$40`}</p> <p className="text-red-600  text-base">{`(50% off)`}</p>  </span>
                         <ul className="flex flex-col gap-5 items-start justify-start ">
                             <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Complete Training Pack </span></li>
                             <li className="flex flex-row items-center gap-2"> <GoDotFill className="text-lg"/> <span className=" gap-2 items-start justify-start text-base"> Weekly mentorship calls </span></li>
@@ -304,7 +304,7 @@ export default function Page() {
             <div className="flex flex-row gap-10 items-center justify-center w-3/5 mx-auto py-5">
                 <Image src={winfred} alt="biology" className="rounded-full " />
                 <div className="flex flex-col gap-2 ">
-                <p className="text-lg text-gray-700">{`"My HackBio experience (and preprint) was my leverage for an interesting conversation with my interview with my Graduate School Admission Team."`}</p>
+                <p className="text-base text-gray-700">{`"My HackBio experience (and preprint) was my leverage for an interesting conversation with my interview with my Graduate School Admission Team."`}</p>
                 <p className="text-base font-bold pt-5">{`Winfred Gatua (Now in University of Bristol, UK)`}</p>
                 </div>
             </div>
@@ -337,14 +337,14 @@ export default function Page() {
 
                     <div className="flex flex-col gap-5 border-2 border-hb-green rounded-lg px-5 py-5">
                         <img src={upcoming.int_image} alt="internship" width={64} height={64} className="border-2 rounded-md border-hb-green" />
-                        <p className="text-lg font-bold">{upcoming.title}</p>
-                        <p className="text-sm">{upcoming.overview}</p>
-                        <p className="text-sm">{upcoming.lenght_in_weeks} Weeks</p>
+                        <p className="text-base font-bold">{upcoming.title}</p>
+                        <p className="text-base">{upcoming.overview}</p>
+                        <p className="text-base">{upcoming.lenght_in_weeks} Weeks</p>
                         <EnrollDialog />
                     </div>
 
                     <div className="flex flex-col gap-3">
-                        <div className="text-xl font-bold"> <p> {`What will you learn?`} </p> <p className="text-sm py-3 underline font-normal"> {`(click course item to preview)`} </p> </div>
+                        <div className="text-xl font-bold"> <p> {`What will you learn?`} </p> <p className="text-base py-3 underline font-normal"> {`(click course item to preview)`} </p> </div>
                         {coursesList
                                     .filter(course =>{
                                         //upcoming.courses?.filter(upCourse => upCourse.id === course.id)
@@ -411,7 +411,7 @@ export default function Page() {
 
                 <div className="flex flex-col gap-10">
                     <div className="flex flex-col gap-4 border-2 border-hb-green p-5 rounded shadow-md">
-                    <p className="text-lg font-bold">You are a <span className="text-hb-green underline">great</span> fit if:</p>
+                    <p className="text-base font-bold">You are a <span className="text-hb-green underline">great</span> fit if:</p>
                     <ul className="list-disc pl-5 text-base">
                         <li>Self-taught learners who want structure and hands-on projects</li>
                         <li>Ambitious beginners ready to get practical</li>
@@ -421,7 +421,7 @@ export default function Page() {
                     </div>
 
                     <div className="flex flex-col gap-4 border-2 border-zinc-500 p-5 rounded shadow-md">
-                    <p className="text-lg font-bold">You are <span className="text-red-600 underline">not</span> a fit if:</p>
+                    <p className="text-base font-bold">You are <span className="text-red-600 underline">not</span> a fit if:</p>
                     <ul className="list-disc pl-5 text-base">
                         <li>You want passive content consumption</li>
                         <li>You expect instant results</li>
@@ -453,7 +453,7 @@ export default function Page() {
                         <li>Graded Certification</li>
                         <li>No Eviction from the internship</li>
                     </ul>
-                    <p className="text-sm">*Server active only during internship</p>
+                    <p className="text-base">*Server active only during internship</p>
                     <EnrollDialog />
                 </div>
 
@@ -462,7 +462,7 @@ export default function Page() {
                     <p className="text-center">You’ll work with peers from around the world.</p>
                     <div className="flex flex-col gap-2 items-center">
                     <Image src={winfred} alt="learner" className="rounded-full w-24 h-24" />
-                    <p className="text-md text-gray-700 italic text-center">"My HackBio experience (and preprint) was my leverage for grad school admissions."</p>
+                    <p className="text-base text-gray-700 italic text-center">"My HackBio experience (and preprint) was my leverage for grad school admissions."</p>
                     <p className="text-base font-bold">Winfred Gatua – University of Bristol</p>
                     </div>
                     <EnrollDialog />

@@ -146,7 +146,7 @@ function Page() {
             <div className="flex flex-col w-[340px] right-0 gap-4 px-4 pt-3 rounded-md border-2 border-hb-green h-[600px] overflow-y-auto">
                 <span className="flex flex-row items-center gap-5">
                     <p className="font-bold text-2xl">Projects</p>
-                    <p className="text-sm text-red-500">Scroll to view more</p>
+                    <p className="text-base text-red-500">Scroll to view more</p>
                 </span>
                 {course_list.map((course_item) => (
                     <div key={course_item.id}>
@@ -172,7 +172,7 @@ function Page() {
             </div>
 
             {/* Simple hamburger or nav toggle — can be replaced with mobile menu logic */}
-            <div className="flex flex-row gap-4 text-sm font-bold">
+            <div className="flex flex-row gap-4 text-base font-bold">
               
               <Logout />
             </div>
@@ -184,7 +184,7 @@ function Page() {
               <a key={tab_item.id} href={tab_item.link}>
                 <div className="flex flex-row items-center gap-1 py-2 border w-fit px-3 rounded-full text-green-900">
                   <tab_item.iconImage />
-                  <p className="text-sm">{tab_item.name}</p>
+                  <p className="text-base">{tab_item.name}</p>
                 </div>
               </a>
             ))}
@@ -196,7 +196,7 @@ function Page() {
               👋 Welcome back, {username.charAt(0).toUpperCase() + username.slice(1).toLocaleLowerCase()}
             </p>
 
-            <p className="text-sm font-bold">Only available on mobile</p>
+            <p className="text-base font-bold">Only available on mobile</p>
 
             {/* <div className="flex flex-col gap-6 items-center min-h-[100svh] ">
               {course_list.filter(course_item => course_item.sub).map((course_item) => (

@@ -60,7 +60,7 @@ export default function Login() {
                             {/* <CardTitle className="text-base">Login</CardTitle> */}
                             <div className='w-full flex justify-center flex-col items-center'> 
                                 <Image src={hb_logo} alt='jisender-logo' height={40} width={40} /> 
-                                <p className='text-lg font-bold'> HackBio </p>
+                                <p className='text-base font-bold'> HackBio </p>
                             </div>
                         </CardHeader>
                         <CardContent>
@@ -92,7 +92,7 @@ export default function Login() {
                                         Sign Up
                                     </Button>
                                 </a>
-                                <a href='/login'><p className='text-sm text-center pt-5 text-blue-600 hover:underline'>  Already have an account? Sign In. </p></a>
+                                <a href='/login'><p className='text-base text-center pt-5 text-blue-600 hover:underline'>  Already have an account? Sign In. </p></a>
 
                             </form>
                         </CardContent>
@@ -107,11 +107,11 @@ export default function Login() {
                         <CardHeader className="text-center">
                             <div className='w-full flex justify-center flex-col items-center'> 
                                 <Image src={hb_logo} alt='jisender-logo' height={40} width={40} /> 
-                                <p className='text-lg font-bold'> HackBio </p>
+                                <p className='text-base font-bold'> HackBio </p>
                             </div>
                         </CardHeader>
                         <CardContent>
-                        <form className="space-y-3 text-xs">
+                        <form className="space-y-3 text-base">
                             {error && (
                             <p className="text-red-500 text-center text-xs">{error}</p>
                             )}
@@ -127,7 +127,7 @@ export default function Login() {
                                 setEmail((e.target as HTMLInputElement).value)
                                 }
                                 required
-                                className="bg-blue-50 text-xs py-3"
+                                className="bg-blue-50 text-base py-3 placeholder:text-base"
                             />
                             </div>
 
@@ -140,7 +140,7 @@ export default function Login() {
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 required
-                                className="bg-blue-50 text-xs py-3"
+                                className="bg-blue-50 text-base py-3 placeholder:text-base"
                             />
                             </div>
 
@@ -153,7 +153,7 @@ export default function Login() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                className="bg-blue-50 text-xs py-3"
+                                className="bg-blue-50 text-base py-3 placeholder:text-base"
                             />
                             </div>
 
@@ -166,7 +166,7 @@ export default function Login() {
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 required
-                                className="bg-blue-50 text-xs py-3"
+                                className="bg-blue-50 text-base py-3 placeholder:text-base"
                             />
                             </div>
 
@@ -178,7 +178,7 @@ export default function Login() {
                             </Button>
 
                             <a href="/login">
-                            <p className="text-sm text-center  text-blue-600 hover:underline">
+                            <p className="text-base text-center  text-blue-600 hover:underline">
                                 Already have an account? Sign In.
                             </p>
                             </a>

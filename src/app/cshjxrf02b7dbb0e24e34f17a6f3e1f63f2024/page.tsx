@@ -17,7 +17,7 @@ export default function Login() {
                 </div>
                 
                 <div className='w-full flex justify-center items-center'>
-                    <a href='https://thehackbio.com/'><p className='text-lg font-bold'> HackBio </p></a>
+                    <a href='https://thehackbio.com/'><p className='text-base font-bold'> HackBio </p></a>
                 </div>
 
                 <div className='w-full flex justify-center flex-row items-end'> 
@@ -26,7 +26,7 @@ export default function Login() {
                 
                 <div className='w-full flex justify-center flex-col gap-10 items-center'>
                     <p className='text-3xl font-bold text-hb-green'> You are enrolled! Please proceed to register with the link below! </p>
-                    <a href='/register' className='text-lg underline hover:text-neutral-500 font-bold'> Proceed to Register Here </a>
+                    <a href='/register' className='text-base underline hover:text-neutral-500 font-bold'> Proceed to Register Here </a>
                 </div>
 
 

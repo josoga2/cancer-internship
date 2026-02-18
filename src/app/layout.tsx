@@ -81,7 +81,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${dmSans}`}
+        className={`${dmSans} text-base`}
       >
         <Banner />
         <div className="min-h-svh flex items-start justify-center">

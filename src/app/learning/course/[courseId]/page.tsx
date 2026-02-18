@@ -179,7 +179,7 @@ export default function Page() {
         <div className="py-5 h-full w-full flex flex-row justify-between items-center">
             <div className="flex flex-col gap-5 max-w-2/5">
                 <p className="text-3xl font-bold text-start"> {coursesList[0].title} </p>
-                <p className="text-base "> {coursesList[0].overview} </p>
+                <p className="text-base"> {coursesList[0].overview} </p>
                 {coursesList[0].free? <div><HbButton text="Enroll For Free" type="primary" onClick={()=>handleFreeEnroll()} /> </div> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'course', id:courseId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
             
             </div>
@@ -198,7 +198,7 @@ export default function Page() {
                 <div className="grid grid-cols-2 gap-10 w-full items-start justify-between ">
                     <div className="flex flex-col gap-7 items-start justify-start border-2 border-green-600 rounded-lg px-5 py-10 w-4/5 sticky top-0">
                         <img src={coursesList[0].image} alt="course-image" width={64} height={64} className="border-2 rounded-md border-green-300"/>
-                        <p className="text-xl font-bold">{coursesList[0].title}</p>
+                        <p className="text-base font-bold">{coursesList[0].title}</p>
                         
                         <span className="flex flex-row gap-5 items-center justify-center">
                             <p className="text-base">{modulesList.length} Lessons</p>
@@ -215,8 +215,8 @@ export default function Page() {
                                 <div className="flex flex-row gap-5 items-center justify-start w-full rounded-lg border border-green-300 px-7 py-3 hover:bg-green-50">
                                     <Accordion type="single" collapsible className="w-full">
                                         <AccordionItem value={(module.id ?? '').toString()}>
-                                            <AccordionTrigger className="text-xl font-bold">{idx+1}.  {module.title}</AccordionTrigger>
-                                            <AccordionContent className="text-base ">
+                                            <AccordionTrigger className="text-base font-bold">{idx+1}.  {module.title}</AccordionTrigger>
+                                            <AccordionContent className="text-base">
                                                 <p className="py-2 pb-3"> {module.description}</p>
                                                 <hr className="w-full h-5" />
                                                 <ul className="list-disc pl-5  text-neutral-600">
@@ -240,7 +240,7 @@ export default function Page() {
                             <div className="prose">
                                 <Markdown  remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{coursesList[0].description}</Markdown>
                             </div>
-                            <p className="leading-7 text-lg"> </p>
+                            <p className="leading-7 text-base"> </p>
                             {coursesList[0].free? <div><HbButton text="Enroll For Free" type="primary" onClick={()=>handleFreeEnroll()} /> </div> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'course', id:courseId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
 
                         </div>
@@ -290,12 +290,12 @@ export default function Page() {
         <OrganizationsTestimonials />
         {/* Course Overview */}
         <div className="flex flex-col gap-5 py-5">
-            <p className="text-lg font-bold">Start Now</p>
+            <p className="text-base font-bold">Start Now</p>
             <div className="border-2 border-green-600 rounded-lg px-5 py-7">
             <img src={coursesList[0].image} alt="course-image" className="w-16 h-16 border-2 border-green-300 rounded-md mb-4" />
             <p className="text-base font-bold mb-2">{coursesList[0].title}</p>
 
-            <p className="text-sm">{modulesList.length} Lessons</p>
+            <p className="text-base">{modulesList.length} Lessons</p>
             <div className="mt-4">
                 {coursesList[0].free? <div><HbButton text="Enroll For Free" type="primary" onClick={()=>handleFreeEnroll()} /> </div> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'course', id:courseId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
             </div>
@@ -308,10 +308,10 @@ export default function Page() {
             {modulesList.map((module, idx) => (
             <Accordion key={module.id} type="single" collapsible className="w-full border-b border-gray-200 py-3">
                 <AccordionItem value={(module.id ?? '').toString()}>
-                <AccordionTrigger className="text-lg font-bold">{idx+1}. {module.title}</AccordionTrigger>
+                <AccordionTrigger className="text-base font-bold">{idx+1}. {module.title}</AccordionTrigger>
                 <AccordionContent className="text-base">
                     <p className="mb-2">{module.description}</p>
-                    <ul className="list-disc pl-5 text-sm text-neutral-600">
+                    <ul className="list-disc pl-5 text-base text-neutral-600">
                     {contentList.filter((content) => content.module === module.id).map((content) => (
                         <li key={content.id}>{content.title}</li>
                     ))}

@@ -159,7 +159,7 @@ export default function ScholarshipPage() {
       {/* Scholarship Listings */}
       
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-12 space-y-4">
-        <p className=" font-bold text-xl">Currently Open</p>
+        <p className="text-base font-bold">Currently Open</p>
         {sortedScholarships.filter((s) => s.status === "Open").map((s) => (
           <div
             key={s.id}
@@ -169,8 +169,8 @@ export default function ScholarshipPage() {
             <div className="flex items-start sm:items-center space-x-4 mb-4 sm:mb-0">
               
               <div>
-                <h2 className="text-base sm:text-lg font-semibold text-gray-900">{s.title}</h2>
-                <p className="text-sm text-gray-500">{s.sponsor} · {s.location}</p>
+                <h2 className="text-base font-semibold text-gray-900">{s.title}</h2>
+                <p className="text-base text-gray-500">{s.sponsor} · {s.location}</p>
                 <div className="flex space-x-2 mt-1">
                   <span className="text-xs px-2 py-1 rounded-full  bg-hb-lightgreen text-hb-green font-medium">
                     {s.type}
@@ -205,7 +205,7 @@ export default function ScholarshipPage() {
               />
               <div>
                 <h2 className="text-base sm:text-lg font-semibold text-gray-900">{s.title}</h2>
-                <p className="text-sm text-gray-500">{s.sponsor} · {s.location}</p>
+                <p className="text-base text-gray-500">{s.sponsor} · {s.location}</p>
                 <div className="flex space-x-2 mt-1">
                   <span className="text-xs px-2 py-1 rounded-full bg-hb-lightgreen text-hb-green font-medium">
                     {s.type}

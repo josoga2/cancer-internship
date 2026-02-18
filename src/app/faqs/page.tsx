@@ -171,7 +171,7 @@ export default function FaqPage() {
       <section className="w-4xl px-4 sm:px-6 py-12 space-y-4">
         {Array.from(new Set(sortedfaqs.map((faq) => faq.type))).map((type) => (
           <div key={type} className="mb-8">
-            <h2 className="text-lg font-semibold mb-4">{type}</h2>
+            <h2 className="text-base font-semibold mb-4">{type}</h2>
             {sortedfaqs
               .filter((faq) => faq.type === type)
               .map((faq) => (
@@ -184,7 +184,7 @@ export default function FaqPage() {
                       <AccordionTrigger className="w-full text-base font-medium">
                         {faq.question}
                       </AccordionTrigger>
-                      <AccordionContent className="mt-2 text-gray-700 text-sm">
+                      <AccordionContent className="mt-2 text-gray-700 text-base">
                         {faq.answer}
                       </AccordionContent>
                     </AccordionItem>

@@ -206,6 +206,29 @@ function Page() {
                 </a>
               </li>
             </ul>
+            {internshipList.length !== 0 && internshipList[0].id !== "" && (
+              <div className="pt-3">
+                <p className="font-semibold text-gray-700">Courses</p>
+                <ul className="flex flex-col gap-2 pt-2">
+                  {internshipList.flatMap((internship) => {
+                    const internshipCourseIds = internship.courses?.map((c) => Number(c.id ?? c)) ?? [];
+                    const coursesForInternship = coursesList.filter((course) =>
+                      internshipCourseIds.includes(Number(course.id))
+                    );
+                    return coursesForInternship.map((course, courseIndex) => {
+                      const courseAnchor = `course-${internship.id ?? "internship"}-${course.id ?? courseIndex}`;
+                      return (
+                        <li key={courseAnchor}>
+                          <a href={`#${courseAnchor}`} className="text-hb-green hover:underline">
+                            {course.title ?? "Untitled course"}
+                          </a>
+                        </li>
+                      );
+                    });
+                  })}
+                </ul>
+              </div>
+            )}
           </nav>
 
           <section id="internship-courses-desktop">
@@ -222,17 +245,21 @@ function Page() {
                     <p className="font-bold text-lg mb-4">{internship.title}</p>
                     {coursesForInternship.length > 0 ? (
                       <div className="flex flex-col gap-6">
-                        {coursesForInternship.map((course) => (
-                          <UpcomingCourseCard
-                            key={course.id}
-                            desc={course.overview ?? ""}
-                            image={course.image ?? "/"}
-                            directTo={`/dashboard/internship/${internship.id}/courses/${course.id}/`}
-                            title={course.title ?? ""}
-                            weeks={0}
-                            lessons={0}
-                          />
-                        ))}
+                        {coursesForInternship.map((course, courseIndex) => {
+                          const courseAnchor = `course-${internship.id ?? "internship"}-${course.id ?? courseIndex}`;
+                          return (
+                            <div key={courseAnchor} id={courseAnchor}>
+                              <UpcomingCourseCard
+                                desc={course.overview ?? ""}
+                                image={course.image ?? "/"}
+                                directTo={`/dashboard/internship/${internship.id}/courses/${course.id}/`}
+                                title={course.title ?? ""}
+                                weeks={0}
+                                lessons={0}
+                              />
+                            </div>
+                          );
+                        })}
                       </div>
                     ) : (
                       <div>
@@ -318,6 +345,29 @@ function Page() {
               </a>
             </li>
           </ul>
+          {internshipList.length !== 0 && internshipList[0].id !== "" && (
+            <div className="pt-3">
+              <p className="font-semibold text-gray-700">Courses</p>
+              <ul className="flex flex-col gap-2 pt-2">
+                {internshipList.flatMap((internship) => {
+                  const internshipCourseIds = internship.courses?.map((c) => Number(c.id ?? c)) ?? [];
+                  const coursesForInternship = coursesList.filter((course) =>
+                    internshipCourseIds.includes(Number(course.id))
+                  );
+                  return coursesForInternship.map((course, courseIndex) => {
+                    const courseAnchor = `course-${internship.id ?? "internship"}-${course.id ?? courseIndex}`;
+                    return (
+                      <li key={courseAnchor}>
+                        <a href={`#${courseAnchor}`} className="text-hb-green hover:underline">
+                          {course.title ?? "Untitled course"}
+                        </a>
+                      </li>
+                    );
+                  });
+                })}
+              </ul>
+            </div>
+          )}
         </nav>
 
         <section id="internship-courses-mobile" className="w-full">
@@ -334,17 +384,21 @@ function Page() {
                   <p className="font-bold text-lg mb-4">{internship.title}</p>
                   {coursesForInternship.length > 0 ? (
                     <div className="flex flex-col gap-6">
-                      {coursesForInternship.map((course) => (
-                        <UpcomingCourseCard
-                          key={course.id}
-                          desc={course.overview ?? ""}
-                          image={course.image ?? "/"}
-                          directTo={`/dashboard/internship/${internship.id}/courses/${course.id}/`}
-                          title={course.title ?? ""}
-                          weeks={0}
-                          lessons={0}
-                        />
-                      ))}
+                      {coursesForInternship.map((course, courseIndex) => {
+                        const courseAnchor = `course-${internship.id ?? "internship"}-${course.id ?? courseIndex}`;
+                        return (
+                          <div key={courseAnchor} id={courseAnchor}>
+                            <UpcomingCourseCard
+                              desc={course.overview ?? ""}
+                              image={course.image ?? "/"}
+                              directTo={`/dashboard/internship/${internship.id}/courses/${course.id}/`}
+                              title={course.title ?? ""}
+                              weeks={0}
+                              lessons={0}
+                            />
+                          </div>
+                        );
+                      })}
                     </div>
                   ) : (
                     <div>
