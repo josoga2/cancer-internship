@@ -9,7 +9,7 @@ const course_list = [
     title: "All Programs",
     desc: "Access all your internships, career paths and their courses here.",
     image: internship,
-    directTo: "/dashboard/internship",
+    directTo: "/dashboard/internship/1/courses",
     lessons: 34,
     weeks: 4,
     sub: true,
