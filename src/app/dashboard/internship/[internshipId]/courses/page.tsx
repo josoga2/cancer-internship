@@ -2,19 +2,23 @@
 import UpcomingCourseCard from "@/components/course-card";
 import withAuth from "@/components/withAuth";
 import api from "@/api";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useMemo, useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
 import LeftSideBar from "@/components/widgets/dashboard-widgets/left-sidebar";
 import MainScreenFlex from "@/components/widgets/dashboard-widgets/main-screen-flex";
 import { Progress } from "@/components/ui/progress";
 import InternshipCourseCard from "@/components/internship-course-card";
+import ProgressFloat from "@/components/widgets/progress-float";
 
 
 
 function Page() {
 
+  const params = useParams();
+  const activeInternshipId = Number(params.internshipId);
   const router = useRouter()
   const [username, setUsername] = useState("");
+  const [loginDates, setLoginDates] = useState<string[]>([]);
   const [userInternshipId, setUserInternshipId] = useState<number[]>([]);
   const [userCoursesId, setUserCoursesId] = useState<number[]>([]);
   const [internshipList, setInternshipList] = useState<Array<{
@@ -81,6 +85,16 @@ function Page() {
 
   const [internshipProgressMap, setInternshipProgressMap] = useState<Record<number, number>>({});
   const [courseProgressMap, setCourseProgressMap] = useState<Record<number, number>>({});
+  const [popupDismissed, setPopupDismissed] = useState(false);
+  const [popupRequestedTrigger, setPopupRequestedTrigger] = useState<string | null>(null);
+  const [popupTrigger, setPopupTrigger] = useState<string | null>(null);
+  const [popupData, setPopupData] = useState<{
+    variant_id: number;
+    headline: string;
+    body: string;
+    cta_text?: string;
+    cta_url?: string;
+  } | null>(null);
 
     //get username
   useEffect(() => {
@@ -92,6 +106,7 @@ function Page() {
           //console.log("User profile data:", response.data);
           const userProfile = response.data; 
           setUsername(userProfile.username);
+          setLoginDates(Array.isArray(userProfile.login_dates) ? userProfile.login_dates : []);
           
         } else {
           router.push("/login");
@@ -117,6 +132,7 @@ function Page() {
           //console.log("User profile data:", response.data[0].Internships);
           const userProfile = response.data; // Assuming you want the first profile
           //console.log("User profile data internships:", userProfile);
+          setLoginDates(Array.isArray(userProfile.login_dates) ? userProfile.login_dates : []);
           setUserInternshipId(
             Array.isArray(userProfile.Internships)
               ? userProfile.Internships.map((id: any) => Number(id))
@@ -185,7 +201,7 @@ function Page() {
   }, []);
   //console.log("User Internship IDs:", internshipList);
 
-  console.log("Course List:", coursesList);
+  //console.log("Course List:", coursesList);
   //console.log('course list west: ', userCoursesId)
 
   // Fetch progress for visible internships
@@ -254,6 +270,100 @@ function Page() {
     fetchCourseProgress();
   }, [coursesList, singleCoursesList]);
 
+  const activeInternshipProgress = !Number.isNaN(activeInternshipId)
+    ? (internshipProgressMap[activeInternshipId] ?? 0)
+    : 0;
+
+  const resolvedTrigger = useMemo(() => {
+    if (activeInternshipProgress >= 80) return "on_course_80";
+    if (activeInternshipProgress >= 50) return "on_course_50";
+    if (activeInternshipProgress >= 25) return "on_course_25";
+    return null;
+  }, [activeInternshipProgress]);
+
+  const popupCourseId = useMemo(() => {
+    if (Number.isNaN(activeInternshipId)) return undefined;
+    const activeInternship = internshipList.find(
+      (internship) => Number(internship.id) === activeInternshipId
+    );
+    if (!activeInternship?.courses?.length) return undefined;
+    const courseIds = activeInternship.courses
+      .map((course) => Number((course as any).id ?? course))
+      .filter((id) => !Number.isNaN(id) && id !== 0);
+    return courseIds[0];
+  }, [activeInternshipId, internshipList]);
+
+  const shouldFetchPopup = !!resolvedTrigger && !!popupCourseId;
+  const showProgressPopup = shouldFetchPopup && !!popupData && !popupDismissed;
+  const allowCta = popupTrigger === "on_course_50" || popupTrigger === "on_course_80";
+
+  useEffect(() => {
+    if (popupTrigger && resolvedTrigger && popupTrigger !== resolvedTrigger) {
+      setPopupData(null);
+      setPopupDismissed(false);
+    }
+  }, [resolvedTrigger, popupTrigger]);
+
+  useEffect(() => {
+    const fetchPopup = async () => {
+      if (!shouldFetchPopup || popupDismissed || !popupCourseId || !resolvedTrigger) return;
+      if (popupRequestedTrigger === resolvedTrigger) return;
+      setPopupRequestedTrigger(resolvedTrigger);
+      try {
+        const res = await api.get("/api/popups/next/", {
+          params: { course_id: popupCourseId, trigger: resolvedTrigger },
+        });
+        if (res.status === 200 && res.data?.variant_id) {
+          setPopupData(res.data);
+          setPopupTrigger(resolvedTrigger);
+          await api.post("/api/popups/impression/", {
+            variant_id: res.data.variant_id,
+            course_id: popupCourseId,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching popup:", error);
+      }
+    };
+
+    fetchPopup();
+  }, [shouldFetchPopup, popupDismissed, popupCourseId, popupRequestedTrigger, resolvedTrigger]);
+
+  const handlePopupDismiss = async () => {
+    if (popupData?.variant_id) {
+      try {
+        await api.post("/api/popups/action/", {
+          variant_id: popupData.variant_id,
+          action: "dismissed",
+        });
+      } catch (error) {
+        console.error("Error logging dismiss:", error);
+      }
+    }
+    setPopupDismissed(true);
+  };
+
+  const handlePopupCta = async () => {
+    if (!popupData?.cta_url) return;
+    if (popupData?.variant_id) {
+      try {
+        await api.post("/api/popups/action/", {
+          variant_id: popupData.variant_id,
+          action: "clicked",
+        });
+      } catch (error) {
+        console.error("Error logging click:", error);
+      }
+    }
+    setPopupDismissed(true);
+    if (popupData.cta_url.startsWith("http")) {
+      window.location.href = popupData.cta_url;
+    } else {
+      router.push(popupData.cta_url);
+    }
+  };
+
+
   return (
     <main className="w-full ">
     <div className="hidden md:flex flex-row w-full pl-5">
@@ -261,7 +371,7 @@ function Page() {
       <LeftSideBar />
       {/** MAIN */}
       <div className="w-full bg-green-50 flex flex-col gap-10 overflow-y-auto h-screen pb-10">
-        <MainScreenFlex username={username} mini_desc="Your Internship Courses"/>
+        <MainScreenFlex username={username} mini_desc="Your Internship Courses" loginDates={loginDates} />
         <div className="flex flex-col gap-10 w-full px-10 ">
           <nav aria-label="Table of contents" className="w-full bg-white border border-green-100 rounded-lg p-4 text-sm">
             <p className="font-semibold text-gray-700">Table of Contents</p>
@@ -322,7 +432,7 @@ function Page() {
                           <div className="w-96 border border-hb-green rounded-md p-4">
                             <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
                               <span>Progress</span>
-                              <span>{internshipProgressMap[Number(internship.id)].toFixed(0)}%</span>
+                              <span>{Math.ceil(internshipProgressMap[Number(internship.id)]).toFixed(0)}%</span>
                             </div>
                             <Progress value={internshipProgressMap[Number(internship.id)]} />
                           </div>
@@ -418,7 +528,7 @@ function Page() {
       <LeftSideBar />
 
       {/* Main Content */}
-      <MainScreenFlex username={username} mini_desc="Your Internship Courses"/>
+      <MainScreenFlex username={username} mini_desc="Your Internship Courses" loginDates={loginDates} />
 
       <div className="flex flex-col w-full gap-6 items-center px-4">
         <nav aria-label="Table of contents" className="w-full bg-white border border-green-100 rounded-lg p-4 text-sm">
@@ -496,7 +606,7 @@ function Page() {
                               title={course.title ?? ""}
                               weeks={0}
                               lessons={0}
-                              progressPercent={courseProgressMap[Number(course.id)] ?? 0}
+                              progressPercent={Math.ceil(courseProgressMap[Number(course.id)]) ?? 0}
                             />
                           </div>
                         );
@@ -564,6 +674,16 @@ function Page() {
       </div>
     </div>
 
+      {showProgressPopup && popupData && (
+        <ProgressFloat
+          title={popupData.headline}
+          message={popupData.body || ""}
+          percent={activeInternshipProgress}
+          ctaText={allowCta ? popupData.cta_text : undefined}
+          onCta={allowCta && popupData.cta_url ? handlePopupCta : undefined}
+          onClose={handlePopupDismiss}
+        />
+      )}
     </main>
   )
 }

@@ -242,7 +242,7 @@ export default function CheckOutForm({title, desc, progId, curr, discount, plan}
                                     <form className="flex flex-col gap-3 items-start w-full  rounded-sm">
                                         <div className="flex flex-col gap-2 p-5 bg-yellow-100 border-amber-800 border rounded-sm">
                                             <p className="text-amber-800">
-                                                {`Kindly proceed to pay NGN ${(Number(finalPrice)*Number(exchangeRateNaira) || 'Select your plan on the right')} via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com`}
+                                                {`Kindly proceed to pay NGN ${(Number(finalPrice)*Number(exchangeRateNaira) || 'Select your plan on the right')} via OPAY (Nigerians) using the following details: 9552770865 (THEHACKBIO ENTERPRISES). After payment, please send a screenshot of the transaction details to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com`}
                                             </p>
                                             <p className="text-amber-800">
                                                 Please note that enrollment will be processed manually and might take 24 hours before it reflects on your account.
@@ -386,7 +386,7 @@ export default function CheckOutForm({title, desc, progId, curr, discount, plan}
                                     <form className="flex flex-col gap-3 items-start w-full  rounded-sm">
                                         <div className="flex flex-col gap-2 p-5 bg-yellow-100 border-amber-800 border rounded-sm">
                                             <p className="text-amber-800">
-                                                {`Kindly proceed to pay NGN ${(Number(finalPrice)*Number(exchangeRateNaira) || 'Select your plan on the right')} via OPay (Nigerians) using the following details: Adewale Ogunleye, 8108368289. After payment, please send a screenshot of the transaction details to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com`}
+                                                {`Kindly proceed to pay NGN ${(Number(finalPrice)*Number(exchangeRateNaira) || 'Select your plan on the right')} via OPAY (Nigerians) using the following details: 9552770865 (THEHACKBIO ENTERPRISES). After payment, please send a screenshot of the transaction details to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com`}
                                             </p>
                                             <p className="text-amber-800">
                                                 Please note that enrollment will be processed manually and might take 24 hours before it reflects on your account.

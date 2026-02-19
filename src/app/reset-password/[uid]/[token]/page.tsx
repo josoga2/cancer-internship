@@ -5,7 +5,9 @@ import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export default function ResetPasswordPage() {
-  const { uid, token } = useParams()
+  const params = useParams()
+  const uid = Array.isArray(params?.uid) ? params.uid[0] : params?.uid
+  const token = Array.isArray(params?.token) ? params.token[0] : params?.token
   const router = useRouter()
 
   const [password, setPassword] = useState('')
@@ -16,6 +18,11 @@ export default function ResetPasswordPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
+    if (!uid || !token) {
+      setError('Reset link is missing or invalid')
+      return
+    }
+
     if (password !== confirm) {
       setError('Passwords do not match')
       return
@@ -24,27 +31,33 @@ export default function ResetPasswordPage() {
     setLoading(true)
     setError('')
 
-    const res = await fetch(
-      `${SERVER_URL}/api/password-reset/confirm/`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          uid,
-          token,
-          new_password: password,
-        }),
+    try {
+      const res = await fetch(
+        `${SERVER_URL}/api/password-reset/confirm/`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            uid,
+            token,
+            new_password: password,
+          }),
+        }
+      )
+
+      setLoading(false)
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        setError(data?.detail || data?.error || 'Invalid or expired reset link')
+        return
       }
-    )
 
-    setLoading(false)
-
-    if (!res.ok) {
-      setError('Invalid or expired reset link')
-      return
+      router.push('/login')
+    } catch (err) {
+      setLoading(false)
+      setError('Unable to reset password. Please try again.')
     }
-
-    router.push('/login')
   }
 
   return (

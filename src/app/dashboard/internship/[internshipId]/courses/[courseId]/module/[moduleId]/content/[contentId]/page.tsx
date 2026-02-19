@@ -33,6 +33,7 @@ import TextContent from "@/components/widgets/course-props-widgets/text";
 import WebRPy from "@/components/widgets/course-props-widgets/webrpy";
 import JupyterContent from "@/components/widgets/course-props-widgets/jupyter-notebook";
 import Link from "next/link";
+import ProgressFloat from "@/components/widgets/progress-float";
 
 
 
@@ -47,6 +48,7 @@ function Page() {
   const router = useRouter()
 
   const [username, setUsername] = useState("");
+  const [loginDates, setLoginDates] = useState<string[]>([]);
   const [cert, setCert] = useState(false);
   const [userXP, setUserXP] = useState("");
   const [userClicks, setUserClicks] = useState<number>(1);
@@ -63,6 +65,16 @@ function Page() {
   const [totalXP, setTotalXP] = useState<number>(1);
   const [certSkill, setCertSkill] = useState("");
    const [progressPercent, setProgressPercent] = useState<number>(0);
+  const [popupDismissed, setPopupDismissed] = useState(false);
+  const [popupRequestedTrigger, setPopupRequestedTrigger] = useState<string | null>(null);
+  const [popupTrigger, setPopupTrigger] = useState<string | null>(null);
+  const [popupData, setPopupData] = useState<{
+    variant_id: number;
+    headline: string;
+    body: string;
+    cta_text?: string;
+    cta_url?: string;
+  } | null>(null);
   const [certPreparedness, setCertPreparedness] = useState("");
   const [certImprovement, setCertImprovement] = useState("");
   const [certError, setCertError] = useState("");
@@ -243,6 +255,7 @@ function Page() {
           //console.log("User profile data:", response.data);
           const userProfile = response.data; 
           setUsername(userProfile.username);
+          setLoginDates(Array.isArray(userProfile.login_dates) ? userProfile.login_dates : []);
           
         } else {
           router.push("/login");
@@ -366,6 +379,7 @@ useEffect(() => {
         if (response.data && response.status == 200 || response.status == 201) {
           //console.log("User profile data:", response.data[0].Internships);
           const userProfile = response.data; // Assuming you want the first profile
+          setLoginDates(Array.isArray(userProfile.login_dates) ? userProfile.login_dates : []);
           setUserInternshipId(
             Array.isArray(userProfile.Internships)
               ? userProfile.Internships.map((id: any) => Number(id))
@@ -693,10 +707,6 @@ useEffect(() => {
     }
 
     const [officialName, setOfficialName] = useState<string>("");
-    
-    // State for toggling Jupyter and WebR widgets
-    const [showJupyter, setShowJupyter] = useState(false);
-    const [showWebR, setShowWebR] = useState(false);
 
 
     const handleGenCertificate = async () => {
@@ -742,6 +752,85 @@ useEffect(() => {
     }
 
 
+  const resolvedTrigger =
+    progressPercent >= 80
+      ? "on_course_80"
+      : progressPercent >= 50
+        ? "on_course_50"
+        : progressPercent >= 25
+          ? "on_course_25"
+          : null;
+
+  const shouldFetchPopup = !!resolvedTrigger && courseId > 0;
+  const showProgressPopup = shouldFetchPopup && !!popupData && !popupDismissed;
+  const allowCta = popupTrigger === "on_course_50" || popupTrigger === "on_course_80";
+
+  useEffect(() => {
+    if (popupTrigger && resolvedTrigger && popupTrigger !== resolvedTrigger) {
+      setPopupData(null);
+      setPopupDismissed(false);
+    }
+  }, [resolvedTrigger, popupTrigger]);
+
+  useEffect(() => {
+    const fetchPopup = async () => {
+      if (!shouldFetchPopup || popupDismissed || !resolvedTrigger) return;
+      if (popupRequestedTrigger === resolvedTrigger) return;
+      setPopupRequestedTrigger(resolvedTrigger);
+      try {
+        const res = await api.get("/api/popups/next/", {
+          params: { course_id: courseId, trigger: resolvedTrigger },
+        });
+        if (res.status === 200 && res.data?.variant_id) {
+          setPopupData(res.data);
+          setPopupTrigger(resolvedTrigger);
+          await api.post("/api/popups/impression/", {
+            variant_id: res.data.variant_id,
+            course_id: courseId,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching popup:", error);
+      }
+    };
+
+    fetchPopup();
+  }, [shouldFetchPopup, popupDismissed, courseId, resolvedTrigger, popupRequestedTrigger]);
+
+  const handlePopupDismiss = async () => {
+    if (popupData?.variant_id) {
+      try {
+        await api.post("/api/popups/action/", {
+          variant_id: popupData.variant_id,
+          action: "dismissed",
+        });
+      } catch (error) {
+        console.error("Error logging dismiss:", error);
+      }
+    }
+    setPopupDismissed(true);
+  };
+
+  const handlePopupCta = async () => {
+    if (!popupData?.cta_url) return;
+    if (popupData?.variant_id) {
+      try {
+        await api.post("/api/popups/action/", {
+          variant_id: popupData.variant_id,
+          action: "clicked",
+        });
+      } catch (error) {
+        console.error("Error logging click:", error);
+      }
+    }
+    setPopupDismissed(true);
+    if (popupData.cta_url.startsWith("http")) {
+      window.location.href = popupData.cta_url;
+    } else {
+      router.push(popupData.cta_url);
+    }
+  };
+
 return (
     <main className="w-full">
     <div className="hidden md:flex flex-row w-full pl-2">
@@ -750,7 +839,7 @@ return (
 
         {/** MAIN */}
         <div className="w-full bg-hb-lightgreen flex flex-col gap-10 text-lg overflow-y-auto h-screen pb-10">
-            <MainScreenFlexIntXP  username={username} mini_desc="Your Internship Courses" userXP={userXP} title={title}/>
+            <MainScreenFlexIntXP  username={username} mini_desc="Your Internship Courses" userXP={userXP} title={title} loginDates={loginDates} />
             
             <div className="px-10 pt-10 w-200  flex flex-col gap-5">
                 {filteredContentList.length >0? (filteredContentList.map((content) => (
@@ -1049,6 +1138,7 @@ return (
                 <TocLink tocHref={`/dashboard/internship/${globalInternshipId}/courses/${courseId}`} />
             </div> */}
             <LeftSideBar />
+            <MainScreenFlexIntXP  username={username} mini_desc="Your Internship Courses" userXP={userXP} title={title} loginDates={loginDates} />
             
             {/* Main Content */}
             <div className="flex flex-col gap-5 px-2 py-5 w-full ">
@@ -1266,7 +1356,17 @@ return (
                 </div>
                 
             </div>
-        </div>         
+        </div>
+        {showProgressPopup && popupData && (
+            <ProgressFloat
+                title={popupData.headline}
+                message={popupData.body || ""}
+                percent={progressPercent}
+                ctaText={allowCta ? popupData.cta_text : undefined}
+                onCta={allowCta && popupData.cta_url ? handlePopupCta : undefined}
+                onClose={handlePopupDismiss}
+            />
+        )}
     </main>
 )
 }

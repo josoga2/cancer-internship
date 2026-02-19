@@ -20,6 +20,7 @@ function Page() {
   const router = useRouter()
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [username, setUsername] = useState("");
+  const [loginDates, setLoginDates] = useState<string[]>([]);
   const [userInternshipId, setUserInternshipId] = useState<number[]>([]);
   const [internshipList, setInternshipList] = useState<Array<{
         id?: string
@@ -57,6 +58,7 @@ function Page() {
           //console.log("User profile data:", response.data);
           const userProfile = response.data; 
           setUsername(userProfile.username);
+          setLoginDates(Array.isArray(userProfile.login_dates) ? userProfile.login_dates : []);
           
         } else {
           router.push("/login");
@@ -81,6 +83,7 @@ function Page() {
         if (response.data && response.status == 200 || response.status == 201) {
           //console.log("User profile data:", response.data[0].Internships);
           const userProfile = response.data; // Assuming you want the first profile
+          setLoginDates(Array.isArray(userProfile.login_dates) ? userProfile.login_dates : []);
           setUserInternshipId(
             Array.isArray(userProfile.Internships)
               ? userProfile.Internships.map((id: any) => Number(id))
@@ -123,7 +126,7 @@ function Page() {
       
       {/** MAIN */}
       <div className="w-full bg-green-50 flex flex-col gap-10 overflow-y-auto h-screen ">
-        <MainScreenFlex username={username} mini_desc="Your Internships"/>
+        <MainScreenFlex username={username} mini_desc="Your Internships" loginDates={loginDates} />
         
         <div className="flex flex-col gap-10 w-full px-10 ">
           {internshipList.length !== 0 ? (
