@@ -383,6 +383,7 @@ const scientistAdjectives = [
           : null;
 
   const shouldFetchPopup = !!resolvedTrigger && courseId > 0;
+  const popupRequestKey = resolvedTrigger ? `${courseId}:${resolvedTrigger}` : null;
   const showProgressPopup = shouldFetchPopup && !!popupData && !popupDismissed;
   const allowCta = popupTrigger === "on_course_50" || popupTrigger === "on_course_80";
 
@@ -396,8 +397,9 @@ const scientistAdjectives = [
   useEffect(() => {
     const fetchPopup = async () => {
       if (!shouldFetchPopup || popupDismissed || !resolvedTrigger) return;
-      if (popupRequestedTrigger === resolvedTrigger) return;
-      setPopupRequestedTrigger(resolvedTrigger);
+      if (!popupRequestKey) return;
+      if (popupRequestedTrigger === popupRequestKey) return;
+      setPopupRequestedTrigger(popupRequestKey);
       try {
         const res = await api.get("/api/popups/next/", {
           params: { course_id: courseId, trigger: resolvedTrigger },

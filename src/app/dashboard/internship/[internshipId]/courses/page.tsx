@@ -294,6 +294,7 @@ function Page() {
   }, [activeInternshipId, internshipList]);
 
   const shouldFetchPopup = !!resolvedTrigger && !!popupCourseId;
+  const popupRequestKey = resolvedTrigger && popupCourseId ? `${popupCourseId}:${resolvedTrigger}` : null;
   const showProgressPopup = shouldFetchPopup && !!popupData && !popupDismissed;
   const allowCta = popupTrigger === "on_course_50" || popupTrigger === "on_course_80";
 
@@ -307,8 +308,9 @@ function Page() {
   useEffect(() => {
     const fetchPopup = async () => {
       if (!shouldFetchPopup || popupDismissed || !popupCourseId || !resolvedTrigger) return;
-      if (popupRequestedTrigger === resolvedTrigger) return;
-      setPopupRequestedTrigger(resolvedTrigger);
+      if (!popupRequestKey) return;
+      if (popupRequestedTrigger === popupRequestKey) return;
+      setPopupRequestedTrigger(popupRequestKey);
       try {
         const res = await api.get("/api/popups/next/", {
           params: { course_id: popupCourseId, trigger: resolvedTrigger },

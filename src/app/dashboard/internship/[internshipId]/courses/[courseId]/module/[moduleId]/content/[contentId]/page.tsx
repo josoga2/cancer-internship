@@ -732,6 +732,7 @@ function Page() {
           : null;
 
   const shouldFetchPopup = !!resolvedTrigger && courseId > 0;
+  const popupRequestKey = resolvedTrigger ? `${courseId}:${resolvedTrigger}` : null;
   const showProgressPopup = shouldFetchPopup && !!popupData && !popupDismissed;
   const allowCta = popupTrigger === "on_course_50" || popupTrigger === "on_course_80";
 
@@ -745,8 +746,9 @@ function Page() {
   useEffect(() => {
     const fetchPopup = async () => {
       if (!shouldFetchPopup || popupDismissed || !resolvedTrigger) return;
-      if (popupRequestedTrigger === resolvedTrigger) return;
-      setPopupRequestedTrigger(resolvedTrigger);
+      if (!popupRequestKey) return;
+      if (popupRequestedTrigger === popupRequestKey) return;
+      setPopupRequestedTrigger(popupRequestKey);
       try {
         const res = await api.get("/api/popups/next/", {
           params: { course_id: courseId, trigger: resolvedTrigger },
@@ -965,7 +967,7 @@ function Page() {
                   key={`${answer}-${index}`}
                   type="button"
                   onClick={() => handleSelectAnswer(answer)}
-                  className={`w-full text-left rounded-2xl border px-4 py-3 transition duration-150 min-h-[48px] ${optionClass}`}
+                  className={`w-full text-left rounded-2xl border px-4 py-3 transition duration-150 min-h-12 ${optionClass}`}
                   aria-pressed={isSelected}
                 >
                   <div className="flex items-start justify-between gap-3">

@@ -18,9 +18,9 @@ export default function Banner() {
       </button>
       <div>
         <a href="https://forms.gle/MPkai287qnBqgRSn6" className=" font-medium hover:text-gray-100">
-          <span className="font-semibold">Graduate School Event: </span> 
+          <span className="font-semibold">New Internship: </span> 
           <p className="underline inline-block">
-            Join our upcoming webinar, 21st Feb, 2026 
+            AI in Genomics | Starts April 18, 2026 | Enjoy 50% early bird discount now. 
           </p>
         </a>
       </div>
