@@ -1460,7 +1460,7 @@ function Page() {
   return (
     <main className="w-full">
     <div className="hidden md:flex w-full">
-      <div className="pl-5">
+      <div>
         <LeftSideBar />
       </div>
       <div className="flex-1 bg-hb-lightgreen min-h-screen flex flex-col">

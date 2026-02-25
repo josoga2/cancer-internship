@@ -1,7 +1,7 @@
 "use client";
 import HbButtons from "@/components/widgets/hb-buttons";
 import { BiDna, BiAtom } from "react-icons/bi";
-import { MdOutlineDashboard } from "react-icons/md";
+import { MdOutlineDashboard, MdOutlineLeaderboard } from "react-icons/md";
 import hb_logo from "@/../public/hb_logo.png";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -28,6 +28,12 @@ const tab_items = [
     name: "Career Paths",
     link: "/dashboard/internship/1/courses",
     iconImage: BiDna
+  },
+  {
+    id: 4,
+    name: "Leaderboard",
+    link: "/dashboard/leaderboard",
+    iconImage: MdOutlineLeaderboard
   }
 ];
 
@@ -55,8 +61,9 @@ export default function LeftSideBar() {
 
     return (
         <main>
-            <div className={`hidden w-full  h-full md:flex flex-col gap-5  items-center justify-center transition-all duration-300 ease-in-out `}>
-                <div className={`sticky top-0 flex flex-col gap-5 text-base h-screen bg-white items-start border-r transition-all duration-300 ease-in-out ${isOpen ? "w-55" : "w-18"} `}>
+            <div className={`hidden md:block transition-all duration-300 ease-in-out ml-5`}>
+                <div className={`relative h-[calc(100vh_-_var(--hb-banner-offset))] ${isOpen ? "w-55" : "w-18"} shrink-0`}>
+                  <div className={`fixed top-[var(--hb-banner-offset)] left-5 z-40 flex h-[calc(100vh_-_var(--hb-banner-offset))] flex-col gap-5 bg-white items-start border-r transition-all duration-300 ease-in-out ${isOpen ? "w-55" : "w-18"}`}>
                     <div className="flex flex-row items-center justify-between w-full gap-2  py-5">
                         <div className="flex flex-row items-center gap-2">
                         <Image src={hb_logo} alt="logo" width={36} height={36} />
@@ -100,6 +107,7 @@ export default function LeftSideBar() {
                         );
                         })}
                     </div>
+                  </div>
                 </div>
             </div>
 

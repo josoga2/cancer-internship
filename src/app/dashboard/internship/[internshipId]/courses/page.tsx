@@ -368,7 +368,7 @@ function Page() {
 
   return (
     <main className="w-full ">
-    <div className="hidden md:flex flex-row w-full pl-5">
+    <div className="hidden md:flex flex-row w-full">
       {/**LEFT SIDE BAR */}
       <LeftSideBar />
       {/** MAIN */}
