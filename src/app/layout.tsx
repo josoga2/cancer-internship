@@ -14,7 +14,10 @@ const dmSans = DM_Sans({
 
 
 export const metadata: Metadata = {
-  title: "HackBio Internship | Learn Bioinformatics, Data, and AI by Doing",
+  title: {
+    default: "HackBio Internship | Learn Bioinformatics, Data, and AI by Doing",
+    template: "%s | HackBio Internship",
+  },
   description: "Join the HackBio Internship to learn Bioinformatics, Data Science, and AI through real-world projects, hands-on practice, and community mentorship.",
   keywords: [
     "HackBio", 

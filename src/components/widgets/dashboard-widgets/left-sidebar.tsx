@@ -7,7 +7,9 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Menu, PanelRightClose, PanelRightOpen, X } from "lucide-react";
+import { FaSlack } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import api from "@/api";
 import Logout from "@/components/logout";
 
 const tab_items = [
@@ -44,6 +46,7 @@ export default function LeftSideBar() {
     const [isOpen, setIsOpen] = useState(true);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [hasMounted, setHasMounted] = useState(false);
+    const [socialPercent, setSocialPercent] = useState(0);
     const storageKey = "hb.sidebar.open";
 
     useEffect(() => {
@@ -58,6 +61,38 @@ export default function LeftSideBar() {
         if (!hasMounted) return;
         localStorage.setItem(storageKey, String(isOpen));
     }, [isOpen, hasMounted]);
+
+    useEffect(() => {
+        const fetchSocial = async () => {
+            try {
+                const res = await api.get("/api/slack/stats/");
+                if (res.status === 200) {
+                    const messages = Number(res.data?.messages_sent || 0);
+                    const lastEvent = res.data?.last_event_at ? new Date(res.data.last_event_at) : null;
+                    const daysSince = lastEvent ? (Date.now() - lastEvent.getTime()) / (1000 * 60 * 60 * 24) : 999;
+                    const recency = Math.max(0, Math.min(1, 1 - daysSince / 30));
+                    const volume = Math.max(0, Math.min(1, Math.log1p(messages) / Math.log1p(200)));
+                    const score = (0.6 * recency) + (0.4 * volume);
+                    setSocialPercent(Math.round(score * 100));
+                }
+            } catch (error) {
+                setSocialPercent(0);
+            }
+        };
+
+        fetchSocial();
+    }, []);
+
+    const socialColor =
+        socialPercent >= 100 ? "#ef4444"
+        : socialPercent >= 75 ? "#7c3aed"
+        : socialPercent >= 50 ? "#f97316"
+        : socialPercent >= 25 ? "#facc15"
+        : socialPercent >= 10 ? "#3b82f6"
+        : "#9ca3af";
+    const ringStyle = {
+        background: `conic-gradient(${socialColor} ${socialPercent * 3.6}deg, #e5e7eb 0deg)`,
+    };
 
     return (
         <main>
@@ -106,6 +141,29 @@ export default function LeftSideBar() {
                             </Link>
                         );
                         })}
+                    </div>
+                    <div className="mt-auto w-full px-4 pb-4">
+                        <div className="flex flex-col items-center gap-2">
+                            <div
+                                className="relative h-10 w-10"
+                                title="Social activity score based on recent Slack activity and message volume."
+                                aria-label="Social activity score based on recent Slack activity and message volume."
+                            >
+                                <div className="absolute inset-0 rounded-full" style={ringStyle} title="Social activity score based on recent Slack activity and message volume." />
+                                <div className="absolute inset-1 rounded-full bg-white flex items-center justify-center text-[10px] font-semibold text-gray-700" title="Social activity score based on recent Slack activity and message volume.">
+                                    {socialPercent}%
+                                </div>
+                            </div>
+                            <a
+                                href="https://hackbiointern-ysx7640.slack.com/archives/C09N00Y6VLZ"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center justify-center gap-2 text-xs text-blue-600 hover:underline w-full"
+                            >
+                                <FaSlack className="text-sm" />
+                                {isOpen && <span>Social</span>}
+                            </a>
+                        </div>
                     </div>
                   </div>
                 </div>
@@ -194,6 +252,29 @@ export default function LeftSideBar() {
                                 );
                                 })}
                             
+                            </div>
+                            <div className="mt-auto px-4 pb-4">
+                                <div className="flex flex-col items-center gap-2">
+                                    <div
+                                        className="relative h-10 w-10"
+                                        title="Social activity score based on recent Slack activity and message volume."
+                                        aria-label="Social activity score based on recent Slack activity and message volume."
+                                    >
+                                        <div className="absolute inset-0 rounded-full" style={ringStyle} title="Social activity score based on recent Slack activity and message volume." />
+                                        <div className="absolute inset-1 rounded-full bg-white flex items-center justify-center text-[10px] font-semibold text-gray-700" title="Social activity score based on recent Slack activity and message volume.">
+                                            {socialPercent}%
+                                        </div>
+                                    </div>
+                                    <a
+                                        href="https://hackbiointern-ysx7640.slack.com/archives/C09N00Y6VLZ"
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="inline-flex items-center justify-center gap-2 text-xs text-blue-700 hover:underline w-full"
+                                    >
+                                        <FaSlack className="text-sm" />
+                                        <span>Social</span>
+                                    </a>
+                                </div>
                             </div>
                             <div className="px-7 bottom-0 mt-auto mb-5 w-full">
                                 <Logout />

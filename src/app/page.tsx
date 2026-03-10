@@ -1,4 +1,5 @@
 import React from "react";
+import { buildPageMetadata } from "@/lib/page-metadata";
 import HbButtons from "@/components/widgets/hb-buttons";
 import winfred from "../../public/winfred.svg"
 import testimonials from '../../public/Testimonials.svg'
@@ -7,6 +8,13 @@ import talent_map from '../../public/wolrd-map.png'
 import ayano from '../../public/ayano.jpeg'
 import adekoya from '../../public/adekoya.jpeg'
 import barve from '../../public/barve.jpeg'
+
+export const metadata = buildPageMetadata({
+  title: "HackBio Internship",
+  description:
+    "Learn bioinformatics, data science, and AI by doing real-world projects with HackBio internships.",
+  urlPath: "/",
+});
 
 import {
   Carousel,

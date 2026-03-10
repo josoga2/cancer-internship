@@ -15,6 +15,16 @@ const nextConfig = {
         hostname: "raw.githubusercontent.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "hbapi.jisender.com",
+        pathname: "/media/**",
+      },
+      {
+        protocol: "https",
+        hostname: "api.jisender.com",
+        pathname: "/media/**",
+      },
     ],
   },
 };

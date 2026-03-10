@@ -17,6 +17,7 @@ interface LeaderboardRow {
   xp: number;
   normalized_xp: number;
   normalized_percent: number;
+  social_score?: number;
 }
 
 function Page() {
@@ -130,6 +131,7 @@ function Page() {
                 <span className="flex-1 pl-6">User</span>
                 <span className="w-24 text-right">XP</span>
                 <span className="w-20 text-right">%</span>
+                <span className="w-20 text-right">Social</span>
               </div>
 
               {loading ? (
@@ -153,6 +155,7 @@ function Page() {
                     <span className="flex-1 pl-6 font-semibold text-gray-900">{row.username}</span>
                     <span className="w-24 text-right font-semibold text-gray-900">{row.normalized_xp} XP</span>
                     <span className="w-20 text-right text-xs text-gray-600">{row.normalized_percent}%</span>
+                    <span className="w-20 text-right text-xs text-gray-600">{row.social_score ?? 0}%</span>
                   </div>
                 ))
               )}
@@ -216,6 +219,7 @@ function Page() {
                     <span className="text-right">
                       <span className="block font-semibold text-gray-900">{row.normalized_xp} XP</span>
                       <span className="block text-xs text-gray-500">{row.normalized_percent}%</span>
+                      <span className="block text-xs text-gray-500">Social {row.social_score ?? 0}%</span>
                     </span>
                   </div>
                   <p className="mt-2 font-semibold text-gray-900">{row.username}</p>
