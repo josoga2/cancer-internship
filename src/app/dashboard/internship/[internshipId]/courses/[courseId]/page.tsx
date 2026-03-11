@@ -9,12 +9,13 @@ import {
     AccordionTrigger,
   } from "@/components/ui/accordion"
 import api from "@/api";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import withAuth from "@/components/withAuth";
 import LeftSideBar from "@/components/widgets/dashboard-widgets/left-sidebar";
 import MainScreenFlexIntXP from "@/components/widgets/dashboard-widgets/main-screen-intxp";
 import Link from "next/dist/client/link";
 import ProgressFloat from "@/components/widgets/progress-float";
+import { CircleCheck, CircleAlert } from "lucide-react";
 
 
 function Page() {
@@ -137,6 +138,17 @@ function Page() {
 
   //console.log('program type:', progType);
   //console.log('global internship id:', globalInternshipId);
+
+  const completedContentIds = useMemo(() => {
+    return new Set(
+      completedContent
+        .split(",")
+        .map((id) => id.trim())
+        .filter((id) => id && id.toLowerCase() !== "none")
+        .map((id) => Number(id))
+        .filter((id) => !Number.isNaN(id))
+    );
+  }, [completedContent]);
 
   //get user progress
   useEffect(() => {
@@ -507,15 +519,25 @@ const scientistAdjectives = [
                           <div className="flex flex-col gap-5 text-gray-600 text-base pl-5">
                               {contentList
                               .filter((content) => Number(content.module) === Number(module.id))
-                              .map((content) => (
-                                <div key={content.id} className="flex flex-col gap-2">
-                                    <ul className="list-disc pl-5 text-base" key={content.id}>
-                                        <Link href={subscriptionIntStatus ? `/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${module.id}/content/${content.id}?type=single` : `/dashboard/checkout?prog=${Number(globalInternshipId) > 0 ? `internship` : `course`}&id=${Number(globalInternshipId) > 0 ? globalInternshipId : courseId}`} className="hover:underline">
-                                            <li>{content.title}</li>
-                                        </Link>
-                                    </ul>
-                                </div>
-                              ))}
+                              .map((content) => {
+                                const isDone = completedContentIds.has(Number(content.id));
+                                return (
+                                  <div key={content.id} className="flex flex-col gap-2">
+                                      <ul className="list-none pl-0 text-base" key={content.id}>
+                                          <Link href={subscriptionIntStatus ? `/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${module.id}/content/${content.id}?type=single` : `/dashboard/checkout?prog=${Number(globalInternshipId) > 0 ? `internship` : `course`}&id=${Number(globalInternshipId) > 0 ? globalInternshipId : courseId}`} className="hover:underline">
+                                              <li className="flex items-center gap-2">
+                                                {isDone ? (
+                                                  <CircleCheck className="h-4 w-4 text-green-600" />
+                                                ) : (
+                                                  <CircleAlert className="h-4 w-4 text-red-500" />
+                                                )}
+                                                <span>{content.title}</span>
+                                              </li>
+                                          </Link>
+                                      </ul>
+                                  </div>
+                                );
+                              })}
                           </div>
                           </AccordionContent>
                       </AccordionItem>
@@ -587,16 +609,26 @@ const scientistAdjectives = [
                           <div className="flex flex-col gap-3 text-sm text-gray-600 pl-2">
                             {contentList
                               .filter((content) => Number(content.module) === Number(module.id))
-                              .map((content) => (
-                                <ul className="list-disc pl-5" key={content.id}>
-                                  <Link
-                                    href={subscriptionIntStatus ? `/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${module.id}/content/${content.id}?type=single` : `/dashboard/checkout?prog=internship&id=${globalInternshipId}`}
-                                    className="hover:underline"
-                                  >
-                                    <li>{content.title}</li>
-                                  </Link>
-                                </ul>
-                              ))}
+                              .map((content) => {
+                                const isDone = completedContentIds.has(Number(content.id));
+                                return (
+                                  <ul className="list-none pl-0" key={content.id}>
+                                    <Link
+                                      href={subscriptionIntStatus ? `/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${module.id}/content/${content.id}?type=single` : `/dashboard/checkout?prog=internship&id=${globalInternshipId}`}
+                                      className="hover:underline"
+                                    >
+                                      <li className="flex items-center gap-2">
+                                        {isDone ? (
+                                          <CircleCheck className="h-4 w-4 text-green-600" />
+                                        ) : (
+                                          <CircleAlert className="h-4 w-4 text-red-500" />
+                                        )}
+                                        <span>{content.title}</span>
+                                      </li>
+                                    </Link>
+                                  </ul>
+                                );
+                              })}
                           </div>
                         </AccordionContent>
                       </AccordionItem>
