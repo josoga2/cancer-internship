@@ -32,7 +32,7 @@ export default function Banner() {
         &times;
       </button>
       <div>
-        <a href="https://forms.gle/MPkai287qnBqgRSn6" className=" font-medium hover:text-gray-100">
+        <a href="https://internship.thehackbio.com/internship" className=" font-medium hover:text-gray-100">
           <span className="font-semibold">New Internship: </span> 
           <p className="underline inline-block">
             AI in Genomics | Starts April 18, 2026 | Enjoy 50% early bird discount now. 
