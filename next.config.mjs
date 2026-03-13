@@ -17,12 +17,12 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "hbapi.jisender.com",
+        hostname: "hbapi.thehackbio.com",
         pathname: "/media/**",
       },
       {
         protocol: "https",
-        hostname: "api.jisender.com",
+        hostname: "api.thehackbio.com",
         pathname: "/media/**",
       },
     ],
