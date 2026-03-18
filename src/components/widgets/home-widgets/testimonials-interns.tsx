@@ -9,7 +9,7 @@ import barve from "@/../public/barve.jpeg"
 export default function TestimonialsInterns() {
     return (
         <main>
-            <div className="hidden w-full py-10  h-full md:flex flex-col gap-5  items-center justify-center border-r-hb-lightgreen border-r border-l border-l-hb-lightgreen">
+            <div className="hidden w-full py-10  h-full md:flex flex-col gap-5  items-center justify-center">
                 <div className="py-5 w-full h-full bg-hb-lightgreen flex flex-col gap-5 px-10">
                     <p className="text-xl font-bold text-center"> Read amazing stories from previous interns</p>
                     <p className="text-center text-base">We are proud to share success stories of our alumni. Yours could be next!</p>

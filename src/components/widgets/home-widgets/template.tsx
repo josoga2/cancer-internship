@@ -3,7 +3,7 @@ import HbButtons from "@/components/widgets/hb-buttons";
 export default function Template() {
     return (
         <main>
-            <div className="hidden w-full py-10  h-full md:flex flex-col gap-5 px-10  items-center justify-center border-r-hb-lightgreen border-r border-l border-l-hb-lightgreen">
+            <div className="hidden w-full py-10  h-full md:flex flex-col gap-5 px-10  items-center justify-center">
                 <div>Insert Desktop Code Here</div>
                 <HbButtons type="primary" text="HackBio"/>
             </div>

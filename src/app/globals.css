@@ -83,7 +83,7 @@
 }
 
 .dark {
-  --background: oklch(0.141 0.005 285.823);
+  --background: #101a15;
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.21 0.006 285.885);
   --card-foreground: oklch(0.985 0 0);
@@ -114,6 +114,7 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.527 0.154 150.069);
+  --color-hb-lightgreen: #101a15;
 }
 
 @layer base {
@@ -152,4 +153,57 @@ body {
   .prose a:hover {
     color: var(--color-primary-light);
   }
+}
+
+/* Global dark-mode utility overrides for existing pages that still use fixed light classes */
+.dark body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.dark .bg-white {
+  background-color: #111827 !important;
+}
+
+.dark .bg-gray-50,
+.dark .bg-hb-lightgreen,
+.dark .bg-green-50 {
+  background-color: #101a15 !important;
+}
+
+.dark .text-gray-900 {
+  color: #f9fafb !important;
+}
+
+.dark .text-gray-800 {
+  color: #f3f4f6 !important;
+}
+
+.dark .text-gray-700 {
+  color: #e5e7eb !important;
+}
+
+.dark .text-gray-600,
+.dark .text-gray-500 {
+  color: #cbd5e1 !important;
+}
+
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-gray-300,
+.dark .border-green-100,
+.dark .border-green-200 {
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+.dark .hover\:bg-gray-100:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #0f172a;
+  color: #e2e8f0;
+  border-color: rgba(255, 255, 255, 0.16);
 }

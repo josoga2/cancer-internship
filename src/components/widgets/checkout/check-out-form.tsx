@@ -1,452 +1,380 @@
-'use client'
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
+import { EmbeddedCheckout, EmbeddedCheckoutProvider } from "@stripe/react-stripe-js";
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Accordion } from "@radix-ui/react-accordion";
 import { CreditCard, Wallet } from "lucide-react";
-import { loadStripe } from "@stripe/stripe-js";
-import { useEffect, useState } from "react";
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
-import {
-  EmbeddedCheckoutProvider,
-  EmbeddedCheckout
-} from '@stripe/react-stripe-js';
 import NavbarPay from "@/components/Nav/navbar-pay";
 import publicApi from "@/publicApi";
 
+type CheckoutType = "course" | "pathway" | "internship" | "subscription";
 
+type CatalogProgram = {
+  id: number;
+  title: string;
+  description: string;
+  price: string | number;
+  mentorship_addon_price?: string | number;
+};
 
-export default function CheckOutForm({title, desc, progId, curr, discount, plan}:{ title:string; desc:string; progId:number, curr:string, discount:number; plan:string }) {
+type SubscriptionOffer = {
+  id: number | null;
+  name: string;
+  price: string | number;
+  duration_days: number;
+  description: string;
+  features: string[];
+};
 
-    const [clientSecret, setClientSecret] = useState<string | null>(null);
-    const [priceType, setPriceType] = useState('')
-    const [refCode, setRefCode] = useState('')
+export default function CheckOutForm({
+  plan,
+  sourceType,
+  programs,
+  selectedProgram,
+  allowProgramSelection,
+  supportsMentorshipAddon,
+  subscriptionOffer,
+}: {
+  plan: CheckoutType;
+  sourceType: string;
+  programs: CatalogProgram[];
+  selectedProgram: CatalogProgram | null;
+  allowProgramSelection: boolean;
+  supportsMentorshipAddon: boolean;
+  subscriptionOffer: SubscriptionOffer;
+}) {
+  const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST!);
 
-    const stripePromise = loadStripe(
-        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST!
-    );
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [refCode, setRefCode] = useState("");
+  const [currency, setCurrency] = useState("USD");
+  const [subscriptionLength, setSubscriptionLength] = useState("12 months");
+  const [purchaseOption, setPurchaseOption] = useState<"program" | "subscription">(
+    plan === "subscription" ? "subscription" : "program"
+  );
+  const [includeMentorship, setIncludeMentorship] = useState(false);
+  const [selectedProgramId, setSelectedProgramId] = useState<number>(selectedProgram?.id || 0);
 
-    
-    //dropdown for length of subscription / one-time payment
-    const [subscriptionLength, setSubscriptionLength] = useState('12 months');
-    console.log(subscriptionLength)
-
-    const productPrice = (() => {
-        
-        if (subscriptionLength === '6 months') {
-            return 0.5;
-        } else if (subscriptionLength === '12 months') {
-            return 1;
-        } else if (subscriptionLength === '3 months') {
-            return 0.25;
-        }
-        return 0;
-    })();
-
-    const createCheckout = async() => {
-        try {
-            const res = await publicApi.post(
-                "/api/create-checkout/",
-                { priceType: priceType, title:title, desc:desc, progId:progId, subscriptionLength:subscriptionLength, refCode:refCode }
-            );
-            if(res.status === 200){
-                //console.log('successful')
-                setClientSecret(res.data.client_secret);
-            }
-            
-        } catch (err) {
-            console.log('unsuccessful')
-            //router.push("/login");
-        }
+  useEffect(() => {
+    if (plan === "subscription") {
+      setPurchaseOption("subscription");
+      setSelectedProgramId(0);
+      return;
     }
+    if (allowProgramSelection) {
+      setSelectedProgramId(selectedProgram?.id || 0);
+    } else {
+      setSelectedProgramId(selectedProgram?.id || 0);
+    }
+  }, [plan, allowProgramSelection, selectedProgram]);
 
-    useEffect(() => {
-        if (!priceType) return;
+  const selectedProgramData = useMemo(
+    () => programs.find((program) => Number(program.id) === Number(selectedProgramId)) || selectedProgram || null,
+    [programs, selectedProgramId, selectedProgram]
+  );
 
-        createCheckout();
-    }, [priceType]);
+  const subscriptionMonthsMultiplier = useMemo(() => {
+    if (subscriptionLength === "3 months") return 0.25;
+    if (subscriptionLength === "6 months") return 0.5;
+    return 1;
+  }, [subscriptionLength]);
 
-    const planPrice = (() => {
-        switch (plan) {
-            case "course":
-                return 30;
-            case "career":
-                return 60;
-            case "internship":
-                return 100;
-            case "subscription":
-                return 400;
-            default:
-                return 0;
-            }
-    })();
+  const isSubscriptionCheckout = plan === "subscription" || purchaseOption === "subscription";
+  const checkoutType: CheckoutType = isSubscriptionCheckout ? "subscription" : plan;
+  const checkoutProgramId = isSubscriptionCheckout ? 0 : Number(selectedProgramData?.id || 0);
 
+  const mentorshipAddonPrice = Number(selectedProgramData?.mentorship_addon_price || 20);
+  const mentorshipEnabled = !isSubscriptionCheckout && supportsMentorshipAddon && includeMentorship;
 
+  const baseProgramPrice = Number(selectedProgramData?.price || 0);
+  const subscriptionPrice = Number(subscriptionOffer?.price || 0);
+  const selectedPriceUsd = isSubscriptionCheckout
+    ? subscriptionPrice * subscriptionMonthsMultiplier
+    : baseProgramPrice + (mentorshipEnabled ? mentorshipAddonPrice : 0);
 
-    const [finalPrice, setFinalPrice] = useState(0);
-    const exchangeRateNaira = 1500
-    const exchangeRateRupee = 90
+  const canInitiateCheckout = isSubscriptionCheckout || checkoutProgramId > 0;
 
-    const [currency, setCurrency] = useState('USD');
+  const exchangeRateNaira = 1500;
+  const exchangeRateRupee = 90;
+  const exchangeRate = currency === "NGN" ? exchangeRateNaira : currency === "INR" ? exchangeRateRupee : 1;
+  const totalPriceInCurrency = Number((selectedPriceUsd * exchangeRate).toFixed(2));
 
-    const exchangeRate = (() => {
-        if (currency === 'NGN') {
-            return exchangeRateNaira;
-        } else if (currency === 'INR') {
-            return exchangeRateRupee;
-        } else {
-            return 1; // USD
+  const checkoutPayload = useMemo(
+    () => ({
+      priceType: checkoutType,
+      type: checkoutType,
+      title: isSubscriptionCheckout ? subscriptionOffer.name : selectedProgramData?.title || "",
+      desc: isSubscriptionCheckout ? subscriptionOffer.description : selectedProgramData?.description || "",
+      progId: checkoutProgramId,
+      id: checkoutProgramId,
+      sourceType,
+      subscriptionLength,
+      includeMentorship: mentorshipEnabled,
+    }),
+    [
+      checkoutType,
+      isSubscriptionCheckout,
+      subscriptionOffer.name,
+      subscriptionOffer.description,
+      selectedProgramData?.title,
+      selectedProgramData?.description,
+      checkoutProgramId,
+      sourceType,
+      subscriptionLength,
+      mentorshipEnabled,
+    ]
+  );
+
+  const paypalPayload = useMemo(
+    () => ({
+      ...checkoutPayload,
+      refCode,
+    }),
+    [checkoutPayload, refCode]
+  );
+
+  const createCheckout = async () => {
+    if (!canInitiateCheckout) return;
+    try {
+      const res = await publicApi.post("/api/create-checkout/", checkoutPayload);
+      if (res.status === 200) {
+        if (res.data?.no_payment_required) {
+          window.alert("You already have enough access for this tier. No additional payment is needed.");
+          setClientSecret(null);
+          return;
         }
-    })();
+        setClientSecret(res.data.client_secret);
+      }
+    } catch {
+      setClientSecret(null);
+    }
+  };
 
-    //paypal config
-    const initialOptions = {
-        "clientId": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '',
-        
-    };
+  useEffect(() => {
+    createCheckout();
+  }, [canInitiateCheckout, checkoutPayload]);
 
-    //Paypal Processors
+  const createOrder = async () => {
+    if (!canInitiateCheckout) return undefined;
+    try {
+      const res = await publicApi.post("/api/create-paypal-order/", paypalPayload);
+      if (res.status === 200) {
+        return res.data.id;
+      }
+    } catch (error) {
+      console.error("Error creating PayPal order:", error);
+    }
+    return undefined;
+  };
 
-    const createOrder = async () => {
-    // 1. Call your Django backend to create the order
+  const onApprove = async (data: any) => {
+    try {
+      const res = await publicApi.post(`/api/capture-paypal-order/${data.orderID}/`);
+      if (res.status === 200) {
+        alert(`Payment Successful! Thank you very much for your purchase. We sent a mail to: ${res.data.email}.`);
+        window.location.href = `/dashboard/checkout/return-paypal/`;
+      }
+    } catch (error) {
+      console.error("Error capturing PayPal order:", error);
+    }
+  };
 
-        try{
+  const initialOptions = { clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "" };
 
-            const res = await publicApi.post(
-                "/api/create-paypal-order/",
-                { priceType: priceType, title:title, desc:desc, progId:progId, subscriptionLength:subscriptionLength, refCode:refCode  }
-            );
-            if(res.status === 200){
-                //console.log('successful')
-                return res.data.id; // Returns the PayPal ID
-            }
-        }
-        catch (error) {
-            console.error("Error creating PayPal order:", error);
-        }
-    };
+  return (
+    <main>
+      <div className="pt-16">
+        <NavbarPay />
+      </div>
 
-
-    const onApprove = async (data: any) => {
-        // 2. Call your Django backend to capture the funds
-
-        try{
-            const res = await publicApi.post(
-                `/api/capture-paypal-order/${data.orderID}/`,
-            );
-            if(res.status === 200){
-                //console.log('successful')
-                alert(`Payment Successful! Thank you very much for your purchase. We sent a mail to: ${res.data.email} Click ok and proceed to access your dashboard.`);
-                window.location.href = `/dashboard/checkout/return-paypal/`; // Redirect to dashboard
-            }
-        }
-        catch (error) {
-            console.error("Error capturing PayPal order:", error);
-        }
-    };
-
-
-    console.log(`refcod is: `, refCode)
-
-    //console.log(priceType, title, progId, subscriptionLength)
-
-    return (
-        <main>
-            <div className="pt-16">
-                <NavbarPay />
-            </div>
-            
-            <div className="hidden w-full py-10  h-full md:flex flex-col gap-5  items-start justify-start ">
-                <div className="text-xs flex w-full flex-row font-bold items-center justify-between right-0 gap-2">
-                    <div className="text-sm flex flex-row font-bold items-center right-0 gap-2">
-                        <p>Select Currency</p>
-                        <select
-                            value={currency}
-                            onChange={(e) => {setCurrency(e.target.value);}}
-                            className="border p-1 rounded-sm"
-                        >
-                            <option value="USD">USD</option>
-                            <option value="NGN">NGN</option>
-                            <option value="INR">INR</option>
-                        </select>
+      <div className="mx-auto w-full max-w-6xl px-4 py-8 md:px-6">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <section className="rounded-sm border bg-white p-5">
+            <p className="text-base font-bold">Select Preferred Payment Method</p>
+            <Accordion type="single" collapsible className="mt-4">
+              <AccordionItem value="paypal">
+                <AccordionTrigger>PayPal</AccordionTrigger>
+                <AccordionContent>
+                  {canInitiateCheckout ? (
+                    <div className="space-y-3">
+                      <PayPalScriptProvider options={initialOptions}>
+                        <PayPalButtons style={{ layout: "vertical" }} createOrder={createOrder} onApprove={onApprove} />
+                      </PayPalScriptProvider>
+                      <input
+                        className="w-full rounded-sm border-2 border-hb-green px-3 py-2"
+                        placeholder="Referral code (optional)"
+                        value={refCode}
+                        onChange={(e) => setRefCode(String(e.target.value))}
+                      />
                     </div>
+                  ) : (
+                    <p className="text-sm text-gray-600">Select a program to continue.</p>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
 
-                    <div className="text-sm flex flex-row font-bold items-center right-0 gap-2">
-                        <p>{`(1)`} Select Suscription Length</p>
-                        <select
-                            value={subscriptionLength}
-                            onChange={(e) => {setSubscriptionLength(e.target.value);}}
-                            className="border p-1 rounded-sm"
-                        >
-                            <option value="3 months">3 months</option>
-                            <option value="6 months">6 months</option>
-                            <option value="12 months">12 months</option>
-                        </select>
+              <AccordionItem value="card">
+                <AccordionTrigger>
+                  <span className="flex items-center gap-2">
+                    <CreditCard className="h-4 w-4" />
+                    Card (Credit or Debit)
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent>
+                  {clientSecret ? (
+                    <EmbeddedCheckoutProvider stripe={stripePromise} options={{ clientSecret }}>
+                      <EmbeddedCheckout />
+                    </EmbeddedCheckoutProvider>
+                  ) : (
+                    <p className="text-sm text-gray-600">Select your preferred checkout option to load card payment.</p>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="bank">
+                <AccordionTrigger>
+                  <span className="flex items-center gap-2">
+                    <Wallet className="h-4 w-4" />
+                    Bank Transfer (NGN)
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-3">
+                    <div className="rounded-sm border border-amber-800 bg-yellow-100 p-4 text-sm text-amber-800">
+                      Kindly proceed to pay NGN {Number((selectedPriceUsd * exchangeRateNaira).toFixed(2)) || "0"} via OPAY
+                      (9552770865, THEHACKBIO ENTERPRISES). Send receipt to contact@thehackbio.com.
                     </div>
-                </div>
-                
-                <div className="grid grid-cols-2 items-start gap-2 w-200 justify-between text-base">
-                    <div className="p-5 border  rounded-sm">
-                        <p className="text-sm font-bold">Select preferred payment method</p>
-                        <Accordion type="single" collapsible>
-
-                            {/**Paypal */}
-                            <AccordionItem value="item-1">
-                                <AccordionTrigger>
-                                    Paypal
-                                </AccordionTrigger>
-
-                                {priceType && subscriptionLength? 
-                                <AccordionContent>
-                                    <PayPalScriptProvider options={initialOptions}>
-                                        <PayPalButtons
-                                            style={{ layout: "vertical" }}
-                                            createOrder={createOrder}
-                                            onApprove={onApprove}
-                                        />
-                                    </PayPalScriptProvider>
-                                    <input className="py-3 px-3 w-full border-2 border-hb-green rounded-md" placeholder="Referral code" value={refCode} onChange={(e)=>setRefCode(String(e.target.value))} />
-                                </AccordionContent>
-                                : <AccordionContent>
-                                    <div>{`Please select your preferred payment plan (to your right)`}</div>
-                                </AccordionContent>}
-                            </AccordionItem>
-
-                            {/**Card */}
-                            
-                                <AccordionItem value="item-2">
-                                    <AccordionTrigger>
-                                        <span className="flex flex-row gap-2 items-center"><CreditCard /> <p>{`Card (Credit or Debit)`}</p></span>
-                                    </AccordionTrigger>
-
-                                    <AccordionContent>
-                                        {clientSecret ? 
-                                        <div id="checkout">
-                                            <EmbeddedCheckoutProvider
-                                                stripe={stripePromise}
-                                                options={{ clientSecret }}
-                                            >
-                                                <EmbeddedCheckout />
-                                            </EmbeddedCheckoutProvider>
-                                        </div>
-                                        : <div>{`Please select your preferred payment plan (to your right)`}</div>}
-                                    </AccordionContent>
-                                </AccordionItem>
-                            
-
-                            {/**Opay */}
-                            <AccordionItem value="item-3">
-                                <AccordionTrigger>
-                                    <span className="flex flex-row gap-2 items-center"><Wallet /> <p>{`Bank Transfer (NGN)`}</p></span>
-                                </AccordionTrigger>
-
-                                <AccordionContent>
-                                    <form className="flex flex-col gap-3 items-start w-full  rounded-sm">
-                                        <div className="flex flex-col gap-2 p-5 bg-yellow-100 border-amber-800 border rounded-sm">
-                                            <p className="text-amber-800">
-                                                {`Kindly proceed to pay NGN ${(Number(finalPrice)*Number(exchangeRateNaira) || 'Select your plan on the right')} via OPAY (Nigerians) using the following details: 9552770865 (THEHACKBIO ENTERPRISES). After payment, please send a screenshot of the transaction details to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com`}
-                                            </p>
-                                            <p className="text-amber-800">
-                                                Please note that enrollment will be processed manually and might take 24 hours before it reflects on your account.
-                                            </p>
-                                            <p className="text-amber-800">
-                                                {`Description: Program + Duration + Referral Code (optional).`}
-                                            </p>
-                                        </div>
-                                        <a
-                                            href={`mailto:contact@thehackbio.com?subject=Payment%20Receipt&body=Hi%20HackBio%2C%0A%0APlease%20find%20my%20receipt%20attached.`}
-                                            className="bg-hb-green px-5 text-white rounded-sm font-bold py-2"
-                                        >
-                                        Send us your receipt
-                                        </a>
-                                    </form>
-                                </AccordionContent>
-                            </AccordionItem>
-                        </Accordion>
-                    
-                    </div>
-
-                    <form className="border p-5 bg-white rounded-sm ">
-                        <div className="flex flex-col gap-5">
-                            <div className="flex flex-col gap-2">
-                                <p className="text-lg font-bold">{title}</p>
-                                <p className="text-sm font-medium">{desc}</p>
-                            </div>
-
-                            <p className="font-bold text-base pb-5 border-b">{`(2)`} Select Plan</p>
-
-                            <div className="flex flex-col gap-2 border rounded-sm p-3">
-                                <div className="flex flex-row items-center gap-3" >
-                                    <input type="radio" name="priceType" value={'subscription'} className="scale-150 accent-hb-green " onChange={() => {setFinalPrice(200 * productPrice);setPriceType('subscription');  }} />
-                                    <p className="text-base font-bold">{`Pro Subscription (12 months)`}</p>
-                                </div>
-                                <span className="flex flex-row gap-2"> <p className="text-base font-bold">{`${currency} ${200 * exchangeRate * productPrice}`}</p> <p className="text-base line-through text-gray-400">{`${currency} ${400 * exchangeRate * productPrice}`}</p> <p className="text-base  font-bold text-blue-600">{`(50% off)`}</p> </span>
-                                <p className="text-sm font-medium">{`Access this course and everything (Internships and Courses) from HackBio`}</p>
-                            </div>
-
-                            <p className="text-red-400 text-sm">
-                                {priceType
-                                ? priceType.charAt(0).toUpperCase() + priceType.slice(1)
-                                : "None "}
-                                {` Selected`}
-                            </p>
-
-                            {/**Prepare for all cases */}
-                            <div className="flex flex-col gap-2 border rounded-sm p-3">
-                                <div className="flex flex-row items-center gap-3">
-                                    <input type="radio" name="priceType" value={'course'} className="scale-150 accent-hb-green " onChange={() => {setFinalPrice((planPrice - (planPrice * discount)) ); setPriceType(plan); }} />
-                                    <p className="text-base font-bold">{`Access this program alone (12 months) `}</p>
-                                </div>
-                                <span className="flex flex-row gap-2 "> <p className="text-base font-bold">{`${currency} ${(planPrice - (planPrice * discount)) * exchangeRate }`}</p> <p className="text-base line-through text-gray-400">{`${currency} ${planPrice * exchangeRate }`} </p> <p className="text-base text-blue-600 font-bold ">{`(50% off)`}</p> </span>
-                                <p className="text-sm font-medium">{`Just this course alone for 12 months`}</p>
-                            </div>
-
-                            <div className="flex flex-row gap-5 items-center text-3xl">
-                                <p className="text-xl font-bold">Total:</p> <p className="">{currency} {finalPrice * exchangeRate }</p>
-                            </div>
-                        </div>
-
-                    </form>
-                </div>
-                
-            </div>
-
-            {/**MOBILE */}
-
-            <div className="flex flex-col w-full md:hidden gap-5   rounded-xl">
-                <div className="text-base flex flex-row font-bold items-center right-0 gap-2">
-                    <p>Select Currency</p>
-                    <select
-                        value={currency}
-                        onChange={(e) => {setCurrency(e.target.value);}}
-                        className="border p-1 rounded-sm"
+                    <a
+                      href="mailto:contact@thehackbio.com?subject=Payment%20Receipt&body=Hi%20HackBio%2C%0A%0APlease%20find%20my%20receipt%20attached."
+                      className="inline-flex rounded-sm bg-hb-green px-4 py-2 text-sm font-bold text-white"
                     >
-                        <option value="USD">USD</option>
-                        <option value="NGN">NGN</option>
-                        <option value="INR">INR</option>
-                    </select>
+                      Send us your receipt
+                    </a>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </section>
+
+          <section className="rounded-sm border bg-white p-5">
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-wrap items-center gap-3 text-sm font-medium">
+                <label className="font-bold">Currency</label>
+                <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="rounded-sm border p-1">
+                  <option value="USD">USD</option>
+                  <option value="NGN">NGN</option>
+                  <option value="INR">INR</option>
+                </select>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 text-sm font-medium">
+                <label className="font-bold">Subscription length</label>
+                <select
+                  value={subscriptionLength}
+                  onChange={(e) => setSubscriptionLength(e.target.value)}
+                  className="rounded-sm border p-1"
+                >
+                  <option value="3 months">3 months</option>
+                  <option value="6 months">6 months</option>
+                  <option value="12 months">12 months</option>
+                </select>
+              </div>
+
+              {plan !== "subscription" ? (
+                <div className="rounded-sm border p-3">
+                  <label className="flex items-start gap-2">
+                    <input
+                      type="radio"
+                      name="purchaseOption"
+                      value="program"
+                      checked={purchaseOption === "program"}
+                      onChange={() => setPurchaseOption("program")}
+                      className="mt-1 accent-hb-green"
+                    />
+                    <span>
+                      <span className="block font-bold">Access this program alone</span>
+                      <span className="text-sm text-gray-600">1 year access to your selected program.</span>
+                    </span>
+                  </label>
                 </div>
-                <div className="flex flex-col-reverse text-sm items-start gap-2 w-full justify-between ">
-                     
-                    <div className="p-5 border  rounded-sm">
-                        <p className="font-bold text-base pb-5 border-b">Select Preferred Payment Method</p>
-                        <Accordion type="single" collapsible>
+              ) : null}
 
-                            {/**Paypal */}
-                            <AccordionItem value="item-1">
-                                <AccordionTrigger>
-                                    Paypal
-                                </AccordionTrigger>
+              <div className="rounded-sm border p-3">
+                <label className="flex items-start gap-2">
+                  <input
+                    type="radio"
+                    name="purchaseOption"
+                    value="subscription"
+                    checked={purchaseOption === "subscription"}
+                    onChange={() => setPurchaseOption("subscription")}
+                    className="mt-1 accent-hb-green"
+                  />
+                  <span>
+                    <span className="block font-bold">{subscriptionOffer.name}</span>
+                    <span className="text-sm text-gray-600">{subscriptionOffer.description}</span>
+                    <ul className="mt-2 space-y-1 text-sm text-gray-700">
+                      {subscriptionOffer.features.map((feature) => (
+                        <li key={feature}>- {feature}</li>
+                      ))}
+                    </ul>
+                  </span>
+                </label>
+              </div>
 
-                                <AccordionContent>
-                                    {priceType && subscriptionLength? 
-                                    <AccordionContent>
-                                        <PayPalScriptProvider options={initialOptions}>
-                                            <PayPalButtons
-                                                style={{ layout: "vertical" }}
-                                                createOrder={createOrder}
-                                                onApprove={onApprove}
-                                            />
-                                        </PayPalScriptProvider>
-                                        <input className="py-3 px-3 w-full border-2 border-hb-green rounded-md" placeholder="Referral code" value={refCode} onChange={(e)=>setRefCode(String(e.target.value))} />
-                                    </AccordionContent>
-                                    : <AccordionContent>
-                                        <div>{`Please select your preferred payment plan (to your right)`}</div>
-                                    </AccordionContent>}
-                                </AccordionContent>
-                            </AccordionItem>
-
-                            {/**Card */}
-                            
-                                <AccordionItem value="item-2">
-                                    <AccordionTrigger>
-                                        <span className="flex flex-row gap-2 items-center"><CreditCard /> <p>{`Card (Credit or Debit)`}</p></span>
-                                    </AccordionTrigger>
-
-                                    <AccordionContent>
-                                        {clientSecret ?  
-                                        <div id="checkout">
-                                            <EmbeddedCheckoutProvider
-                                                stripe={stripePromise}
-                                                options={{ clientSecret }}
-                                            >
-                                                <EmbeddedCheckout />
-                                            </EmbeddedCheckoutProvider>
-                                        </div>
-                                        : <div>{`Please select your preferred payment plan (to your below)`}</div>}
-                                    </AccordionContent>
-                                </AccordionItem>
-                            
-
-                            {/**Opay */}
-                            <AccordionItem value="item-3">
-                                <AccordionTrigger>
-                                    <span className="flex flex-row gap-2 items-center"><Wallet /> <p>{`Bank Transfer (NGN)`}</p></span>
-                                </AccordionTrigger>
-
-                                <AccordionContent>
-                                    <form className="flex flex-col gap-3 items-start w-full  rounded-sm">
-                                        <div className="flex flex-col gap-2 p-5 bg-yellow-100 border-amber-800 border rounded-sm">
-                                            <p className="text-amber-800">
-                                                {`Kindly proceed to pay NGN ${(Number(finalPrice)*Number(exchangeRateNaira) || 'Select your plan on the right')} via OPAY (Nigerians) using the following details: 9552770865 (THEHACKBIO ENTERPRISES). After payment, please send a screenshot of the transaction details to @thehackbio on X (Twitter), HackBio on Linkedin or via email at: contact@thehackbio.com`}
-                                            </p>
-                                            <p className="text-amber-800">
-                                                Please note that enrollment will be processed manually and might take 24 hours before it reflects on your account.
-                                            </p>
-                                        </div>
-                                        <a
-                                            href={`mailto:contact@thehackbio.com?subject=Payment%20Receipt&body=Hi%20HackBio%2C%0A%0APlease%20find%20my%20receipt%20attached.`}
-                                            className="bg-hb-green px-5 text-white rounded-sm font-bold py-2"
-                                        >
-                                        Send us your receipt
-                                        </a>
-                                    </form>
-                                </AccordionContent>
-                            </AccordionItem>
-                        </Accordion>
-                    
-                    </div>
-
-                    <form className="border p-5 bg-white rounded-sm w-full">
-                       
-                        <div className="flex flex-col gap-5">
-                            <div className="flex flex-col gap-2">
-                                <p className="text-lg font-bold">{title}</p>
-                                <p className="text-sm font-medium">{desc}</p>
-                            </div>
-
-                            <div className="flex flex-col gap-2 border rounded-sm p-3">
-                                <div className="flex flex-row items-center gap-3" >
-                                    <input type="radio" name="priceType" value={'subscription'} className="scale-150 accent-hb-green " onChange={() => {setFinalPrice(200 * productPrice);setPriceType('subscription');  }} />
-                                    <p className="text-base font-bold">{`Pro Subscription (12 months)`}</p>
-                                </div>
-                                <span className="flex flex-row text-xs gap-2"> <p className="font-bold">{`${currency} ${200 * exchangeRate * productPrice}`}</p> <p className="line-through text-gray-400">{`${currency} ${400 * exchangeRate * productPrice}`}</p> <p className="font-bold text-blue-600">{`(50% off)`}</p> </span>
-                                <p className="text-sm font-medium">{`Access this course and everything (Internships and Courses) from HackBio`}</p>
-                            </div>
-
-                            <p className="text-red-400 text-sm">
-                                {priceType
-                                ? priceType.charAt(0).toUpperCase() + priceType.slice(1)
-                                : "None "}
-                                {` Selected`}
-                            </p>
-
-                            {/**Prepare for all cases */}
-                            <div className="flex flex-col gap-2 border rounded-sm p-3">
-                                <div className="flex flex-row items-center gap-3">
-                                    <input type="radio" name="priceType" value={'course'} className="scale-125 accent-hb-green " onChange={() => {setFinalPrice((planPrice - (planPrice * discount)) ); setPriceType(plan); }} />
-                                    <p className="text-base font-bold">{`Access this program alone (12 months) `}</p>
-                                </div>
-                                <span className="flex flex-row text-xs gap-2 "> <p className=" font-bold">{`${currency} ${(planPrice - (planPrice * discount)) * exchangeRate }`}</p> <p className=" line-through text-gray-400">{`${currency} ${planPrice * exchangeRate }`} </p> <p className=" text-blue-600 font-bold ">{`(50% off)`}</p> </span>
-                                <p className="text-sm font-medium">{`Just this program alone for 12 months`}</p>
-                            </div>
-
-                            <div className="flex flex-row gap-5 items-center text-3xl">
-                                <p className="text-xl font-bold">Total:</p> <p className="">{currency} {finalPrice * exchangeRate }</p>
-                            </div>
-                        </div>
-
-                    </form>
+              {!isSubscriptionCheckout && allowProgramSelection ? (
+                <div className="space-y-2">
+                  <label className="text-sm font-bold">Select preferred {plan}</label>
+                  <select
+                    value={selectedProgramId || ""}
+                    onChange={(e) => setSelectedProgramId(Number(e.target.value))}
+                    className="w-full rounded-sm border p-2 text-sm"
+                  >
+                    <option value="" disabled>
+                      Select a {plan}
+                    </option>
+                    {programs.map((program) => (
+                      <option key={program.id} value={program.id}>
+                        {program.title} (${Number(program.price || 0)})
+                      </option>
+                    ))}
+                  </select>
                 </div>
+              ) : null}
+
+              {!isSubscriptionCheckout && selectedProgramData ? (
+                <div className="rounded-sm border p-3">
+                  <p className="font-bold">{selectedProgramData.title}</p>
+                  <p className="text-sm text-gray-600">{selectedProgramData.description}</p>
+                </div>
+              ) : null}
+
+              {!isSubscriptionCheckout && supportsMentorshipAddon ? (
+                <label className="flex items-center justify-between rounded-sm border p-3 text-sm">
+                  <span>Add mentorship support (+${mentorshipAddonPrice})</span>
+                  <input
+                    type="checkbox"
+                    checked={includeMentorship}
+                    onChange={(e) => setIncludeMentorship(e.target.checked)}
+                    className="accent-hb-green"
+                  />
+                </label>
+              ) : null}
+
+              <div className="rounded-sm border bg-hb-lightgreen/30 p-3">
+                <p className="text-sm text-gray-700">
+                  Selected: <span className="font-semibold">{checkoutType}</span>
+                </p>
+                <p className="text-xl font-bold">
+                  Total: {currency} {totalPriceInCurrency}
+                </p>
+              </div>
             </div>
-        </main>
-    )
+          </section>
+        </div>
+      </div>
+    </main>
+  );
 }

@@ -38,7 +38,7 @@ export default function Hero() {
 
     return (
         <main>
-            <div className="hidden w-full py-10  h-full md:flex flex-col gap-5  items-center justify-center border-r-hb-lightgreen border-r border-l border-l-hb-lightgreen">
+            <div className="hidden w-full py-10  h-full md:flex flex-col gap-5  items-center justify-center">
                 <div className="w-full flex flex-row items-center justify-between py-20 relative bg-hb-lightgreen">
                     <div className="w-3/5 h-full items-start text-start flex flex-col gap-5 px-10 ">
                         <p className= 'text-5xl font-bold leading-16'>{content.headline}</p>

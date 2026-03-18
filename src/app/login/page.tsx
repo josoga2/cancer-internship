@@ -55,7 +55,7 @@ export default function Login() {
     };
 
     return (
-        <main className="max-w-full w-full py-10 flex flex-col h-screen items-center justify-center bg-linear-to-b from-white via-hb-lightgreen to-hb-lightgreen">
+        <main className="max-w-full w-full py-10 flex flex-col h-screen items-center justify-center bg-linear-to-b from-white via-hb-lightgreen to-hb-lightgreen dark:from-[#101a15] dark:via-[#13221a] dark:to-[#0f1d17]">
             <div className='hidden md:flex w-87.5 py-5 bg-white  flex-col gap-2 items-center justify-center border-2 border-gray-200 rounded-lg shadow-lg px-5'>
                 
                 <div className='w-full flex justify-start items-start text-base'>

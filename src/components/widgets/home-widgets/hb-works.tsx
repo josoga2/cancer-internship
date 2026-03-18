@@ -3,7 +3,7 @@ import { BookOpenCheck, BrainCircuit, Cable, Pill, Tablets } from "lucide-react"
 export default function Hbworks() {
     return (
         <main>
-            <div className="hidden w-full py-10 h-full md:flex flex-col gap-5  items-center justify-center border-r-hb-lightgreen border-r border-l border-l-hb-lightgreen">
+            <div className="hidden w-full py-10 h-full md:flex flex-col gap-5  items-center justify-center">
                 <div className="py-5 bg-hb-lightgreen w-full h-full  flex flex-col gap-5 px-10">
                     <div className="w-full h-full py-10 px-10 flex flex-col gap-5 bg-hb-lightgreen items-center justify-center ">
                         <p className="text-xl font-bold text-center"> Why HackBio Works</p>

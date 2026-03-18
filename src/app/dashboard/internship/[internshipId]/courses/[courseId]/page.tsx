@@ -472,20 +472,25 @@ const scientistAdjectives = [
         {/**LEFT SIDE BAR */}
         <LeftSideBar />
         {/** MAIN */}
-        <div className="w-full bg-hb-lightgreen flex flex-col gap-10 overflow-y-auto h-screen ">
-          <div className="flex flex-row gap-10 bg-white w-full border-b text-base text-gray-600 justify-between  items-center">
-            <MainScreenFlexIntXP username={username} mini_desc="Your Internship Courses" userXP={userXP} title={title} loginDates={loginDates} />
-          </div>
-          
-          <div className="px-10 ">
+        <div className="w-full bg-hb-lightgreen flex flex-col gap-8 overflow-y-auto h-screen pb-10">
+          <MainScreenFlexIntXP
+            username={username}
+            mini_desc="Your Internship Courses"
+            userXP={userXP}
+            title={title}
+            loginDates={loginDates}
+            contentClassName="max-w-6xl mx-auto w-full px-6 lg:px-8"
+          />
+
+          <div className="w-full max-w-6xl mx-auto px-6 lg:px-8">
             
               {coursesList
                   .filter((c) => Number(c.id) === courseId)
                   .map((course) => (
                   <div key={course.id}>
                   {course.image && (
-                    <div className="flex flex-row items-end gap-5 mb-10 max-w-200">    
-                      <img src={course.image} alt="course image" className="w-48 h-48 border-2 rounded-md border-neutral-400" />
+                    <div className="mb-10 flex w-full flex-row items-end gap-5">
+                      <img src={course.image} alt="course image" className="h-48 w-48 rounded-md border-2 border-neutral-400 object-cover" />
                       <div className="flex flex-col gap-2 w-full">
                           <p className="font-bold text-3xl ">{course.title}</p>
                           {globalInternshipId > 0 ? (
@@ -509,7 +514,7 @@ const scientistAdjectives = [
               {modulesList.map((module) => (
                 <div key={module.id} className="flex flex-col gap-5 pb-5">
                   <div>
-                      <div className="flex flex-col gap-5 items-center justify-start max-w-200 rounded-lg border border-hb-green px-7 py-3 bg-white">
+                      <div className="flex w-full flex-col gap-5 rounded-md border border-hb-green bg-white px-6 py-4">
                       <Accordion type="multiple" className="w-full flex flex-col gap-5 ">
                       <AccordionItem value={module.id.toString()}>
                           <AccordionTrigger className="text-xl font-bold">
@@ -559,12 +564,14 @@ const scientistAdjectives = [
         <LeftSideBar />
                     
           
-        <div className="flex w-full flex-col gap-3  px-10 py-4 border-b mx-auto items-center ">
-          <MainScreenFlexIntXP username={username} mini_desc="Your Internship Courses" userXP={userXP} title={title} loginDates={loginDates} />
-
-          {/* Bottom Row: XP + Title */}
-          
-        </div>
+        <MainScreenFlexIntXP
+          username={username}
+          mini_desc="Your Internship Courses"
+          userXP={userXP}
+          title={title}
+          loginDates={loginDates}
+          contentClassName="max-w-6xl mx-auto w-full px-4"
+        />
 
         {/* Main Scrollable Content */}
         <div className="flex-1 pb-20 min-h-svh px-4 pt-6 ">

@@ -7,7 +7,7 @@ export default function ComplexityLevel({ id }: { id: string }) {
 
   return (
     <main>
-      <div key={id} className="hidden w-full py-10  h-full md:flex flex-col gap-5 px-10  items-center justify-center border-r-hb-lightgreen border-r border-l border-l-hb-lightgreen pb-10">
+      <div key={id} className="hidden w-full py-10  h-full md:flex flex-col gap-5 px-10  items-center justify-center pb-10">
         {/*desktop*/}
         
         

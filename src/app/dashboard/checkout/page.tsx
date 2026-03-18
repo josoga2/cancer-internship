@@ -11,53 +11,86 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 );
 
+type CheckoutType = "course" | "pathway" | "internship" | "subscription";
+
+type CatalogProgram = {
+  id: number;
+  title: string;
+  description: string;
+  price: string | number;
+  mentorship_addon_price?: string | number;
+};
+
+type SubscriptionOffer = {
+  id: number | null;
+  name: string;
+  price: string | number;
+  duration_days: number;
+  description: string;
+  features: string[];
+};
+
+type CheckoutCatalogResponse = {
+  type: CheckoutType;
+  selected_id: number;
+  selection_required: boolean;
+  allow_program_selection: boolean;
+  supports_mentorship_addon: boolean;
+  selected_program: CatalogProgram | null;
+  programs: CatalogProgram[];
+  subscription_offer: SubscriptionOffer;
+};
+
 function PageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  const queryType = searchParams.get("type");
   const prog = searchParams.get("prog");
-  const id = searchParams.get("id");
-
-  const [title, setTitle] = useState("");
-  const [desc, setDesc] = useState("");
+  const sourceType = (queryType || prog || "subscription").toLowerCase();
+  const normalizedType = (sourceType === "career" ? "pathway" : sourceType) as CheckoutType;
+  const id = Number(searchParams.get("id") || 0);
+  const [catalog, setCatalog] = useState<CheckoutCatalogResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!prog || !id) return;
+    const allowedTypes = new Set(["course", "pathway", "internship", "subscription"]);
+    if (!allowedTypes.has(normalizedType)) {
+      router.push("/pricing");
+      return;
+    }
 
-    const fetchProgramAndId = async () => {
+    const fetchCheckoutCatalog = async () => {
+      setIsLoading(true);
       try {
-        if (prog === "course") {
-          const res = await publicApi.get("/api/courses/");
-          const course = res.data.find(
-            (item: any) => Number(item.id) === Number(id)
-          );
-          setTitle(course?.title || "");
-          setDesc(course?.overview || "");
-        } else {
-          const res = await publicApi.get("/api/internships/");
-          const course = res.data.find(
-            (item: any) => Number(item.id) === Number(id)
-          );
-          setTitle(course?.title || "");
-          setDesc(course?.overview || "");
-        }
+        const res = await publicApi.get("/api/checkout/catalog/", {
+          params: { type: normalizedType, id, source_type: sourceType },
+        });
+        setCatalog(res.data);
       } catch {
         router.push("/login");
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchProgramAndId();
-  }, [prog, id, router]);
+    fetchCheckoutCatalog();
+  }, [normalizedType, id, router, sourceType]);
+
+  if (isLoading || !catalog) {
+    return <div className="p-8 text-sm">Loading checkout details...</div>;
+  }
 
   return (
     <Elements stripe={stripePromise}>
       <CheckOutForm
-        title={title}
-        desc={desc}
-        progId={Number(id)}
-        curr="USD"
-        discount={0.5}
-        plan={prog || "subscription"}
+        plan={catalog.type}
+        sourceType={sourceType}
+        programs={catalog.programs || []}
+        selectedProgram={catalog.selected_program}
+        allowProgramSelection={catalog.allow_program_selection}
+        supportsMentorshipAddon={catalog.supports_mentorship_addon}
+        subscriptionOffer={catalog.subscription_offer}
       />
     </Elements>
   );

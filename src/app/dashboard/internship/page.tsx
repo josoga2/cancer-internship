@@ -126,9 +126,14 @@ function Page() {
       
       {/** MAIN */}
       <div className="w-full bg-green-50 flex flex-col gap-10 overflow-y-auto h-screen ">
-        <MainScreenFlex username={username} mini_desc="Your Internships" loginDates={loginDates} />
+        <MainScreenFlex
+          username={username}
+          mini_desc="Your Internships"
+          loginDates={loginDates}
+          contentClassName="max-w-6xl mx-auto w-full px-6 lg:px-8"
+        />
         
-        <div className="flex flex-col gap-10 w-full px-10 ">
+        <div className="flex w-full max-w-6xl mx-auto flex-col gap-10 px-6 lg:px-8">
           {internshipList.length !== 0 ? (
             internshipList.map((internship) => (
               <div key={internship.id}>

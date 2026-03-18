@@ -212,14 +212,14 @@ export default function Page() {
                         {modulesList.map((module, idx) => (
                             <div key={module.id} className="flex flex-col gap-10 items-start justify-start w-full">
                                 <div className="flex flex-col gap-10 items-start justify-start w-full">
-                                <div className="flex flex-row gap-5 items-center justify-start w-full rounded-lg border border-green-300 px-7 py-3 hover:bg-green-50">
+                                <div className="flex flex-row gap-5 items-center justify-start w-full rounded-lg border border-green-300 px-7 py-3 hover:bg-hb-lightgreen dark:bg-[#14261e] dark:text-white dark:hover:bg-hb-green dark:border-hb-green/60">
                                     <Accordion type="single" collapsible className="w-full">
                                         <AccordionItem value={(module.id ?? '').toString()}>
-                                            <AccordionTrigger className="text-base font-bold">{idx+1}.  {module.title}</AccordionTrigger>
-                                            <AccordionContent className="text-base">
+                                            <AccordionTrigger className="text-base font-bold text-gray-900 dark:text-white">{idx+1}.  {module.title}</AccordionTrigger>
+                                            <AccordionContent className="text-base text-gray-700 dark:text-gray-100">
                                                 <p className="py-2 pb-3"> {module.description}</p>
                                                 <hr className="w-full h-5" />
-                                                <ul className="list-disc pl-5  text-neutral-600">
+                                                <ul className="list-disc pl-5 text-neutral-600 dark:text-gray-100">
                                                     {contentList
                                                         .filter((content) => content.module === module.id)
                                                         .map((content) => (

@@ -11,29 +11,29 @@ export default function LearningExperience({ internshipStatus }: { internshipSta
 
   return (
     <main>
-      <div key={internshipStatus} className="hidden w-full py-10  h-full md:flex flex-col gap-5 px-10  items-center justify-center border-r-hb-lightgreen border-r border-l border-l-hb-lightgreen pb-10">
+      <div key={internshipStatus} className="hidden w-full py-10  h-full md:flex flex-col gap-5 px-10  items-center justify-center pb-10">
         {/*desktop*/}
         <div className="w-full flex flex-col bg-hb-lightgreen rounded-lg p-10 gap-5 mb-10 border">
           <span className="text-3xl font-bold  px-10 flex flex-row items-center gap-2"> <Gift/> <p>  The HackBio Experience </p> </span>
           <p className="px-10 text-justify">HackBio was modelled after real-world bioinformatics and data science projects. The experience is fully hands-on and practical not passive tutorials. Every module is task-driven, focused on mastering a tool, and designed to mirror how work is done in actual research and industry settings.</p>
           
           <div className="grid grid-cols-2 px-10 gap-10">
-            <div className=" flex flex-col p-5 justify-start items-start gap-5 w-full bg-yellow-50 border rounded-md ">
+            <div className=" flex flex-col p-5 justify-start items-start gap-5 w-full bg-yellow-50 border rounded-md dark:bg-[#1c2a23] dark:border-hb-green/40 dark:text-white">
               <Blocks className="text-hb-green"/>
               <p className="font-bold">Learn Bioinformatics by Doing with Structure</p>
             </div>
 
-            <div className=" flex flex-col p-5 justify-start items-start gap-5 w-full border bg-purple-50 rounded-md ">
+            <div className=" flex flex-col p-5 justify-start items-start gap-5 w-full border bg-purple-50 rounded-md dark:bg-[#1c2a23] dark:border-hb-green/40 dark:text-white">
               <Hammer className="text-hb-green"/>
               <p className="font-bold">Train With Tools Employers and Labs Actually Use</p>
             </div>
 
-            <div className=" flex flex-col p-5 justify-start items-start gap-5 w-full border bg-red-50 rounded-md ">
+            <div className=" flex flex-col p-5 justify-start items-start gap-5 w-full border bg-red-50 rounded-md dark:bg-[#1c2a23] dark:border-hb-green/40 dark:text-white">
               <Bubbles className="text-hb-green"/>
               <p className="font-bold">Get Mentorship and Direction Most Programs Avoid</p>
             </div>
 
-            <div className=" flex flex-col p-5 justify-start items-start gap-5 w-full border bg-cyan-50 rounded-md ">
+            <div className=" flex flex-col p-5 justify-start items-start gap-5 w-full border bg-cyan-50 rounded-md dark:bg-[#1c2a23] dark:border-hb-green/40 dark:text-white">
               <ChartPie className="text-hb-green"/>
               <p className="font-bold">Build Proof of Skill, Not Certificates of Attendance</p>
             </div>
@@ -79,22 +79,22 @@ export default function LearningExperience({ internshipStatus }: { internshipSta
           <p className="px-2 text-justify">HackBio was modelled after real-world bioinformatics and data science projects. The experience is fully hands-on and practical not passive tutorials. Every module is task-driven, focused on mastering a tool, and designed to mirror how work is done in actual research and industry settings.</p>
           
           <div className="flex flex-col px-2 gap-2">
-            <div className=" flex flex-col p-5 justify-start items-start gap-5 w-full bg-yellow-50 border rounded-md ">
+            <div className=" flex flex-col p-5 justify-start items-start gap-5 w-full bg-yellow-50 border rounded-md dark:bg-[#1c2a23] dark:border-hb-green/40 dark:text-white">
               <Blocks className="text-hb-green"/>
               <p className="font-bold">Learn Bioinformatics by Doing with Structure</p>
             </div>
 
-            <div className=" flex flex-col p-5 justify-start items-start gap-5 w-full border bg-purple-50 rounded-md ">
+            <div className=" flex flex-col p-5 justify-start items-start gap-5 w-full border bg-purple-50 rounded-md dark:bg-[#1c2a23] dark:border-hb-green/40 dark:text-white">
               <Hammer className="text-hb-green"/>
               <p className="font-bold">Train With Tools Employers and Labs Actually Use</p>
             </div>
 
-            <div className=" flex flex-col p-5 justify-start items-start gap-5 w-full border bg-red-50 rounded-md ">
+            <div className=" flex flex-col p-5 justify-start items-start gap-5 w-full border bg-red-50 rounded-md dark:bg-[#1c2a23] dark:border-hb-green/40 dark:text-white">
               <Bubbles className="text-hb-green"/>
               <p className="font-bold">Get Mentorship and Direction Most Programs Avoid</p>
             </div>
 
-            <div className=" flex flex-col p-5 justify-start items-start gap-5 w-full border bg-cyan-50 rounded-md ">
+            <div className=" flex flex-col p-5 justify-start items-start gap-5 w-full border bg-cyan-50 rounded-md dark:bg-[#1c2a23] dark:border-hb-green/40 dark:text-white">
               <ChartPie className="text-hb-green"/>
               <p className="font-bold">Build Proof of Skill, Not Certificates of Attendance</p>
             </div>

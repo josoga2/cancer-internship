@@ -26,27 +26,9 @@ import HbButton from "@/components/widgets/hb-buttons";
 import Video from "@/components/widgets/course-props-widgets/video";
 import TextContent from "@/components/widgets/course-props-widgets/text";
 import WebRPy from "@/components/widgets/course-props-widgets/webrpy";
+import StreakBar from "@/components/widgets/dashboard-widgets/streak-bar";
 import Link from "next/link";
 import ProgressFloat from "@/components/widgets/progress-float";
-
-const formatLocalDate = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
-const buildLast7Days = (loginDates: string[]) => {
-  const dateSet = new Set(loginDates);
-  const today = new Date();
-  return Array.from({ length: 7 }, (_, index) => {
-    const offset = 6 - index;
-    const day = new Date(today);
-    day.setDate(today.getDate() - offset);
-    const key = formatLocalDate(day);
-    return dateSet.has(key);
-  });
-};
 
 const CONTENT_META: Record<string, { icon: string; label: string }> = {
   video: { icon: "🎥", label: "Video" },
@@ -803,7 +785,6 @@ function Page() {
     }
   };
 
-  const streakDays = buildLast7Days(loginDates || []);
   const courseTitle = coursesList.find((course) => Number(course.id) === courseId)?.title || "Course";
   const moduleTitle = modulesList.find((module) => Number(module.id) === moduleId)?.title || "Module";
   const currentLessonTitle = filteredContentList[0]?.title || "Lesson";
@@ -1028,24 +1009,6 @@ function Page() {
       </div>
     );
   };
-
-  const streakBar = (tone: "desktop" | "mobile") => (
-    <div
-      className={`inline-flex items-center gap-3 rounded-full border px-3 py-1 ${tone === "desktop" ? "border-gray-200 bg-white/70" : "border-green-200 bg-white/60"}`}
-    >
-      <span className={`text-sm font-semibold ${tone === "desktop" ? "text-gray-600" : "text-green-900"}`}>
-        🔥 {tone === "mobile" ? "streak" : "Last 7 days"}
-      </span>
-      <div className="flex items-center gap-2">
-        {streakDays.map((isActive, index) => (
-          <span
-            key={`${tone}-streak-${index}`}
-            className={`h-4 w-4 rounded-full ${isActive ? (tone === "desktop" ? "bg-green-500 shadow-[0_0_0_2px_rgba(34,197,94,0.2)]" : "bg-green-600 shadow-[0_0_0_2px_rgba(22,163,74,0.25)]") : tone === "desktop" ? "bg-gray-200" : "bg-green-100"}`}
-          />
-        ))}
-      </div>
-    </div>
-  );
 
   const desktopLessonContent = (
     <div className="flex flex-col gap-8">
@@ -1478,7 +1441,7 @@ function Page() {
               </div>
             </div>
           <div className="flex items-center justify-between px-8 pb-4">
-            {streakBar("desktop")}
+            <StreakBar loginDates={loginDates} mode="desktop" />
             <button
               type="button"
               onClick={() => setStepsOpen((prev) => !prev)}
@@ -1550,7 +1513,9 @@ function Page() {
           <div className="mt-2">
             <Progress value={modulePercent} />
           </div>
-          <div className="mt-3">{streakBar("mobile")}</div>
+          <div className="mt-3">
+            <StreakBar loginDates={loginDates} mode="mobile" />
+          </div>
           <div className="mt-4 grid grid-cols-2 gap-2">
             {["learn", "practice", "steps", "resources"].map((tab) => (
               <button

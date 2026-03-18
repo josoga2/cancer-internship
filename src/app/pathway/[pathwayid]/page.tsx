@@ -29,7 +29,7 @@ export default function Page() {
     const pathwayId = Number(params.pathwayid);
     const router = useRouter();
 
-    const [internship, setInternshipList] = useState<Array<{
+    const [pathways, setPathwayList] = useState<Array<{
         id?: string
         title?: string
         description?: string
@@ -72,19 +72,19 @@ export default function Page() {
 
     // Fetch courses from the public API
     useEffect(() => {
-        const fetchInternships = async () => {
+        const fetchPathways = async () => {
             try {
-                const response = await publicApi.get('/api/internships/');
+                const response = await publicApi.get('/api/pathways/');
                 if (response.status === 200) {
-                    setInternshipList(response.data);
+                    setPathwayList(response.data);
                 } else {
-                    console.error('Failed to fetch internships:', response.statusText);
+                    console.error('Failed to fetch pathways:', response.statusText);
                 }
             } catch (error) {
-                console.error('Error fetching internships:', error);
+                console.error('Error fetching pathways:', error);
             }
         };
-        fetchInternships();
+        fetchPathways();
     }, []);
     //console.log(internship);
 
@@ -105,18 +105,16 @@ export default function Page() {
     }, []);
 
 
-    const thisPathwayStatus = internship.find(int => Number(int.id) === Number(pathwayId))?.free;
-    const CPathName = internship.find(int => Number(int.id) === Number(pathwayId))?.title
-    const CPathOverview = internship.find(int => Number(int.id) === Number(pathwayId))?.overview
+    const thisPathwayStatus = pathways.find((pathway) => Number(pathway.id) === Number(pathwayId))?.free;
+    const CPathName = pathways.find((pathway) => Number(pathway.id) === Number(pathwayId))?.title
+    const CPathOverview = pathways.find((pathway) => Number(pathway.id) === Number(pathwayId))?.overview
     const internshipStatus: string = 'open';
 
     const handleFreeEnroll = async () => {
         try {
-            const response = await api.post('/api/free-enroll-internship/', {
-                internship_id: pathwayId,
-            });
+            const response = await api.post('/api/add-free-pathway/');
             if (response.status === 200) {
-                alert('Successfully enrolled in the Career Track! You will be redirected to your dashboard now.');
+                alert('Successfully enrolled in the free pathway! You will be redirected to your dashboard now.');
                 router.push('/dashboard');
             } else {
                 alert('You have to sign in to enroll in this course.');
@@ -142,7 +140,7 @@ export default function Page() {
                 <div className="flex flex-col gap-5 max-w-2/5">
                     <p className="text-3xl font-bold text-start">{CPathName} </p>
                     <p className="text-base">{CPathOverview} </p>
-                    {thisPathwayStatus? <div><HbButton text="Enroll For Free" type="primary" onClick={()=>handleFreeEnroll()} /> </div> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:pathwayId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
+                    {thisPathwayStatus? <div><HbButton text="Enroll For Free" type="primary" onClick={()=>handleFreeEnroll()} /> </div> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'pathway', id:pathwayId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
                 </div>
                 <Image src={keywords} alt="biology" className="w-2/5" />
             </div>
@@ -151,7 +149,7 @@ export default function Page() {
 
             {/** Learning Paths */}
 
-            {internship.filter(c => Number(pathwayId) === Number(c.id) ).map((upcoming) => (
+            {pathways.filter((pathway) => Number(pathwayId) === Number(pathway.id)).map((upcoming) => (
             <div key={upcoming.id} className="flex flex-row items-start justify-between gap-10 max-w-full">
                 <div className="w-4/5">
                     <UpcomingSection status={upcoming.free || false} id={upcoming.id || ""} start_date={upcoming.start_date || ""} int_image={upcoming.int_image || ""} title={upcoming.title || ""} overview={upcoming.overview || ""} lenght_in_weeks={upcoming.lenght_in_weeks || 1} internshipStatus={internshipStatus} />
@@ -177,13 +175,13 @@ export default function Page() {
             ))}
 
 
-            <TestimonialsEnroll InternshipStatus={internshipStatus}/>
+            <TestimonialsEnroll InternshipStatus={internshipStatus} />
             <div className="w-full flex flex-col items-center justify-center">
                 <LearningTracks />
             </div>
 
             <div className="w-full flex flex-col items-center justify-center">
-                {thisPathwayStatus? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-base bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:pathwayId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
+                {thisPathwayStatus? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-base bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'pathway', id:pathwayId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
             </div>
 
             {/** who is this internship for?*/}
@@ -194,9 +192,9 @@ export default function Page() {
                 <div className="flex flex-row gap-2 items-start">
                     {/*<FreePrice /> */}
                     {/*<PremiumPrice />*/}
-                    <HbPrices plan="Become a Pro" discount={0.5} prog="career" progId={String(pathwayId)}/>
+                    <HbPrices plan="Become a Pro" discount={0.5} prog="pathway" progId={String(pathwayId)}/>
                     <p className="font-bold"></p>
-                    <HbPrices plan="Career Pathway" discount={0.5} prog="career" progId={String(pathwayId)}/>
+                    <HbPrices plan="Career Pathway" discount={0.5} prog="pathway" progId={String(pathwayId)}/>
                 </div>
             </div>
         </div>
@@ -209,12 +207,12 @@ export default function Page() {
                 <div className="flex flex-col gap-4">
                     <p className="text-2xl font-bold text-start">{CPathName} </p>
                     <p className="text-base">{CPathOverview} </p>
-                    {thisPathwayStatus? <Link href="/dashboard"><Button className=" py-6 text-white font-bold text-base bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:pathwayId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
+                    {thisPathwayStatus? <Link href="/dashboard"><Button className=" py-6 text-white font-bold text-base bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'pathway', id:pathwayId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
                 </div>
 
                 
 
-                {internship.filter(c => Number(pathwayId) === Number(c.id) ).map((upcoming) => (
+                {pathways.filter((pathway) => Number(pathwayId) === Number(pathway.id)).map((upcoming) => (
                     <div key={upcoming.id} className="flex flex-col gap-5 w-full">
                         <UpcomingSection status={upcoming.free || false} id={upcoming.id || ""} start_date={upcoming.start_date || ""} int_image={upcoming.int_image || ""} title={upcoming.title || ""} overview={upcoming.overview || ""} lenght_in_weeks={upcoming.lenght_in_weeks || 1} internshipStatus={internshipStatus} />
                      
@@ -240,17 +238,17 @@ export default function Page() {
                     </div>
                 ))}
 
-                <TestimonialsEnroll InternshipStatus={internshipStatus}/>
+                <TestimonialsEnroll InternshipStatus={internshipStatus} />
                 <LearningTracks />
 
                 <div className="w-full flex flex-col items-center justify-center">
-                    {thisPathwayStatus? <Link href="/dashboard"><Button className=" py-6 text-white font-bold text-base bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:pathwayId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
+                    {thisPathwayStatus? <Link href="/dashboard"><Button className=" py-6 text-white font-bold text-base bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'pathway', id:pathwayId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
                 </div>
 
                 <LearningExperience internshipStatus={internshipStatus} />
 
                 <div className="flex flex-col items-center py-10">
-                    {thisPathwayStatus? <Link href="/dashboard"><Button className=" py-6 text-white font-bold text-base bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:pathwayId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
+                    {thisPathwayStatus? <Link href="/dashboard"><Button className=" py-6 text-white font-bold text-base bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'pathway', id:pathwayId } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
                 </div>
 
                 <div className="flex flex-col gap-2 items-center justify-start w-full  ">
@@ -259,9 +257,9 @@ export default function Page() {
                     <div className="flex flex-col gap-2 items-start">
                         {/*<FreePrice /> */}
                         {/*<PremiumPrice />*/}
-                        <HbPrices plan="Become a Pro" discount={0.5} prog="career" progId={String(pathwayId)}/>
+                        <HbPrices plan="Become a Pro" discount={0.5} prog="pathway" progId={String(pathwayId)}/>
                         <p className="font-bold text-base">... Or just this pathway</p>
-                        <HbPrices plan="Career Pathway" discount={0.5} prog="career" progId={String(pathwayId)}/>
+                        <HbPrices plan="Career Pathway" discount={0.5} prog="pathway" progId={String(pathwayId)}/>
                     </div>
                 </div>
             </div>

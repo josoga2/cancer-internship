@@ -106,7 +106,7 @@ export default function Page() {
   return (
     <section>
         <Navbar />
-        <main className="hidden md:flex md:max-w-5xl bg md:m-auto md:items-center p-5 md:justify-between border-r-hb-lightgreen border-r border-l border-l-hb-lightgreen">
+        <main className="hidden md:flex md:max-w-5xl bg md:m-auto md:items-center p-5 md:justify-between">
             {/** Hero */}
             <div className="">
                 <HeroSection id={String(thisInternshipid) || '0'} internshipStatus={internshipStatus} />

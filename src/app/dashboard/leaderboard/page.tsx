@@ -88,7 +88,7 @@ function Page() {
       <div className="hidden md:flex flex-row w-full">
         <LeftSideBar />
         <div className="w-full min-h-screen bg-white">
-          <div className="px-10 py-8">
+          <div className="w-full max-w-6xl mx-auto px-6 lg:px-8 py-8">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">Dashboard</p>
@@ -135,18 +135,18 @@ function Page() {
               </div>
 
               {loading ? (
-                <div className="rounded-lg border border-gray-200 bg-white px-4 py-4 text-sm text-gray-600">
+                <div className="rounded-md border border-gray-200 bg-white px-4 py-4 text-sm text-gray-600">
                   Loading leaderboard...
                 </div>
               ) : leaderboard.length === 0 ? (
-                <div className="rounded-lg border border-gray-200 bg-white px-4 py-4 text-sm text-gray-600">
+                <div className="rounded-md border border-gray-200 bg-white px-4 py-4 text-sm text-gray-600">
                   No leaderboard data available.
                 </div>
               ) : (
                 leaderboard.map((row) => (
                   <div
                     key={`${row.user_id ?? row.username}-${row.rank}`}
-                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-4 text-sm"
+                    className="flex items-center justify-between rounded-md border border-gray-200 bg-white px-4 py-4 text-sm"
                   >
                     <span className="text-gray-500">
                       {row.rank === 1 ? "🥇" : row.rank === 2 ? "🥈" : row.rank === 3 ? "🥉" : "#"}
@@ -166,7 +166,7 @@ function Page() {
 
       <div className="md:hidden w-full min-h-svh bg-white">
         <LeftSideBar />
-        <div className="px-4 py-6">
+        <div className="w-full max-w-6xl mx-auto px-4 py-6">
           <h1 className="text-xl font-semibold text-gray-900">Leaderboard</h1>
 
           <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-3">
@@ -198,18 +198,18 @@ function Page() {
               Score uses normalized XP (base 10 XP removed). Attempts reduce points. Percent is normalized XP divided by total internship XP.
             </p>
             {loading ? (
-              <div className="rounded-lg border border-gray-200 bg-white px-4 py-4 text-sm text-gray-600">
+              <div className="rounded-md border border-gray-200 bg-white px-4 py-4 text-sm text-gray-600">
                 Loading leaderboard...
               </div>
             ) : leaderboard.length === 0 ? (
-              <div className="rounded-lg border border-gray-200 bg-white px-4 py-4 text-sm text-gray-600">
+              <div className="rounded-md border border-gray-200 bg-white px-4 py-4 text-sm text-gray-600">
                 No leaderboard data available.
               </div>
             ) : (
               leaderboard.map((row) => (
                 <div
                   key={`${row.user_id ?? row.username}-${row.rank}`}
-                  className="rounded-lg border border-gray-200 bg-white px-4 py-4 text-sm"
+                  className="rounded-md border border-gray-200 bg-white px-4 py-4 text-sm"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-gray-500">

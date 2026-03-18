@@ -4,6 +4,8 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner"
 import { GoogleAnalytics } from '@next/third-parties/google'
 import Banner from "@/components/Nav/Banner";
+import { ThemeProvider } from "@/components/theme-provider";
+import ThemeToggle from "@/components/theme-toggle";
 
 
 
@@ -86,12 +88,15 @@ export default function RootLayout({
       <body
         className={`${dmSans} text-base`}
       >
-        <Banner />
-        <div className="min-h-svh flex items-start justify-center">
-            {children}
-            <Toaster />
-            <GoogleAnalytics gaId={gaId} />
-        </div>
+        <ThemeProvider>
+          <Banner />
+          <div className="min-h-svh flex items-start justify-center">
+              {children}
+              <Toaster />
+              <GoogleAnalytics gaId={gaId} />
+          </div>
+          <ThemeToggle />
+        </ThemeProvider>
       </body>
     </html>
   );

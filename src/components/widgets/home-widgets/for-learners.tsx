@@ -5,7 +5,7 @@ export default function ForLearners() {
     return (
         <main>
             {/* Desktop View */}
-            <div className="hidden w-full py-10  h-full md:flex flex-col gap-5  items-center justify-center border-r-hb-lightgreen border-r border-l border-l-hb-lightgreen">
+            <div className="hidden w-full py-10  h-full md:flex flex-col gap-5  items-center justify-center">
                 <div className="py-5 bg-hb-lightgreen w-full h-full  flex flex-col gap-5 px-10">
           
                     <div className="grid grid-cols-2 gap-10 items-center justify-center">

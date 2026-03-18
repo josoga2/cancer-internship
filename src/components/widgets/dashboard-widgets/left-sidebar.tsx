@@ -11,6 +11,7 @@ import { FaSlack } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import api from "@/api";
 import Logout from "@/components/logout";
+import ThemeToggle from "@/components/theme-toggle";
 
 const tab_items = [
   {
@@ -21,21 +22,21 @@ const tab_items = [
   },
   {
     id: 2,
-    name: "Internships",
+    name: "All Programs",
     link: "/dashboard/internship/1/courses",
     iconImage: BiDna
   },
   {
     id: 3,
-    name: "Career Paths",
-    link: "/dashboard/internship/1/courses",
-    iconImage: BiDna
-  },
-  {
-    id: 4,
     name: "Leaderboard",
     link: "/dashboard/leaderboard",
     iconImage: MdOutlineLeaderboard
+  },
+  {
+    id: 4,
+    name: "Practice Lab",
+    link: "/dashboard/practice",
+    iconImage: BiAtom
   }
 ];
 
@@ -47,6 +48,8 @@ export default function LeftSideBar() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [hasMounted, setHasMounted] = useState(false);
     const [socialPercent, setSocialPercent] = useState(0);
+    const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
+    const [refreshingAccess, setRefreshingAccess] = useState(false);
     const storageKey = "hb.sidebar.open";
 
     useEffect(() => {
@@ -61,6 +64,25 @@ export default function LeftSideBar() {
         if (!hasMounted) return;
         localStorage.setItem(storageKey, String(isOpen));
     }, [isOpen, hasMounted]);
+
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+        const sidebarOffset = isOpen ? "15rem" : "5.75rem";
+        document.documentElement.style.setProperty("--hb-sidebar-offset", sidebarOffset);
+    }, [isOpen]);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const res = await api.get("/api/get-user-profile/");
+                setHasActiveSubscription(Boolean(res.data?.has_active_subscription));
+            } catch (error) {
+                setHasActiveSubscription(false);
+            }
+        };
+
+        fetchProfile();
+    }, []);
 
     useEffect(() => {
         const fetchSocial = async () => {
@@ -82,6 +104,33 @@ export default function LeftSideBar() {
 
         fetchSocial();
     }, []);
+
+    const handleRefreshAccess = async () => {
+        if (!hasActiveSubscription || refreshingAccess) return;
+        setRefreshingAccess(true);
+        try {
+            const res = await api.post("/api/refresh-subscriber-access/");
+            if (res.status === 200) {
+                const internshipsAdded = Number(res.data?.internships_added || 0);
+                const pathwaysAdded = Number(res.data?.pathways_added || 0);
+                const coursesAdded = Number(res.data?.courses_added || 0);
+                window.alert(
+                    `Access refreshed. Added: ${internshipsAdded} internship(s), ${pathwaysAdded} pathway(s), ${coursesAdded} course(s).`
+                );
+            }
+        } catch (error: any) {
+            if (error?.response?.status === 402) {
+                setHasActiveSubscription(false);
+                window.alert("Your subscription is not active. Please renew to refresh access.");
+            } else {
+                window.alert("Unable to refresh access right now. Please try again.");
+            }
+        } finally {
+            setRefreshingAccess(false);
+        }
+    };
+
+    const visibleTabs = tab_items;
 
     const socialColor =
         socialPercent >= 100 ? "#ef4444"
@@ -112,8 +161,8 @@ export default function LeftSideBar() {
                         </div>
                     </div>
                     <div className="flex flex-col gap-2 text-sm">
-                        {tab_items.map((item) => {
-                            const activeLink = tab_items
+                        {visibleTabs.map((item) => {
+                            const activeLink = visibleTabs
                             .filter(item => pathname === item.link || pathname.startsWith(item.link + "/"))
                             .sort((a, b) => b.link.length - a.link.length)[0]?.link;
                         
@@ -144,6 +193,25 @@ export default function LeftSideBar() {
                     </div>
                     <div className="mt-auto w-full px-4 pb-4">
                         <div className="flex flex-col items-center gap-2">
+                            {hasActiveSubscription ? (
+                                <button
+                                    type="button"
+                                    onClick={handleRefreshAccess}
+                                    disabled={refreshingAccess}
+                                    className={`inline-flex items-center justify-center rounded-md border border-hb-green/30 bg-hb-lightgreen text-xs font-semibold text-hb-green transition hover:bg-green-100 disabled:cursor-not-allowed disabled:opacity-60 ${
+                                        isOpen ? "w-full gap-2 px-3 py-2" : "h-10 w-10"
+                                    }`}
+                                    title="Refresh and enroll into latest released programs"
+                                >
+                                    <span>↻</span>
+                                    {isOpen ? <span>{refreshingAccess ? "Refreshing..." : "Sync Access"}</span> : null}
+                                </button>
+                            ) : null}
+                            <ThemeToggle
+                                variant="sidebar"
+                                showLabel={isOpen}
+                                className={isOpen ? "w-full" : ""}
+                            />
                             <div
                                 className="relative h-10 w-10"
                                 title="Social activity score based on recent Slack activity and message volume."
@@ -224,7 +292,7 @@ export default function LeftSideBar() {
 
                             {/* Nav items */}
                             <div className="flex flex-col gap-1 p-3 text-sm">
-                                {tab_items.map((item) => {
+                                {visibleTabs.map((item) => {
                                 const isActive =
                                     pathname === item.link ||
                                     pathname.startsWith(item.link + "/");
@@ -255,6 +323,17 @@ export default function LeftSideBar() {
                             </div>
                             <div className="mt-auto px-4 pb-4">
                                 <div className="flex flex-col items-center gap-2">
+                                    {hasActiveSubscription ? (
+                                        <button
+                                            type="button"
+                                            onClick={handleRefreshAccess}
+                                            disabled={refreshingAccess}
+                                            className="inline-flex w-full items-center justify-center rounded-md border border-hb-green/30 bg-hb-lightgreen px-3 py-2 text-xs font-semibold text-hb-green transition hover:bg-green-100 disabled:cursor-not-allowed disabled:opacity-60"
+                                        >
+                                            {refreshingAccess ? "Refreshing..." : "↻ Sync Access"}
+                                        </button>
+                                    ) : null}
+                                    <ThemeToggle variant="sidebar" showLabel={true} className="w-full" />
                                     <div
                                         className="relative h-10 w-10"
                                         title="Social activity score based on recent Slack activity and message volume."
