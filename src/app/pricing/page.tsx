@@ -286,6 +286,44 @@ function renderCompareValue(value: string | boolean) {
   return <span>{value}</span>;
 }
 
+function MobileCompareTable({
+  sections,
+  plans,
+}: {
+  sections: CompareSection[];
+  plans: ComparePlan[];
+}) {
+  return (
+    <div className="space-y-4">
+      {sections.map((section) => (
+        <article key={section.title} className="rounded-md border border-hb-green/20 bg-hb-lightgreen/20 p-3 dark:bg-hb-green-dark/30">
+          <h4 className="text-sm font-bold text-hb-green">{section.title}</h4>
+          <div className="mt-3 space-y-3">
+            {section.features.map((feature) => (
+              <div key={`${section.title}-${feature.name}`} className="rounded-sm border border-hb-green/20 bg-white p-3 dark:bg-slate-900">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">{feature.name}</p>
+                <div className="mt-2 space-y-2">
+                  {plans.map((plan) => (
+                    <div
+                      key={`${section.title}-${feature.name}-${plan.key}-mobile`}
+                      className="flex items-center justify-between gap-3 rounded-sm border border-gray-200 bg-gray-50 px-2 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+                    >
+                      <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">{plan.name}</span>
+                      <span className="text-right text-xs font-medium text-gray-800 dark:text-gray-100">
+                        {renderCompareValue(feature.values[plan.key])}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
 function PlanCard({ plan }: { plan: JourneyPlan }) {
   return (
     <article
@@ -458,7 +496,10 @@ export default function PricingPage() {
 
         <section className="rounded-md border border-hb-green/20 bg-white p-6 dark:bg-slate-900">
           <h3 className="text-xl font-bold text-gray-900 dark:text-white">{compareTableTitle}</h3>
-          <div className="mt-4 overflow-x-auto">
+          <div className="mt-4 md:hidden">
+            <MobileCompareTable sections={compareSections} plans={comparePlans} />
+          </div>
+          <div className="mt-4 hidden overflow-x-auto md:block">
             <table className="min-w-[900px] w-full border-collapse">
               <thead>
                 <tr className="border-b border-hb-green/20">
