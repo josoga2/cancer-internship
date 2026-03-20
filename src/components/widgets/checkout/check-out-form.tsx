@@ -56,7 +56,7 @@ export default function CheckOutForm({
     plan === "subscription" ? "subscription" : "program"
   );
   const [includeMentorship, setIncludeMentorship] = useState(false);
-  const [selectedProgramId, setSelectedProgramId] = useState<number>(selectedProgram?.id || 0);
+  const [selectedProgramId, setSelectedProgramId] = useState<number>(selectedProgram?.id || programs?.[0]?.id || 0);
 
   useEffect(() => {
     if (plan === "subscription") {
@@ -64,15 +64,12 @@ export default function CheckOutForm({
       setSelectedProgramId(0);
       return;
     }
-    if (allowProgramSelection) {
-      setSelectedProgramId(selectedProgram?.id || 0);
-    } else {
-      setSelectedProgramId(selectedProgram?.id || 0);
-    }
-  }, [plan, allowProgramSelection, selectedProgram]);
+    const fallbackProgramId = selectedProgram?.id || programs?.[0]?.id || 0;
+    setSelectedProgramId(fallbackProgramId);
+  }, [plan, allowProgramSelection, selectedProgram, programs]);
 
   const selectedProgramData = useMemo(
-    () => programs.find((program) => Number(program.id) === Number(selectedProgramId)) || selectedProgram || null,
+    () => programs.find((program) => Number(program.id) === Number(selectedProgramId)) || selectedProgram || programs?.[0] || null,
     [programs, selectedProgramId, selectedProgram]
   );
 
@@ -101,6 +98,7 @@ export default function CheckOutForm({
   const exchangeRateRupee = 90;
   const exchangeRate = currency === "NGN" ? exchangeRateNaira : currency === "INR" ? exchangeRateRupee : 1;
   const totalPriceInCurrency = Number((selectedPriceUsd * exchangeRate).toFixed(2));
+  const shouldShowProgramSelector = !isSubscriptionCheckout && (allowProgramSelection || !selectedProgramData) && programs.length > 0;
 
   const checkoutPayload = useMemo(
     () => ({
@@ -324,7 +322,7 @@ export default function CheckOutForm({
                 </label>
               </div>
 
-              {!isSubscriptionCheckout && allowProgramSelection ? (
+              {shouldShowProgramSelector ? (
                 <div className="space-y-2">
                   <label className="text-sm font-bold">Select preferred {plan}</label>
                   <select
