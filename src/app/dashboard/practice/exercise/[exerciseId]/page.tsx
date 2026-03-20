@@ -20,6 +20,8 @@ type DetailPayload = {
       title: string;
       type: string;
       xp_reward: number;
+      hint?: string | null;
+      explanation?: string | null;
     };
     content_json: Record<string, any>;
   };
@@ -31,12 +33,13 @@ type DetailPayload = {
     user_skill_xp: number;
     mastery_percent: number;
     streak: number;
-    last_result?: {
-      is_correct?: boolean;
-      explanation?: string;
-      best_practice?: string;
-      next_step?: string;
-    } | null;
+      last_result?: {
+        is_correct?: boolean;
+        explanation?: string;
+        hint?: string;
+        best_practice?: string;
+        next_step?: string;
+      } | null;
   };
 };
 
@@ -45,6 +48,7 @@ type SubmitResult = {
   score: number;
   xp_awarded: number;
   explanation?: string;
+  hint?: string;
   best_practice?: string;
   next_step?: string;
   next_question?: number | null;
@@ -100,6 +104,7 @@ function Page() {
   const exercise = detail?.exercise?.exercise;
   const content = detail?.exercise?.content_json || {};
   const meta = detail?.meta;
+  const questionHint = exercise?.hint || content?.hint || "No hint available for this question.";
 
   const progressPercent = useMemo(() => {
     if (!meta?.exercise_total) return 0;
@@ -250,33 +255,31 @@ function Page() {
                 />
               </div>
 
-              {content?.hint ? (
-                <div className="mt-5">
-                  <button
-                    type="button"
-                    onClick={() => setHintOpen((prev) => !prev)}
-                    className="text-sm font-semibold text-blue-700"
-                  >
-                    Need a hint?
-                  </button>
-                  {hintOpen ? <p className="text-sm text-gray-700 mt-2">{content.hint}</p> : null}
-                </div>
-              ) : null}
+              <div className="mt-5">
+                <button
+                  type="button"
+                  onClick={() => setHintOpen((prev) => !prev)}
+                  className="text-sm font-semibold text-hb-green dark:text-hb-lightgreen"
+                >
+                  Need a hint?
+                </button>
+                {hintOpen ? <p className="mt-2 text-sm text-gray-700 dark:text-gray-100">{questionHint}</p> : null}
+              </div>
             </div>
 
             {result ? (
               <FeedbackPanel
                 correct={result.correct}
                 explanation={result.explanation}
+                hint={result.hint || questionHint}
                 bestPractice={result.best_practice}
-                nextStep={result.next_step}
               />
             ) : null}
           </div>
 
-          <div className="fixed bottom-0 right-0 left-0 md:left-[var(--hb-sidebar-offset,15rem)] transition-[left] duration-300 border-t border-gray-200 bg-white/95 backdrop-blur px-6 py-3">
+          <div className="fixed bottom-0 right-0 left-0 md:left-[var(--hb-sidebar-offset,15rem)] transition-[left] duration-300 border-t border-gray-200 bg-white/95 backdrop-blur px-6 py-3 dark:border-hb-green/40 dark:bg-[#0a1f19]/95">
             <div className="flex items-center justify-between">
-              <Link href="/dashboard/practice" className="inline-flex items-center gap-2 text-sm font-semibold text-gray-700">
+              <Link href="/dashboard/practice" className="inline-flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-100">
                 <ArrowLeft className="h-4 w-4" />
                 Back
               </Link>
@@ -317,14 +320,14 @@ function Page() {
             <FeedbackPanel
               correct={result.correct}
               explanation={result.explanation}
+              hint={result.hint || questionHint}
               bestPractice={result.best_practice}
-              nextStep={result.next_step}
             />
           ) : null}
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-white px-4 py-3 flex items-center justify-between">
-          <Link href="/dashboard/practice" className="text-sm font-semibold text-gray-700">Back</Link>
+        <div className="fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-white px-4 py-3 flex items-center justify-between dark:border-hb-green/40 dark:bg-[#0a1f19]/95">
+          <Link href="/dashboard/practice" className="text-sm font-semibold text-gray-700 dark:text-gray-100">Back</Link>
           <button
             type="button"
             onClick={handlePrimaryAction}
