@@ -36,7 +36,8 @@ const tab_items = [
     id: 4,
     name: "Practice Lab",
     link: "/dashboard/practice",
-    iconImage: BiAtom
+    iconImage: BiAtom,
+    hidden: true, // temporary hide; keep config for quick re-enable
   }
 ];
 
@@ -130,7 +131,7 @@ export default function LeftSideBar() {
         }
     };
 
-    const visibleTabs = tab_items;
+    const visibleTabs = tab_items.filter((item) => !item.hidden);
 
     const socialColor =
         socialPercent >= 100 ? "#ef4444"
