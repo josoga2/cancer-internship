@@ -37,7 +37,7 @@ export default function UpcomingSection({ id, start_date, int_image, title, over
                 <p className="text-base">{lenght_in_weeks} Weeks</p>
               </span>
 
-              {status? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:id } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
+              {status? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'internship', id:id } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
             </div>
           </div>
         </div>
@@ -55,7 +55,7 @@ export default function UpcomingSection({ id, start_date, int_image, title, over
           <p className="text-lg font-bold">{title}</p>
           <p className="text-sm">{overview}</p>
           <p className="text-sm">{lenght_in_weeks} Weeks</p>
-          {status? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:id } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
+          {status? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'internship', id:id } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
         </div>
       </div>
 

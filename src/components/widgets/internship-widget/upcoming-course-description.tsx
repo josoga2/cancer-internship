@@ -24,7 +24,7 @@ export default function UpcomingCourseDescription({ description, internshipStatu
             <div className="prose">
               <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{description}</Markdown>
             </div>
-            {status? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:id } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
+            {status? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'internship', id:id } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
 
           </div>
         </div>
@@ -36,7 +36,7 @@ export default function UpcomingCourseDescription({ description, internshipStatu
           <div className="prose">
             <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{description}</Markdown>
           </div>
-          {status? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'career', id:id } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
+          {status? <Link href="/dashboard"><Button className="px-10 py-6 text-white font-bold text-xl bg-green-600" >Enroll Now</Button></Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'internship', id:id } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
 
 
         </div>
