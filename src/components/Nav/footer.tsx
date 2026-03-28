@@ -29,6 +29,7 @@ export default function Footer() {
             
           </div>
           <div className='flex flex-col gap-2'> 
+            <Link href='/pricing'>Enrollment Plan</Link>
             <Link href='/blog'>Blog and articles</Link>
             <Link href='/job-report'>BFX Job Report 2024</Link>
             <Link href='/blog/ai-revolution-at-hackbio-starts-with-ngs'>Our AI Revolution</Link>
@@ -68,6 +69,7 @@ export default function Footer() {
           </div>
           <div className='flex flex-col gap-2 pt-3'>
             <hr />  
+            <Link href='/pricing'>Enrollment Plan</Link>
             <Link href='/blog'>Blog and articles</Link>
             <Link href='/'>Genomics</Link>
             <Link href='/'>Biomedical AI</Link>

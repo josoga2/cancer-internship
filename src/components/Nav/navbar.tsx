@@ -118,6 +118,15 @@ export default function Navbar() {
                   </NavigationMenuLink> */}
 
                   <NavigationMenuLink asChild>
+                    <Link href="/pricing">
+                      <div className="font-bold">Enrollment Plan</div>
+                      <div className="text-muted-foreground ">
+                        Compare plans and choose how you want to enroll
+                      </div>
+                    </Link>
+                  </NavigationMenuLink>
+
+                  <NavigationMenuLink asChild>
                     <Link href="/blog">
                       <div className="font-bold">Blog</div>
                       <div className="text-muted-foreground ">
@@ -199,6 +208,7 @@ export default function Navbar() {
             <Link href='/internship'>Internships</Link>
             <Link href='/learning'>Explore Careers Tracks</Link>
             <Link href='/hire-talents'>Hire Talents</Link>
+            <Link href='/pricing'>Enrollment Plan</Link>
             <Link href='/blog'>Blog</Link>
             <Link href='/testimonial'>Testimonials</Link>
             {/* <Link href='/learning' className="text-lg font-medium text-black">Career Paths</Link> */}
