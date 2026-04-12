@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 // components/CourseBanner.tsx
 export default function Banner() {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const bannerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
