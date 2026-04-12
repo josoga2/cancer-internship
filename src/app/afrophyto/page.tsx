@@ -92,21 +92,7 @@ export default function AfrophytoPage() {
             <span className="text-xl font-bold text-emerald-700">AfroPhyto</span>
           </Link>
           <nav className="hidden items-center gap-5 text-sm font-medium text-slate-700 md:flex dark:text-slate-200">
-            <Link href="/afrophyto" className="hover:text-emerald-700 dark:hover:text-emerald-400">
-              Home
-            </Link>
-            <a href="#" className="hover:text-emerald-700 dark:hover:text-emerald-400">
-              About
-            </a>
-            <a href="#" className="hover:text-emerald-700 dark:hover:text-emerald-400">
-              Docs
-            </a>
-            <a href="#" className="hover:text-emerald-700 dark:hover:text-emerald-400">
-              Molecular Docking
-            </a>
-            <a href="#" className="hover:text-emerald-700 dark:hover:text-emerald-400">
-              Contribute Data
-            </a>
+            
             <a
               href="mailto:contact@thehackbio.com?subject=Support%20AfroPhyto"
               className="rounded-md bg-emerald-600 px-3 py-2 text-white hover:bg-emerald-700"
@@ -122,8 +108,7 @@ export default function AfrophytoPage() {
           <p className="text-sm font-semibold uppercase tracking-wide text-emerald-600">Plant Phytochemical Database</p>
           <h1 className="mt-2 text-4xl font-bold text-emerald-700">AfroPhyto</h1>
           <p className="mt-3 max-w-3xl text-base text-slate-700 dark:text-slate-200">
-            Discover medicinal plants and their known phytochemicals from African contexts. This page currently uses
-            mock JSON data through a temporary API route.
+            Discover medicinal plants and their known phytochemicals. Search our comprehensive database of medicinal plants and their bioactive compounds.
           </p>
           <div className="mt-5 flex flex-col gap-2 sm:flex-row">
             <input
@@ -141,12 +126,7 @@ export default function AfrophytoPage() {
               Search
             </button>
           </div>
-          <p className="mt-3 text-sm text-slate-500 dark:text-slate-300">
-            API source:{" "}
-            <code className="rounded bg-slate-100 px-1 py-0.5 text-slate-700 dark:bg-[#102641] dark:text-slate-200">
-              {process.env.NEXT_PUBLIC_AFROPHYTO_API_URL || AFROPHYTO_DUMMY_API_URL}
-            </code>
-          </p>
+          
         </div>
       </section>
 
