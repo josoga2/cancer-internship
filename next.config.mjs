@@ -25,6 +25,11 @@ const nextConfig = {
         hostname: "api.thehackbio.com",
         pathname: "/media/**",
       },
+      {
+        protocol: "http",
+        hostname: "165.22.124.117",
+        pathname: "/**",
+      },
     ],
   },
 };
