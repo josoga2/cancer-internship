@@ -65,6 +65,10 @@ function Page() {
   const [mcqGraded, setMcqGraded] = useState(false);
   const [userInternshipId, setUserInternshipId] = useState<number[]>([]);
   const [improve, setImprove] = useState<string>("waiting for review...");
+  const [gradeSummary, setGradeSummary] = useState<string>("");
+  const [gradeFeedbackItems, setGradeFeedbackItems] = useState<string[]>([]);
+  const [gradePercent, setGradePercent] = useState<number | null>(null);
+  const [hasGradeResult, setHasGradeResult] = useState<boolean>(false);
   const [userCoursesId, setUserCoursesId] = useState<number[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState("none");
   const [hintClicked, setHintClicked] = useState<boolean>(false);
@@ -239,6 +243,58 @@ function Page() {
     return 0;
   };
 
+  const normalizeFeedbackLine = (line: string) =>
+    line
+      .replace(/\s+/g, " ")
+      .replace(/\.+$/g, "")
+      .trim();
+
+  const parseFeedbackFallback = (text: string) =>
+    (text || "")
+      .split(/\.\s+/)
+      .map(normalizeFeedbackLine)
+      .filter(Boolean)
+      .filter((line) => !/^waiting for review/i.test(line));
+
+  const feedbackLines =
+    gradeFeedbackItems.length > 0
+      ? gradeFeedbackItems.map((line) => normalizeFeedbackLine(String(line))).filter(Boolean)
+      : parseFeedbackFallback(improve);
+
+  const feedbackHeader = normalizeFeedbackLine(gradeSummary) || feedbackLines[0] || "No feedback available yet.";
+  const feedbackDetails = gradeSummary ? feedbackLines : feedbackLines.slice(1);
+
+  const scoreToneClasses =
+    grade >= 8
+      ? "border-emerald-300 bg-emerald-50 dark:border-emerald-700/50 dark:bg-emerald-950/40"
+      : grade >= 5
+        ? "border-amber-300 bg-amber-50 dark:border-amber-700/50 dark:bg-amber-950/35"
+        : "border-red-300 bg-red-50 dark:border-red-700/50 dark:bg-red-950/35";
+
+  const scoreTextClasses =
+    grade >= 8
+      ? "text-emerald-900 dark:text-emerald-100"
+      : grade >= 5
+        ? "text-amber-900 dark:text-amber-100"
+        : "text-red-900 dark:text-red-100";
+
+  const gradeFeedbackCard = (
+    <div className={`w-full rounded-md border p-4 ${scoreToneClasses}`}>
+      <p className={`text-base font-semibold ${scoreTextClasses}`}>Score: {grade}/10 XP</p>
+      {gradePercent !== null && (
+        <p className={`text-xs mt-1 ${scoreTextClasses}`}>Overall: {Math.round(gradePercent)}%</p>
+      )}
+      <p className={`text-sm mt-2 ${scoreTextClasses}`}>{feedbackHeader}</p>
+      {feedbackDetails.length > 0 && (
+        <ul className={`mt-2 list-disc pl-5 text-sm space-y-1 ${scoreTextClasses}`}>
+          {feedbackDetails.map((line, index) => (
+            <li key={`${index}-${line.slice(0, 24)}`}>{line}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+
   const handleCertificateSubmit = async () => {
     setCertError("");
     if (certSkill.trim().length < 10) {
@@ -381,6 +437,15 @@ function Page() {
 
     fetchUserProgress();
   }, []);
+
+  useEffect(() => {
+    setHasGradeResult(false);
+    setGrade(0);
+    setGradePercent(null);
+    setGradeSummary("");
+    setGradeFeedbackItems([]);
+    setImprove("waiting for review...");
+  }, [contentId]);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -582,11 +647,16 @@ function Page() {
       if (response.status === 200) {
         const parsedGrade = Number(response.data?.grade_response ?? 0);
         setGrade(Number.isFinite(parsedGrade) ? parsedGrade : 0);
+        const parsedPercent = Number(response.data?.score_percent);
+        setGradePercent(Number.isFinite(parsedPercent) ? parsedPercent : null);
         const summary = response.data?.feedback_summary || "";
         const rubricFeedback = Array.isArray(response.data?.rubric_feedback)
-          ? response.data.rubric_feedback.join(" ")
-          : "";
-        setImprove((`${summary} ${rubricFeedback}`.trim()) || "No feedback provided yet.");
+          ? response.data.rubric_feedback.map((line: any) => String(line))
+          : [];
+        setGradeSummary(String(summary).trim());
+        setGradeFeedbackItems(rubricFeedback);
+        setImprove((`${summary} ${rubricFeedback.join(" ")}`.trim()) || "No feedback provided yet.");
+        setHasGradeResult(true);
         setLoading(false);
       } else {
         console.error("Failed to submit solution.");
@@ -621,11 +691,16 @@ function Page() {
       if (response.status === 200) {
         const parsedGrade = Number(response.data?.grade_response ?? 0);
         setGrade(Number.isFinite(parsedGrade) ? parsedGrade : 0);
+        const parsedPercent = Number(response.data?.score_percent);
+        setGradePercent(Number.isFinite(parsedPercent) ? parsedPercent : null);
         const summary = response.data?.feedback_summary || "";
         const rubricFeedback = Array.isArray(response.data?.rubric_feedback)
-          ? response.data.rubric_feedback.join(" ")
-          : "";
-        setImprove((`${summary} ${rubricFeedback}`.trim()) || filteredContentList[0].project_solution || "No feedback provided.");
+          ? response.data.rubric_feedback.map((line: any) => String(line))
+          : [];
+        setGradeSummary(String(summary).trim());
+        setGradeFeedbackItems(rubricFeedback);
+        setImprove((`${summary} ${rubricFeedback.join(" ")}`.trim()) || filteredContentList[0].project_solution || "No feedback provided.");
+        setHasGradeResult(true);
         setLoading(false);
       } else {
         console.error("Failed to submit solution.");
@@ -1109,12 +1184,7 @@ function Page() {
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                           </svg>
-                        ) : (
-                          <div>
-                            <p>Your grade is: {grade} XP</p>
-                            <p className="leading-7 text-sm">Suggested Improvements: {improve}</p>
-                          </div>
-                        )}
+                        ) : hasGradeResult ? gradeFeedbackCard : null}
                       </div>
                     </div>
                   </div>
@@ -1150,12 +1220,7 @@ function Page() {
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                             </svg>
-                          ) : (
-                            <div>
-                              <p>Your grade is: {grade}</p>
-                              <p className="leading-7 text-sm">Feedback: {improve}</p>
-                            </div>
-                          )}
+                          ) : hasGradeResult ? gradeFeedbackCard : null}
                         </div>
                       </div>
                     </div>
@@ -1342,12 +1407,7 @@ function Page() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                     </svg>
-                  ) : (
-                    <div>
-                      <p>Your grade is: {grade} XP</p>
-                      <p className="leading-7 text-sm">Suggested Improvements: {improve}</p>
-                    </div>
-                  )}
+                  ) : hasGradeResult ? gradeFeedbackCard : null}
                 </div>
               </div>
             </div>
@@ -1369,12 +1429,7 @@ function Page() {
               <Label htmlFor="solution" className="text-sm font-bold">Your Solution</Label>
               <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} className="text-xs font-mono h-100 p-2 bg-green-900 text-white" />
               <Button onClick={() => { handleSolutionSubmit(); }} className="bg-hb-green text-white">SUBMIT</Button>
-              {loading ? (<p>Loading grade...</p>) : (
-                <div>
-                  <p>Your score is: {grade}</p>
-                  <p className="leading-7 text-sm">Feedback: {improve}</p>
-                </div>
-              )}
+              {loading ? (<p>Loading grade...</p>) : hasGradeResult ? gradeFeedbackCard : null}
             </div>
           )}
 
