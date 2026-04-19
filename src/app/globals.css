@@ -207,3 +207,150 @@ body {
   color: #e2e8f0;
   border-color: rgba(255, 255, 255, 0.16);
 }
+
+/* Notebook readability overrides */
+.hb-notebook-render {
+  color: #0f172a;
+  line-height: 1.6;
+}
+
+.hb-notebook-render pre,
+.hb-notebook-render code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.hb-notebook-render .jp-InputArea-editor,
+.hb-notebook-render .jp-OutputArea-output pre,
+.hb-notebook-render .output pre,
+.hb-notebook-render .highlight pre,
+.hb-notebook-render pre {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  padding: 0.75rem !important;
+  overflow-x: auto;
+}
+
+.hb-notebook-render .jp-OutputPrompt,
+.hb-notebook-render .jp-InputPrompt {
+  color: #475569 !important;
+}
+
+.hb-notebook-render .cm-comment,
+.hb-notebook-render .highlight .c {
+  color: #64748b !important;
+}
+
+.hb-notebook-render .cm-keyword,
+.hb-notebook-render .highlight .k {
+  color: #0f766e !important;
+}
+
+.hb-notebook-render .cm-string,
+.hb-notebook-render .highlight .s {
+  color: #b45309 !important;
+}
+
+.hb-notebook-render .cm-number,
+.hb-notebook-render .highlight .m {
+  color: #7c3aed !important;
+}
+
+.dark .hb-notebook-render {
+  color: #e2e8f0;
+}
+
+.dark .hb-notebook-render .jp-InputArea-editor,
+.dark .hb-notebook-render .jp-OutputArea-output pre,
+.dark .hb-notebook-render .output pre,
+.dark .hb-notebook-render .highlight pre,
+.dark .hb-notebook-render pre {
+  background: #0b1324 !important;
+  color: #e2e8f0 !important;
+  border-color: #334155 !important;
+}
+
+.dark .hb-notebook-render .jp-OutputPrompt,
+.dark .hb-notebook-render .jp-InputPrompt {
+  color: #94a3b8 !important;
+}
+
+.dark .hb-notebook-render .cm-comment,
+.dark .hb-notebook-render .highlight .c {
+  color: #94a3b8 !important;
+}
+
+.dark .hb-notebook-render .cm-keyword,
+.dark .hb-notebook-render .highlight .k {
+  color: #34d399 !important;
+}
+
+.dark .hb-notebook-render .cm-string,
+.dark .hb-notebook-render .highlight .s {
+  color: #fbbf24 !important;
+}
+
+.dark .hb-notebook-render .cm-number,
+.dark .hb-notebook-render .highlight .m {
+  color: #c4b5fd !important;
+}
+
+/* Dark mode markdown + table overrides for converted notebooks */
+.dark .hb-notebook-render .jp-RenderedHTMLCommon,
+.dark .hb-notebook-render .rendered_html {
+  color: #e2e8f0 !important;
+}
+
+.dark .hb-notebook-render .jp-RenderedHTMLCommon h1,
+.dark .hb-notebook-render .jp-RenderedHTMLCommon h2,
+.dark .hb-notebook-render .jp-RenderedHTMLCommon h3,
+.dark .hb-notebook-render .jp-RenderedHTMLCommon h4,
+.dark .hb-notebook-render .jp-RenderedHTMLCommon h5,
+.dark .hb-notebook-render .jp-RenderedHTMLCommon h6,
+.dark .hb-notebook-render .jp-RenderedHTMLCommon p,
+.dark .hb-notebook-render .jp-RenderedHTMLCommon li,
+.dark .hb-notebook-render .jp-RenderedHTMLCommon td,
+.dark .hb-notebook-render .jp-RenderedHTMLCommon th,
+.dark .hb-notebook-render .rendered_html h1,
+.dark .hb-notebook-render .rendered_html h2,
+.dark .hb-notebook-render .rendered_html h3,
+.dark .hb-notebook-render .rendered_html h4,
+.dark .hb-notebook-render .rendered_html h5,
+.dark .hb-notebook-render .rendered_html h6,
+.dark .hb-notebook-render .rendered_html p,
+.dark .hb-notebook-render .rendered_html li,
+.dark .hb-notebook-render .rendered_html td,
+.dark .hb-notebook-render .rendered_html th {
+  color: #e2e8f0 !important;
+}
+
+.dark .hb-notebook-render .jp-RenderedHTMLCommon a,
+.dark .hb-notebook-render .rendered_html a {
+  color: #7dd3fc !important;
+}
+
+.dark .hb-notebook-render .jp-RenderedHTMLCommon table,
+.dark .hb-notebook-render .rendered_html table,
+.dark .hb-notebook-render table.dataframe {
+  background: #0f172a !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #334155 !important;
+  border-collapse: collapse !important;
+}
+
+.dark .hb-notebook-render .jp-RenderedHTMLCommon th,
+.dark .hb-notebook-render .rendered_html th,
+.dark .hb-notebook-render table.dataframe th {
+  background: #111b2f !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #334155 !important;
+}
+
+.dark .hb-notebook-render .jp-RenderedHTMLCommon td,
+.dark .hb-notebook-render .rendered_html td,
+.dark .hb-notebook-render table.dataframe td {
+  background: #0b1324 !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #334155 !important;
+}

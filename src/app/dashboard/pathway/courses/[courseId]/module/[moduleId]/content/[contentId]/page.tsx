@@ -112,6 +112,7 @@ function Page() {
 
   const [contentList, setContentList] = useState<Array<{
     id: number | string
+    order?: number | string
     title: string
     content_type: string
     module?: number | string
@@ -132,6 +133,7 @@ function Page() {
 
   const [filteredContentList, setFilteredContentList] = useState<Array<{
         id: number | string
+        order?: number | string
         title: string
         content_type: string
         module?: number | string
@@ -159,8 +161,26 @@ function Page() {
   const [improve, setImprove] = useState<string>("waiting for review...");
   const [loading, setLoading] = useState<boolean>(false);
       // State for toggling Jupyter and WebR widgets
-    const [showJupyter, setShowJupyter] = useState(false);
-    const [showWebR, setShowWebR] = useState(false);
+  const [showJupyter, setShowJupyter] = useState(false);
+  const [showWebR, setShowWebR] = useState(false);
+
+  const toSortableNumber = (value: unknown) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+
+  const compareByContentOrderOnly = (
+    a: { order?: number | string },
+    b: { order?: number | string }
+  ) => {
+    const aOrder = toSortableNumber(a.order);
+    const bOrder = toSortableNumber(b.order);
+
+    if (aOrder !== null && bOrder !== null) return aOrder - bOrder;
+    if (aOrder !== null) return -1;
+    if (bOrder !== null) return 1;
+    return 0;
+  };
 
     //get username
   useEffect(() => {
@@ -247,8 +267,12 @@ function Page() {
                     const getPreviousModuleId = () => {
                         //console.log(allModules)
                         if (!allModules || allModules.length === 0) return 0;
-                        // Sort modules by id (assuming numeric ids)
-                        const sortedModules = [...allModules].sort((a, b) => Number(a.id) - Number(b.id));
+                        const sortedModules = [...allModules].sort((a: any, b: any) => {
+                            const aOrder = toSortableNumber(a.order);
+                            const bOrder = toSortableNumber(b.order);
+                            if (aOrder !== null && bOrder !== null && aOrder !== bOrder) return aOrder - bOrder;
+                            return Number(a.id) - Number(b.id);
+                        });
                         const currentIndex = sortedModules.findIndex(m => Number(m.id) === moduleId);
                         if (currentIndex > 0) {
                             return Number(sortedModules[currentIndex - 1].id);
@@ -258,8 +282,12 @@ function Page() {
 
                     const getNextModuleId = () => {
                         if (!allModules || allModules.length === 0) return 0;
-                        // Sort modules by id (assuming numeric ids)
-                        const sortedModules = [...allModules].sort((a, b) => Number(a.id) - Number(b.id));
+                        const sortedModules = [...allModules].sort((a: any, b: any) => {
+                            const aOrder = toSortableNumber(a.order);
+                            const bOrder = toSortableNumber(b.order);
+                            if (aOrder !== null && bOrder !== null && aOrder !== bOrder) return aOrder - bOrder;
+                            return Number(a.id) - Number(b.id);
+                        });
                         const currentIndex = sortedModules.findIndex(m => Number(m.id) === moduleId);
                         if (currentIndex !== -1 && currentIndex < sortedModules.length - 1) {
                             return Number(sortedModules[currentIndex + 1].id);
@@ -280,12 +308,13 @@ function Page() {
                         const contents = contentResponse.data.filter((content: { id: number | string; module?: number | string }) =>
                             Number(content.module) === moduleId
                         );
+                        const sortedContents = [...contents].sort(compareByContentOrderOnly);
                         if (contents.length > 0) {
                             setFilteredContentList(
-                                contents.filter((content: { id: any; }) => Number(content.id) === contentId)
+                                sortedContents.filter((content: { id: any; }) => Number(content.id) === contentId)
                             );
                         }
-                        setContentList(contents);
+                        setContentList(sortedContents);
                         
                         
                         //console.log("Contents List:", contents);
@@ -295,8 +324,9 @@ function Page() {
                             const prevModuleContents = contentResponse.data.filter(
                                 (content: { module?: number | string }) => Number(content.module) === getPreviousModuleId()
                             );
-                            if (prevModuleContents.length > 0) {
-                                return Number(prevModuleContents[0].id);
+                            const sortedPrevModuleContents = [...prevModuleContents].sort(compareByContentOrderOnly);
+                            if (sortedPrevModuleContents.length > 0) {
+                                return Number(sortedPrevModuleContents[0].id);
                             }
                             return 0;
                         };
@@ -307,8 +337,9 @@ function Page() {
                             const nextModuleContents = contentResponse.data.filter(
                                 (content: { module?: number | string }) => Number(content.module) === getNextModuleId()
                             );
-                            if (nextModuleContents.length > 0) {
-                                return Number(nextModuleContents[0].id);
+                            const sortedNextModuleContents = [...nextModuleContents].sort(compareByContentOrderOnly);
+                            if (sortedNextModuleContents.length > 0) {
+                                return Number(sortedNextModuleContents[0].id);
                             }
                             return 0;
                         };
@@ -824,22 +855,7 @@ return (
                     {content.content_type === 'jupyter' && (
                         <div className="w-full flex flex-row gap-10">
                             <div className="w-full min-h-screen over border-2 rounded-md border-hb-green p-10 flex flex-col gap-2">
-                                <div className="flex flex-row gap-10 items-center ">
-                                    <a href="http://192.168.42.99/"  target="_blank"> 
-                                        <Button className="bg-hb-green text-white text-xl font-bold border-black border-2"> 
-                                            Notebook on HackBio 
-                                        </Button> 
-                                    </a>
-                                    <a href={content.jupyter_url}  target="_blank"> 
-                                        <Button className="bg-amber-500 text-white text-xl font-bold border-black border-2"> 
-                                            Notebook on Colab 
-                                        </Button> 
-                                    </a>
-                                </div>
-                                <p className="font-bold">
-                                    If you need an account to run python on HackBio, you can request for access from your HackBio Manager on Slack
-                                </p>
-                                {typeof content.text_content === 'string' && <NotebookViewer url={content.jupyter_url} />}
+                                <NotebookViewer contentId={Number(content.id)} sourceUrl={content.jupyter_url} />
                             </div>
                         </div>
                     )}
@@ -1225,13 +1241,7 @@ return (
                         {/* Jupyter */}
                         {content.content_type === 'jupyter' && (
                             <div className="flex flex-col pb-24 gap-2 text-xs max-w-full overflow-auto prose prose-base">
-                                <a href="#" target="_blank">
-                                    <Button className="bg-hb-green text-white">Notebook on HackBio</Button>
-                                </a>
-                                <a href={content.jupyter_url} target="_blank">
-                                    <Button className="bg-amber-500 text-white">Notebook on Colab</Button>
-                                </a>
-                                {typeof content.text_content === 'string' && <NotebookViewer url={content.jupyter_url} />}
+                                <NotebookViewer contentId={Number(content.id)} sourceUrl={content.jupyter_url} />
                             </div>
                         )}
 

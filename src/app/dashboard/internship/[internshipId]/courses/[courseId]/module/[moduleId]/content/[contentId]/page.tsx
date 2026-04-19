@@ -138,6 +138,7 @@ function Page() {
 
   const [contentList, setContentList] = useState<Array<{
     id: number | string
+    order?: number | string
     title: string
     content_type: string
     module?: number | string
@@ -159,6 +160,7 @@ function Page() {
 
   const [filteredContentList, setFilteredContentList] = useState<Array<{
         id: number | string
+        order?: number | string
         title: string
         content_type: string
         module?: number | string
@@ -215,6 +217,26 @@ function Page() {
       if (messages.length > 0) return messages.join(" ");
     }
     return "Failed to save feedback. Please try again.";
+  };
+
+  const toSortableNumber = (value: unknown) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+
+  const compareByContentOrderOnly = (
+    a: { order?: number | string },
+    b: { order?: number | string }
+  ) => {
+    const aOrder = toSortableNumber(a.order);
+    const bOrder = toSortableNumber(b.order);
+
+    if (aOrder !== null && bOrder !== null) return aOrder - bOrder;
+    if (aOrder !== null) return -1;
+    if (bOrder !== null) return 1;
+
+    // Keep backend response order when explicit order is missing.
+    return 0;
   };
 
   const handleCertificateSubmit = async () => {
@@ -406,7 +428,12 @@ function Page() {
                 );
                 const getPreviousModuleId = () => {
                   if (!allModules || allModules.length === 0) return 0;
-                  const sortedModules = [...allModules].sort((a, b) => Number(a.id) - Number(b.id));
+                  const sortedModules = [...allModules].sort((a: any, b: any) => {
+                    const aOrder = toSortableNumber(a.order);
+                    const bOrder = toSortableNumber(b.order);
+                    if (aOrder !== null && bOrder !== null && aOrder !== bOrder) return aOrder - bOrder;
+                    return Number(a.id) - Number(b.id);
+                  });
                   const currentIndex = sortedModules.findIndex(m => Number(m.id) === moduleId);
                   if (currentIndex > 0) {
                     return Number(sortedModules[currentIndex - 1].id);
@@ -416,7 +443,12 @@ function Page() {
 
                 const getNextModuleId = () => {
                   if (!allModules || allModules.length === 0) return 0;
-                  const sortedModules = [...allModules].sort((a, b) => Number(a.id) - Number(b.id));
+                  const sortedModules = [...allModules].sort((a: any, b: any) => {
+                    const aOrder = toSortableNumber(a.order);
+                    const bOrder = toSortableNumber(b.order);
+                    if (aOrder !== null && bOrder !== null && aOrder !== bOrder) return aOrder - bOrder;
+                    return Number(a.id) - Number(b.id);
+                  });
                   const currentIndex = sortedModules.findIndex(m => Number(m.id) === moduleId);
                   if (currentIndex !== -1 && currentIndex < sortedModules.length - 1) {
                     return Number(sortedModules[currentIndex + 1].id);
@@ -436,21 +468,23 @@ function Page() {
                   const contents = contentResponse.data.filter((content: { id: number | string; module?: number | string }) =>
                     Number(content.module) === moduleId
                   );
+                  const sortedContents = [...contents].sort(compareByContentOrderOnly);
 
-                  if (contents.length > 0) {
+                  if (sortedContents.length > 0) {
                     setFilteredContentList(
-                      contents.filter((content: { id: any; }) => Number(content.id) === contentId)
+                      sortedContents.filter((content: { id: any; }) => Number(content.id) === contentId)
                     );
                   }
-                  setContentList(contents);
+                  setContentList(sortedContents);
 
                   const getFirstContentIdOfPreviousModule = () => {
                     if (getPreviousModuleId() <= 0) return 0;
                     const prevModuleContents = contentResponse.data.filter(
                       (content: { module?: number | string }) => Number(content.module) === getPreviousModuleId()
                     );
-                    if (prevModuleContents.length > 0) {
-                      return Number(prevModuleContents[0].id);
+                    const sortedPrevModuleContents = [...prevModuleContents].sort(compareByContentOrderOnly);
+                    if (sortedPrevModuleContents.length > 0) {
+                      return Number(sortedPrevModuleContents[0].id);
                     }
                     return 0;
                   };
@@ -460,8 +494,9 @@ function Page() {
                     const nextModuleContents = contentResponse.data.filter(
                       (content: { module?: number | string }) => Number(content.module) === getNextModuleId()
                     );
-                    if (nextModuleContents.length > 0) {
-                      return Number(nextModuleContents[0].id);
+                    const sortedNextModuleContents = [...nextModuleContents].sort(compareByContentOrderOnly);
+                    if (sortedNextModuleContents.length > 0) {
+                      return Number(sortedNextModuleContents[0].id);
                     }
                     return 0;
                   };
@@ -545,7 +580,13 @@ function Page() {
       }
 
       if (response.status === 200) {
-        setGrade((response.data.grade_response));
+        const parsedGrade = Number(response.data?.grade_response ?? 0);
+        setGrade(Number.isFinite(parsedGrade) ? parsedGrade : 0);
+        const summary = response.data?.feedback_summary || "";
+        const rubricFeedback = Array.isArray(response.data?.rubric_feedback)
+          ? response.data.rubric_feedback.join(" ")
+          : "";
+        setImprove((`${summary} ${rubricFeedback}`.trim()) || "No feedback provided yet.");
         setLoading(false);
       } else {
         console.error("Failed to submit solution.");
@@ -578,8 +619,13 @@ function Page() {
       }
 
       if (response.status === 200) {
-        setGrade(response.data.grade_response);
-        setImprove(filteredContentList[0].project_solution || "No feedback provided.");
+        const parsedGrade = Number(response.data?.grade_response ?? 0);
+        setGrade(Number.isFinite(parsedGrade) ? parsedGrade : 0);
+        const summary = response.data?.feedback_summary || "";
+        const rubricFeedback = Array.isArray(response.data?.rubric_feedback)
+          ? response.data.rubric_feedback.join(" ")
+          : "";
+        setImprove((`${summary} ${rubricFeedback}`.trim()) || filteredContentList[0].project_solution || "No feedback provided.");
         setLoading(false);
       } else {
         console.error("Failed to submit solution.");
@@ -788,7 +834,7 @@ function Page() {
   const courseTitle = coursesList.find((course) => Number(course.id) === courseId)?.title || "Course";
   const moduleTitle = modulesList.find((module) => Number(module.id) === moduleId)?.title || "Module";
   const currentLessonTitle = filteredContentList[0]?.title || "Lesson";
-  const sortedModuleContents = [...contentList].sort((a, b) => Number(a.id) - Number(b.id));
+  const sortedModuleContents = [...contentList].sort(compareByContentOrderOnly);
   const currentModuleIndex = sortedModuleContents.findIndex((content) => Number(content.id) === Number(contentId));
   const nextContentInModuleId =
     currentModuleIndex >= 0 && currentModuleIndex < sortedModuleContents.length - 1
@@ -1076,13 +1122,7 @@ function Page() {
 
                 {content.content_type === "jupyter" && (
                   <div className="flex flex-col pb-24 gap-2 text-xs max-w-full overflow-auto prose prose-base leading-tight">
-                    <a href="#" target="_blank">
-                      <Button className="bg-hb-green text-white">Notebook on HackBio</Button>
-                    </a>
-                    <a href={content.jupyter_url} target="_blank">
-                      <Button className="bg-amber-500 text-white">Notebook on Colab</Button>
-                    </a>
-                    {typeof content.text_content === "string" && <NotebookViewer url={content.jupyter_url} />}
+                    <NotebookViewer contentId={Number(content.id)} sourceUrl={content.jupyter_url} />
                   </div>
                 )}
 
@@ -1111,7 +1151,10 @@ function Page() {
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                             </svg>
                           ) : (
-                            <p>Your grade is: {grade}</p>
+                            <div>
+                              <p>Your grade is: {grade}</p>
+                              <p className="leading-7 text-sm">Feedback: {improve}</p>
+                            </div>
                           )}
                         </div>
                       </div>
@@ -1312,13 +1355,7 @@ function Page() {
 
           {content.content_type === "jupyter" && (
             <div className="flex flex-col pb-24 gap-2 text-xs max-w-full overflow-auto prose prose-base leading-tight">
-              <a href="#" target="_blank">
-                <Button className="bg-hb-green text-white">Notebook on HackBio</Button>
-              </a>
-              <a href={content.jupyter_url} target="_blank">
-                <Button className="bg-amber-500 text-white">Notebook on Colab</Button>
-              </a>
-              {typeof content.text_content === "string" && <NotebookViewer url={content.jupyter_url} />}
+              <NotebookViewer contentId={Number(content.id)} sourceUrl={content.jupyter_url} />
             </div>
           )}
 
@@ -1332,7 +1369,12 @@ function Page() {
               <Label htmlFor="solution" className="text-sm font-bold">Your Solution</Label>
               <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} className="text-xs font-mono h-100 p-2 bg-green-900 text-white" />
               <Button onClick={() => { handleSolutionSubmit(); }} className="bg-hb-green text-white">SUBMIT</Button>
-              {loading ? (<p>Loading grade...</p>) : (<p>Your score is: {grade}</p>)}
+              {loading ? (<p>Loading grade...</p>) : (
+                <div>
+                  <p>Your score is: {grade}</p>
+                  <p className="leading-7 text-sm">Feedback: {improve}</p>
+                </div>
+              )}
             </div>
           )}
 

@@ -8,7 +8,15 @@ import rehypeRaw from "rehype-raw";
 import remarkDeflist from "remark-deflist";
 import NotebookViewer from "@/components/nbc/notebook";
 
-export default function JupyterContent({text_content, jupyter_url}: {text_content: string, jupyter_url: string}) {
+export default function JupyterContent({
+    text_content,
+    jupyter_url,
+    content_id,
+}: {
+    text_content: string,
+    jupyter_url: string,
+    content_id?: number
+}) {
     return (
         <main>
             <div className="hidden w-full h-full md:flex flex-col  items-center justify-center text-sm">
@@ -25,7 +33,9 @@ export default function JupyterContent({text_content, jupyter_url}: {text_conten
                                 <p className="font-bold">
                                     If you need an account to run python on HackBio, you can request for access from your HackBio Manager on Slack
                                 </p>
-                                {typeof text_content === 'string' && <NotebookViewer url={jupyter_url} />}
+                                {typeof text_content === 'string' && (
+                                    <NotebookViewer contentId={content_id || 0} sourceUrl={jupyter_url} />
+                                )}
                             </div>
                         </div>
                 </div>
