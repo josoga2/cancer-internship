@@ -9,7 +9,7 @@ const ImageGenerator = () => {
   const [title, setTitle] = useState('I just got into HackBio 🏆🎉!');
   //const [announcement, setAnnouncement] = useState('I am excited to announce that I just finished HackBio NGS Internship 🏆🎉');
   const [announcement, setAnnouncement] = useState('I am excited to announce that I got into the Hackbio AI in Genomics Program 🎉');
-  const [hashtag, setHashtag] = useState('#HackBioAIG25');
+  const [hashtag, setHashtag] = useState('#HackBioAIG26');
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const templateRef = useRef(null);
 
