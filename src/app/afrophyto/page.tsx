@@ -9,6 +9,7 @@ import {
 } from "@/app/afrophyto/mock-data";
 
 const PAGE_SIZE = 8;
+const getPlantInitial = (name: string) => name?.trim()?.charAt(0)?.toUpperCase() || "?";
 
 export default function AfrophytoPage() {
   const [plants, setPlants] = useState<AfrophytoPlant[]>([]);
@@ -185,17 +186,9 @@ export default function AfrophytoPage() {
                     key={plant.id}
                     className="flex h-full flex-col rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-[#0a1730]"
                   >
-                    {plant.image ? (
-                      <img
-                        src={plant.image}
-                        alt={plant.common_names}
-                        className="mb-4 h-14 w-14 rounded-md border border-slate-200 object-cover dark:border-slate-700"
-                      />
-                    ) : (
-                      <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-md bg-emerald-100 text-lg font-bold text-emerald-700">
-                        {plant.common_names.slice(0, 1)}
-                      </div>
-                    )}
+                    <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-md bg-emerald-100 text-2xl font-bold text-emerald-700">
+                      {getPlantInitial(plant.common_names)}
+                    </div>
                     <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">{plant.common_names}</h2>
                     <p className="text-sm italic text-slate-500 dark:text-slate-300">{plant.scientific_name}</p>
                     <p className="mt-3 line-clamp-4 text-sm text-slate-700 dark:text-slate-200">{plant.description}</p>
@@ -224,17 +217,9 @@ export default function AfrophytoPage() {
                     className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm md:flex-row md:items-center md:justify-between dark:border-slate-700 dark:bg-[#0a1730]"
                   >
                     <div className="flex items-start gap-4">
-                      {plant.image ? (
-                        <img
-                          src={plant.image}
-                          alt={plant.common_names}
-                          className="h-14 w-14 shrink-0 rounded-md border border-slate-200 object-cover dark:border-slate-700"
-                        />
-                      ) : (
-                        <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-emerald-100 text-lg font-bold text-emerald-700">
-                          {plant.common_names.slice(0, 1)}
-                        </div>
-                      )}
+                      <div className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-md bg-emerald-100 text-2xl font-bold text-emerald-700">
+                        {getPlantInitial(plant.common_names)}
+                      </div>
                       <div>
                         <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">{plant.common_names}</h2>
                         <p className="text-sm italic text-slate-500 dark:text-slate-300">{plant.scientific_name}</p>

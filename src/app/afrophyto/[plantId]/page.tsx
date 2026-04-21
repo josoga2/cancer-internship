@@ -7,6 +7,7 @@ import { type AfrophytoPlant, getAfrophytoPlantById } from "@/app/afrophyto/mock
 const MOBILE_COMPOUNDS_PER_PAGE = 4;
 const formatMetric = (value: number | null | undefined): string =>
   typeof value === "number" && Number.isFinite(value) ? value.toFixed(2) : "-";
+const getPlantInitial = (name: string) => name?.trim()?.charAt(0)?.toUpperCase() || "?";
 
 type PageProps = {
   params: {
@@ -121,17 +122,9 @@ export default function AfrophytoPlantDetailPage({ params }: PageProps) {
         <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-[#0a1730]">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div className="flex gap-4">
-              {plant.image ? (
-                <img
-                  src={plant.image}
-                  alt={plant.common_names}
-                  className="h-24 w-24 shrink-0 rounded-lg border border-slate-200 object-cover dark:border-slate-700"
-                />
-              ) : (
-                <div className="inline-flex h-20 w-20 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-2xl font-bold text-emerald-700">
-                  {plant.common_names.slice(0, 1)}
-                </div>
-              )}
+              <div className="inline-flex h-24 w-24 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-4xl font-bold text-emerald-700">
+                {getPlantInitial(plant.common_names)}
+              </div>
               <div>
                 <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">{plant.common_names}</h1>
                 <p className="mt-1 text-base italic text-slate-500 dark:text-slate-300">{plant.scientific_name}</p>
