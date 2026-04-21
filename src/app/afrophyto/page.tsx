@@ -64,6 +64,19 @@ export default function AfrophytoPage() {
   }, [plants, search]);
 
   const pageCount = Math.max(1, Math.ceil(filteredPlants.length / PAGE_SIZE));
+  const visiblePageNumbers = useMemo(() => {
+    const maxVisible = 5;
+    if (pageCount <= maxVisible) {
+      return Array.from({ length: pageCount }, (_, index) => index + 1);
+    }
+    let start = Math.max(1, page - Math.floor(maxVisible / 2));
+    let end = start + maxVisible - 1;
+    if (end > pageCount) {
+      end = pageCount;
+      start = end - maxVisible + 1;
+    }
+    return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+  }, [page, pageCount]);
 
   const pagedPlants = useMemo(() => {
     const safePage = Math.min(page, pageCount);
@@ -84,18 +97,17 @@ export default function AfrophytoPage() {
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900 dark:bg-[#061a14] dark:text-slate-100">
       <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur dark:border-slate-800 dark:bg-[#0a2019]/95">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-2.5 sm:py-3">
           <Link href="/afrophyto" className="flex items-center gap-2">
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-emerald-600 font-bold text-white">
               A
             </span>
-            <span className="text-xl font-bold text-emerald-700">AfroPhyto</span>
+            <span className="text-lg font-bold text-emerald-700 sm:text-xl">AfroPhyto</span>
           </Link>
-          <nav className="hidden items-center gap-5 text-sm font-medium text-slate-700 md:flex dark:text-slate-200">
-            
+          <nav className="flex items-center gap-3 text-sm font-medium text-slate-700 dark:text-slate-200">
             <a
               href="mailto:contact@thehackbio.com?subject=Support%20AfroPhyto"
-              className="rounded-md bg-emerald-600 px-3 py-2 text-white hover:bg-emerald-700"
+              className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
             >
               Donate
             </a>
@@ -103,10 +115,10 @@ export default function AfrophytoPage() {
         </div>
       </header>
 
-      <section className="mx-auto w-full max-w-6xl px-4 py-10">
-        <div className="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm dark:border-emerald-500/30 dark:bg-[#0b1f3b]">
+      <section className="mx-auto w-full max-w-6xl px-4 py-6 sm:py-10">
+        <div className="rounded-xl border border-emerald-100 bg-white p-4 shadow-sm sm:rounded-2xl sm:p-6 dark:border-emerald-500/30 dark:bg-[#0b1f3b]">
           <p className="text-sm font-semibold uppercase tracking-wide text-emerald-600">Plant Phytochemical Database</p>
-          <h1 className="mt-2 text-4xl font-bold text-emerald-700">AfroPhyto</h1>
+          <h1 className="mt-2 text-3xl font-bold text-emerald-700 sm:text-4xl">AfroPhyto</h1>
           <p className="mt-3 max-w-3xl text-base text-slate-700 dark:text-slate-200">
             Discover medicinal plants and their known phytochemicals. Search our comprehensive database of medicinal plants and their bioactive compounds.
           </p>
@@ -121,7 +133,7 @@ export default function AfrophytoPage() {
             <button
               type="button"
               onClick={() => setSearch(search.trim())}
-              className="rounded-md bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-700"
+              className="w-full rounded-md bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-700 sm:w-auto"
             >
               Search
             </button>
@@ -138,23 +150,23 @@ export default function AfrophytoPage() {
         ) : (
           <>
             <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                 <p className="text-sm text-slate-600 dark:text-slate-300">
                   Showing <span className="font-semibold text-slate-900 dark:text-slate-100">{filteredPlants.length}</span> plant
                   {filteredPlants.length === 1 ? "" : "s"}
                 </p>
-                <div className="inline-flex rounded-md border border-slate-300 bg-white p-1 dark:border-slate-700 dark:bg-[#10253f]">
+                <div className="inline-flex w-full rounded-md border border-slate-300 bg-white p-1 sm:w-auto dark:border-slate-700 dark:bg-[#10253f]">
                   <button
                     type="button"
                     onClick={() => setViewMode("card")}
-                    className={`rounded px-3 py-1 text-sm ${viewMode === "card" ? "bg-emerald-600 text-white" : "text-slate-700 dark:text-slate-200"}`}
+                    className={`w-1/2 rounded px-3 py-1 text-sm sm:w-auto ${viewMode === "card" ? "bg-emerald-600 text-white" : "text-slate-700 dark:text-slate-200"}`}
                   >
                     Card View
                   </button>
                   <button
                     type="button"
                     onClick={() => setViewMode("list")}
-                    className={`rounded px-3 py-1 text-sm ${viewMode === "list" ? "bg-emerald-600 text-white" : "text-slate-700 dark:text-slate-200"}`}
+                    className={`w-1/2 rounded px-3 py-1 text-sm sm:w-auto ${viewMode === "list" ? "bg-emerald-600 text-white" : "text-slate-700 dark:text-slate-200"}`}
                   >
                     List View
                   </button>
@@ -239,7 +251,7 @@ export default function AfrophytoPage() {
                     </div>
                     <Link
                       href={`/afrophyto/${plant.id}`}
-                      className="inline-flex items-center justify-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+                      className="inline-flex w-full items-center justify-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 md:w-auto"
                     >
                       View Phytochemicals
                     </Link>
@@ -254,7 +266,8 @@ export default function AfrophytoPage() {
               </div>
             ) : null}
 
-            <div className="mt-8 flex items-center justify-center gap-2">
+            <div className="mt-8 overflow-x-auto pb-1">
+              <div className="mx-auto flex w-max items-center justify-center gap-2">
               <button
                 type="button"
                 onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
@@ -263,8 +276,7 @@ export default function AfrophytoPage() {
               >
                 Previous
               </button>
-              {Array.from({ length: pageCount }).map((_, index) => {
-                const pageNumber = index + 1;
+              {visiblePageNumbers.map((pageNumber) => {
                 const active = pageNumber === page;
                 return (
                   <button
@@ -289,6 +301,7 @@ export default function AfrophytoPage() {
               >
                 Next
               </button>
+              </div>
             </div>
           </>
         )}
