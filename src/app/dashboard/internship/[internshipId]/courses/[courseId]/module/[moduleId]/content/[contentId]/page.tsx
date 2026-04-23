@@ -29,6 +29,7 @@ import WebRPy from "@/components/widgets/course-props-widgets/webrpy";
 import StreakBar from "@/components/widgets/dashboard-widgets/streak-bar";
 import Link from "next/link";
 import ProgressFloat from "@/components/widgets/progress-float";
+import { CheckCircle2, XCircle } from "lucide-react";
 
 const CONTENT_META: Record<string, { icon: string; label: string }> = {
   video: { icon: "🎥", label: "Video" },
@@ -1028,6 +1029,30 @@ function Page() {
     </div>
   );
 
+  const quizMarkdownComponents = {
+    h1: ({ children }: any) => <p className="mb-2 text-base font-normal leading-7 text-gray-900 dark:text-gray-100">{children}</p>,
+    h2: ({ children }: any) => <p className="mb-2 text-base font-normal leading-7 text-gray-900 dark:text-gray-100">{children}</p>,
+    h3: ({ children }: any) => <p className="mb-2 text-base font-normal leading-7 text-gray-900 dark:text-gray-100">{children}</p>,
+    h4: ({ children }: any) => <p className="mb-2 text-base font-normal leading-7 text-gray-900 dark:text-gray-100">{children}</p>,
+    p: ({ children }: any) => <p className="mb-2 text-base font-normal leading-7 text-gray-900 dark:text-gray-100">{children}</p>,
+    ul: ({ children }: any) => <ul className="mb-2 list-disc space-y-1 pl-5 text-sm text-gray-800 dark:text-gray-100">{children}</ul>,
+    ol: ({ children }: any) => <ol className="mb-2 list-decimal space-y-1 pl-5 text-sm text-gray-800 dark:text-gray-100">{children}</ol>,
+    li: ({ children }: any) => <li className="leading-6">{children}</li>,
+    pre: ({ children }: any) => (
+      <pre className="mt-2 overflow-x-auto rounded-md bg-gray-950 p-3 font-mono text-xs text-gray-100">{children}</pre>
+    ),
+    code: ({ inline, children, ...props }: any) =>
+      inline ? (
+        <code {...props} className="rounded-sm bg-gray-100 px-1 py-0.5 font-mono text-xs text-gray-900">
+          {children}
+        </code>
+      ) : (
+        <code {...props} className="font-mono text-xs text-gray-100">
+          {children}
+        </code>
+      ),
+  };
+
   const quizCard = (content: any) => {
     const answers = [content.quiz_answer_a, content.quiz_answer_b, content.quiz_answer_c].filter(Boolean);
     return (
@@ -1046,8 +1071,10 @@ function Page() {
             </div>
           </div>
 
-          <div className="mt-4 text-lg sm:text-xl font-semibold text-gray-900">
-            <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>{content.quiz_question || "No question provided"}</Markdown>
+          <div className="mt-4 text-gray-900">
+            <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]} components={quizMarkdownComponents}>
+              {content.quiz_question || "No question provided"}
+            </Markdown>
           </div>
 
           <div className="mt-4 flex flex-col gap-3">
@@ -1069,18 +1096,22 @@ function Page() {
                   key={`${answer}-${index}`}
                   type="button"
                   onClick={() => handleSelectAnswer(answer)}
-                  className={`w-full text-left rounded-2xl border px-4 py-3 transition duration-150 min-h-12 ${optionClass}`}
+                  className={`w-full text-left rounded-md border px-4 py-3 transition duration-150 min-h-12 ${optionClass}`}
                   aria-pressed={isSelected}
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <div className="text-xs sm:text-sm font-mono text-gray-800 prose prose-sm max-w-none">
-                      <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]}>
+                    <div className="text-xs sm:text-sm text-gray-800 max-w-none">
+                      <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]} components={quizMarkdownComponents}>
                         {answer}
                       </Markdown>
                     </div>
                     {mcqGraded && (
-                      <span className="text-sm font-semibold">
-                        {isCorrectOption ? "✓" : isIncorrectSelected ? "✕" : ""}
+                      <span className="pt-0.5">
+                        {isCorrectOption ? (
+                          <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        ) : isIncorrectSelected ? (
+                          <XCircle className="h-4 w-4 text-red-500" />
+                        ) : null}
                       </span>
                     )}
                   </div>

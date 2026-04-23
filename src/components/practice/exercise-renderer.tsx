@@ -17,6 +17,36 @@ type ExerciseRendererProps = {
 const SELECT_TYPES = new Set(["mcq", "plot_interpret", "tool_select", "scenario"]);
 const CODE_TYPES = new Set(["command", "debug", "plot_reproduce", "dataset"]);
 const ORDER_TYPES = new Set(["rearrange", "pipeline"]);
+const markdownComponents = {
+  h1: ({ children }: any) => <p className="mb-2 text-base font-normal leading-7 text-gray-900">{children}</p>,
+  h2: ({ children }: any) => <p className="mb-2 text-base font-normal leading-7 text-gray-900">{children}</p>,
+  h3: ({ children }: any) => <p className="mb-2 text-base font-normal leading-7 text-gray-900">{children}</p>,
+  h4: ({ children }: any) => <p className="mb-2 text-base font-normal leading-7 text-gray-900">{children}</p>,
+  p: ({ children }: any) => <p className="mb-2 text-base font-normal leading-7 text-gray-900">{children}</p>,
+  ul: ({ children }: any) => <ul className="mb-2 list-disc space-y-1 pl-5 text-sm text-gray-800">{children}</ul>,
+  ol: ({ children }: any) => <ol className="mb-2 list-decimal space-y-1 pl-5 text-sm text-gray-800">{children}</ol>,
+  li: ({ children }: any) => <li className="leading-6">{children}</li>,
+  img: ({ ...props }) => (
+    <img {...props} className="mt-2 max-h-64 w-full rounded-md border border-gray-200 object-contain" />
+  ),
+  pre: ({ children }: any) => (
+    <pre className="mt-2 overflow-x-auto rounded-md bg-gray-950 p-3 font-mono text-xs text-gray-100">{children}</pre>
+  ),
+  code: ({ inline, children, ...props }: any) => {
+    if (inline) {
+      return (
+        <code {...props} className="rounded-sm bg-gray-100 px-1 py-0.5 font-mono text-xs text-gray-900">
+          {children}
+        </code>
+      );
+    }
+    return (
+      <code {...props} className="font-mono text-xs text-gray-100">
+        {children}
+      </code>
+    );
+  },
+};
 
 export default function ExerciseRenderer({
   exerciseType,
@@ -39,30 +69,11 @@ export default function ExerciseRenderer({
     <div className="flex flex-col gap-5">
       <div className="rounded-xl border border-gray-200 bg-white p-5">
         <p className="text-xs font-semibold uppercase tracking-wide text-green-700">Quiz Checkpoint</p>
-        <div className={`mt-2 max-w-none text-gray-900 prose prose-sm ${isOrderType ? "font-mono" : ""}`}>
+        <div className={`mt-2 max-w-none text-gray-900 ${isOrderType ? "font-mono" : ""}`}>
           <Markdown
             remarkPlugins={[remarkMath, remarkGfm]}
             rehypePlugins={[rehypeKatex]}
-            components={{
-              img: ({ ...props }) => (
-                <img {...props} className="mt-2 max-h-64 w-full rounded-md border border-gray-200 object-contain" />
-              ),
-              code: ({ className, children, ...props }: any) => {
-                const inline = !className;
-                if (inline) {
-                  return (
-                    <code {...props} className="rounded-sm bg-gray-100 px-1 py-0.5 font-mono text-xs text-gray-900">
-                      {children}
-                    </code>
-                  );
-                }
-                return (
-                  <code {...props} className="block overflow-x-auto rounded-md bg-gray-950 p-3 font-mono text-xs text-gray-100">
-                    {children}
-                  </code>
-                );
-              },
-            }}
+            components={markdownComponents}
           >
             {String(prompt)}
           </Markdown>
@@ -93,7 +104,7 @@ export default function ExerciseRenderer({
                 key={`${value}-${index}`}
                 type="button"
                 onClick={() => onAnswerChange(value)}
-                className={`w-full text-left rounded-xl border px-4 py-3 transition ${
+                className={`w-full text-left rounded-md border px-4 py-3 transition ${
                   selected
                     ? "border-green-600 bg-green-50 shadow-sm"
                     : "border-gray-300 bg-white hover:border-green-300"
