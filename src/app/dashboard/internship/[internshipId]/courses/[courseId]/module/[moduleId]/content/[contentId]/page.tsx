@@ -40,6 +40,34 @@ const CONTENT_META: Record<string, { icon: string; label: string }> = {
   jupyter: { icon: "📓", label: "Notebook" },
   submit: { icon: "✅", label: "Submit" },
   certificate: { icon: "🏅", label: "Certificate" },
+  feedback: { icon: "📝", label: "Feedback" },
+};
+
+const FEEDBACK_OPTIONS = {
+  mentorship_quality: [
+    { value: "excellent", label: "Excellent" },
+    { value: "good", label: "Good" },
+    { value: "fair", label: "Fair" },
+    { value: "poor", label: "Poor" },
+  ],
+  modules_relevance: [
+    { value: "very_relevant", label: "Very relevant" },
+    { value: "somewhat_relevant", label: "Somewhat relevant" },
+    { value: "slightly_relevant", label: "Slightly relevant" },
+    { value: "not_relevant", label: "Not relevant" },
+  ],
+  difficulty_level: [
+    { value: "too_easy", label: "Too easy" },
+    { value: "appropriate", label: "Appropriate" },
+    { value: "manageable", label: "Challenging but manageable" },
+    { value: "too_difficult", label: "Too difficult" },
+  ],
+  progression_experience: [
+    { value: "strongly_yes", label: "Strongly yes" },
+    { value: "yes", label: "Yes" },
+    { value: "somewhat", label: "Somewhat" },
+    { value: "no", label: "No" },
+  ],
 };
 
 
@@ -91,6 +119,17 @@ function Page() {
   const [certPreparedness, setCertPreparedness] = useState("");
   const [certImprovement, setCertImprovement] = useState("");
   const [certError, setCertError] = useState("");
+  const [feedbackMentorshipQuality, setFeedbackMentorshipQuality] = useState("");
+  const [feedbackMentorshipImprovement, setFeedbackMentorshipImprovement] = useState("");
+  const [feedbackModulesRelevance, setFeedbackModulesRelevance] = useState("");
+  const [feedbackModulesUseful, setFeedbackModulesUseful] = useState("");
+  const [feedbackDifficultyLevel, setFeedbackDifficultyLevel] = useState("");
+  const [feedbackDifficultyStruggle, setFeedbackDifficultyStruggle] = useState("");
+  const [feedbackProgressionExperience, setFeedbackProgressionExperience] = useState("");
+  const [feedbackExperienceImprovement, setFeedbackExperienceImprovement] = useState("");
+  const [feedbackError, setFeedbackError] = useState("");
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
   const [internshipList, setInternshipList] = useState<Array<{
         id?: string
         title?: string
@@ -330,6 +369,64 @@ function Page() {
     await handleGenCertificate();
   };
 
+  const handleFeedbackSubmit = async (navigateAfter = false) => {
+    setFeedbackError("");
+    if (!feedbackMentorshipQuality || !feedbackModulesRelevance || !feedbackDifficultyLevel || !feedbackProgressionExperience) {
+      setFeedbackError("Please answer all required rating questions.");
+      return false;
+    }
+
+    setFeedbackLoading(true);
+    try {
+      const payload: Record<string, unknown> = {
+        contentid: contentId,
+        courseid: courseId,
+        mentorship_quality: feedbackMentorshipQuality,
+        mentorship_improvement: feedbackMentorshipImprovement.trim(),
+        modules_relevance: feedbackModulesRelevance,
+        modules_most_least_useful: feedbackModulesUseful.trim(),
+        difficulty_level: feedbackDifficultyLevel,
+        difficulty_struggle_area: feedbackDifficultyStruggle.trim(),
+        progression_experience: feedbackProgressionExperience,
+        experience_improvement: feedbackExperienceImprovement.trim(),
+      };
+      if (!(progType === "single" && globalInternshipId === 0)) {
+        payload.internshipid = globalInternshipId;
+      }
+
+      const response = await api.post("/api/content-feedback/", payload);
+      if (response.status !== 200) {
+        setFeedbackError("Failed to save feedback. Please try again.");
+        return false;
+      }
+
+      const xpEarned = Number(response.data?.xp_earned || 0);
+      setFeedbackSubmitted(true);
+      setUniqCContent((prev) => {
+        const next = new Set(prev);
+        next.add(String(contentId));
+        return next;
+      });
+      if (xpEarned > 0) {
+        setUserXP((prev) => (Number(prev || 0) + xpEarned).toString());
+      }
+      toast.success(
+        xpEarned > 0
+          ? `Feedback submitted. ${xpEarned} XP gained!`
+          : "Feedback updated successfully. No additional XP this time."
+      );
+      if (navigateAfter) {
+        router.push(nextHref);
+      }
+      return true;
+    } catch (error) {
+      setFeedbackError(formatBackendError(error));
+      return false;
+    } finally {
+      setFeedbackLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -356,6 +453,16 @@ function Page() {
     setMcqGraded(false);
     setHintClicked(false);
     setGrade(0);
+    setFeedbackError("");
+    setFeedbackSubmitted(false);
+    setFeedbackMentorshipQuality("");
+    setFeedbackMentorshipImprovement("");
+    setFeedbackModulesRelevance("");
+    setFeedbackModulesUseful("");
+    setFeedbackDifficultyLevel("");
+    setFeedbackDifficultyStruggle("");
+    setFeedbackProgressionExperience("");
+    setFeedbackExperienceImprovement("");
   }, [contentId]);
 
   useEffect(() => {
@@ -925,12 +1032,42 @@ function Page() {
   const isCurrentCompleted = uniqCContent.has(String(contentId));
   const activeContent = filteredContentList[0];
   const isQuizContent = activeContent?.content_type === "quiz";
+  const isFeedbackContent = activeContent?.content_type === "feedback";
   const quizItems = contentList.filter((content) => content.content_type === "quiz");
   const quizTotal = quizItems.length;
   const quizIndex = quizItems.findIndex((content) => Number(content.id) === Number(contentId)) + 1;
   const moduleStepIndex = currentModuleIndex >= 0 ? currentModuleIndex + 1 : 1;
   const quizCorrectAnswer = activeContent?.actual_answer || "";
   const isQuizCorrect = isQuizContent && mcqGraded && selectedAnswer !== "none" && selectedAnswer === quizCorrectAnswer;
+
+  useEffect(() => {
+    if (!isFeedbackContent) return;
+    let mounted = true;
+
+    const loadFeedback = async () => {
+      try {
+        const response = await api.get(`/api/content-feedback/?contentid=${contentId}`);
+        if (!mounted || response.status !== 200 || !response.data?.submitted || !response.data?.feedback) return;
+        const existing = response.data.feedback;
+        setFeedbackMentorshipQuality(existing.mentorship_quality || "");
+        setFeedbackMentorshipImprovement(existing.mentorship_improvement || "");
+        setFeedbackModulesRelevance(existing.modules_relevance || "");
+        setFeedbackModulesUseful(existing.modules_most_least_useful || "");
+        setFeedbackDifficultyLevel(existing.difficulty_level || "");
+        setFeedbackDifficultyStruggle(existing.difficulty_struggle_area || "");
+        setFeedbackProgressionExperience(existing.progression_experience || "");
+        setFeedbackExperienceImprovement(existing.experience_improvement || "");
+        setFeedbackSubmitted(true);
+      } catch {
+        // best-effort hydration
+      }
+    };
+
+    loadFeedback();
+    return () => {
+      mounted = false;
+    };
+  }, [contentId, isFeedbackContent]);
 
   const buildContentHref = (targetModuleId: number, targetContentId: number) =>
     `/dashboard/internship/${globalInternshipId}/courses/${courseId}/module/${targetModuleId}/content/${targetContentId}?type=single`;
@@ -943,12 +1080,26 @@ function Page() {
     : `/dashboard/internship/${globalInternshipId}/courses/${courseId}?type=single`;
 
   const quizActionLabel = loading && !mcqGraded ? "Submitting..." : !mcqGraded ? "Submit" : isQuizCorrect ? "Next" : "Try again";
+  const feedbackReady =
+    Boolean(feedbackMentorshipQuality) &&
+    Boolean(feedbackModulesRelevance) &&
+    Boolean(feedbackDifficultyLevel) &&
+    Boolean(feedbackProgressionExperience);
+  const feedbackActionLabel = feedbackLoading
+    ? "Submitting..."
+    : feedbackSubmitted || isCurrentCompleted
+      ? (nextContentInModuleId > 0 ? "Next" : "Back to course")
+      : "Submit feedback";
   const primaryLabel = isQuizContent
     ? quizActionLabel
+    : isFeedbackContent
+      ? feedbackActionLabel
     : isCurrentCompleted
       ? (nextContentInModuleId > 0 ? "Next" : "Back to course")
       : "Mark complete";
-  const primaryDisabled = isQuizContent && !mcqGraded && (selectedAnswer === "none" || loading);
+  const primaryDisabled =
+    (isQuizContent && !mcqGraded && (selectedAnswer === "none" || loading)) ||
+    (isFeedbackContent && !feedbackSubmitted && !isCurrentCompleted && (!feedbackReady || feedbackLoading));
 
   const handleQuizAction = async () => {
     if (!mcqGraded) {
@@ -974,6 +1125,14 @@ function Page() {
       await handleQuizAction();
       return;
     }
+    if (isFeedbackContent) {
+      if (feedbackSubmitted || isCurrentCompleted) {
+        router.push(nextHref);
+      } else {
+        await handleFeedbackSubmit(true);
+      }
+      return;
+    }
     if (isCurrentCompleted) {
       router.push(nextHref);
       return;
@@ -997,6 +1156,7 @@ function Page() {
     }
     if (type === "video") return 8;
     if (type === "quiz") return 3;
+    if (type === "feedback") return 4;
     if (type === "project") return 15;
     if (type === "codeTask") return 12;
     if (type === "jupyter") return 10;
@@ -1162,6 +1322,118 @@ function Page() {
     );
   };
 
+  const feedbackCard = (content: any) => {
+    const renderOptions = (
+      selectedValue: string,
+      onSelect: (value: string) => void,
+      options: Array<{ value: string; label: string }>
+    ) => (
+      <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {options.map((option) => {
+          const selected = selectedValue === option.value;
+          return (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => onSelect(option.value)}
+              className={`rounded-md border px-3 py-2 text-left text-sm transition ${
+                selected
+                  ? "border-green-500 bg-green-50 text-green-800"
+                  : "border-gray-300 bg-white text-gray-700 hover:border-green-300"
+              }`}
+            >
+              {option.label}
+            </button>
+          );
+        })}
+      </div>
+    );
+
+    return (
+      <div className="w-full rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-wide text-green-700">Program Feedback</p>
+        <p className="mt-2 text-sm text-gray-600">Help us improve by sharing your honest feedback. Required fields are marked.</p>
+        {content?.text_content ? (
+          <div className="mt-3 rounded-md border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700">
+            <Markdown remarkPlugins={[remarkMath, remarkGfm]} rehypePlugins={[rehypeKatex]} components={quizMarkdownComponents}>
+              {content.text_content}
+            </Markdown>
+          </div>
+        ) : null}
+
+        <div className="mt-4 space-y-4">
+          <div>
+            <p className="text-sm font-semibold text-gray-900">1. Mentorship Quality *</p>
+            <p className="text-xs text-gray-500">How would you rate the support and guidance from your mentor(s)?</p>
+            {renderOptions(feedbackMentorshipQuality, setFeedbackMentorshipQuality, FEEDBACK_OPTIONS.mentorship_quality)}
+            <textarea
+              value={feedbackMentorshipImprovement}
+              onChange={(e) => setFeedbackMentorshipImprovement(e.target.value)}
+              placeholder="Optional: What could be improved?"
+              className="mt-2 w-full rounded-md border border-gray-300 p-3 text-sm"
+            />
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold text-gray-900">2. Content & Modules *</p>
+            <p className="text-xs text-gray-500">How relevant and useful were the HackBio modules and learning materials?</p>
+            {renderOptions(feedbackModulesRelevance, setFeedbackModulesRelevance, FEEDBACK_OPTIONS.modules_relevance)}
+            <textarea
+              value={feedbackModulesUseful}
+              onChange={(e) => setFeedbackModulesUseful(e.target.value)}
+              placeholder="Optional: Which module was most/least useful?"
+              className="mt-2 w-full rounded-md border border-gray-300 p-3 text-sm"
+            />
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold text-gray-900">3. Difficulty Level *</p>
+            <p className="text-xs text-gray-500">How would you describe the overall difficulty of the program?</p>
+            {renderOptions(feedbackDifficultyLevel, setFeedbackDifficultyLevel, FEEDBACK_OPTIONS.difficulty_level)}
+            <textarea
+              value={feedbackDifficultyStruggle}
+              onChange={(e) => setFeedbackDifficultyStruggle(e.target.value)}
+              placeholder="Optional: Where did you struggle most?"
+              className="mt-2 w-full rounded-md border border-gray-300 p-3 text-sm"
+            />
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold text-gray-900">4. Progression & Overall Experience *</p>
+            <p className="text-xs text-gray-500">Did you feel a clear sense of progress and growth throughout the internship?</p>
+            {renderOptions(
+              feedbackProgressionExperience,
+              setFeedbackProgressionExperience,
+              FEEDBACK_OPTIONS.progression_experience
+            )}
+            <textarea
+              value={feedbackExperienceImprovement}
+              onChange={(e) => setFeedbackExperienceImprovement(e.target.value)}
+              placeholder="Optional: What would improve your experience?"
+              className="mt-2 w-full rounded-md border border-gray-300 p-3 text-sm"
+            />
+          </div>
+        </div>
+
+        {feedbackError ? <p className="mt-3 text-xs font-semibold text-red-500">{feedbackError}</p> : null}
+        {feedbackSubmitted ? <p className="mt-3 text-xs font-semibold text-green-700">Feedback submitted successfully.</p> : null}
+
+        <div className="mt-4">
+          <Button
+            type="button"
+            onClick={() => {
+              handleFeedbackSubmit(false);
+            }}
+            disabled={feedbackLoading}
+            className="w-fit bg-green-600 text-white hover:bg-green-700"
+          >
+            {feedbackLoading ? "Submitting..." : "Submit Feedback"}
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
   const desktopLessonContent = (
     <div className="flex flex-col gap-8">
       {filteredContentList.length > 0 ? (
@@ -1229,6 +1501,10 @@ function Page() {
 
                 {content.content_type === "quiz" && (
                   <div className="w-full">{quizCard(content)}</div>
+                )}
+
+                {content.content_type === "feedback" && (
+                  <div className="w-full">{feedbackCard(content)}</div>
                 )}
 
                 {content.content_type === "project" && (
@@ -1452,6 +1728,10 @@ function Page() {
 
           {content.content_type === "quiz" && (
             <div className="w-full">{quizCard(content)}</div>
+          )}
+
+          {content.content_type === "feedback" && (
+            <div className="w-full">{feedbackCard(content)}</div>
           )}
 
           {content.content_type === "project" && (
