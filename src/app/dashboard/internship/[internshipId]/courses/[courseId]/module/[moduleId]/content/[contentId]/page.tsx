@@ -753,6 +753,10 @@ function Page() {
       }
 
       if (response.status === 200) {
+        const updatedDisplayUsername = String(response.data?.display_username || "").trim();
+        if (updatedDisplayUsername) {
+          setUsername(updatedDisplayUsername);
+        }
         const parsedGrade = Number(response.data?.grade_response ?? 0);
         setGrade(Number.isFinite(parsedGrade) ? parsedGrade : 0);
         const parsedPercent = Number(response.data?.score_percent);
@@ -797,6 +801,10 @@ function Page() {
       }
 
       if (response.status === 200) {
+        const updatedDisplayUsername = String(response.data?.display_username || "").trim();
+        if (updatedDisplayUsername) {
+          setUsername(updatedDisplayUsername);
+        }
         const parsedGrade = Number(response.data?.grade_response ?? 0);
         setGrade(Number.isFinite(parsedGrade) ? parsedGrade : 0);
         const parsedPercent = Number(response.data?.score_percent);

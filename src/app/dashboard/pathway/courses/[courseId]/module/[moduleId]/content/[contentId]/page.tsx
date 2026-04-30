@@ -441,6 +441,10 @@ function Page() {
                 channel: filteredContentList[0].project_promote_channel || "C09A477A43E" // Default channel if not provided
             });
             if (response.status === 200) {
+                const updatedDisplayUsername = String(response.data?.display_username || "").trim();
+                if (updatedDisplayUsername) {
+                    setUsername(updatedDisplayUsername);
+                }
                 console.log("Solution submitted successfully.: ", response.data.grade_response.grade);
                 setGrade(response.data.grade_response.grade); // Assuming the response contains a grade field
                 setLoading(false);

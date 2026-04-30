@@ -90,13 +90,9 @@ export default function LeftSideBar() {
             try {
                 const res = await api.get("/api/slack/stats/");
                 if (res.status === 200) {
-                    const messages = Number(res.data?.messages_sent || 0);
-                    const lastEvent = res.data?.last_event_at ? new Date(res.data.last_event_at) : null;
-                    const daysSince = lastEvent ? (Date.now() - lastEvent.getTime()) / (1000 * 60 * 60 * 24) : 999;
-                    const recency = Math.max(0, Math.min(1, 1 - daysSince / 30));
-                    const volume = Math.max(0, Math.min(1, Math.log1p(messages) / Math.log1p(200)));
-                    const score = (0.6 * recency) + (0.4 * volume);
-                    setSocialPercent(Math.round(score * 100));
+                    const consistency = Number(res.data?.consistency_7d_percent || 0);
+                    const socialPercentFromConsistency = Math.max(0, Math.min(100, Math.round(consistency)));
+                    setSocialPercent(socialPercentFromConsistency);
                 }
             } catch (error) {
                 setSocialPercent(0);
@@ -215,11 +211,11 @@ export default function LeftSideBar() {
                             />
                             <div
                                 className="relative h-10 w-10"
-                                title="Social activity score based on recent Slack activity and message volume."
-                                aria-label="Social activity score based on recent Slack activity and message volume."
+                                title="7-day Slack consistency: percentage of the last 7 days with at least one Slack action."
+                                aria-label="7-day Slack consistency: percentage of the last 7 days with at least one Slack action."
                             >
-                                <div className="absolute inset-0 rounded-full" style={ringStyle} title="Social activity score based on recent Slack activity and message volume." />
-                                <div className="absolute inset-1 rounded-full bg-white flex items-center justify-center text-[10px] font-semibold text-gray-700" title="Social activity score based on recent Slack activity and message volume.">
+                                <div className="absolute inset-0 rounded-full" style={ringStyle} title="7-day Slack consistency: percentage of the last 7 days with at least one Slack action." />
+                                <div className="absolute inset-1 rounded-full bg-white flex items-center justify-center text-[10px] font-semibold text-gray-700" title="7-day Slack consistency: percentage of the last 7 days with at least one Slack action.">
                                     {socialPercent}%
                                 </div>
                             </div>
@@ -337,11 +333,11 @@ export default function LeftSideBar() {
                                     <ThemeToggle variant="sidebar" showLabel={true} className="w-full" />
                                     <div
                                         className="relative h-10 w-10"
-                                        title="Social activity score based on recent Slack activity and message volume."
-                                        aria-label="Social activity score based on recent Slack activity and message volume."
+                                        title="7-day Slack consistency: percentage of the last 7 days with at least one Slack action."
+                                        aria-label="7-day Slack consistency: percentage of the last 7 days with at least one Slack action."
                                     >
-                                        <div className="absolute inset-0 rounded-full" style={ringStyle} title="Social activity score based on recent Slack activity and message volume." />
-                                        <div className="absolute inset-1 rounded-full bg-white flex items-center justify-center text-[10px] font-semibold text-gray-700" title="Social activity score based on recent Slack activity and message volume.">
+                                        <div className="absolute inset-0 rounded-full" style={ringStyle} title="7-day Slack consistency: percentage of the last 7 days with at least one Slack action." />
+                                        <div className="absolute inset-1 rounded-full bg-white flex items-center justify-center text-[10px] font-semibold text-gray-700" title="7-day Slack consistency: percentage of the last 7 days with at least one Slack action.">
                                             {socialPercent}%
                                         </div>
                                     </div>
