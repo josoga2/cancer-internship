@@ -232,6 +232,34 @@ function MonitoringPage() {
     };
   }, [rows]);
 
+  const visibleProgramOptions = useMemo(() => {
+    const source = programOptions.length
+      ? programOptions
+      : rows.map((row) => ({
+          program_ref: `${row.program_type}:${row.program_id}`,
+          program_title: row.program_title,
+          program_type: row.program_type,
+        }));
+
+    const normalized = source
+      .map((item) => ({
+        ...item,
+        program_title: (item.program_title || "").trim(),
+      }))
+      .filter((item) => item.program_ref && item.program_title);
+
+    const uniqueMap = new Map<string, ProgramOption>();
+    normalized.forEach((item) => {
+      if (!uniqueMap.has(item.program_ref)) {
+        uniqueMap.set(item.program_ref, item);
+      }
+    });
+
+    const list = Array.from(uniqueMap.values()).sort((a, b) => a.program_title.localeCompare(b.program_title));
+    if (!programType) return list;
+    return list.filter((item) => item.program_type === programType);
+  }, [programOptions, rows, programType]);
+
   return (
     <main className="w-full">
       <div className="hidden md:flex flex-row w-full">
@@ -288,7 +316,7 @@ function MonitoringPage() {
                       className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#09152b] px-3 py-2 text-sm"
                     >
                       <option value="">All program names</option>
-                      {programOptions.map((program) => (
+                      {visibleProgramOptions.map((program) => (
                         <option key={program.program_ref} value={program.program_ref}>
                           {program.program_title}
                         </option>
@@ -350,7 +378,7 @@ function MonitoringPage() {
                       className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#09152b] px-3 py-2 text-sm"
                     >
                       <option value="">All program names</option>
-                      {programOptions.map((program) => (
+                      {visibleProgramOptions.map((program) => (
                         <option key={program.program_ref} value={program.program_ref}>
                           {program.program_title}
                         </option>
@@ -525,7 +553,7 @@ function MonitoringPage() {
                 className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#09152b] px-3 py-2 text-sm"
               >
                 <option value="">All program names</option>
-                {programOptions.map((program) => (
+                {visibleProgramOptions.map((program) => (
                   <option key={program.program_ref} value={program.program_ref}>
                     {program.program_title}
                   </option>
