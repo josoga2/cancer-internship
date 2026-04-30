@@ -1,7 +1,7 @@
 'use client';
 
 import * as THREE from 'three';
-import { useEffect, useRef} from 'react';
+import { useEffect, useRef } from 'react';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 // cursor
@@ -9,12 +9,6 @@ const cursor = {
     x: 0,
     y: 0
 }
-window.addEventListener('mousemove', (event) => {
-    cursor.x = event.clientX / 800 - 0.5;
-    cursor.y = -(event.clientY / 600 - 0.5);
-
-    //console.log(cursor);
-});
 
 // you need canvas, scene, camera, renderer, geometry, material and mesh to create a 3D object in three.js
 export default function Page() {
@@ -22,6 +16,12 @@ export default function Page() {
   
 
   useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+        cursor.x = event.clientX / 800 - 0.5;
+        cursor.y = -(event.clientY / 600 - 0.5);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
     
     const mesh = new THREE.Mesh(
         new THREE.BoxGeometry(1,1,1),
@@ -67,6 +67,11 @@ export default function Page() {
     };
     animate();
 
+    return () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+        controls.dispose();
+        renderer.dispose();
+    };
 
   }, []);
 

@@ -2,6 +2,7 @@
 import HbButtons from "@/components/widgets/hb-buttons";
 import { BiDna, BiAtom } from "react-icons/bi";
 import { MdOutlineDashboard, MdOutlineLeaderboard } from "react-icons/md";
+import { HiOutlineUsers } from "react-icons/hi2";
 import hb_logo from "@/../public/hb_logo.png";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -41,6 +42,12 @@ const tab_items = [
   }
 ];
 
+const monitoring_tab = {
+  id: 9,
+  name: "Monitoring",
+  link: "/dashboard/monitoring",
+  iconImage: HiOutlineUsers,
+};
 
 export default function LeftSideBar() {
 
@@ -50,6 +57,8 @@ export default function LeftSideBar() {
     const [hasMounted, setHasMounted] = useState(false);
     const [socialPercent, setSocialPercent] = useState(0);
     const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
+    const [isMentor, setIsMentor] = useState(false);
+    const [isCxo, setIsCxo] = useState(false);
     const [refreshingAccess, setRefreshingAccess] = useState(false);
     const storageKey = "hb.sidebar.open";
 
@@ -77,8 +86,12 @@ export default function LeftSideBar() {
             try {
                 const res = await api.get("/api/get-user-profile/");
                 setHasActiveSubscription(Boolean(res.data?.has_active_subscription));
+                setIsMentor(Boolean(res.data?.is_mentor));
+                setIsCxo(Boolean(res.data?.is_cxo));
             } catch (error) {
                 setHasActiveSubscription(false);
+                setIsMentor(false);
+                setIsCxo(false);
             }
         };
 
@@ -127,7 +140,10 @@ export default function LeftSideBar() {
         }
     };
 
-    const visibleTabs = tab_items.filter((item) => !item.hidden);
+    const visibleTabs = [
+        ...tab_items.filter((item) => !item.hidden),
+        ...((isMentor || isCxo) ? [monitoring_tab] : []),
+    ];
 
     const socialColor =
         socialPercent >= 100 ? "#ef4444"
