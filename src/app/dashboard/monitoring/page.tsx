@@ -26,6 +26,9 @@ interface MonitoringRow {
   progress_percent?: number;
   social_points?: number;
   social_rank?: number | null;
+  access_expires_at?: string | null;
+  access_months_left?: number | null;
+  access_expiring?: boolean;
 }
 
 interface MentorOption {
@@ -47,13 +50,19 @@ function formatDate(value?: string | null) {
   return parsed.toLocaleDateString();
 }
 
+function daysSince(value?: string | null) {
+  if (!value) return null;
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return (Date.now() - parsed.getTime()) / (1000 * 60 * 60 * 24);
+}
+
 function MonitoringPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCxo, setIsCxo] = useState(false);
   const [isMentor, setIsMentor] = useState(false);
 
   const [rows, setRows] = useState<MonitoringRow[]>([]);
-  const [emails, setEmails] = useState<string[]>([]);
 
   const [programType, setProgramType] = useState<"" | "course" | "internship" | "pathway">("");
   const [programRef, setProgramRef] = useState<string>("");
@@ -63,6 +72,16 @@ function MonitoringPage() {
   const [query, setQuery] = useState("");
   const [expiringOnly, setExpiringOnly] = useState(false);
   const [error, setError] = useState("");
+
+  const [progressMin, setProgressMin] = useState("");
+  const [progressMax, setProgressMax] = useState("");
+  const [lastLoginWithinDays, setLastLoginWithinDays] = useState("");
+  const [lastLmsWithinDays, setLastLmsWithinDays] = useState("");
+  const [streakMin, setStreakMin] = useState("");
+  const [streakMax, setStreakMax] = useState("");
+  const [socialMin, setSocialMin] = useState("");
+  const [socialMax, setSocialMax] = useState("");
+  const [expiryMaxMonths, setExpiryMaxMonths] = useState("");
 
   const [editState, setEditState] = useState<Record<number, { total_slots: string; used_slots: string }>>({});
   const [savingRow, setSavingRow] = useState<number | null>(null);
@@ -79,7 +98,6 @@ function MonitoringPage() {
 
       if (!cxo && !mentor) {
         setRows([]);
-        setEmails([]);
         return;
       }
 
@@ -112,7 +130,6 @@ function MonitoringPage() {
       },
     });
     setRows(Array.isArray(res.data?.results) ? res.data.results : []);
-    setEmails(Array.isArray(res.data?.emails) ? res.data.emails : []);
     setMentors(Array.isArray(res.data?.mentors) ? res.data.mentors : []);
     setProgramOptions(Array.isArray(res.data?.program_options) ? res.data.program_options : []);
   };
@@ -133,7 +150,6 @@ function MonitoringPage() {
     });
     const list = Array.isArray(res.data?.results) ? res.data.results : [];
     setRows(list);
-    setEmails(list.map((item: MonitoringRow) => item.student_email).filter(Boolean));
     setProgramOptions(Array.isArray(res.data?.program_options) ? res.data.program_options : []);
     const nextEditState: Record<number, { total_slots: string; used_slots: string }> = {};
     list.forEach((item: MonitoringRow) => {
@@ -179,14 +195,18 @@ function MonitoringPage() {
   };
 
   const handleCopyEmails = async () => {
-    if (emails.length === 0) {
+    const targetEmails = filteredRows
+      .map((row) => (row.student_email || "").trim().toLowerCase())
+      .filter(Boolean);
+    const uniqueEmails = Array.from(new Set(targetEmails));
+    if (uniqueEmails.length === 0) {
       window.alert("No emails available for this filtered result.");
       return;
     }
-    const csvEmails = emails.join(", ");
+    const csvEmails = uniqueEmails.join(", ");
     try {
       await navigator.clipboard.writeText(csvEmails);
-      window.alert(`${emails.length} email(s) copied to clipboard.`);
+      window.alert(`${uniqueEmails.length} email(s) copied to clipboard.`);
     } catch {
       window.alert("Could not copy automatically. Please copy manually from the list.");
     }
@@ -225,12 +245,68 @@ function MonitoringPage() {
   };
 
   const summary = useMemo(() => {
-    const expiring = rows.filter((row) => row.remaining_slots === 1).length;
+    const expiring = rows.filter((row) => row.access_expiring).length;
     return {
       total: rows.length,
       expiring,
     };
   }, [rows]);
+
+  const filteredRows = useMemo(() => {
+    const pMin = progressMin !== "" ? Number(progressMin) : null;
+    const pMax = progressMax !== "" ? Number(progressMax) : null;
+    const loginDays = lastLoginWithinDays !== "" ? Number(lastLoginWithinDays) : null;
+    const lmsDays = lastLmsWithinDays !== "" ? Number(lastLmsWithinDays) : null;
+    const sMin = streakMin !== "" ? Number(streakMin) : null;
+    const sMax = streakMax !== "" ? Number(streakMax) : null;
+    const socMin = socialMin !== "" ? Number(socialMin) : null;
+    const socMax = socialMax !== "" ? Number(socialMax) : null;
+    const exMax = expiryMaxMonths !== "" ? Number(expiryMaxMonths) : null;
+
+    return rows.filter((row) => {
+      const progress = Number(row.progress_percent ?? 0);
+      if (pMin !== null && !Number.isNaN(pMin) && progress < pMin) return false;
+      if (pMax !== null && !Number.isNaN(pMax) && progress > pMax) return false;
+
+      if (loginDays !== null && !Number.isNaN(loginDays)) {
+        const loginAge = daysSince(row.last_login_date);
+        if (loginAge === null || loginAge > loginDays) return false;
+      }
+
+      if (lmsDays !== null && !Number.isNaN(lmsDays)) {
+        const lmsAge = daysSince(row.last_lms_activity_at);
+        if (lmsAge === null || lmsAge > lmsDays) return false;
+      }
+
+      const streak = Number(row.activity_streak_7d ?? 0);
+      if (sMin !== null && !Number.isNaN(sMin) && streak < sMin) return false;
+      if (sMax !== null && !Number.isNaN(sMax) && streak > sMax) return false;
+
+      const social = Number(row.social_points ?? 0);
+      if (socMin !== null && !Number.isNaN(socMin) && social < socMin) return false;
+      if (socMax !== null && !Number.isNaN(socMax) && social > socMax) return false;
+
+      const monthsLeft = row.access_months_left;
+      if (exMax !== null && !Number.isNaN(exMax)) {
+        if (monthsLeft === null || monthsLeft === undefined || Number(monthsLeft) > exMax) return false;
+      }
+
+      if (expiringOnly && !row.access_expiring) return false;
+      return true;
+    });
+  }, [
+    rows,
+    progressMin,
+    progressMax,
+    lastLoginWithinDays,
+    lastLmsWithinDays,
+    streakMin,
+    streakMax,
+    socialMin,
+    socialMax,
+    expiryMaxMonths,
+    expiringOnly,
+  ]);
 
   const visibleProgramOptions = useMemo(() => {
     const source = programOptions.length
@@ -277,7 +353,8 @@ function MonitoringPage() {
               <>
                 <div className="mt-5 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0b1b32] px-4 py-3 text-sm text-gray-700 dark:text-gray-200 flex flex-wrap items-center gap-4">
                   <span>Total students: <strong>{summary.total}</strong></span>
-                  <span>Expiring meetings (remaining slot = 1): <strong>{summary.expiring}</strong></span>
+                  <span>Filtered students: <strong>{filteredRows.length}</strong></span>
+                  <span>Expiring access (≤ 1 month left): <strong>{summary.expiring}</strong></span>
                   {isCxo ? (
                     <button
                       type="button"
@@ -340,7 +417,7 @@ function MonitoringPage() {
                         checked={expiringOnly}
                         onChange={(event) => setExpiringOnly(event.target.checked)}
                       />
-                      Expiring only
+                      Expiring access only
                     </label>
                     <button
                       type="submit"
@@ -393,6 +470,120 @@ function MonitoringPage() {
                   </form>
                 ) : null}
 
+                {(isCxo || isMentor) ? (
+                  <div className="mt-4 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0b1b32] p-4 grid grid-cols-1 md:grid-cols-5 gap-3">
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      value={progressMin}
+                      onChange={(event) => setProgressMin(event.target.value)}
+                      placeholder="Progress min %"
+                      className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#09152b] px-3 py-2 text-sm"
+                    />
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      value={progressMax}
+                      onChange={(event) => setProgressMax(event.target.value)}
+                      placeholder="Progress max %"
+                      className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#09152b] px-3 py-2 text-sm"
+                    />
+                    <select
+                      value={lastLoginWithinDays}
+                      onChange={(event) => setLastLoginWithinDays(event.target.value)}
+                      className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#09152b] px-3 py-2 text-sm"
+                    >
+                      <option value="">Last login: any time</option>
+                      <option value="7">Last login: 7 days</option>
+                      <option value="14">Last login: 14 days</option>
+                      <option value="30">Last login: 30 days</option>
+                      <option value="90">Last login: 90 days</option>
+                    </select>
+                    <select
+                      value={lastLmsWithinDays}
+                      onChange={(event) => setLastLmsWithinDays(event.target.value)}
+                      className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#09152b] px-3 py-2 text-sm"
+                    >
+                      <option value="">Last LMS activity: any time</option>
+                      <option value="7">Last LMS activity: 7 days</option>
+                      <option value="14">Last LMS activity: 14 days</option>
+                      <option value="30">Last LMS activity: 30 days</option>
+                      <option value="90">Last LMS activity: 90 days</option>
+                    </select>
+                    <input
+                      type="number"
+                      min={0}
+                      max={7}
+                      value={streakMin}
+                      onChange={(event) => setStreakMin(event.target.value)}
+                      placeholder="7-day streak min"
+                      className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#09152b] px-3 py-2 text-sm"
+                    />
+                    <input
+                      type="number"
+                      min={0}
+                      max={7}
+                      value={streakMax}
+                      onChange={(event) => setStreakMax(event.target.value)}
+                      placeholder="7-day streak max"
+                      className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#09152b] px-3 py-2 text-sm"
+                    />
+                    <input
+                      type="number"
+                      min={0}
+                      value={socialMin}
+                      onChange={(event) => setSocialMin(event.target.value)}
+                      placeholder="Social sessions min"
+                      className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#09152b] px-3 py-2 text-sm"
+                    />
+                    <input
+                      type="number"
+                      min={0}
+                      value={socialMax}
+                      onChange={(event) => setSocialMax(event.target.value)}
+                      placeholder="Social sessions max"
+                      className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#09152b] px-3 py-2 text-sm"
+                    />
+                    <input
+                      type="number"
+                      min={0}
+                      step="0.1"
+                      value={expiryMaxMonths}
+                      onChange={(event) => setExpiryMaxMonths(event.target.value)}
+                      placeholder="Expiry: max months left"
+                      className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#09152b] px-3 py-2 text-sm"
+                    />
+                    <label className="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-200">
+                      <input
+                        type="checkbox"
+                        checked={expiringOnly}
+                        onChange={(event) => setExpiringOnly(event.target.checked)}
+                      />
+                      Expiring access only
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setProgressMin("");
+                        setProgressMax("");
+                        setLastLoginWithinDays("");
+                        setLastLmsWithinDays("");
+                        setStreakMin("");
+                        setStreakMax("");
+                        setSocialMin("");
+                        setSocialMax("");
+                        setExpiryMaxMonths("");
+                        setExpiringOnly(false);
+                      }}
+                      className="rounded-md border border-hb-green px-4 py-2 text-sm font-semibold text-hb-green"
+                    >
+                      Clear metric filters
+                    </button>
+                  </div>
+                ) : null}
+
                 {error ? <p className="mt-3 text-sm text-red-600">{error}</p> : null}
 
                 <div className="mt-4 overflow-x-auto rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0b1b32]">
@@ -406,13 +597,13 @@ function MonitoringPage() {
                         <th className="text-left px-3 py-2">Last login</th>
                         <th className="text-left px-3 py-2">Last LMS activity</th>
                         <th className="text-left px-3 py-2">7-day streak</th>
-                        <th className="text-left px-3 py-2">Social</th>
+                        <th className="text-left px-3 py-2">Social sessions</th>
                         <th className="text-left px-3 py-2">Sessions</th>
-                        <th className="text-left px-3 py-2">Expiring</th>
+                        <th className="text-left px-3 py-2">Access left</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {rows.map((row) => {
+                      {filteredRows.map((row) => {
                         const edit = editState[row.assignment_id] || {
                           total_slots: String(row.total_slots ?? 0),
                           used_slots: String(row.used_slots ?? 0),
@@ -479,11 +670,11 @@ function MonitoringPage() {
                               )}
                             </td>
                             <td className="px-3 py-3">
-                              {row.remaining_slots === 1 ? (
-                                <span className="inline-flex rounded-md bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700">Yes</span>
-                              ) : (
-                                <span className="text-xs text-gray-500 dark:text-gray-300">No</span>
-                              )}
+                              {row.access_months_left !== null && row.access_months_left !== undefined ? (
+                                <span className="text-xs text-gray-700 dark:text-gray-200">
+                                  {Number(row.access_months_left).toFixed(2)} month(s)
+                                </span>
+                              ) : <span className="text-xs text-gray-500 dark:text-gray-300">-</span>}
                             </td>
                           </tr>
                         );
@@ -579,7 +770,7 @@ function MonitoringPage() {
                   checked={expiringOnly}
                   onChange={(event) => setExpiringOnly(event.target.checked)}
                 />
-                Expiring only
+                      Expiring access only
               </label>
               <button
                 type="submit"
@@ -590,7 +781,7 @@ function MonitoringPage() {
             </form>
           ) : null}
           <div className="mt-4 flex flex-col gap-3">
-            {rows.map((row) => {
+            {filteredRows.map((row) => {
               const edit = editState[row.assignment_id] || {
                 total_slots: String(row.total_slots ?? 0),
                 used_slots: String(row.used_slots ?? 0),
@@ -638,7 +829,11 @@ function MonitoringPage() {
                       </button>
                     </div>
                   ) : null}
-                  {row.remaining_slots === 1 ? <p className="mt-2 text-xs font-semibold text-amber-600">Expiring meeting slots</p> : null}
+                  {row.access_months_left !== null && row.access_months_left !== undefined ? (
+                    <p className="mt-2 text-xs text-gray-600 dark:text-gray-300">
+                      Access expires in {Number(row.access_months_left).toFixed(2)} month(s)
+                    </p>
+                  ) : null}
                 </div>
               );
             })}
