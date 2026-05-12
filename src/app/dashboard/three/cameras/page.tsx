@@ -13,8 +13,8 @@ const cursor = {
 }
 
 const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight
+    width: 0,
+    height: 0
 }
 
 // you need canvas, scene, camera, renderer, geometry, material and mesh to create a 3D object in three.js
@@ -22,6 +22,11 @@ export default function Page() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
   useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    sizes.width = window.innerWidth;
+    sizes.height = window.innerHeight;
 
 // Setup Debug GUI
     const gui = new GUI();
@@ -113,17 +118,17 @@ export default function Page() {
     scene.add(camera);
 
     //Controls
-    const controls = new OrbitControls(camera, canvasRef.current as HTMLCanvasElement);
+    const controls = new OrbitControls(camera, canvas);
     controls.enableDamping = true;
 
     const renderer = new THREE.WebGLRenderer({
-        canvas: canvasRef.current as HTMLCanvasElement
+        canvas
     });
     renderer.setSize(sizes.width, sizes.height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     //renderer.render(scene, camera);
 
-    window.addEventListener('resize', () => {
+    const handleResize = () => {
         // Update sizes
         sizes.width = window.innerWidth;
         sizes.height = window.innerHeight;
@@ -134,12 +139,11 @@ export default function Page() {
         
         // Update renderer
         renderer.setSize(sizes.width, sizes.height);
-    });
+    };
+
+    window.addEventListener('resize', handleResize);
 
     const handleDoubleClick = async () => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-
         const fullscreenElement = document.fullscreenElement || (document as any).webkitFullscreenElement;
 
         try {
@@ -161,7 +165,7 @@ export default function Page() {
         }
     };
 
-    canvasRef.current?.addEventListener('dblclick', handleDoubleClick);
+    canvas.addEventListener('dblclick', handleDoubleClick);
 
     //animation
     const animate = () => {
@@ -184,7 +188,8 @@ export default function Page() {
 
     return () => {
         window.removeEventListener('mousemove', handleMouseMove);
-        canvasRef.current?.removeEventListener('dblclick', handleDoubleClick);
+        window.removeEventListener('resize', handleResize);
+        canvas.removeEventListener('dblclick', handleDoubleClick);
         controls.dispose();
         renderer.dispose();
         gui.destroy();
