@@ -40,6 +40,7 @@
     "html2canvas-pro": "^1.5.11",
     "jwt-decode": "^4.0.0",
     "katex": "^0.16.22",
+    "lil-gui": "^0.21.0",
     "lucide-react": "^0.511.0",
     "next": "^14.2.7",
     "next-themes": "^0.4.6",

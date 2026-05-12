@@ -112,7 +112,7 @@ export default function Page() {
     useEffect(() => {
         const fetchModules = async () => {
             try {
-                const response = await publicApi.get('/api/modules/');
+                const response = await publicApi.get('/api/public/modules/');
                 if (response.status === 200) {
                     setModulesList(
                         response.data.filter(
@@ -133,7 +133,7 @@ export default function Page() {
     useEffect(() => {
         const fetchContents = async () => {
             try {
-                const response = await publicApi.get('/api/contents/');
+                const response = await publicApi.get('/api/public/contents/');
                 if (response.status === 200) {
                     setContentList(response.data);
                 } else {

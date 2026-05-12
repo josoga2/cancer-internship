@@ -3,12 +3,14 @@
 import { Suspense, useState } from "react";
 import api from "@/api";
 import { useSearchParams, useRouter } from "next/navigation";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/constants/constants";
 
 function FinalizeAccountSetupContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const uid = searchParams.get("uid");
+  const setup = searchParams.get("setup");
   const token = searchParams.get("token");
 
   const [username, setUsername] = useState("");
@@ -16,7 +18,7 @@ function FinalizeAccountSetupContent() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  if (!uid || !token) {
+  if ((!uid && !setup) || !token) {
     return (
       <p className="text-red-600 font-medium">
         Invalid or expired setup link.
@@ -34,18 +36,23 @@ function FinalizeAccountSetupContent() {
     try {
       const res = await api.post("/api/finalize-account-setup/", {
         uid,
+        setup,
         token,
         username,
         password,
       });
 
       if (res.status === 200) {
-        router.push("/login");
+        if (res.data?.access && res.data?.refresh) {
+          localStorage.setItem(ACCESS_TOKEN, res.data.access);
+          localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+        }
+        router.push(res.data?.redirect_path || "/dashboard");
       } else {
         setError("Invalid details or already in use.");
       }
-    } catch {
-      router.push("/login");
+    } catch (error: any) {
+      setError(error?.response?.data?.error || "Invalid, used, or expired setup link.");
     } finally {
       setLoading(false);
     }

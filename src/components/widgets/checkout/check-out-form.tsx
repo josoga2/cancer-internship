@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from "@stripe/react-stripe-js";
@@ -8,7 +8,7 @@ import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/
 import { Accordion } from "@radix-ui/react-accordion";
 import { CreditCard, Wallet } from "lucide-react";
 import NavbarPay from "@/components/Nav/navbar-pay";
-import publicApi from "@/publicApi";
+import api from "@/api";
 
 type CheckoutType = "course" | "pathway" | "internship" | "subscription";
 
@@ -46,12 +46,21 @@ export default function CheckOutForm({
   supportsMentorshipAddon: boolean;
   subscriptionOffer: SubscriptionOffer;
 }) {
-  const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST!);
+  const stripePromise = useMemo(
+    () => loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST || ""),
+    []
+  );
 
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [checkoutError, setCheckoutError] = useState("");
   const [refCode, setRefCode] = useState("");
   const [currency, setCurrency] = useState("USD");
   const [subscriptionLength, setSubscriptionLength] = useState("12 months");
+  const [openPaymentMethod, setOpenPaymentMethod] = useState("card");
+  const [loadedCheckoutKey, setLoadedCheckoutKey] = useState("");
+  const [isCardCheckoutLoading, setIsCardCheckoutLoading] = useState(false);
+  const [accessEmail, setAccessEmail] = useState("");
+  const [isAccessEmailLocked, setIsAccessEmailLocked] = useState(false);
   const [purchaseOption, setPurchaseOption] = useState<"program" | "subscription">(
     plan === "subscription" ? "subscription" : "program"
   );
@@ -92,7 +101,10 @@ export default function CheckOutForm({
     ? subscriptionPrice * subscriptionMonthsMultiplier
     : baseProgramPrice + (mentorshipEnabled ? mentorshipAddonPrice : 0);
 
-  const canInitiateCheckout = isSubscriptionCheckout || checkoutProgramId > 0;
+  const normalizedAccessEmail = accessEmail.trim().toLowerCase();
+  const isAccessEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedAccessEmail);
+  const canSelectProgram = isSubscriptionCheckout || checkoutProgramId > 0;
+  const canInitiateCheckout = canSelectProgram && isAccessEmailValid;
 
   const exchangeRateNaira = 1500;
   const exchangeRateRupee = 90;
@@ -111,6 +123,7 @@ export default function CheckOutForm({
       sourceType,
       subscriptionLength,
       includeMentorship: mentorshipEnabled,
+      accessEmail: normalizedAccessEmail,
     }),
     [
       checkoutType,
@@ -123,8 +136,10 @@ export default function CheckOutForm({
       sourceType,
       subscriptionLength,
       mentorshipEnabled,
+      normalizedAccessEmail,
     ]
   );
+  const checkoutKey = useMemo(() => JSON.stringify(checkoutPayload), [checkoutPayload]);
 
   const paypalPayload = useMemo(
     () => ({
@@ -134,32 +149,82 @@ export default function CheckOutForm({
     [checkoutPayload, refCode]
   );
 
-  const createCheckout = async () => {
+  const createCheckout = useCallback(async () => {
     if (!canInitiateCheckout) return;
+    if (clientSecret && loadedCheckoutKey === checkoutKey) return;
+
+    setIsCardCheckoutLoading(true);
+    setClientSecret(null);
+    setCheckoutError("");
     try {
-      const res = await publicApi.post("/api/create-checkout/", checkoutPayload);
+      const res = await api.post("/api/create-checkout/", checkoutPayload);
       if (res.status === 200) {
         if (res.data?.no_payment_required) {
           window.alert("You already have enough access for this tier. No additional payment is needed.");
           setClientSecret(null);
+          setCheckoutError("");
           return;
         }
         setClientSecret(res.data.client_secret);
+        setLoadedCheckoutKey(checkoutKey);
+        setCheckoutError("");
       }
-    } catch {
+    } catch (error: any) {
       setClientSecret(null);
+      setLoadedCheckoutKey("");
+      setCheckoutError(
+        error?.response?.data?.error ||
+          error?.response?.data?.detail ||
+          "Card checkout could not be loaded. Please try again."
+      );
+    } finally {
+      setIsCardCheckoutLoading(false);
     }
-  };
+  }, [canInitiateCheckout, checkoutKey, checkoutPayload, clientSecret, loadedCheckoutKey]);
 
   useEffect(() => {
-    createCheckout();
-  }, [canInitiateCheckout, checkoutPayload]);
+    if (openPaymentMethod === "card") {
+      createCheckout();
+    }
+  }, [createCheckout, openPaymentMethod]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function loadCheckoutIdentity() {
+      try {
+        const res = await api.get("/api/get-user-profile/");
+        const email = String(res.data?.email || "").trim().toLowerCase();
+        if (!ignore && email) {
+          setAccessEmail(email);
+          setIsAccessEmailLocked(true);
+        }
+      } catch {
+        if (!ignore) {
+          setIsAccessEmailLocked(false);
+        }
+      }
+    }
+
+    loadCheckoutIdentity();
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const createOrder = async () => {
+    if (!isAccessEmailValid) {
+      window.alert("Enter the email where we should send your access link.");
+      return undefined;
+    }
     if (!canInitiateCheckout) return undefined;
     try {
-      const res = await publicApi.post("/api/create-paypal-order/", paypalPayload);
+      const res = await api.post("/api/create-paypal-order/", paypalPayload);
       if (res.status === 200) {
+        if (res.data?.no_payment_required) {
+          window.alert("You already have enough access for this tier. No additional payment is needed.");
+          return undefined;
+        }
         return res.data.id;
       }
     } catch (error) {
@@ -170,7 +235,7 @@ export default function CheckOutForm({
 
   const onApprove = async (data: any) => {
     try {
-      const res = await publicApi.post(`/api/capture-paypal-order/${data.orderID}/`);
+      const res = await api.post(`/api/capture-paypal-order/${data.orderID}/`);
       if (res.status === 200) {
         alert(`Payment Successful! Thank you very much for your purchase. We sent a mail to: ${res.data.email}.`);
         window.location.href = `/dashboard/checkout/return-paypal/`;
@@ -192,7 +257,27 @@ export default function CheckOutForm({
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <section className="rounded-sm border bg-white p-5">
             <p className="text-base font-bold">Select Preferred Payment Method</p>
-            <Accordion type="single" collapsible className="mt-4">
+            <div className="mt-4 rounded-sm border p-3">
+              <label className="text-sm font-bold" htmlFor="checkout-access-email">
+                Where should we send your access link?
+              </label>
+              <input
+                id="checkout-access-email"
+                type="email"
+                value={accessEmail}
+                onChange={(e) => setAccessEmail(e.target.value)}
+                readOnly={isAccessEmailLocked}
+                placeholder="you@example.com"
+                className="mt-2 w-full rounded-sm border px-3 py-2 text-sm read-only:bg-gray-100"
+                required
+              />
+              {isAccessEmailLocked ? (
+                <p className="mt-2 text-xs text-gray-600">Purchasing as {accessEmail}</p>
+              ) : (
+                <p className="mt-2 text-xs text-gray-600">We will use this email for your receipt and account setup link.</p>
+              )}
+            </div>
+            <Accordion type="single" collapsible className="mt-4" value={openPaymentMethod} onValueChange={setOpenPaymentMethod}>
               <AccordionItem value="paypal">
                 <AccordionTrigger>PayPal</AccordionTrigger>
                 <AccordionContent>
@@ -209,7 +294,9 @@ export default function CheckOutForm({
                       />
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-600">Select a program to continue.</p>
+                    <p className="text-sm text-gray-600">
+                      {isAccessEmailValid ? "Select a program to continue." : "Enter your email above to continue."}
+                    </p>
                   )}
                 </AccordionContent>
               </AccordionItem>
@@ -222,10 +309,16 @@ export default function CheckOutForm({
                   </span>
                 </AccordionTrigger>
                 <AccordionContent>
-                  {clientSecret ? (
+                  {!isAccessEmailValid ? (
+                    <p className="text-sm text-gray-600">Enter your email above to load card payment.</p>
+                  ) : isCardCheckoutLoading ? (
+                    <p className="text-sm text-gray-600">Loading secure card checkout...</p>
+                  ) : clientSecret ? (
                     <EmbeddedCheckoutProvider stripe={stripePromise} options={{ clientSecret }}>
                       <EmbeddedCheckout />
                     </EmbeddedCheckoutProvider>
+                  ) : checkoutError ? (
+                    <p className="text-sm text-red-600">{checkoutError}</p>
                   ) : (
                     <p className="text-sm text-gray-600">Select your preferred checkout option to load card payment.</p>
                   )}
