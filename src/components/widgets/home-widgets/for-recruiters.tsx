@@ -1,5 +1,4 @@
 import HbButtons from "@/components/widgets/hb-buttons";
-import talent_map from "@/../public/wolrd-map.png"
 
 export default function ForRecruiters() {
     return (
@@ -10,7 +9,7 @@ export default function ForRecruiters() {
                     <div className="grid grid-cols-2 gap-10 items-center justify-center">
             
                         <div className="flex flex-row gap-5 py-10 items-center justify-center">
-                            <img src={talent_map.src} alt="biology" className="w-[900px] h-full" /> 
+                            <img src="/wolrd-map.png" alt="biology" className="w-[900px] h-full" /> 
                         </div>
 
                         <div className="flex flex-col gap-3 w-full">
@@ -33,7 +32,7 @@ export default function ForRecruiters() {
 
             <div className="flex flex-col w-full md:hidden gap-5 p-2  rounded-xl">
                 <div className="flex flex-col gap-5 p-5 border border-hb-lightgreen rounded-xl">
-                    <img src={talent_map.src} alt="hackbio talent map" className="w-full rounded-lg" />
+                    <img src="/wolrd-map.png" alt="hackbio talent map" className="w-full rounded-lg" />
                     <p className="font-semibold text-hb-green text-base">{`>_ For Recruiters`}</p>
                     <p className="font-bold text-lg">Hire pre-vetted bioinformatics talents</p>
                     <p className="text-sm">

@@ -159,6 +159,11 @@ export default function CheckOutForm({
     try {
       const res = await api.post("/api/create-checkout/", checkoutPayload);
       if (res.status === 200) {
+        if (res.data?.enrolled) {
+          window.alert(res.data?.detail || "You have been enrolled successfully.");
+          window.location.href = res.data?.redirect_path || "/dashboard";
+          return;
+        }
         if (res.data?.no_payment_required) {
           window.alert("You already have enough access for this tier. No additional payment is needed.");
           setClientSecret(null);
@@ -177,6 +182,10 @@ export default function CheckOutForm({
           error?.response?.data?.detail ||
           "Card checkout could not be loaded. Please try again."
       );
+      if (error?.response?.status === 401 || error?.response?.data?.login_required) {
+        window.alert(error?.response?.data?.detail || "Please login or create an account first.");
+        window.location.href = error?.response?.data?.redirect_path || "/login";
+      }
     } finally {
       setIsCardCheckoutLoading(false);
     }
@@ -221,13 +230,23 @@ export default function CheckOutForm({
     try {
       const res = await api.post("/api/create-paypal-order/", paypalPayload);
       if (res.status === 200) {
+        if (res.data?.enrolled) {
+          window.alert(res.data?.detail || "You have been enrolled successfully.");
+          window.location.href = res.data?.redirect_path || "/dashboard";
+          return undefined;
+        }
         if (res.data?.no_payment_required) {
           window.alert("You already have enough access for this tier. No additional payment is needed.");
           return undefined;
         }
         return res.data.id;
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.status === 401 || error?.response?.data?.login_required) {
+        window.alert(error?.response?.data?.detail || "Please login or create an account first.");
+        window.location.href = error?.response?.data?.redirect_path || "/login";
+        return undefined;
+      }
       console.error("Error creating PayPal order:", error);
     }
     return undefined;

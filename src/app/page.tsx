@@ -1,13 +1,18 @@
-import React from "react";
 import { buildPageMetadata } from "@/lib/page-metadata";
-import HbButtons from "@/components/widgets/hb-buttons";
-import winfred from "../../public/winfred.svg"
-import testimonials from '../../public/Testimonials.svg'
-import learners from '../../public/learners.png'
-import talent_map from '../../public/wolrd-map.png'
-import ayano from '../../public/ayano.jpeg'
-import adekoya from '../../public/adekoya.jpeg'
-import barve from '../../public/barve.jpeg'
+import Navbar from "@/components/Nav/navbar";
+import Footer from "@/components/Nav/footer";
+import CoreSpecializations from "@/components/widgets/home-widgets/core-specializations";
+import Hbworks from "@/components/widgets/home-widgets/hb-works";
+import Hero from "@/components/widgets/home-widgets/hero";
+import OrganizationsTestimonials from "@/components/widgets/home-widgets/org-testimonial-carousel";
+import ComputationalBiologistsSection from "@/components/widgets/home-widgets/computational-biologists-section";
+import FeaturedCareerPathways from "@/components/widgets/home-widgets/featured-career-pathways";
+import SuccessStorySection from "@/components/widgets/home-widgets/success-story-section";
+import TestimonialsEnroll from "@/components/widgets/internship-widget/testimonials-enroll";
+import GettingStartedResources from "@/components/widgets/home-widgets/getting-started-resources";
+import ForLearners from "@/components/widgets/home-widgets/for-learners";
+import ForRecruiters from "@/components/widgets/home-widgets/for-recruiters";
+import TestimonialsInterns from "@/components/widgets/home-widgets/testimonials-interns";
 
 export const metadata = buildPageMetadata({
   title: "HackBio Internship",
@@ -16,51 +21,42 @@ export const metadata = buildPageMetadata({
   urlPath: "/",
 });
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
-
-
-import Image from "next/image";
-import Navbar from "@/components/Nav/navbar";
-import Footer from "@/components/Nav/footer";
-import CoreSpecializations from "@/components/widgets/home-widgets/core-specializations";
-import Hbworks from "@/components/widgets/home-widgets/hb-works";
-import Hero from "@/components/widgets/home-widgets/hero";
-import OrganizationsTestimonials from "@/components/widgets/home-widgets/org-testimonial-carousel";
-import ForLearners from "@/components/widgets/home-widgets/for-learners";
-import ForRecruiters from "@/components/widgets/home-widgets/for-recruiters";
-import TestimonialsInterns from "@/components/widgets/home-widgets/testimonials-interns";
-
-
 export default function Home() {
   return (
     <main>
-      <Navbar />
+    <Navbar /> 
     <div className="w-full">
-      <div className="hidden md:flex w-full flex-col md:max-w-5xl bg md:m-auto md:items-center pt-10 md:justify-between">
+      <div className="hidden md:flex w-full flex-col bg md:items-center md:justify-between">
         {/* Hero Section */}
         
         <Hero />
 
+        <div className="flex w-full max-w-5xl flex-col items-center">
         <OrganizationsTestimonials />
+
+        <ComputationalBiologistsSection />
+
+        <FeaturedCareerPathways />
+
+        <SuccessStorySection />
+
+         <TestimonialsEnroll InternshipStatus="open" variant="home" /> 
+
+         <GettingStartedResources /> 
         
-        <ForLearners />
+        {/* <ForLearners /> */}
 
             {/**for companies */}
-        <ForRecruiters />
+        {/* <ForRecruiters /> */}
 
 
-        <Hbworks />
+        {/* <Hbworks /> */}
 
         {/**Core Specializations */}
-        <CoreSpecializations />
+        {/* <CoreSpecializations /> */}
 
-        <TestimonialsInterns />
+        {/* <TestimonialsInterns /> */}
+        </div>
 
 
       </div>
@@ -70,24 +66,36 @@ export default function Home() {
         {/* Hero Section */}
         <Hero />
 
+        <div className="flex w-full flex-col gap-10 px-5">
         {/* Organizations */}
         <OrganizationsTestimonials />
 
+        <ComputationalBiologistsSection />
+
+        <FeaturedCareerPathways />
+
+        <SuccessStorySection />
+
+        <TestimonialsEnroll InternshipStatus="open" variant="home" />
+
+        <GettingStartedResources />
+
         {/* Learners Section */}
-        <ForLearners />
+        {/* <ForLearners /> */}
 
         {/* Recruiters Section */}
-        <ForRecruiters />
+        {/* <ForRecruiters /> */}
 
         {/* Why HackBio Works */}
-        <Hbworks />
+        {/* <Hbworks /> */}
 
         {/* Core Specializations */}
-        <CoreSpecializations />
+        {/* <CoreSpecializations /> */}
         
 
         {/* Learners Testimonials */}
-        <TestimonialsInterns />
+        {/* <TestimonialsInterns /> */}
+        </div>
       </div>
 
 

@@ -1,5 +1,4 @@
 import HbButtons from "@/components/widgets/hb-buttons";
-import learners from '@/../public/learners.png'
 
 export default function ForLearners() {
     return (
@@ -24,7 +23,7 @@ export default function ForLearners() {
                             </div>
                         </div>
                         <div className="flex flex-row gap-5 py-10 items-center justify-center">
-                            <img src={learners.src} alt="biology" className="w-800" />
+                            <img src="/learners.png" alt="biology" className="w-800" />
                         </div>
                     </div>
                 </div>
@@ -33,7 +32,7 @@ export default function ForLearners() {
             {/* Mobile View */}
             <div className="flex flex-col w-full md:hidden gap-5   rounded-xl">
                 <div className="flex flex-col gap-5 bg-hb-lightgreen p-5 rounded-xl">
-                    <img src={learners.src} alt="biology" className="w-full rounded-lg" />
+                    <img src="/learners.png" alt="biology" className="w-full rounded-lg" />
                     <p className="font-semibold text-hb-green text-base">{`>_ For Learners`}</p>
                     <p className="font-bold text-lg">Turn skills into career ready projects</p>
                     <p className="text-sm">

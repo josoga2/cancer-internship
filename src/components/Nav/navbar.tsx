@@ -4,18 +4,14 @@ import hb_logo from '../../../public/hb_logo.png'
 import { useEffect, useState } from 'react';
 import { Menu, X } from 'lucide-react'
 import Link from 'next/link';
-import Banner from './Banner';
 import HbButton from '../widgets/hb-buttons';
 import api from '@/api';
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
-  NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
 } from "@/components/ui/navigation-menu"
 
 
@@ -51,8 +47,7 @@ export default function Navbar() {
   
   return (
     <main className='w-full fixed top-0 left-0 bg-white shadow-md z-50 pb-2'>
-       <Banner />
-    <div className="hidden md:flex md:max-w-5xl bg md:m-auto md:items-center pt-5 md:justify-between">
+    <div className="hidden md:flex md:max-w-7xl bg md:m-auto md:items-center pt-5 md:justify-between">
         <Link href='/' className='flex flex-row gap-3 items-center'> 
           <Image src={hb_logo} alt='hb_log' width={35} height={35} /> 
           <p className='font-bold hover:text-hb-green text-lg'>HackBio</p>
@@ -191,7 +186,7 @@ export default function Navbar() {
     
     
     {/***MOBILE */}
-    <div className="w-full pt-4 px-4 flex items-center justify-between md:hidden relative z-50 bg-white">
+    <div className="w-full max-w-full pt-4 px-4 flex items-center justify-between md:hidden relative z-0 bg-white overflow-x-hidden box-border">
       {/* Logo */}
         <Link href="/">
           <Image src={hb_logo} alt="hb_logo" width={35} height={35} />
@@ -204,7 +199,7 @@ export default function Navbar() {
 
         {/* Drawer */}
         {isOpen && (
-          <div className="absolute top-full left-0 w-full bg-white shadow-lg px-6 py-6 flex flex-col gap-4 z-40 transition-all">
+          <div className="absolute top-full left-0 right-0 w-full max-w-full bg-white shadow-lg px-6 py-6 flex flex-col gap-4 z-40 transition-all box-border overflow-x-hidden">
             <Link href='/internship'>Internships</Link>
             <Link href='/learning'>Explore Careers Tracks</Link>
             <Link href='/hire-talents'>Hire Talents</Link>

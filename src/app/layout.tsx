@@ -1,18 +1,10 @@
 import type { Metadata } from "next";
-import { DM_Sans, Manrope } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner"
 import { GoogleAnalytics } from '@next/third-parties/google'
 import Banner from "@/components/Nav/Banner";
 import { ThemeProvider } from "@/components/theme-provider";
 import ThemeToggle from "@/components/theme-toggle";
-
-
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  display: "swap",
-});
 
 
 export const metadata: Metadata = {
@@ -86,7 +78,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${dmSans} text-base`}
+        className="text-base"
       >
         <ThemeProvider>
           <Banner />

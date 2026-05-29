@@ -1,736 +1,462 @@
-"use client"
+"use client";
+
 import { useParams, useRouter } from "next/navigation";
-import hb_logo from "@/../public/hb_logo.png";
-import { Progress } from "@/components/ui/progress"
-import Image from "next/image";
-
-
+import { Progress } from "@/components/ui/progress";
 import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-  } from "@/components/ui/accordion"
-import { Button } from "@/components/ui/button";
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import api from "@/api";
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import withAuth from "@/components/withAuth";
-import { MdOutlineDashboard } from "react-icons/md";
-import { BiAtom, BiDna } from "react-icons/bi";
-import { LuNotebook } from "react-icons/lu";
-import Logout from "@/components/logout";
-import path from "path";
+import LeftSideBar from "@/components/widgets/dashboard-widgets/left-sidebar";
+import MainScreenFlexIntXP from "@/components/widgets/dashboard-widgets/main-screen-intxp";
+import Link from "next/link";
+import ProgressFloat from "@/components/widgets/progress-float";
+import { CircleAlert, CircleCheck } from "lucide-react";
 
+type CourseItem = {
+  id?: number | string;
+  title?: string;
+  overview?: string;
+  description?: string;
+  published?: boolean;
+  is_active?: boolean;
+  image?: string;
+};
 
-const tab_items = [
-  {
-    id: 1,
-    name: "Dashboard",
-    link: "/dashboard/",
-    isActive: false,
-    iconImage: MdOutlineDashboard
-  },
-  {
-    id: 2,
-    name: "Internships",
-    link: "/dashboard/internship/",
-    isActive: false,
-    iconImage: BiDna
-  },
-  {
-    id: 3,
-    name: "Internship Courses",
-    link: "/dashboard/internship/1/courses/",
-    isActive: false,
-    iconImage: BiDna
-  },
-  {
-    id: 4,
-    name: "Career Pathway",
-    link: "/dashboard/pathway/",
-    isActive: false,
-    iconImage: BiAtom
-  },
-  
-  {
-    id: 5,
-    name: "CP Courses",
-    link: "/dashboard/pathway/courses/",
-    isActive: true,
-    iconImage: BiAtom
-  }
-]
+type ModuleItem = {
+  id: number | string;
+  title: string;
+  description: string;
+  course?: number | string;
+};
 
+type ContentItem = {
+  id: number | string;
+  title: string;
+  content_type: string;
+  module?: number | string;
+  course?: number | string;
+};
 
-
-
-function Page() {
-
-  const params = useParams()
-  const courseId = Number(params.courseId)
-  const router = useRouter()
-  const [drawerOpen, setDrawerOpen] = useState(false);
-
-  const [username, setUsername] = useState("");
-  const [userXP, setUserXP] = useState("");
-  const [title, setTitle] = useState("");
-  const [userClicks, setUserClicks] = useState<number>(1);
-  const [uniqueContentId, setUniqueContentId] = useState<number>(0);
-  const [totalContent, setTotalContent] = useState<number>(0);
-   const [completedContent, setCompletedContent] = useState<string>('');
-  const [userPathwayId, setUserPathwayId] = useState<number[]>([]);
-  const [userCoursesId, setUserCoursesId] = useState<number[]>([]);
-  const [pathwayList, setPathwayList] = useState<Array<{
-        id?: string
-        title?: string
-        description?: string
-        published?: boolean
-        free?: boolean
-        start_date?: string
-        overview?: string
-        lenght_in_weeks?: number
-        int_image?: string
-        courses?: Array<{
-            id?: number | string
-        }>
-    }>>([
-        {
-            id: "",
-            title: "",
-            description: "",
-            published: false,
-            free: false,
-            start_date: "",
-            overview: "",
-            lenght_in_weeks: 0,
-            int_image: "/",
-            courses: [{ id: "" }]
-        }
-    ]);
-
-  const [coursesList, setCoursesList] = useState<Array<{
-    id?: number | string
-    title?: string
-    overview?: string
-    description?: string
-    published?: boolean
-    image?: string
-  }>>([
-      {
-        id: "",
-        title: "",
-        overview: "",
-        description: "",
-        published: false,
-        image: "/"
-      }
-  ]);
-
-  const [modulesList, setModulesList] = useState<Array<{
-    id: number | string
-    title: string
-    description: string
-    course?: number | string
-  }>>([]);
-
-  const [contentList, setContentList] = useState<Array<{
-    id: number | string
-    title: string
-    content_type: string
-    module?: number | string
-  }>>([]);
-
-    //get username
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await api.get('/api/get-user-profile/'); // Adjust the endpoint as needed
-        //console.log("Response from get-user-profile:", response.data);
-        if (response.data && response.status == 200 || response.status == 201) {
-          //console.log("User profile data:", response.data);
-          const userProfile = response.data; 
-          setUsername(userProfile.username);
-          setUserXP(userProfile.total_xp.toString());
-          setUserClicks(userProfile.no_clicks );
-          setCompletedContent(userProfile.no_completed_contents ? userProfile.no_completed_contents : ""); 
-          const uniqItems = new Set(userProfile.no_completed_contents.split(","))
-          setUniqueContentId(uniqItems.size )
-          
-        } else {
-          router.push("/login");
-          console.error("No user profile found.");
-          
-        }
-      } catch (error) {
-        router.push("/login");
-        console.error("Error fetching user profile:", error);
-      }
-    };
-
-    fetchUserProfile();
-  }, []);
-
-  //get user internship id
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await api.get('/api/get-user-profile/'); // Adjust the endpoint as needed
-        //console.log("Response from get-user-profile:", response.data);
-        if (response.data && response.status == 200 || response.status == 201) {
-          //console.log("User profile data:", response.data[0].Internships);
-          const userProfile = response.data; // Assuming you want the first profile
-          setUserPathwayId(
-            Array.isArray(userProfile.Pathways)
-              ? userProfile.Pathways.map((id: any) => Number(id))
-              : userProfile.Pathways
-                ? [Number(userProfile.Pathways)]
-                : []
-          ); // Set the internships array if it exists
-
-          //make the internship list
-          const pathwayResponse = await api.get('/api/pathways/');
-
-          if (pathwayResponse.status === 200) {
-            const pathways = pathwayResponse.data.filter((pathway: { id: string, free: boolean }) => 
-              userProfile.Pathways.includes(Number(pathway.id)) && pathway.free
-            );
-            setPathwayList(pathways);
-
-            //make the courses list
-            const coursesResponse = await api.get('/api/courses/');
-            if (coursesResponse.status === 200) {
-                
-                const allCourseIds = pathways
-                .flatMap((pathway: any) => 
-                    Array.isArray(pathway.courses)
-                    ? pathway.courses.map((c: any) => Number(c)) // each c is already an ID
-                    : []
-                );
-                //console.log("filtered internships:", internships);
-                const courses = coursesResponse.data.filter((course: { id: number | string }) =>
-                allCourseIds.includes(Number(course.id))
-                );
-                //console.log("Courses List:", courses);
-                setCoursesList(courses)
-                //make the modules list
-                const modulesResponse = await api.get('/api/modules/');
-                if (modulesResponse.status === 200) {
-                    const modules = modulesResponse.data.filter((module: {
-                        course(course: any): unknown; id: number | string }) =>
-                        courseId === Number(module.course)
-                    );
-                    //console.log("Modules List:", modules);
-                    setModulesList(modules);
-
-                    //make content list
-                    const contentResponse = await api.get('/api/contents/');
-                    if (contentResponse.status === 200) {
-                        setTotalContent(contentResponse.data.length);
-                        // Assuming you want to filter contents based on the courseId
-                        const contents = contentResponse.data.filter((content: { id: number | string; course?: number | string }) =>
-                            courseId === Number(content.course) 
-                        );
-                        setContentList(contents);
-                        //console.log("Contents List:", contents);
-                        // You can set the contents to a state if needed
-                    } else {
-                        console.error("Failed to fetch contents.");
-                    }
-                }
-            }
-
-                
-        }
-  
-        } else {
-          console.error("No user profile found.");
-          router.push("/login");
-        }
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-        router.push("/login");
-      }
-    };
-
-    fetchUserProfile();
-  }, []);
-
+type PathwayItem = {
+  id?: number | string;
+  title?: string;
+  published?: boolean;
+  is_active?: boolean;
+  courses?: Array<number | string | { id?: number | string }>;
+};
 
 const scientistAdjectives = [
-    "Brilliant",
-    "Curious",
-    "Innovative",
-    "Sharp",
-    "Ingenious",
-    "Diligent",
-    "Methodical",
-    "Precise",
-    "Wise",
-    "Thoughtful",
-    "Rational",
-    "Logical",
-    "Intuitive",
-    "Insightful",
-    "Meticulous",
-    "Visionary",
-    "Analytical",
-    "Clever",
-    "Astute",
-    "Persistent",
-    "Adaptive",
-    "Adventurous",
-    "Ambitious",
-    "Articulate",
-    "Attentive",
-    "Bold",
-    "Candid",
-    "Capable",
-    "Cautious",
-    "Committed",
-    "Composed",
-    "Confident",
-    "Consistent",
-    "Constructive",
-    "Creative",
-    "Critical",
-    "Curatorial",
-    "Decisive",
-    "Dedicated",
-    "Dependable",
-    "Determined",
-    "Discerning",
-    "Disciplined",
-    "Dynamic",
-    "Eloquent",
-    "Empirical",
-    "Enterprising",
-    "Enthusiastic",
-    "Exacting",
-    "Expansive",
-    "Experimental",
-    "Experienced",
-    "Exploratory",
-    "Expressive",
-    "Farsighted",
-    "Fearless",
-    "Focused",
-    "Formal",
-    "Functional",
-    "Grounded",
-    "Imaginative",
-    "Impartial",
-    "Independent",
-    "Industrious",
-    "Inquisitive",
-    "Inspirational",
-    "Integrative",
-    "Intelligent",
-    "Judicious",
-    "Keen",
-    "Knowledgeable",
-    "Logical-minded",
-    "Lucid",
-    "Measured",
-    "Motivated",
-    "Objective",
-    "Observant",
-    "Open-minded",
-    "Organized",
-    "Original",
-    "Passionate",
-    "Patient",
-    "Pioneering",
-    "Pragmatic",
-    "Proactive",
-    "Proficient",
-    "Punctual",
-    "Purposeful",
-    "Quantitative",
-    "Questioning",
-    "Reflective",
-    "Relentless",
-    "Resourceful",
-    "Rigorous",
-    "Scrupulous",
-    "Self-reliant",
-    "Shrewd",
-    "Skeptical",
-    "Strategic",
-    "Systematic",
-    "Tenacious",
-    "Thorough",
-    "Unbiased",
-    "Versatile",
-    "Zealous",
-    "Accurate",
-    "Accomplished",
-    "Adaptable",
-    "Alert",
-    "Altruistic",
-    "Ambidextrous",
-    "Amiable",
-    "Analytical-minded",
-    "Assertive",
-    "Attuned",
-    "Authoritative",
-    "Balanced",
-    "Benevolent",
-    "Brave",
-    "Broad-minded",
-    "Calculating",
-    "Careful",
-    "Charismatic",
-    "Clear-headed",
-    "Collaborative",
-    "Communicative",
-    "Competent",
-    "Comprehensive",
-    "Conscientious",
-    "Conservative",
-    "Cooperative",
-    "Courteous",
-    "Curiosity-driven",
-    "Data-driven",
-    "Deep-thinking",
-    "Deliberate",
-    "Detail-oriented",
-    "Determinate",
-    "Dexterous",
-    "Diplomatic",
-    "Discreet",
-    "Distinguished",
-    "Driven",
-    "Educated",
-    "Effective",
-    "Efficient",
-    "Energetic",
-    "Engaged",
-    "Enlightened",
-    "Entertaining",
-    "Ethical",
-    "Exact",
-    "Exceptional",
-    "Exemplary",
-    "Experienced-minded",
-    "Fact-based",
-    "Fair",
-    "Firm",
-    "Flexible",
-    "Focused-minded",
-    "Forward-thinking",
-    "Frugal",
-    "Genuine",
-    "Hardworking",
-    "Helpful",
-    "Honest",
-    "Humble",
-    "Idealistic",
-    "Impeccable",
-    "Inclusive",
-    "Indefatigable",
-    "Individualistic",
-    "Influential",
-    "Ingenious-minded",
-    "Innovative-minded",
-    "Inspiring",
-    "Intellectual",
-    "Inventive",
-    "Learner-oriented",
-    "Level-headed",
-    "Lifelong-learning",
-    "Logical-thinking",
-    "Loyal",
-    "Masterful",
-    "Mentoring",
-    "Mindful",
-    "Multi-skilled",
-    "Neat",
-    "Objective-minded",
-    "Observational",
-    "Open",
-    "Optimistic",
-    "Orderly",
-    "Organisational",
-    "Passion-driven",
-    "Perceptive",
-    "Persevering",
-    "Persuasive",
-    "Philosophical",
-    "Pioneering-minded",
-    "Polished",
-    "Positive",
-    "Practical",
-    "Precautionary",
-    "Principled",
-    "Problem-solving",
-    "Productive",
-    "Professional",
-    "Progressive",
-    "Protective",
-    "Prudent",
-    "Purpose-driven",
-    "Qualified",
-    "Quick-witted",
-    "Realistic",
-    "Reliable",
-    "Resilient",
-    "Respectful",
-    "Scholarly",
-    "Scientific",
-    "Self-aware",
-    "Self-disciplined",
-    "Self-motivated",
-    "Skillful",
-    "Sophisticated",
-    "Specialised",
-    "Steadfast",
-    "Supportive",
-    "Sustainable",
-    "Tactful",
-    "Talented",
-    "Thrifty",
-    "Time-conscious",
-    "Trustworthy",
-    "Unconventional",
-    "Unshakeable",
-    "Value-driven",
-    "Well-informed",
-    "Well-prepared",
-    "Well-rounded"
+  "Brilliant",
+  "Curious",
+  "Innovative",
+  "Sharp",
+  "Ingenious",
+  "Diligent",
+  "Methodical",
+  "Precise",
+  "Wise",
+  "Thoughtful",
+  "Analytical",
+  "Persistent",
 ];
-    
-function getRandomAdjective() {
-    return scientistAdjectives[Math.floor(Math.random() * scientistAdjectives.length)];
-}
-useEffect(() => {
-    const adjective = getRandomAdjective();
-    setTitle(`${adjective} ${username}`);
-}, [username]);
 
-  
+const normalizeIdArray = (value: unknown): number[] => {
+  if (Array.isArray(value)) {
+    return value.map((id) => Number(id)).filter((id) => !Number.isNaN(id));
+  }
+  const numeric = Number(value);
+  return Number.isNaN(numeric) ? [] : [numeric];
+};
+
+const courseRefId = (course: number | string | { id?: number | string }) =>
+  Number(typeof course === "object" ? course.id : course);
+
+const clampProgress = (value: number) => Math.max(0, Math.min(100, value));
+
+function Page() {
+  const params = useParams();
+  const courseId = Number(params.courseId);
+  const router = useRouter();
+
+  const [username, setUsername] = useState("");
+  const [loginDates, setLoginDates] = useState<string[]>([]);
+  const [userXP, setUserXP] = useState("");
+  const [title, setTitle] = useState("");
+  const [subscriptionStatus, setSubscriptionStatus] = useState(false);
+  const [completedContent, setCompletedContent] = useState("");
+  const [progressPercent, setProgressPercent] = useState(0);
+  const [activePathway, setActivePathway] = useState<PathwayItem | null>(null);
+  const [coursesList, setCoursesList] = useState<CourseItem[]>([]);
+  const [modulesList, setModulesList] = useState<ModuleItem[]>([]);
+  const [contentList, setContentList] = useState<ContentItem[]>([]);
+  const [popupDismissed, setPopupDismissed] = useState(false);
+  const [popupRequestedTrigger, setPopupRequestedTrigger] = useState<string | null>(null);
+  const [popupTrigger, setPopupTrigger] = useState<string | null>(null);
+  const [popupData, setPopupData] = useState<{
+    variant_id: number;
+    headline: string;
+    body: string;
+    cta_text?: string;
+    cta_url?: string;
+  } | null>(null);
+
+  const completedContentIds = useMemo(() => {
+    return new Set(
+      completedContent
+        .split(",")
+        .map((id) => id.trim())
+        .filter((id) => id && id.toLowerCase() !== "none")
+        .map((id) => Number(id))
+        .filter((id) => !Number.isNaN(id))
+    );
+  }, [completedContent]);
+
+  useEffect(() => {
+    const fetchPageData = async () => {
+      try {
+        const profileResponse = await api.get("/api/get-user-profile/");
+        if (!(profileResponse.data && (profileResponse.status === 200 || profileResponse.status === 201))) {
+          router.push("/login");
+          return;
+        }
+
+        const userProfile = profileResponse.data;
+        setUsername(userProfile.username);
+        setLoginDates(Array.isArray(userProfile.login_dates) ? userProfile.login_dates : []);
+
+        const adjective = scientistAdjectives[Math.floor(Math.random() * scientistAdjectives.length)];
+        setTitle(`${adjective} ${userProfile.username}`);
+
+        const enrolledPathwayIds = normalizeIdArray(userProfile.Pathways);
+        const [pathwayResponse, coursesResponse, modulesResponse, contentResponse, courseProgressResponse] =
+          await Promise.all([
+            api.get("/api/pathways/"),
+            api.get("/api/courses/"),
+            api.get("/api/modules/"),
+            api.get("/api/contents/"),
+            api.post("/api/user-course-progress/", { courseid: courseId }),
+          ]);
+
+        const enrolledPathways: PathwayItem[] = pathwayResponse.data.filter((pathway: PathwayItem) =>
+          enrolledPathwayIds.includes(Number(pathway.id))
+        );
+        const matchingPathway =
+          enrolledPathways.find((pathway) =>
+            (pathway.courses || [])
+              .map((course) => courseRefId(course))
+              .filter((id) => !Number.isNaN(id))
+              .includes(courseId)
+          ) || null;
+
+        setActivePathway(matchingPathway);
+
+        const pathwayCourseIds = new Set(
+          (matchingPathway?.courses || [])
+            .map((course) => courseRefId(course))
+            .filter((id) => !Number.isNaN(id))
+        );
+        if (pathwayCourseIds.size === 0) {
+          pathwayCourseIds.add(courseId);
+        }
+
+        setCoursesList(
+          coursesResponse.data.filter((course: CourseItem) =>
+            pathwayCourseIds.has(Number(course.id))
+          )
+        );
+        setModulesList(modulesResponse.data.filter((module: ModuleItem) => courseId === Number(module.course)));
+        setContentList(contentResponse.data.filter((content: ContentItem) => courseId === Number(content.course)));
+
+        const courseProgress = courseProgressResponse.data;
+        setCompletedContent(courseProgress.completed_contents || "");
+        setUserXP(String(courseProgress.total_xp_earned || userProfile.total_xp || 0));
+
+        const subscriptionEnd = new Date(courseProgress.current_period_end);
+        setSubscriptionStatus(subscriptionEnd.getTime() > Date.now());
+
+        if (matchingPathway?.id) {
+          const pathwayProgressResponse = await api.post("/api/progress/pathway/", {
+            pathwayid: Number(matchingPathway.id),
+          });
+          const percent =
+            typeof pathwayProgressResponse?.data?.completion_percent === "number"
+              ? pathwayProgressResponse.data.completion_percent
+              : 0;
+          setProgressPercent(percent);
+        } else {
+          const courseProgressPercent = await api.post("/api/progress/course/", { courseid: courseId });
+          const percent =
+            typeof courseProgressPercent?.data?.completion_percent === "number"
+              ? courseProgressPercent.data.completion_percent
+              : 0;
+          setProgressPercent(percent);
+        }
+      } catch (error) {
+        console.error("Error fetching pathway course page data:", error);
+        router.push("/login");
+      }
+    };
+
+    fetchPageData();
+  }, [courseId, router]);
+
+  const resolvedTrigger =
+    progressPercent >= 80
+      ? "on_course_80"
+      : progressPercent >= 50
+        ? "on_course_50"
+        : progressPercent >= 25
+          ? "on_course_25"
+          : null;
+
+  const popupRequestKey = resolvedTrigger ? `${courseId}:${resolvedTrigger}` : null;
+  const showProgressPopup = !!resolvedTrigger && !!popupData && !popupDismissed;
+  const allowCta = popupTrigger === "on_course_50" || popupTrigger === "on_course_80";
+
+  useEffect(() => {
+    if (popupTrigger && resolvedTrigger && popupTrigger !== resolvedTrigger) {
+      setPopupData(null);
+      setPopupDismissed(false);
+    }
+  }, [resolvedTrigger, popupTrigger]);
+
+  useEffect(() => {
+    const fetchPopup = async () => {
+      if (!resolvedTrigger || popupDismissed || !popupRequestKey) return;
+      if (popupRequestedTrigger === popupRequestKey) return;
+      setPopupRequestedTrigger(popupRequestKey);
+
+      try {
+        const res = await api.get("/api/popups/next/", {
+          params: { course_id: courseId, trigger: resolvedTrigger },
+        });
+        if (res.status === 200 && res.data?.variant_id) {
+          setPopupData(res.data);
+          setPopupTrigger(resolvedTrigger);
+          await api.post("/api/popups/impression/", {
+            variant_id: res.data.variant_id,
+            course_id: courseId,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching popup:", error);
+      }
+    };
+
+    fetchPopup();
+  }, [courseId, popupDismissed, popupRequestKey, popupRequestedTrigger, resolvedTrigger]);
+
+  const handlePopupDismiss = async () => {
+    if (popupData?.variant_id) {
+      try {
+        await api.post("/api/popups/action/", {
+          variant_id: popupData.variant_id,
+          action: "dismissed",
+        });
+      } catch (error) {
+        console.error("Error logging dismiss:", error);
+      }
+    }
+    setPopupDismissed(true);
+  };
+
+  const handlePopupCta = async () => {
+    if (!popupData?.cta_url) return;
+    if (popupData?.variant_id) {
+      try {
+        await api.post("/api/popups/action/", {
+          variant_id: popupData.variant_id,
+          action: "clicked",
+        });
+      } catch (error) {
+        console.error("Error logging click:", error);
+      }
+    }
+    setPopupDismissed(true);
+    if (popupData.cta_url.startsWith("http")) {
+      window.location.href = popupData.cta_url;
+    } else {
+      router.push(popupData.cta_url);
+    }
+  };
+
+  const checkoutHref = activePathway?.id
+    ? `/dashboard/checkout?prog=pathway&id=${activePathway.id}`
+    : `/dashboard/checkout?prog=course&id=${courseId}`;
+
+  const courseContentHref = (moduleId: string | number, contentId: string | number) =>
+    subscriptionStatus
+      ? `/dashboard/pathway/courses/${courseId}/module/${moduleId}/content/${contentId}`
+      : checkoutHref;
 
   return (
     <main className="w-full">
-      <div className="hidden md:flex flex-row w-full pl-5">
-        {/**LEFT SIDE BAR */}
-        <div className="flex flex-col gap-5 text-base h-screen bg-white items-start w-[200px] border-r">
-          <div className="flex flex-row items-center gap-2 px-2 py-5">
-            <Image src={hb_logo} alt="logo" width={40} height={40} />
-            <p className="font-bold">HackBio</p>
-          </div>
-          <div className="flex flex-col gap-7 w-full items-start">
-            {tab_items.map((tab_item) => (
-            <a href={tab_item.link} key={tab_item.id}>
-              <div key={tab_item.id} className= {` w-[200px] px-2 py-2.5 hover:underline flex flex-row items-center gap-2 ${tab_item.isActive ? "text-hb-green rounded-l-md bg-green-100 font-bold" : "text-gray-600"}`}>
-                {<tab_item.iconImage />} <p>{tab_item.name}</p>
-              </div>
-            </a>
-          ))}
-          </div>
-        </div>
-        {/** MAIN */}
-        <div className="w-full bg-hb-lightgreen flex flex-col gap-10 overflow-y-auto h-screen pb-10">
-          <div className="flex flex-row gap-10 pl-10 pt-7 bg-white w-full pb-5 border-b text-base text-gray-600 justify-between pr-10 items-center">
-              <div className="flex flex-row gap-10 items-center">
-              <a href="/internship" className="hover:underline font-bold">Internships</a>
-              <a href="/learning" className="hover:underline font-bold">Courses</a>
-              </div>
+      <div className="hidden md:flex w-full">
+        <LeftSideBar />
+        <div className="w-full bg-hb-lightgreen flex h-screen flex-col gap-8 overflow-y-auto pb-10">
+          <MainScreenFlexIntXP
+            username={username}
+            mini_desc="Your Pathway Courses"
+            userXP={userXP}
+            title={title}
+            loginDates={loginDates}
+            contentClassName="max-w-6xl mx-auto w-full px-6 lg:px-8"
+          />
 
-              <div className="flex flex-row gap-10 items-center text-black text-xl">
-                  <p className="font-bold"> 🎖️ {Math.ceil(Number(userXP))} XP</p>
-                  <p className="font-bold"> {title}</p>
-                  <Logout />
-              </div>
-          </div>
-          
-          <div className="px-10 pt-10">
-            
-              {coursesList
-                  .filter((c) => Number(c.id) === courseId)
-                  .map((course) => (
-                  <div key={course.id}>
-                  {course.image && (
-                      <div className="flex flex-row items-end gap-5 mb-10 max-w-[800px]">    
-                          <img src={course.image} alt="course image" className="w-48 h-48 border-2 rounded-md border-neutral-400" />
-                              <div className="flex flex-col gap-5 w-full">
-                                  <p className="font-bold text-3xl ">{course.title}</p>
-                                  <div className="flex flex-row gap-10 items-center border w-full rounded-md border-hb-green px-5 py-3">
-                                      <Progress value={Math.ceil((Number(uniqueContentId)/Number(totalContent))*100)} className="" />
-                                      <p className="font-bold text-2xl rounded-full">{Math.ceil((Number(uniqueContentId)/Number(totalContent))*100)}%</p>
-                                  </div>
-                              </div>
-                          </div>
-                  )}
-              
-              {modulesList.map((module) => (
-                <div key={module.id} className="flex flex-col gap-5 pb-5">
-                  <div>
-                      <div className="flex flex-col gap-5 items-center justify-start max-w-[800px] rounded-lg border border-hb-green px-7 py-3 bg-white">
-                      <Accordion type="multiple" className="w-full flex flex-col gap-5 ">
-                      <AccordionItem value={module.id.toString()}>
-                          <AccordionTrigger className="text-2xl font-bold">
-                              {module.title}
-                          </AccordionTrigger>
-                          <AccordionContent className="text-xl">
-                          <div className="flex flex-col gap-5 text-gray-600 text-xl pl-5">
-                              {contentList
-                                  .filter((content) => Number(content.module) === Number(module.id))
-                                  .map((content) => (
-                                      <div key={content.id} className="flex flex-col gap-2">
-                                          <ul className="list-disc pl-5 text-lg" key={content.id}>
-                                              <a href={`/dashboard/pathway/courses/${courseId}/module/${module.id}/content/${content.id}`} className="hover:underline">
-                                                  <li>{content.title}</li>
-                                              </a>
-                                          </ul>
-                                      </div>
-                              ))}
-                          </div>
-                          </AccordionContent>
-                      </AccordionItem>
-                      </Accordion>
+          <div className="w-full max-w-6xl mx-auto px-6 lg:px-8">
+            {coursesList
+              .filter((course) => Number(course.id) === courseId)
+              .map((course) => (
+                <div key={course.id}>
+                  {course.image ? (
+                    <div className="mb-10 flex w-full flex-row items-end gap-5">
+                      <img
+                        src={course.image}
+                        alt="course image"
+                        className="h-48 w-48 rounded-md border-2 border-neutral-400 object-cover"
+                      />
+                      <div className="flex w-full flex-col gap-2">
+                        <p className="font-bold text-3xl">{course.title}</p>
+                        <p className="text-sm text-gray-600">
+                          {activePathway?.title ? `${activePathway.title} Progress` : "Pathway Progress"}
+                        </p>
+                        <div className="flex w-full flex-row items-center justify-between gap-10 rounded-md border border-hb-green px-5 py-3">
+                          <Progress value={Math.ceil(clampProgress(progressPercent))} />
+                          <p className="rounded-full text-2xl font-bold">{Math.ceil(clampProgress(progressPercent))}%</p>
+                        </div>
                       </div>
-                  </div>
-                </div>
-              ))}
+                    </div>
+                  ) : null}
+
+                  <p className="mb-10 text-sm text-red-600">
+                    {subscriptionStatus ? "" : (
+                      <span>
+                        Your subscription to this pathway has expired.{" "}
+                        <Link className="font-bold hover:underline" href={checkoutHref}>
+                          Click here to subscribe now
+                        </Link>
+                      </span>
+                    )}
+                  </p>
+
+                  {modulesList.map((module) => (
+                    <div key={module.id} className="flex flex-col gap-5 pb-5">
+                      <div className="flex w-full flex-col gap-5 rounded-md border border-hb-green bg-white px-6 py-4">
+                        <Accordion type="multiple" className="flex w-full flex-col gap-5">
+                          <AccordionItem value={module.id.toString()}>
+                            <AccordionTrigger className="text-xl font-bold">{module.title}</AccordionTrigger>
+                            <AccordionContent className="text-sm">
+                              <div className="flex flex-col gap-5 pl-5 text-base text-gray-600">
+                                {contentList
+                                  .filter((content) => Number(content.module) === Number(module.id))
+                                  .map((content) => {
+                                    const isDone = completedContentIds.has(Number(content.id));
+                                    return (
+                                      <div key={content.id} className="flex flex-col gap-2">
+                                        <ul className="list-none pl-0 text-base">
+                                          <Link href={courseContentHref(module.id, content.id)} className="hover:underline">
+                                            <li className="flex items-center gap-2">
+                                              {isDone ? (
+                                                <CircleCheck className="h-4 w-4 text-green-600" />
+                                              ) : (
+                                                <CircleAlert className="h-4 w-4 text-red-500" />
+                                              )}
+                                              <span>{content.title}</span>
+                                            </li>
+                                          </Link>
+                                        </ul>
+                                      </div>
+                                    );
+                                  })}
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ))}
           </div>
         </div>
       </div>
 
-      {/**MOBILE */}
-      <div className="flex flex-col w-full md:hidden bg-hb-lightgreen pb-20 min-h-[100svh]">
+      <div className="flex min-h-svh w-full flex-col bg-hb-lightgreen pb-20 md:hidden">
+        <LeftSideBar />
 
-        {/* Header */}
-         <div className="flex flex-row items-center justify-between px-4 py-4 border-b bg-white">
-            <div className="flex flex-row items-center gap-2">
-              <Image src={hb_logo} alt="HackBio logo" width={32} height={32} />
-              <p className="font-bold text-lg">HackBio</p>
-            </div>
+        <MainScreenFlexIntXP
+          username={username}
+          mini_desc="Your Pathway Courses"
+          userXP={userXP}
+          title={title}
+          loginDates={loginDates}
+          contentClassName="max-w-6xl mx-auto w-full px-4"
+        />
 
-            {/* Simple hamburger or nav toggle — can be replaced with mobile menu logic */}
-            <div className="flex flex-row gap-4 text-sm font-bold">
-              
-              <Logout />
-            </div>
-          </div>
-
-          {/* Navigation Tabs (from sidebar) */}
-          {/* Drawer Toggle Button */}
-          <div className="flex items-center py-4 px-4">
-            <button
-              onClick={() => setDrawerOpen(true)}
-              aria-label="Open navigation"
-              className="p-2 rounded-md border border-gray-300 bg-white shadow-sm"
-            >
-              {/* Hamburger Icon */}
-              <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-          </div>
-
-          {/* Drawer Overlay */}
-          {drawerOpen && (
-            <div
-              className="fixed inset-0 z-40 bg-black bg-opacity-30"
-              onClick={() => setDrawerOpen(false)}
-              aria-label="Close navigation overlay"
-            />
-          )}
-
-          {/* Drawer Panel */}
-          <div
-            className={`fixed top-0 left-0 z-50 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ${
-              drawerOpen ? "translate-x-0" : "-translate-x-full"
-            }`}
-            style={{ willChange: "transform" }}
-          >
-            <div className="flex flex-row items-center justify-between px-4 py-4 border-b">
-              <div className="flex flex-row items-center gap-2">
-                <Image src={hb_logo} alt="HackBio logo" width={32} height={32} />
-                <p className="font-bold text-lg">HackBio</p>
-              </div>
-              <button
-                onClick={() => setDrawerOpen(false)}
-                aria-label="Close navigation"
-                className="p-2 rounded-md"
-              >
-                {/* Close Icon */}
-                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M6 6l12 12M6 18L18 6" />
-                </svg>
-              </button>
-            </div>
-            <div className="flex flex-col gap-2 px-4 py-4">
-              {tab_items.map((tab_item) => (
-                <a key={tab_item.id} href={tab_item.link} onClick={() => setDrawerOpen(false)}>
-                  <div className={`flex flex-row items-center gap-2 py-2 px-3 rounded-md ${tab_item.isActive ? "bg-green-100 text-hb-green font-bold" : "text-green-900"}`}>
-                    <tab_item.iconImage />
-                    <p className="text-sm">{tab_item.name}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-          
-        <div className="flex w-full flex-col gap-3  px-10 py-4 border-b mx-auto items-center ">
-
-          {/* Bottom Row: XP + Title */}
-          <div className="flex items-center text-center justify-center gap-5 w-full  text-sm text-green-900 pt-2">
-            <p className="font-bold">🎖️ {Math.ceil(Number(userXP))} XP</p>
-            <p className="font-bold">{title}</p>
-          </div>
-        </div>
-
-        {/* Main Scrollable Content */}
-        <div className="flex-1 pb-20 min-h-[100svh] px-4 pt-6 ">
-
-          {/* Course Preview Block */}
+        <div className="min-h-svh flex-1 px-4 pb-20 pt-6">
           {coursesList
-            .filter((c) => Number(c.id) === courseId)
+            .filter((course) => Number(course.id) === courseId)
             .map((course) => (
               <div key={course.id} className="flex flex-col gap-6">
-                {course.image && (
+                {course.image ? (
                   <div className="flex flex-col items-center gap-4">
                     <img
                       src={course.image}
                       alt="course image"
-                      className="w-32 h-32 border-2 rounded-md border-neutral-400"
+                      className="h-32 w-32 rounded-md border-2 border-neutral-400 object-cover"
                     />
-                    <p className="font-bold text-xl text-center">{course.title}</p>
+                    <p className="text-center text-xl font-bold">{course.title}</p>
 
-                    <div className="w-full border border-hb-green px-4 py-2 rounded-md bg-white flex items-center justify-between">
-                      <Progress value={Math.ceil((Number(uniqueContentId) / Number(totalContent)) * 100)} />
-                      <p className="font-bold text-lg">
-                        {Math.ceil((Number(uniqueContentId) / Number(totalContent)) * 100)}%
-                      </p>
+                    <div className="flex w-full items-center justify-between gap-3 rounded-md border border-hb-green bg-white px-4 py-2">
+                      <p className="text-sm text-gray-600">Pathway Progress</p>
+                      <Progress value={Math.ceil(clampProgress(progressPercent))} />
+                      <p className="text-lg font-bold">{Math.ceil(clampProgress(progressPercent))}%</p>
                     </div>
                   </div>
-                )}
+                ) : null}
 
-                {/* Modules Accordion */}
+                <p className="text-sm text-red-600">
+                  {subscriptionStatus ? "" : (
+                    <span>
+                      Your subscription to this pathway has expired.{" "}
+                      <Link className="font-bold hover:underline" href={checkoutHref}>
+                        Click here to subscribe now
+                      </Link>
+                    </span>
+                  )}
+                </p>
+
                 {modulesList.map((module) => (
-                  <div key={module.id} className="w-full border border-hb-green rounded-lg bg-white px-4 py-3 ">
+                  <div key={module.id} className="w-full rounded-lg border border-hb-green bg-white px-4 py-3">
                     <Accordion type="multiple">
                       <AccordionItem value={module.id.toString()}>
-                        <AccordionTrigger className="text-lg font-bold">
-                          {module.title}
-                        </AccordionTrigger>
+                        <AccordionTrigger className="text-lg font-bold">{module.title}</AccordionTrigger>
                         <AccordionContent>
-                          <div className="flex flex-col gap-3 text-base text-gray-600 pl-2">
+                          <div className="flex flex-col gap-3 pl-2 text-sm text-gray-600">
                             {contentList
                               .filter((content) => Number(content.module) === Number(module.id))
-                              .map((content) => (
-                                <ul className="list-disc pl-5" key={content.id}>
-                                  <a
-                                    href={`/dashboard/pathway/courses/${courseId}/module/${module.id}/content/${content.id}`}
-                                    className="hover:underline"
-                                  >
-                                    <li>{content.title}</li>
-                                  </a>
-                                </ul>
-                              ))}
+                              .map((content) => {
+                                const isDone = completedContentIds.has(Number(content.id));
+                                return (
+                                  <ul className="list-none pl-0" key={content.id}>
+                                    <Link href={courseContentHref(module.id, content.id)} className="hover:underline">
+                                      <li className="flex items-center gap-2">
+                                        {isDone ? (
+                                          <CircleCheck className="h-4 w-4 text-green-600" />
+                                        ) : (
+                                          <CircleAlert className="h-4 w-4 text-red-500" />
+                                        )}
+                                        <span>{content.title}</span>
+                                      </li>
+                                    </Link>
+                                  </ul>
+                                );
+                              })}
                           </div>
                         </AccordionContent>
                       </AccordionItem>
@@ -742,8 +468,18 @@ useEffect(() => {
         </div>
       </div>
 
+      {showProgressPopup && popupData ? (
+        <ProgressFloat
+          title={popupData.headline}
+          message={popupData.body || ""}
+          percent={progressPercent}
+          ctaText={allowCta ? popupData.cta_text : undefined}
+          onCta={allowCta && popupData.cta_url ? handlePopupCta : undefined}
+          onClose={handlePopupDismiss}
+        />
+      ) : null}
     </main>
-  )
+  );
 }
 
 const PageWrapper = () => <Page />;

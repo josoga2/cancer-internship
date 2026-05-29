@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import HbButtons from "../hb-buttons";
 import publicApi from "@/publicApi";
 
@@ -36,61 +35,32 @@ export default function Hero() {
         fetchHomepage();
     }, []);
 
-    return (
-        <main>
-            <div className="hidden w-full py-10  h-full md:flex flex-col gap-5  items-center justify-center">
-                <div className="w-full flex flex-row items-center justify-between py-20 relative bg-hb-lightgreen">
-                    <div className="w-3/5 h-full items-start text-start flex flex-col gap-5 px-10 ">
-                        <p className= 'text-5xl font-bold leading-16'>{content.headline}</p>
-                        <p className=" text-xl w-2/3 text-gray-700">{content.subheadline}</p>
-                        <div className="flex flex-row gap-5 py-5">
-                            <a href={content.button_link}> <HbButtons type="primary" text={content.button_text}/> </a>
-                            {/* <a href="/hire-talents"> <HbButtons type="outline" text="Hire Talents"/> </a> */}
-                        </div>
-                    </div>
-                    {content.hero_image_url ? (
-                        <div className="w-2/5 h-full flex items-center justify-center pr-10">
-                            <Image
-                                src={content.hero_image_url}
-                                alt="HackBio hero"
-                                width={560}
-                                height={360}
-                                className="w-full h-full max-h-85 object-contain"
-                                priority
-                                sizes="(min-width: 768px) 40vw, 100vw"
-                            />
-                        </div>
-                    ) : null}
-                    
-                </div>
-            </div>
+    const backgroundStyle = content.hero_image_url
+        ? { backgroundImage: `url(${content.hero_image_url})` }
+        : undefined;
 
-            <div className="flex flex-col w-full md:hidden gap-5 p-2 rounded-xl">
-                <div className="flex flex-col gap-5 text-start">
-                    <p className="text-3xl font-bold leading-tight">
+    return (
+        <section
+            className="relative left-1/2 min-h-[560px] w-screen -translate-x-1/2 overflow-hidden bg-hb-lightgreen bg-cover bg-center md:min-h-[520px] md:bg-[center_right]"
+            style={backgroundStyle}
+        >
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(219,242,232,0.96)_0%,rgba(219,242,232,0.88)_32%,rgba(219,242,232,0.44)_58%,rgba(219,242,232,0.12)_100%)] md:bg-[linear-gradient(90deg,rgba(219,242,232,0.98)_0%,rgba(219,242,232,0.88)_34%,rgba(219,242,232,0.34)_58%,rgba(219,242,232,0.08)_100%)]" />
+
+            <div className="relative mx-auto flex min-h-[560px] w-full max-w-5xl items-center px-5 py-24 md:min-h-[520px] md:px-0">
+                <div className="flex w-full max-w-[38rem] flex-col items-start gap-5 text-left">
+                    <h1 className="max-w-full break-words text-[42px] font-black leading-[0.98] tracking-normal text-gray-900 sm:text-[52px] md:text-[64px]">
                         {content.headline}
-                    </p>
-                    <p className="text-base text-gray-700">
+                    </h1>
+                    <p className="max-w-[35rem] break-words text-lg font-medium leading-[1.36] text-gray-800 md:text-xl">
                         {content.subheadline}
                     </p>
-                    <div className="flex flex-col gap-3">
-                        <a href={content.button_link}> <HbButtons type="primary" text={content.button_text}/> </a>
-                        {/* <a href="/hire-talents"> <HbButtons type="outline" text="Hire Talents"/> </a> */}
+                    <div className="pt-2">
+                        <a href={content.button_link}>
+                            <HbButtons type="primary" text={content.button_text}/>
+                        </a>
                     </div>
                 </div>
-                {content.hero_image_url ? (
-                    <div className="w-full flex items-center justify-center">
-                        <Image
-                            src={content.hero_image_url}
-                            alt="HackBio hero"
-                            width={560}
-                            height={320}
-                            className="w-full max-h-65 object-contain"
-                            sizes="100vw"
-                        />
-                    </div>
-                ) : null}
             </div>
-        </main>
+        </section>
     )
 }

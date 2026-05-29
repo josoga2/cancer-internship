@@ -56,6 +56,7 @@ function Page() {
         title?: string
         description?: string
         published?: boolean
+        is_active?: boolean
         free?: boolean
         start_date?: string
         overview?: string
@@ -85,6 +86,7 @@ function Page() {
     overview?: string
     description?: string
     published?: boolean
+    is_active?: boolean
     image?: string
   }>>([
       {
@@ -144,8 +146,8 @@ function Page() {
 
           if (pathwayResponse.status === 200) {
             //console.log("Pathway Response Data:", pathwayResponse.data);
-            const pathways = pathwayResponse.data.filter((pathway: { id: string, free: boolean }) => 
-              userProfile.Pathways.includes(Number(pathway.id)) && pathway.free
+            const pathways = pathwayResponse.data.filter((pathway: { id: string, free: boolean, published?: boolean, is_active?: boolean }) => 
+              userProfile.Pathways.includes(Number(pathway.id))
             );
             setPathwaysList(pathways);
 
@@ -160,7 +162,7 @@ function Page() {
                   : []
               );
               //console.log("filtered internships:", internships);
-              const courses = coursesResponse.data.filter((course: { id: number | string }) =>
+              const courses = coursesResponse.data.filter((course: { id: number | string, published?: boolean, is_active?: boolean }) =>
               allCourseIds.includes(Number(course.id))
               );
               //console.log("Courses List:", courses);

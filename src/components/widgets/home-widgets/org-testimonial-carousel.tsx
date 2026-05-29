@@ -1,35 +1,32 @@
-import lg_testimonial from '@/../public/Testimonials.svg'
-import sm_testimonial from '@/../public/sm_testimonial.svg'
-
 export default function OrganizationsTestimonials() {
     return (
-        <main>
-            <div className="hidden w-full py-10  h-full md:flex flex-col gap-5 px-10  items-center justify-center ">
-                <div className="flex flex-col items-center gap-5">
-                    <p className="text-lg font-bold text-center">
-                        100+ Organizations have hired our graduates
+        <section className="w-full">
+            <div className="hidden w-full py-6 md:flex flex-col items-center justify-center">
+                <div className="flex w-full max-w-5xl flex-col items-center gap-5">
+                    <p className="text-center text-2xl py-10 font-medium leading-tight text-gray-900">
+                        Trusted by scientists working in over 100+ organizations around the world
                     </p>
                     <img
-                        src={lg_testimonial.src}
+                        src="/Testimonials.svg"
                         alt="organizations-that-trust-hackbio"
-                        className="w-5/6"
+                        className="h-auto w-full max-w-[980px] object-contain"
                     />
                 </div>
             </div>
 
-            <div className="flex flex-col w-full md:hidden gap-5 p-2  rounded-xl">
-                <div className="flex flex-col items-center gap-5">
-                    <p className="text-lg font-bold text-center">
-                        100+ Organizations have hired our graduates
+            <div className="flex w-full flex-col gap-4 py-4 px-5 md:hidden">
+                <div className="flex flex-col items-center gap-4">
+                    <p className="max-w-sm text-center pb-5 text-base font-medium leading-snug text-gray-900">
+                        Trusted by scientists working in over 100+ organizations around the world
                     </p>
                     <img
-                        src={sm_testimonial.src}
+                        src="/sm_testimonial.svg"
                         alt="organizations-that-trust-hackbio"
-                        className="w-full"
+                        className="h-auto w-full object-contain"
                     />
                 </div>
             </div>
 
-        </main>
+        </section>
     )
 }

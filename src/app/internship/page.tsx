@@ -1,23 +1,17 @@
 "use client";
 import React, {  useEffect, useState } from "react";
 import publicApi from "../../publicApi"
-import { EnrollDialog } from "@/components/enroll/enroll";
 import  Navbar  from "@/components/Nav/navbar";
 import Footer from "@/components/Nav/footer";
-import { Button } from "@/components/ui/button";
-import UpcomingSection from "@/components/widgets/internship-widget/upcoming";
-import UpcomingCourseDetails from "@/components/widgets/internship-widget/upcoming-course-details";
-import UpcomingCourseDescription from "@/components/widgets/internship-widget/upcoming-course-description";
 import HeroSection from "@/components/widgets/internship-widget/HeroSection";
-import HbButton from "@/components/widgets/hb-buttons";
-import LearningTracks from "@/components/widgets/internship-widget/LearningTracks";
 import TestimonialsEnroll from "@/components/widgets/internship-widget/testimonials-enroll";
-import LearningExperience from "@/components/widgets/internship-widget/LearningExperience";
-import FreePrice from "@/components/widgets/internship-widget/PricingFree";
-import PremiumPrice from "@/components/widgets/internship-widget/PricingPremium";
-import HbPrices from "@/components/all-pricings/preview";
-import { number } from "framer-motion";
-import Link from "next/link";
+import ProgramSkillsTools, { type SkillTool } from "@/components/widgets/program-skills-tools";
+import ProgramOutline, { type ProgramOutlineItem } from "@/components/widgets/program-outline";
+import CareerOutlook from "@/components/widgets/career-outlook";
+import CareerClaritySection from "@/components/widgets/career-clarity-section";
+import GraduateTestimonialSection from "@/components/widgets/graduate-testimonial-section";
+import FAQPreviewSection from "@/components/widgets/faq-preview-section";
+import PotentialProjectsSection, { type PotentialProject } from "@/components/widgets/potential-projects-section";
 
 
 export default function Page() {
@@ -25,13 +19,24 @@ export default function Page() {
     const [internship, setInternshipList] = useState<Array<{
         id?: string
         title?: string
+        summary?: string
         description?: string
         published?: boolean
         start_date?: string
         overview?: string
         lenght_in_weeks?: number
         int_image?: string
+        hero_background_image?: string
+        skills_and_tools_detail?: SkillTool[]
+        career_outlook_description?: string
+        low_salary?: number
+        median_salary?: number
+        high_salary?: number
+        brochure_link?: string
+        price?: number
+        free?: boolean
         courses?: Array<string | number>
+        potential_projects?: PotentialProject[]
     }>>([
         {
             id: "",
@@ -60,6 +65,19 @@ export default function Page() {
             published: false
         }
     ]);
+    const [modulesList, setModulesList] = useState<Array<{
+        id?: number | string
+        title?: string
+        description?: string
+        course?: number | string
+    }>>([]);
+    const [contentList, setContentList] = useState<Array<{
+        id?: number | string
+        title?: string
+        module?: number | string
+        course?: number | string
+        content_type?: string
+    }>>([]);
     const internshipStatus: string = 'open';
 
 
@@ -97,125 +115,178 @@ export default function Page() {
         fetchCourses();
     }, []);
 
-    const thisInternshipid = internship
-    .filter(int => int.published === true)
-    .map(int => int.id)
+    useEffect(() => {
+        const fetchModules = async () => {
+            try {
+                const response = await publicApi.get('/api/public/modules/');
+                if (response.status === 200) {
+                    setModulesList(response.data);
+                }
+            } catch (error) {
+                console.error('Error fetching modules:', error);
+            }
+        };
+        fetchModules();
+    }, []);
+
+    useEffect(() => {
+        const fetchContents = async () => {
+            try {
+                const response = await publicApi.get('/api/public/contents/');
+                if (response.status === 200) {
+                    setContentList(response.data);
+                }
+            } catch (error) {
+                console.error('Error fetching contents:', error);
+            }
+        };
+        fetchContents();
+    }, []);
+
+    const publishedInternships = internship.filter(int => int.published === true)
+    const heroInternship = publishedInternships[0]
+    const heroInternshipIsFree = Boolean(heroInternship && (heroInternship.free || Number(heroInternship.price || 0) <= 0))
+    const thisInternshipid = heroInternship?.id || "0"
+    const heroDuration = heroInternship?.lenght_in_weeks ? String(heroInternship.lenght_in_weeks) : "12"
+    const heroCourseIds = new Set((heroInternship?.courses ?? []).map(String))
+    const outlineCourses = coursesList.filter((course) => heroCourseIds.has(String(course.id)))
+    const outlineModuleIds = new Set(
+        modulesList
+            .filter((module) => heroCourseIds.has(String(module.course)))
+            .map((module) => String(module.id))
+    )
+    const outlineItems: ProgramOutlineItem[] = outlineCourses.map((course, index) => ({
+        id: course.id,
+        label: `Course ${index + 1}:`,
+        title: course.title,
+        description: course.description,
+        children: modulesList
+            .filter((module) => String(module.course) === String(course.id))
+            .map((module) => ({
+                id: module.id,
+                title: module.title,
+                description: module.description,
+            })),
+    }))
+    const outlineProjectCount = contentList.filter(
+        (content) =>
+            content.content_type === "project" &&
+            (heroCourseIds.has(String(content.course)) || outlineModuleIds.has(String(content.module)))
+    ).length
 
     //console.log(coursesList.filter(course => course.published === true));
 
   return (
-    <section>
+    <section className="w-full overflow-x-hidden">
         <Navbar />
-        <main className="hidden md:flex md:max-w-5xl bg md:m-auto md:items-center p-5 md:justify-between">
+        <main className="hidden w-full md:block">
             {/** Hero */}
-            <div className="">
-                <HeroSection id={String(thisInternshipid) || '0'} internshipStatus={internshipStatus} />
-
-                {internship.filter(int => int.published === true).map((upcoming, idx) => (
-                    <div key={upcoming.id} className="flex flex-row items-start justify-between gap-10 max-w-full ">
-                        <div  className="w-4/5">
-                            <UpcomingSection status={false} id={upcoming.id || ""} start_date={upcoming.start_date || ""} int_image={upcoming.int_image || ""} title={upcoming.title || ""} overview={upcoming.overview || ""} lenght_in_weeks={upcoming.lenght_in_weeks || 1} internshipStatus={internshipStatus} />
-                        </div>
-                        <div className="flex flex-col gap-5 items-start justify-center w-full ">
-                            <p className="text-2xl font-bold pb-10">What will you learn?</p>
-                            
-                            {coursesList
-                                .filter(course =>{
-                                    //upcoming.courses?.filter(upCourse => upCourse.id === course.id)
-                                    const courseIds = (upcoming.courses ?? []).filter((id): id is string | number => id !== undefined);
-                                    return courseIds.includes(course.id as string | number);    
-                                    }
-                                )
-                                .map((course, n) => (
-                                    <div key={course.id}>    
-                                        <UpcomingCourseDetails id={course.id as string} n={n} title={course.title || ""} />
-                                    </div>
-                            ))}
-                            <UpcomingCourseDescription id={upcoming.id || ''} status={false} description={upcoming.description || ""} internshipStatus={internshipStatus} />
-                        </div>
-                    </div>
-                ))}
-
-
+            <div className="mx-auto w-full">
+                <HeroSection
+                    id={String(thisInternshipid)}
+                    internshipStatus={internshipStatus}
+                    programType="internship"
+                    backgroundImage={heroInternship?.hero_background_image || heroInternship?.int_image || ""}
+                    badgeText="High Job Demand"
+                    kicker="Become a"
+                    headline={heroInternship?.title || "Genome Data Scientist"}
+                    subcopy={heroInternship?.summary || heroInternship?.overview || ""}
+                    ctaText={heroInternshipIsFree ? "Enroll For Free" : "Enroll Now"}
+                    isFree={heroInternshipIsFree}
+                    duration={heroDuration}
+                />
+                <ProgramSkillsTools items={heroInternship?.skills_and_tools_detail} />
+                <ProgramOutline
+                    items={outlineItems}
+                    courseCount={outlineCourses.length}
+                    lessonCount={outlineModuleIds.size}
+                    projectCount={outlineProjectCount}
+                    brochureLink={heroInternship?.brochure_link}
+                    brochureLabel="Download Internship Brochure"
+                    childMode="modules"
+                    descriptionTitle="Internship Description"
+                    description={heroInternship?.description || heroInternship?.overview || ""}
+                    programType="internship"
+                    programId={String(thisInternshipid)}
+                    programPrice={heroInternship?.price || 0}
+                    programPriceLabel="This Internship Alone"
+                />
+                <PotentialProjectsSection
+                    projects={heroInternship?.potential_projects}
+                    programType="internship"
+                    programId={String(thisInternshipid)}
+                />
+                <CareerOutlook
+                    programTitle={heroInternship?.title || "Genome Data Science"}
+                    description={heroInternship?.career_outlook_description || heroInternship?.summary || heroInternship?.overview || ""}
+                    lowSalary={heroInternship?.low_salary}
+                    medianSalary={heroInternship?.median_salary}
+                    highSalary={heroInternship?.high_salary}
+                    guideLink={heroInternship?.brochure_link}
+                    programType="internship"
+                    programId={String(thisInternshipid)}
+                />
+                <CareerClaritySection />
+                <GraduateTestimonialSection programType="internship" programId={String(thisInternshipid)} />
+                
                 <TestimonialsEnroll InternshipStatus={internshipStatus}/>
-                <div className="w-full flex flex-col items-center justify-center">
-                    <LearningTracks />
-                </div>
-
-                <div className="w-full  flex flex-col items-center justify-center">
-                    {false? <Link href="/dashboard"><HbButton type="primary" text="Enroll Now" /> </Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'internship', id:String(thisInternshipid) } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
-                </div>
-
-                {/** who is this internship for?*/}
-                <LearningExperience internshipStatus={internshipStatus} />
-                <div className="flex flex-col gap-2 items-center justify-start w-full mx-auto px-5 ">
-                    <span className="flex flex-row items-start font-bold text-2xl gap-2"> <p> The smartest investment for your career journey</p> </span>
-                    <p className="font-bold pt-5">Gain full access to all our courses and internships (including future ones)... Or just this cohort</p>
-                    <div className="flex flex-row gap-2 items-start">
-                        {/*<FreePrice /> */}
-                        {/*<PremiumPrice />*/}
-                        <HbPrices plan="Become a Pro" discount={0.5} prog="internship" progId={String(thisInternshipid)}/>
-                        <p className="font-bold"></p>
-                        <HbPrices plan="Internship Access" discount={0.5} prog="internship" progId={String(thisInternshipid)}/>
-                    </div>
-                </div>
+                <FAQPreviewSection />
+                
             </div>
         </main>
         
         {/**MOBILE */}
-        <main>
-            <div className="flex md:hidden flex-col gap-10 pt-20 w-full text-sm p-5">
-                <HeroSection id="hero-section-mobile" internshipStatus={internshipStatus} />
-
-                {internship.filter(int => int.published === true).map((upcoming, idx) => (
-                    <div key={upcoming.id} className="flex flex-col gap-5 w-full">
-                        <UpcomingSection status={false} id={upcoming.id || ""} start_date={upcoming.start_date || ""} int_image={upcoming.int_image || ""} title={upcoming.title || ""} overview={upcoming.overview || ""} lenght_in_weeks={upcoming.lenght_in_weeks || 1} internshipStatus={internshipStatus} />
-                        
-
-                        <div className="flex flex-col gap-3">
-                            <div className="text-xl font-bold"> <p> {`What will you learn?`} </p> <p className="text-xs py-3 underline font-normal"> {`(click course item to preview)`} </p> </div>
-                            {coursesList
-                                        .filter(course =>{
-                                            //upcoming.courses?.filter(upCourse => upCourse.id === course.id)
-                                            const courseIds = (upcoming.courses ?? []).filter((id): id is string | number => id !== undefined);
-                                            return courseIds.includes(course.id as string | number);    
-                                            }
-                                        ).map((course, ndx) => (
-                                        <div key={course.id}>    
-                                            <UpcomingCourseDetails id={course.id as string} n={ndx} title={course.title || ""} />
-                                        </div>
-                            ))}
-
-
-                            <UpcomingCourseDescription status={false} id={upcoming.id || ""} description={upcoming.description || ""} internshipStatus={internshipStatus} />
-
-                        </div>
-                    </div>
-                ))}
-
+        <main className="w-full md:hidden">
+            <div className="flex flex-col gap-10 pt-20 w-full min-w-0 text-sm px-0">
+                <HeroSection
+                    id={String(thisInternshipid)}
+                    internshipStatus={internshipStatus}
+                    programType="internship"
+                    backgroundImage={heroInternship?.hero_background_image || heroInternship?.int_image || ""}
+                    badgeText="High Job Demand"
+                    kicker="Become a"
+                    headline={heroInternship?.title || "Genome Data Scientist"}
+                    subcopy={heroInternship?.summary || heroInternship?.overview || ""}
+                    ctaText={heroInternshipIsFree ? "Enroll For Free" : "Enroll Now"}
+                    isFree={heroInternshipIsFree}
+                    duration={heroDuration}
+                />
+                <ProgramSkillsTools items={heroInternship?.skills_and_tools_detail} />
+                <ProgramOutline
+                    items={outlineItems}
+                    courseCount={outlineCourses.length}
+                    lessonCount={outlineModuleIds.size}
+                    projectCount={outlineProjectCount}
+                    brochureLink={heroInternship?.brochure_link}
+                    brochureLabel="Download Internship Brochure"
+                    childMode="modules"
+                    descriptionTitle="Internship Description"
+                    description={heroInternship?.description || heroInternship?.overview || ""}
+                    programType="internship"
+                    programId={String(thisInternshipid)}
+                    programPrice={heroInternship?.price || 0}
+                    programPriceLabel="This Internship Alone"
+                />
+                <PotentialProjectsSection
+                    projects={heroInternship?.potential_projects}
+                    programType="internship"
+                    programId={String(thisInternshipid)}
+                />
+                <CareerOutlook
+                    programTitle={heroInternship?.title || "Genome Data Science"}
+                    description={heroInternship?.career_outlook_description || heroInternship?.summary || heroInternship?.overview || ""}
+                    lowSalary={heroInternship?.low_salary}
+                    medianSalary={heroInternship?.median_salary}
+                    highSalary={heroInternship?.high_salary}
+                    guideLink={heroInternship?.brochure_link}
+                    programType="internship"
+                    programId={String(thisInternshipid)}
+                />
+                <CareerClaritySection />
+                <GraduateTestimonialSection programType="internship" programId={String(thisInternshipid)} />
                 <TestimonialsEnroll InternshipStatus={internshipStatus}/>
-                <LearningTracks />
-
-                <div className="w-full  flex flex-col items-center justify-center">
-                    {false? <Link href="/dashboard"><HbButton type="primary" text="Enroll Now" /> </Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'internship', id:String(thisInternshipid) } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
-                </div>
-
-                <LearningExperience internshipStatus={internshipStatus} />
-
-                <div className="w-full  flex flex-col items-center justify-center">
-                    {false? <Link href="/dashboard"><HbButton type="primary" text="Enroll Now" /> </Link> : <Link href={{ pathname: "/dashboard/checkout", query: { prog:'internship', id:String(thisInternshipid) } }} className="pt-5" > <HbButton text="Enroll Now" type="primary" /> </Link> }
-                </div>
-
-                <div className="flex flex-col gap-2 items-center justify-start w-full ">
-                    <span className="flex flex-col items-start font-bold text-2xl gap-2"> <p> The smartest investment for your career journey</p> </span>
-                    <div className="flex flex-col gap-2 items-start">
-                        {/*<FreePrice /> */}
-                        {/*<PremiumPrice />*/}
-                        <p className="font-bold pt-5">Gain full access to all our courses and internships (including future ones)</p>
-                        <HbPrices plan="Become a Pro" discount={0.5} prog="internship" progId={String(thisInternshipid)}/>
-                        <HbPrices plan="Internship Access" discount={0.5} prog="internship" progId={String(thisInternshipid)}/>
-                    </div>
-                </div>
+                <FAQPreviewSection />
+                
                 
             </div>
 

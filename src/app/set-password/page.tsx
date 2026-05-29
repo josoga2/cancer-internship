@@ -47,7 +47,7 @@ function FinalizeAccountSetupContent() {
           localStorage.setItem(ACCESS_TOKEN, res.data.access);
           localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
         }
-        router.push(res.data?.redirect_path || "/dashboard");
+        router.push("/dashboard");
       } else {
         setError("Invalid details or already in use.");
       }

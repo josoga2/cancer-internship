@@ -14,10 +14,53 @@ type CourseItem = {
   overview?: string;
   description?: string;
   published?: boolean;
+  is_active?: boolean;
   image?: string;
   skill_tags?: string | null;
   difficulty_level?: string | null;
 };
+
+type ProgramCourseRef = {
+  id?: number | string;
+};
+
+type InternshipItem = {
+  id?: string | number;
+  title?: string;
+  description?: string;
+  published?: boolean;
+  is_active?: boolean;
+  start_date?: string;
+  overview?: string;
+  lenght_in_weeks?: number;
+  int_image?: string;
+  courses?: ProgramCourseRef[];
+};
+
+type PathwayItem = {
+  id?: string | number;
+  title?: string;
+  description?: string;
+  published?: boolean;
+  is_active?: boolean;
+  free?: boolean;
+  start_date?: string;
+  overview?: string;
+  duration_label?: string;
+  int_image?: string;
+  courses?: Array<ProgramCourseRef | number | string>;
+};
+
+const normalizeIdArray = (value: unknown): number[] => {
+  if (Array.isArray(value)) {
+    return value.map((id) => Number(id)).filter((id) => !Number.isNaN(id));
+  }
+  const numeric = Number(value);
+  return Number.isNaN(numeric) ? [] : [numeric];
+};
+
+const courseRefId = (course: ProgramCourseRef | number | string) =>
+  Number(typeof course === "object" ? course.id : course);
 
 const splitSkillTags = (skillTags?: string | null) => {
   if (!skillTags) return [];
@@ -106,21 +149,8 @@ function Page() {
   const router = useRouter()
   const [username, setUsername] = useState("");
   const [loginDates, setLoginDates] = useState<string[]>([]);
-  const [userInternshipId, setUserInternshipId] = useState<number[]>([]);
   const [userCoursesId, setUserCoursesId] = useState<number[]>([]);
-  const [internshipList, setInternshipList] = useState<Array<{
-        id?: string
-        title?: string
-        description?: string
-        published?: boolean
-        start_date?: string
-        overview?: string
-        lenght_in_weeks?: number
-        int_image?: string
-        courses?: Array<{
-            id?: number | string
-        }>
-    }>>([
+  const [internshipList, setInternshipList] = useState<InternshipItem[]>([
         {
             id: "",
             title: "",
@@ -133,6 +163,7 @@ function Page() {
             courses: [{ id: "" }]
         }
     ]);
+  const [pathwayList, setPathwayList] = useState<PathwayItem[]>([]);
 
   const [coursesList, setCoursesList] = useState<CourseItem[]>([
       {
@@ -161,6 +192,7 @@ function Page() {
   ]);
 
   const [internshipProgressMap, setInternshipProgressMap] = useState<Record<number, number>>({});
+  const [pathwayProgressMap, setPathwayProgressMap] = useState<Record<number, number>>({});
   const [popupDismissed, setPopupDismissed] = useState(false);
   const [popupRequestedTrigger, setPopupRequestedTrigger] = useState<string | null>(null);
   const [popupTrigger, setPopupTrigger] = useState<string | null>(null);
@@ -209,53 +241,57 @@ function Page() {
           const userProfile = response.data; // Assuming you want the first profile
           //console.log("User profile data internships:", userProfile);
           setLoginDates(Array.isArray(userProfile.login_dates) ? userProfile.login_dates : []);
-          setUserInternshipId(
-            Array.isArray(userProfile.Internships)
-              ? userProfile.Internships.map((id: any) => Number(id))
-              : userProfile.Internships
-                ? [Number(userProfile.Internships)]
-                : []
-          ); // Set the internships array if it exists
+          const enrolledInternshipIds = normalizeIdArray(userProfile.Internships);
+          const enrolledPathwayIds = normalizeIdArray(userProfile.Pathways);
+          const enrolledCourseIds = normalizeIdArray(userProfile.Courses);
 
-          //make the internship list
-          const internshipResponse = await api.get('/api/internships/');
+          const [internshipResponse, pathwayResponse, coursesResponse] = await Promise.all([
+            api.get('/api/internships/'),
+            api.get('/api/pathways/'),
+            api.get('/api/courses/'),
+          ]);
 
-          if (internshipResponse.status === 200) {
-            const internships = internshipResponse.data.filter((internship: { id: string }) => 
-              userProfile.Internships.includes(Number(internship.id))
+          if (internshipResponse.status === 200 && pathwayResponse.status === 200 && coursesResponse.status === 200) {
+            const internships = internshipResponse.data.filter((internship: InternshipItem) => 
+              enrolledInternshipIds.includes(Number(internship.id))
             );
             setInternshipList(internships);
 
-            //make the courses list
-            const coursesResponse = await api.get('/api/courses/');
-            if (coursesResponse.status === 200) {
-              
-              const allCourseIds = internships
+            const pathways = pathwayResponse.data.filter((pathway: PathwayItem) =>
+              enrolledPathwayIds.includes(Number(pathway.id))
+            );
+            setPathwayList(pathways);
+
+            const internshipCourseIds = internships
               .flatMap((internship: any) => 
                 Array.isArray(internship.courses)
-                  ? internship.courses.map((c: any) => Number(c)) // each c is already an ID
+                  ? internship.courses.map((c: any) => courseRefId(c))
                   : []
-              );
-              //console.log("filtered internships:", internships);
-              const courses = coursesResponse.data.filter((course: { id: number | string }) =>
-                allCourseIds.includes(Number(course.id))
-              );
-              //console.log("Courses List:", courses);
-              setCoursesList(courses)
-            }
+              )
+              .filter((id: number) => !Number.isNaN(id));
 
-            if (coursesResponse.status === 200) {
-              const enrolledCourses = userProfile.Courses
+            const pathwayCourseIds = pathways
+              .flatMap((pathway: any) =>
+                Array.isArray(pathway.courses)
+                  ? pathway.courses.map((c: any) => courseRefId(c))
+                  : []
+              )
+              .filter((id: number) => !Number.isNaN(id));
 
-              const singleCourses = coursesResponse.data.filter((course: { id: number | string }) =>
-                enrolledCourses.includes(Number(course.id))
-              );
+            const programCourseIds = Array.from(new Set([...internshipCourseIds, ...pathwayCourseIds]));
+            const courses = coursesResponse.data.filter((course: CourseItem) =>
+              programCourseIds.includes(Number(course.id))
+            );
+            setCoursesList(courses)
 
-              setSingleCoursesList(singleCourses)
+            const singleCourseIds = enrolledCourseIds.filter((courseId) => !programCourseIds.includes(courseId));
+            const singleCourses = coursesResponse.data.filter((course: CourseItem) =>
+              singleCourseIds.includes(Number(course.id))
+            );
 
-              setUserCoursesId(enrolledCourses);
-              
-            }
+            setSingleCoursesList(singleCourses)
+
+            setUserCoursesId(singleCourseIds);
           }
 
           //const coursesResponse = await api.get('/api/courses/');
@@ -309,6 +345,36 @@ function Page() {
 
     fetchProgress();
   }, [internshipList]);
+
+  useEffect(() => {
+    const fetchPathwayProgress = async () => {
+      try {
+        const pathwayIds = pathwayList
+          .map((pathway) => Number(pathway.id))
+          .filter((id) => !Number.isNaN(id) && id !== 0);
+
+        if (pathwayIds.length === 0) return;
+
+        const progressEntries: Array<[number, number]> = [];
+        for (const pathwayId of pathwayIds) {
+          const res = await api.post('/api/progress/pathway/', { pathwayid: pathwayId });
+          const percent = typeof res?.data?.completion_percent === 'number' ? res.data.completion_percent : 0;
+          progressEntries.push([pathwayId, percent]);
+        }
+
+        if (progressEntries.length > 0) {
+          setPathwayProgressMap((prev) => ({
+            ...prev,
+            ...Object.fromEntries(progressEntries),
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching pathway progress:', error);
+      }
+    };
+
+    fetchPathwayProgress();
+  }, [pathwayList]);
 
   const activeInternshipProgress = !Number.isNaN(activeInternshipId)
     ? (internshipProgressMap[activeInternshipId] ?? 0)
@@ -471,6 +537,60 @@ function Page() {
               )}
             </section>
 
+            <section id="pathway-courses-desktop" className="flex flex-col gap-8">
+              <p className="text-base font-bold text-gray-800">Career Pathways</p>
+              {pathwayList.length > 0 ? (
+                pathwayList.map((pathway) => {
+                  const pathwayCourseIds = pathway.courses?.map((c) => courseRefId(c)).filter((id) => !Number.isNaN(id)) ?? [];
+                  const coursesForPathway = coursesList.filter((course) =>
+                    pathwayCourseIds.includes(Number(course.id))
+                  );
+
+                  return (
+                    <div key={pathway.id} className="rounded-md border border-hb-green/20 bg-white p-5">
+                      <div className="flex flex-col gap-4">
+                        <p className="font-bold text-lg text-gray-900">{pathway.title}</p>
+                        <div className="w-full max-w-sm">
+                          <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+                            <span>Pathway Progress</span>
+                            <span>{Math.round(pathwayProgressMap[Number(pathway.id)] ?? 0)}%</span>
+                          </div>
+                          <div className="h-2 w-full overflow-hidden rounded-full border border-hb-green/20 bg-hb-lightgreen">
+                            <div
+                              className="h-full rounded-full bg-hb-green transition-[width]"
+                              style={{ width: `${clampProgress(pathwayProgressMap[Number(pathway.id)] ?? 0)}%` }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {coursesForPathway.length > 0 ? (
+                        <div className="mt-5 grid grid-cols-3 gap-4">
+                          {coursesForPathway.map((course, courseIndex) => {
+                            const courseAnchor = `course-pathway-${pathway.id ?? "pathway"}-${course.id ?? courseIndex}`;
+                            return (
+                              <div key={courseAnchor} id={courseAnchor}>
+                                <CourseListingCard
+                                  course={course}
+                                  href={`/dashboard/pathway/courses/${course.id}/`}
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <p className="mt-4 text-sm text-gray-600">No courses found for this pathway.</p>
+                      )}
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="rounded-md border border-hb-green/20 bg-white p-5 text-sm text-gray-600">
+                  Your enrolled pathways will appear here.
+                </div>
+              )}
+            </section>
+
             <section id="single-courses-desktop" className="flex flex-col gap-4 pb-4">
               <p className="text-base font-bold text-gray-800">Single Courses</p>
               {userCoursesId.length !== 0 ? (
@@ -546,6 +666,54 @@ function Page() {
             ) : (
               <div className="rounded-md border border-hb-green/20 bg-white p-4 text-sm text-gray-600">
                 If you are enrolled for an internship or a course and this is still empty after 24 hours, please write to contact@thehackbio.com.
+              </div>
+            )}
+          </section>
+
+          <section id="pathway-courses-mobile" className="w-full flex flex-col gap-6">
+            <p className="text-base font-bold text-gray-800">Career Pathways</p>
+            {pathwayList.length > 0 ? (
+              pathwayList.map((pathway) => {
+                const pathwayCourseIds = pathway.courses?.map((c) => courseRefId(c)).filter((id) => !Number.isNaN(id)) ?? [];
+                const coursesForPathway = coursesList.filter((course) =>
+                  pathwayCourseIds.includes(Number(course.id))
+                );
+
+                return (
+                  <div key={pathway.id} className="rounded-md border border-hb-green/20 bg-white p-4">
+                    <p className="font-bold text-lg text-gray-900">{pathway.title}</p>
+                    <div className="w-full mt-3">
+                      <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+                        <span>Pathway Progress</span>
+                        <span>{Math.round(pathwayProgressMap[Number(pathway.id)] ?? 0)}%</span>
+                      </div>
+                      <div className="h-2 w-full overflow-hidden rounded-full border border-hb-green/20 bg-hb-lightgreen">
+                        <div
+                          className="h-full rounded-full bg-hb-green transition-[width]"
+                          style={{ width: `${clampProgress(pathwayProgressMap[Number(pathway.id)] ?? 0)}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {coursesForPathway.length > 0 ? (
+                      <div className="mt-4 grid grid-cols-1 gap-4">
+                        {coursesForPathway.map((course) => (
+                          <CourseListingCard
+                            key={course.id}
+                            course={course}
+                            href={`/dashboard/pathway/courses/${course.id}/`}
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="mt-3 text-sm text-gray-600">No courses found for this pathway.</p>
+                    )}
+                  </div>
+                );
+              })
+            ) : (
+              <div className="rounded-md border border-hb-green/20 bg-white p-4 text-sm text-gray-600">
+                Your enrolled pathways will appear here.
               </div>
             )}
           </section>

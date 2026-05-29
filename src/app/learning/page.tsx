@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import Navbar from "@/components/Nav/navbar";
 import Footer from "@/components/Nav/footer";
 import publicApi from "@/publicApi";
@@ -25,6 +26,14 @@ type CatalogItem = {
   duration_label?: string;
   duration_days?: number;
   is_standalone?: boolean;
+  background_image?: string;
+  hero_background_image?: string;
+  int_image?: string;
+  image?: string;
+  cover_image?: string;
+  thumbnail?: string;
+  published?: boolean;
+  is_active?: boolean;
 };
 
 type CatalogResponse = {
@@ -32,6 +41,66 @@ type CatalogResponse = {
   page: number;
   page_size: number;
   results: CatalogItem[];
+};
+
+type InternshipStatusResponse = {
+  id?: number | string;
+  is_open?: boolean;
+  open?: boolean;
+  status?: string;
+  title?: string;
+  short_description?: string;
+  summary?: string;
+  overview?: string;
+  description?: string;
+  background_image?: string;
+  hero_background_image?: string;
+  int_image?: string;
+  image?: string;
+};
+
+type InternshipItem = InternshipStatusResponse & {
+  published?: boolean;
+  finished?: boolean;
+};
+
+type LegacyCourse = {
+  id?: number | string;
+  slug?: string;
+  title?: string;
+  short_description?: string;
+  overview?: string;
+  description?: string;
+  level?: string;
+  difficulty_level?: string;
+  price?: number;
+  free?: boolean;
+  skill_tags?: string;
+  topic?: string;
+  duration_label?: string;
+  duration_days?: number;
+  image?: string;
+  hero_background_image?: string;
+};
+
+type LegacyPathway = {
+  id?: number | string;
+  slug?: string;
+  title?: string;
+  short_description?: string;
+  overview?: string;
+  description?: string;
+  level?: string;
+  price?: number;
+  free?: boolean;
+  topic?: string;
+  duration_label?: string;
+  duration_days?: number;
+  courses?: Array<number | string>;
+  int_image?: string;
+  hero_background_image?: string;
+  published?: boolean;
+  is_active?: boolean;
 };
 
 const PAGE_SIZE = 12;
@@ -45,6 +114,9 @@ const sortOptions = [
 
 const levelOptions = ["Beginner", "Intermediate", "Advanced"];
 const durationOptions = ["< 2 weeks", "2–4 weeks", "1–3 months"];
+
+const keepPublishedPathways = (items: CatalogItem[]) =>
+  items.filter((item) => item.item_type !== "pathway" || item.published !== false);
 
 export default function LearningPage() {
   const router = useRouter();
@@ -70,6 +142,155 @@ export default function LearningPage() {
     results: [],
   });
   const [loading, setLoading] = useState(true);
+  const [internshipStatus, setInternshipStatus] = useState<InternshipStatusResponse | null>(null);
+  const [openInternship, setOpenInternship] = useState<InternshipItem | null>(null);
+  const [featuredPathways, setFeaturedPathways] = useState<CatalogItem[]>([]);
+
+  const courseTags = (course: LegacyCourse) => {
+    const tags = new Set<string>();
+    (course.skill_tags || "")
+      .replace(";", ",")
+      .split(",")
+      .map((tag) => tag.trim().toLowerCase())
+      .filter(Boolean)
+      .forEach((tag) => tags.add(tag));
+    if (course.topic) tags.add(course.topic.trim().toLowerCase());
+    return Array.from(tags).sort();
+  };
+
+  const matchesDuration = (durationDays: number | undefined, selected: string[]) => {
+    if (!selected.length) return true;
+    const days = Number(durationDays || 0);
+    return selected.some((bucket) => {
+      const key = bucket.replaceAll(" ", "").replace("–", "-");
+      return (
+        (["<2weeks", "lt2weeks"].includes(key) && days < 14) ||
+        (["2-4weeks", "2to4weeks"].includes(key) && days >= 14 && days <= 28) ||
+        (["1-3months", "1to3months"].includes(key) && days >= 29 && days <= 90)
+      );
+    });
+  };
+
+  const fetchLegacyCatalog = async (params: Record<string, string | number>): Promise<CatalogResponse> => {
+    const type = String(params.type || "all");
+    const pageNumber = Number(params.page || 1);
+    const pageSize = Number(params.page_size || PAGE_SIZE);
+    const searchQuery = String(params.q || "").trim().toLowerCase();
+    const levelFilter = String(params.level || "")
+      .split(",")
+      .map((item) => item.trim().toLowerCase())
+      .filter(Boolean);
+    const topicFilter = String(params.topic || "")
+      .split(",")
+      .map((item) => item.trim().toLowerCase())
+      .filter(Boolean);
+    const durationFilter = String(params.duration || "")
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+    const selectedPrice = String(params.price || "all");
+
+    const [coursesResponse, pathwaysResponse] = await Promise.all([
+      type !== "pathway" ? publicApi.get("/api/courses/") : Promise.resolve({ data: [] }),
+      type !== "course" ? publicApi.get("/api/pathways/") : Promise.resolve({ data: [] }),
+    ]);
+
+    const courses: LegacyCourse[] = Array.isArray(coursesResponse.data) ? coursesResponse.data : [];
+    const pathways: LegacyPathway[] = Array.isArray(pathwaysResponse.data) ? pathwaysResponse.data : [];
+    const coursesById = new Map(courses.map((course) => [String(course.id), course]));
+
+    const items: CatalogItem[] = [];
+
+    if (type !== "course") {
+      pathways.forEach((pathway) => {
+        if (pathway.published !== true) return;
+        if (pathway.is_active === false) return;
+
+        const includedCourses = (pathway.courses || [])
+          .map((courseId) => coursesById.get(String(courseId)))
+          .filter((course): course is LegacyCourse => Boolean(course));
+        const tags = new Set<string>();
+        if (pathway.topic) tags.add(pathway.topic.trim().toLowerCase());
+        includedCourses.forEach((course) => courseTags(course).forEach((tag) => tags.add(tag)));
+        const normalizedTags = Array.from(tags).sort();
+        const description = pathway.short_description || pathway.overview || pathway.description || "";
+        const searchableBlob = [pathway.title, description, normalizedTags.join(" "), includedCourses.map((course) => course.title).join(" ")]
+          .join(" ")
+          .toLowerCase();
+        const isFree = Boolean(pathway.free || !pathway.price);
+
+        if (searchQuery && !searchableBlob.includes(searchQuery)) return;
+        if (levelFilter.length && !levelFilter.includes((pathway.level || "Beginner").toLowerCase())) return;
+        if (topicFilter.length && !topicFilter.some((topic) => normalizedTags.includes(topic))) return;
+        if (!matchesDuration(pathway.duration_days, durationFilter)) return;
+        if (selectedPrice === "free" && !isFree) return;
+        if (selectedPrice === "paid" && isFree) return;
+
+        items.push({
+          item_type: "pathway",
+          id: Number(pathway.id),
+          slug: pathway.slug || String(pathway.id),
+          title: pathway.title || "Pathway",
+          short_description: description,
+          level: pathway.level || "Beginner",
+          price: pathway.price || 0,
+          tags: normalizedTags,
+          duration_label: pathway.duration_label,
+          duration_days: pathway.duration_days,
+          course_count: (pathway.courses || []).length,
+          course_titles_preview: includedCourses.map((course) => course.title || "").filter(Boolean).slice(0, 5),
+          hero_background_image: pathway.hero_background_image,
+          background_image: pathway.hero_background_image,
+          int_image: pathway.int_image,
+          published: true,
+          is_active: true,
+        });
+      });
+    }
+
+    if (type !== "pathway") {
+      courses.forEach((course) => {
+        const tags = courseTags(course);
+        const description = course.short_description || course.overview || course.description || "";
+        const searchableBlob = [course.title, description, tags.join(" ")].join(" ").toLowerCase();
+        const isFree = Boolean(course.free || !course.price);
+
+        if (searchQuery && !searchableBlob.includes(searchQuery)) return;
+        if (levelFilter.length && !levelFilter.includes((course.level || course.difficulty_level || "Beginner").toLowerCase())) return;
+        if (topicFilter.length && !topicFilter.some((topic) => tags.includes(topic))) return;
+        if (!matchesDuration(course.duration_days, durationFilter)) return;
+        if (selectedPrice === "free" && !isFree) return;
+        if (selectedPrice === "paid" && isFree) return;
+
+        items.push({
+          item_type: "course",
+          id: Number(course.id),
+          slug: course.slug || String(course.id),
+          title: course.title || "Course",
+          short_description: description,
+          level: course.level || course.difficulty_level || "Beginner",
+          price: course.price || 0,
+          tags,
+          duration_label: course.duration_label,
+          duration_days: course.duration_days,
+          hero_background_image: course.hero_background_image,
+          background_image: course.hero_background_image,
+          image: course.image,
+        });
+      });
+    }
+
+    if (params.sort === "price_asc") items.sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
+    else if (params.sort === "price_desc") items.sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
+    else items.sort((a, b) => (a.item_type === b.item_type ? a.title.localeCompare(b.title) : a.item_type === "pathway" ? -1 : 1));
+
+    return {
+      count: items.length,
+      page: pageNumber,
+      page_size: pageSize,
+      results: items.slice((pageNumber - 1) * pageSize, pageNumber * pageSize),
+    };
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(query.trim()), 250);
@@ -89,6 +310,62 @@ export default function LearningPage() {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchInternshipStatus = async () => {
+      try {
+        const response = await publicApi.get("/api/internship/status/");
+        setInternshipStatus(response.data);
+      } catch (error) {
+        console.error("Failed to load internship status:", error);
+        setInternshipStatus(null);
+      }
+    };
+
+    const fetchOpenInternship = async () => {
+      try {
+        const response = await publicApi.get("/api/internships/");
+        const internships: InternshipItem[] = Array.isArray(response.data) ? response.data : [];
+        const activeInternship =
+          internships.find((internship) => internship.published === true && internship.finished !== true) || null;
+        setOpenInternship(activeInternship);
+      } catch (error) {
+        console.error("Failed to load open internships:", error);
+        setOpenInternship(null);
+      }
+    };
+
+    fetchInternshipStatus();
+    fetchOpenInternship();
+  }, []);
+
+  useEffect(() => {
+    const fetchFeaturedPathways = async () => {
+      try {
+        const response = await publicApi.get("/api/catalog/", {
+          params: {
+            type: "pathway",
+            page: 1,
+            page_size: 50,
+            sort: "popular",
+          },
+        });
+        const results = Array.isArray(response.data?.results) ? response.data.results : [];
+        setFeaturedPathways(keepPublishedPathways(results));
+      } catch (error) {
+        console.error("Failed to load highlighted pathways:", error);
+        const fallback = await fetchLegacyCatalog({
+          type: "pathway",
+          page: 1,
+          page_size: 50,
+          sort: "popular",
+        });
+        setFeaturedPathways(keepPublishedPathways(fallback.results));
+      }
+    };
+
+    fetchFeaturedPathways();
+  }, []);
+
   const availableTopics = useMemo(() => {
     const topics = new Set<string>();
     data.results.forEach((item) => {
@@ -97,38 +374,57 @@ export default function LearningPage() {
     return Array.from(topics).sort().slice(0, 12);
   }, [data.results]);
 
+  
   useEffect(() => {
     const fetchCatalog = async () => {
       setLoading(true);
+      const params: Record<string, string | number> = {
+        page,
+        page_size: PAGE_SIZE,
+        sort,
+      };
+
+      let effectiveType = catalogType;
+      if (onlyPathwayBundles) {
+        effectiveType = "pathway";
+      }
+      params.type = effectiveType;
+
+      if (debouncedQuery) params.q = debouncedQuery;
+      if (selectedLevels.length) params.level = selectedLevels.join(",");
+      if (selectedTopics.length) params.topic = selectedTopics.join(",");
+      if (selectedDurations.length) params.duration = selectedDurations.join(",");
+      if (priceFilter !== "all") params.price = priceFilter;
+
+      if (!onlyPathwayBundles) {
+        if (onlyStandalone) params.in_pathway = "false";
+        if (onlyInPathway) params.in_pathway = "true";
+      }
+
       try {
-        const params: Record<string, string | number> = {
-          page,
-          page_size: PAGE_SIZE,
-          sort,
-        };
-
-        let effectiveType = catalogType;
-        if (onlyPathwayBundles) {
-          effectiveType = "pathway";
-        }
-        params.type = effectiveType;
-
-        if (debouncedQuery) params.q = debouncedQuery;
-        if (selectedLevels.length) params.level = selectedLevels.join(",");
-        if (selectedTopics.length) params.topic = selectedTopics.join(",");
-        if (selectedDurations.length) params.duration = selectedDurations.join(",");
-        if (priceFilter !== "all") params.price = priceFilter;
-
-        if (!onlyPathwayBundles) {
-          if (onlyStandalone) params.in_pathway = "false";
-          if (onlyInPathway) params.in_pathway = "true";
-        }
-
         const response = await publicApi.get("/api/catalog/", { params });
-        setData(response.data);
+        const results = Array.isArray(response.data?.results) ? keepPublishedPathways(response.data.results) : [];
+        setData({
+          ...response.data,
+          count: response.data?.count ?? results.length,
+          page: response.data?.page ?? page,
+          page_size: response.data?.page_size ?? PAGE_SIZE,
+          results,
+        });
       } catch (error) {
         console.error("Failed to load catalog:", error);
-        setData({ count: 0, page: 1, page_size: PAGE_SIZE, results: [] });
+        try {
+          const fallbackData = await fetchLegacyCatalog(params);
+          const results = keepPublishedPathways(fallbackData.results);
+          setData({
+            ...fallbackData,
+            count: results.length,
+            results,
+          });
+        } catch (fallbackError) {
+          console.error("Failed to load fallback catalog:", fallbackError);
+          setData({ count: 0, page: 1, page_size: PAGE_SIZE, results: [] });
+        }
       } finally {
         setLoading(false);
       }
@@ -150,6 +446,70 @@ export default function LearningPage() {
   ]);
 
   const totalPages = Math.max(1, Math.ceil((data.count || 0) / PAGE_SIZE));
+
+  const resolveMediaUrl = (src?: string) => {
+    if (!src) return "";
+    if (/^https?:\/\//i.test(src)) return src;
+    if (src.startsWith("/") && !src.startsWith("/media/")) return src;
+    const baseUrl = publicApi.defaults.baseURL || "";
+    try {
+      return new URL(src, baseUrl).toString();
+    } catch {
+      return src;
+    }
+  };
+
+  const randomPathway = useMemo(() => {
+    const pathways = featuredPathways.length
+      ? featuredPathways
+      : data.results.filter((item) => item.item_type === "pathway");
+    if (!pathways.length) return null;
+    return pathways[Math.floor(Math.random() * pathways.length)];
+  }, [data.results, featuredPathways]);
+
+  const highlightedItem = useMemo(() => {
+    const statusOpen =
+      internshipStatus?.is_open === true ||
+      internshipStatus?.open === true ||
+      internshipStatus?.status?.toLowerCase() === "open";
+
+    if (statusOpen || openInternship) {
+      const internship = openInternship || internshipStatus;
+      return {
+        type: "internship" as const,
+        title: internship?.title || "Open Internship",
+        description:
+          internship?.short_description ||
+          internship?.summary ||
+          internship?.overview ||
+          internship?.description ||
+          "Fast, fun, and complete bioinformatics training.",
+        image:
+          internship?.hero_background_image ||
+          internship?.background_image ||
+          internship?.int_image ||
+          internship?.image ||
+          "/internships.jpg",
+        href: "/internship",
+      };
+    }
+
+    if (!randomPathway) return null;
+    return {
+      type: "pathway" as const,
+      title: randomPathway.title,
+      description: randomPathway.short_description || "Discover how prepared you are for a career in bioinformatics.",
+      image:
+        randomPathway.hero_background_image ||
+        randomPathway.background_image ||
+        randomPathway.int_image ||
+        randomPathway.image ||
+        randomPathway.cover_image ||
+        randomPathway.thumbnail ||
+        "/courses.jpg",
+      href: `/pathway/${randomPathway.id}`,
+    };
+  }, [internshipStatus, openInternship, randomPathway]);
 
   const toggleMultiSelect = (value: string, selected: string[], setter: (next: string[]) => void) => {
     if (selected.includes(value)) {
@@ -289,11 +649,43 @@ export default function LearningPage() {
       <Navbar />
       <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-24 md:px-6">
         <section className="rounded-sm border border-gray-200 bg-white p-6 dark:border-hb-green/30 dark:bg-[#0a1f19]">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Explore Courses & Career Pathways</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Build the skills for your dream career in Biotech</h1>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-            Learn single courses or follow a full pathway built from multiple courses.
+            High-demand skill development for modern biotech careers.
           </p>
         </section>
+        {/* Highlighted Pathway or Internship */}
+        {highlightedItem ? (
+          <section className="mx-auto mt-8 grid w-full max-w-4xl grid-cols-1 gap-6 md:grid-cols-[minmax(260px,1fr)_1fr] md:items-center md:gap-10">
+            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm border-2 border-gray-800/70 bg-gray-100 dark:border-hb-green/50 dark:bg-[#0d2a22]">
+              <Image
+                src={resolveMediaUrl(highlightedItem.image)}
+                alt={highlightedItem.title}
+                fill
+                sizes="(min-width: 768px) 420px, 100vw"
+                className="object-cover"
+                priority={highlightedItem.type === "internship"}
+                unoptimized
+              />
+              <div className="absolute inset-0 bg-gray-200/15" />
+              <div className="absolute bottom-4 left-4 flex items-center gap-2 text-xl font-extrabold uppercase text-black md:text-2xl">
+                <span className="h-4 w-4 rounded-full bg-[#ffc72c] md:h-5 md:w-5" />
+                <span className="text-white">Featured</span>
+              </div>
+            </div>
+            <div className="flex flex-col items-start">
+              <h2 className="max-w-[520px] text-3xl font-extrabold leading-tight text-gray-900 md:text-4xl dark:text-white">
+                {highlightedItem.title}
+              </h2>
+              <p className="mt-5 max-w-[420px] text-lg leading-snug text-gray-800 dark:text-gray-200">
+                {highlightedItem.description}
+              </p>
+              <Link href={highlightedItem.href} className="mt-8 text-lg font-bold text-hb-green underline underline-offset-2">
+                Explore -&gt;
+              </Link>
+            </div>
+          </section>
+        ) : null}
 
         <section className="mt-4 grid grid-cols-1 gap-3 rounded-sm border border-gray-200 bg-white p-4 md:grid-cols-[1fr_180px_180px] dark:border-hb-green/30 dark:bg-[#0a1f19]">
           <input
