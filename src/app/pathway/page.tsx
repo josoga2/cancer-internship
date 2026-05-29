@@ -1,7 +1,7 @@
 "use client";
 import React, {  useEffect, useState } from "react";
 import { ArrowRight } from 'lucide-react';
-import winfred from "../../../public/winfred.svg"
+import winfred from "@/../public/winfred.png";
 import keywords from "../../../public/keywords.svg"
 import microbe from "../../../public/microbe.webp"
 import phealth from "../../../public/phealth.jpg"
