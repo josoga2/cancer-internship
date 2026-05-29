@@ -40,3 +40,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Next build caches
+
+.next-stale-sonner-cache/
+
+
+
+# Turbopack
+
+.turbo/
