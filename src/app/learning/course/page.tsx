@@ -2,7 +2,10 @@
 import React from "react";
 import { Button } from "@/components/ui/button"
 import biology from "../../../../public/biology.svg"
-import winfred from "../../../../public/winfred.svg"
+import winfred from "@/../public/winfred.png";
+import ayano from "@/../public/ayano.jpeg";
+import adekoya from "@/../public/adekoya.jpeg";
+import barve from "@/../public/barve.jpeg";
 import keywords from "../../../../public/keywords.svg"
 import { GoDotFill } from "react-icons/go";
 import Image from "next/image";
