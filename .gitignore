@@ -50,3 +50,19 @@ next-env.d.ts
 # Turbopack
 
 .turbo/
+
+# Next.js
+.next/
+out/
+
+# Next build caches
+.next-stale-sonner-cache/
+
+# Turbopack
+.turbo/
+
+# Node
+node_modules/
+
+# Logs
+*.log
