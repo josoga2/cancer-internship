@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button"
-import winfred from "../../../public/winfred.svg"
+import winfred from "@/../public/winfred.png";
 import testimonials from '../../../public/Testimonials.svg'
 import sm_testimonial from '../../../public/sm_testimonial.svg'
 import hire_process from '../../../public/hire_process.svg'
