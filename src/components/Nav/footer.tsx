@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <main className='w-full  bottom-0 left-0 bg-white pb-2 px-5 border-t-2 border-gray-200'>
+    <main className='bottom-0 left-0 w-full border-t-2 border-gray-200 bg-white px-5 pb-2 text-[#1f1f24] dark:border-white/10 dark:bg-[#0f172a] dark:text-white'>
     <div className="hidden md:flex md:max-w-5xl bg md:m-auto md:items-start py-10  gap-20">
         <Link href='/' className='flex flex-row gap-3 items-center'> 
           <Image src={hb_logo} alt='hb_log' width={35} height={35} /> 
@@ -47,7 +47,7 @@ export default function Footer() {
     
     
     {/***MOBILE */}
-    <div className="w-full max-w-sm bottom-0 pt-4 px-5 flex flex-col items-start justify-start md:hidden bg-white">
+    <div className="bottom-0 flex w-full max-w-sm flex-col items-start justify-start bg-white px-5 pt-4 dark:bg-[#0f172a] md:hidden">
       {/* Logo */}
         <Link href='/' className='flex flex-row gap-3 items-center'> 
           <Image src={hb_logo} alt='hb_log' width={35} height={35} /> 

@@ -22,12 +22,12 @@ import {
 export default function NavbarPay() {
   
   return (
-    <main className='w-full fixed top-0 left-0 bg-white shadow-md z-50 pb-2'>
+    <main className='fixed left-0 top-0 z-50 w-full bg-white pb-2 text-[#1f1f24] shadow-md dark:bg-[#0f172a] dark:text-white dark:shadow-black/30'>
        <Banner />
     <div className="hidden md:flex md:max-w-5xl bg md:m-auto md:items-center pt-5 md:justify-between">
         <Link href='/' className='flex flex-row gap-3 items-center'> 
           <Image src={hb_logo} alt='hb_log' width={35} height={35} /> 
-          <p className='font-bold hover:text-hb-green text-lg'>HackBio</p>
+          <p className='text-lg font-bold hover:text-hb-green'>HackBio</p>
         </Link>
         
 
@@ -35,7 +35,7 @@ export default function NavbarPay() {
     
     
     {/***MOBILE */}
-    <div className="w-full pt-4 px-4 flex items-center justify-between md:hidden relative z-50 bg-white">
+    <div className="relative z-50 flex w-full items-center justify-between bg-white px-4 pt-4 dark:bg-[#0f172a] md:hidden">
       {/* Logo */}
         <Link href="/" className='flex flex-row gap-2 items-center'>
           <Image src={hb_logo} alt="hb_logo" width={35} height={35} />

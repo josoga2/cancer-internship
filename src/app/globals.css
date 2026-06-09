@@ -167,6 +167,17 @@ body {
   background-color: #111827 !important;
 }
 
+.dark [class~="bg-white/30"],
+.dark [class~="bg-white/45"],
+.dark [class~="bg-white/60"],
+.dark [class~="bg-white/62"],
+.dark [class~="bg-white/70"],
+.dark [class~="bg-white/75"],
+.dark [class~="bg-white/85"],
+.dark [class~="bg-white/95"] {
+  background-color: rgba(15, 23, 42, 0.82) !important;
+}
+
 .dark .bg-gray-50,
 .dark .bg-gray-100,
 .dark .bg-gray-200,
@@ -180,6 +191,19 @@ body {
 .dark .bg-hb-lightgreen,
 .dark .bg-green-50 {
   background-color: #101a15 !important;
+}
+
+.dark [class~="bg-[#dff5e8]"],
+.dark [class~="bg-[#bfe9d1]"],
+.dark [class~="bg-[#eaf9f1]"],
+.dark [class~="bg-[#eef4f1]"],
+.dark [class~="bg-[#dff4ff]"],
+.dark [class~="bg-[#d6effb]"],
+.dark [class~="bg-[#e4f5fe]"],
+.dark [class~="bg-[#c3d3ea]"],
+.dark [class~="bg-[#b8e8cc]"],
+.dark [class~="bg-[#fff0b8]"] {
+  background-color: #10251b !important;
 }
 
 .dark .text-black,
@@ -240,6 +264,9 @@ body {
 }
 
 .dark .hover\:bg-gray-100:hover,
+.dark .hover\:bg-gray-200:hover,
+.dark .hover\:bg-gray-300:hover,
+.dark .hover\:bg-gray-400:hover,
 .dark .hover\:bg-slate-100:hover,
 .dark .hover\:bg-neutral-100:hover,
 .dark .hover\:bg-zinc-100:hover {
