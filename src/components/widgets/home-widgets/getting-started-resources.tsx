@@ -52,7 +52,7 @@ const resources = [
 export default function GettingStartedResources() {
   return (
     <section className="w-full py-12 px-5 md:py-16">
-      <div className="mx-auto w-full max-w-5xl rounded-sm bg-[#eef4f1] px-5 py-10 md:px-10 md:py-11">
+      <div className="mx-auto w-full max-w-5xl rounded-sm bg-[#eef4f1] px-5 py-10 dark:bg-[#0f172a] md:px-10 md:py-11">
         <h2 className="text-3xl font-medium tracking-normal text-hb-green">
           Resources for getting started
         </h2>
@@ -66,16 +66,16 @@ export default function GettingStartedResources() {
                 href={resource.href}
                 target={isExternal ? "_blank" : undefined}
                 rel={isExternal ? "noopener noreferrer" : undefined}
-                className="group grid min-h-[110px] grid-cols-[80px_1fr] items-center gap-4 rounded-sm bg-white p-3 shadow-[0_2px_7px_rgba(0,0,0,0.25)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_18px_rgba(0,0,0,0.18)]"
+                className="group grid min-h-[110px] grid-cols-[80px_1fr] items-center gap-4 rounded-sm bg-white p-3 shadow-[0_2px_7px_rgba(0,0,0,0.25)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_18px_rgba(0,0,0,0.18)] dark:bg-[#111827] dark:shadow-black/30"
               >
                 <span className={`flex h-20 w-20 items-center justify-center rounded-sm text-5xl font-medium ${resource.background} ${resource.color}`}>
                   {resource.letter}
                 </span>
                 <span className="flex min-w-0 flex-col">
-                  <span className="text-xl font-medium leading-tight text-black group-hover:text-hb-green">
+                  <span className="text-xl font-medium leading-tight text-black group-hover:text-hb-green dark:text-white dark:group-hover:text-hb-green">
                     {resource.title}
                   </span>
-                  <span className="mt-3 text-base leading-snug text-gray-600">
+                  <span className="mt-3 text-base leading-snug text-gray-600 dark:text-slate-300">
                     {resource.description}
                   </span>
                 </span>

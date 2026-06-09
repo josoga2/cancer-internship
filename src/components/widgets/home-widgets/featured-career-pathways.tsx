@@ -102,7 +102,7 @@ export default function FeaturedCareerPathways() {
   return (
     <section className="w-full py-12">
       <div className="mx-auto w-full max-w-5xl px-5">
-        <h2 className="text-3xl font-medium leading-tight tracking-normal text-gray-900">
+        <h2 className="text-3xl font-medium leading-tight tracking-normal text-gray-900 dark:text-white">
           Featured Career <span className="text-hb-green">PATHS</span>
         </h2>
 
@@ -134,23 +134,23 @@ export default function FeaturedCareerPathways() {
             className="relative min-h-[430px] overflow-hidden rounded-sm border-4 border-sky-500 bg-cover bg-center p-8 md:p-12"
             style={{ backgroundImage: `url(${activeImage})` }}
           >
-            <div className="absolute inset-0 bg-white/62" />
+            <div className="absolute inset-0 bg-white/62 dark:bg-slate-950/70" />
             <div className="relative z-10 flex h-full max-w-[620px] flex-col justify-center">
-              <h3 className="text-4xl font-medium leading-tight tracking-normal text-black">
+              <h3 className="text-4xl font-medium leading-tight tracking-normal text-black dark:text-white">
                 {activeItem?.title || "Become a Genome Data Scientist"}
               </h3>
-              <p className="mt-8 text-base leading-snug text-gray-900">
+              <p className="mt-8 text-base leading-snug text-gray-900 dark:text-slate-200">
                 {activeDescription}
               </p>
 
-              <div className="mt-7 flex items-center gap-3 text-base font-medium text-gray-900">
+              <div className="mt-7 flex items-center gap-3 text-base font-medium text-gray-900 dark:text-slate-100">
                 <span className="h-5 w-5 rounded-full bg-yellow-400 shadow-[0_0_0_0_rgba(250,204,21,0.8)] animate-pulse" />
                 <span>Currently Open  </span>
               </div>
 
               <a
                 href={activeHref}
-                className="mt-7 inline-flex w-fit items-center text-xl font-medium  text-gray-900 transition hover:text-hb-green"
+                className="mt-7 inline-flex w-fit items-center text-xl font-medium text-gray-900 transition hover:text-hb-green dark:text-white dark:hover:text-hb-green"
               >
                 Explore Career Path ↗
               </a>

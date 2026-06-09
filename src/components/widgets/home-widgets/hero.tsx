@@ -41,17 +41,17 @@ export default function Hero() {
 
     return (
         <section
-            className="relative left-1/2 min-h-[560px] w-screen -translate-x-1/2 overflow-hidden bg-hb-lightgreen bg-cover bg-center md:min-h-[520px] md:bg-[center_right]"
+            className="relative left-1/2 min-h-[560px] w-screen -translate-x-1/2 overflow-hidden bg-hb-lightgreen bg-cover bg-center dark:bg-[#0f172a] md:min-h-[520px] md:bg-[center_right]"
             style={backgroundStyle}
         >
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(219,242,232,0.96)_0%,rgba(219,242,232,0.88)_32%,rgba(219,242,232,0.44)_58%,rgba(219,242,232,0.12)_100%)] md:bg-[linear-gradient(90deg,rgba(219,242,232,0.98)_0%,rgba(219,242,232,0.88)_34%,rgba(219,242,232,0.34)_58%,rgba(219,242,232,0.08)_100%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(219,242,232,0.96)_0%,rgba(219,242,232,0.88)_32%,rgba(219,242,232,0.44)_58%,rgba(219,242,232,0.12)_100%)] dark:bg-[linear-gradient(90deg,rgba(2,6,23,0.96)_0%,rgba(15,23,42,0.9)_34%,rgba(15,23,42,0.58)_66%,rgba(15,23,42,0.28)_100%)] md:bg-[linear-gradient(90deg,rgba(219,242,232,0.98)_0%,rgba(219,242,232,0.88)_34%,rgba(219,242,232,0.34)_58%,rgba(219,242,232,0.08)_100%)] md:dark:bg-[linear-gradient(90deg,rgba(2,6,23,0.98)_0%,rgba(15,23,42,0.9)_34%,rgba(15,23,42,0.48)_62%,rgba(15,23,42,0.18)_100%)]" />
 
             <div className="relative mx-auto flex min-h-[560px] w-full max-w-5xl items-center px-5 py-24 md:min-h-[520px] md:px-0">
                 <div className="flex w-full max-w-[38rem] flex-col items-start gap-5 text-left">
-                    <h1 className="max-w-full break-words text-[42px] font-black leading-[0.98] tracking-normal text-gray-900 sm:text-[52px] md:text-[64px]">
+                    <h1 className="max-w-full break-words text-[42px] font-black leading-[0.98] tracking-normal text-gray-900 dark:text-white sm:text-[52px] md:text-[64px]">
                         {content.headline}
                     </h1>
-                    <p className="max-w-[35rem] break-words text-lg font-medium leading-[1.36] text-gray-800 md:text-xl">
+                    <p className="max-w-[35rem] break-words text-lg font-medium leading-[1.36] text-gray-800 dark:text-slate-200 md:text-xl">
                         {content.subheadline}
                     </p>
                     <div className="pt-2">

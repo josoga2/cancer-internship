@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from "@stripe/react-stripe-js";
@@ -27,6 +27,16 @@ type SubscriptionOffer = {
   duration_days: number;
   description: string;
   features: string[];
+};
+
+type DiscountInfo = {
+  valid: boolean;
+  code: string;
+  percentage_off: number;
+  original_price: number;
+  discount_amount: number;
+  final_price: number;
+  message: string;
 };
 
 export default function CheckOutForm({
@@ -66,6 +76,11 @@ export default function CheckOutForm({
   );
   const [includeMentorship, setIncludeMentorship] = useState(false);
   const [selectedProgramId, setSelectedProgramId] = useState<number>(selectedProgram?.id || programs?.[0]?.id || 0);
+  const [discountCode, setDiscountCode] = useState("");
+  const [appliedDiscount, setAppliedDiscount] = useState<DiscountInfo | null>(null);
+  const [discountMessage, setDiscountMessage] = useState("");
+  const [isDiscountLoading, setIsDiscountLoading] = useState(false);
+  const checkoutRequestKeyRef = useRef("");
 
   useEffect(() => {
     if (plan === "subscription") {
@@ -100,16 +115,20 @@ export default function CheckOutForm({
   const selectedPriceUsd = isSubscriptionCheckout
     ? subscriptionPrice * subscriptionMonthsMultiplier
     : baseProgramPrice + (mentorshipEnabled ? mentorshipAddonPrice : 0);
+  const finalPriceUsd = appliedDiscount?.valid ? Number(appliedDiscount.final_price || 0) : selectedPriceUsd;
 
   const normalizedAccessEmail = accessEmail.trim().toLowerCase();
   const isAccessEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedAccessEmail);
   const canSelectProgram = isSubscriptionCheckout || checkoutProgramId > 0;
   const canInitiateCheckout = canSelectProgram && isAccessEmailValid;
+  const hasUnappliedDiscountCode = discountCode.trim().length > 0 && discountCode.trim().toUpperCase() !== appliedDiscount?.code;
 
   const exchangeRateNaira = 1500;
   const exchangeRateRupee = 90;
   const exchangeRate = currency === "NGN" ? exchangeRateNaira : currency === "INR" ? exchangeRateRupee : 1;
-  const totalPriceInCurrency = Number((selectedPriceUsd * exchangeRate).toFixed(2));
+  const totalPriceInCurrency = Number((finalPriceUsd * exchangeRate).toFixed(2));
+  const originalPriceInCurrency = Number((selectedPriceUsd * exchangeRate).toFixed(2));
+  const discountAmountInCurrency = Number(((appliedDiscount?.discount_amount || 0) * exchangeRate).toFixed(2));
   const shouldShowProgramSelector = !isSubscriptionCheckout && (allowProgramSelection || !selectedProgramData) && programs.length > 0;
 
   const checkoutPayload = useMemo(
@@ -124,6 +143,7 @@ export default function CheckOutForm({
       subscriptionLength,
       includeMentorship: mentorshipEnabled,
       accessEmail: normalizedAccessEmail,
+      discount_code: appliedDiscount?.valid ? appliedDiscount.code : "",
     }),
     [
       checkoutType,
@@ -137,6 +157,8 @@ export default function CheckOutForm({
       subscriptionLength,
       mentorshipEnabled,
       normalizedAccessEmail,
+      appliedDiscount?.valid,
+      appliedDiscount?.code,
     ]
   );
   const checkoutKey = useMemo(() => JSON.stringify(checkoutPayload), [checkoutPayload]);
@@ -152,7 +174,9 @@ export default function CheckOutForm({
   const createCheckout = useCallback(async () => {
     if (!canInitiateCheckout) return;
     if (clientSecret && loadedCheckoutKey === checkoutKey) return;
+    if (checkoutRequestKeyRef.current === checkoutKey) return;
 
+    checkoutRequestKeyRef.current = checkoutKey;
     setIsCardCheckoutLoading(true);
     setClientSecret(null);
     setCheckoutError("");
@@ -175,6 +199,7 @@ export default function CheckOutForm({
         setCheckoutError("");
       }
     } catch (error: any) {
+      checkoutRequestKeyRef.current = "";
       setClientSecret(null);
       setLoadedCheckoutKey("");
       setCheckoutError(
@@ -190,12 +215,6 @@ export default function CheckOutForm({
       setIsCardCheckoutLoading(false);
     }
   }, [canInitiateCheckout, checkoutKey, checkoutPayload, clientSecret, loadedCheckoutKey]);
-
-  useEffect(() => {
-    if (openPaymentMethod === "card") {
-      createCheckout();
-    }
-  }, [createCheckout, openPaymentMethod]);
 
   useEffect(() => {
     let ignore = false;
@@ -220,6 +239,59 @@ export default function CheckOutForm({
       ignore = true;
     };
   }, []);
+
+  useEffect(() => {
+    setAppliedDiscount(null);
+    setDiscountMessage("");
+    setClientSecret(null);
+    setLoadedCheckoutKey("");
+    checkoutRequestKeyRef.current = "";
+  }, [selectedPriceUsd, checkoutType, checkoutProgramId, mentorshipEnabled, subscriptionLength]);
+
+  useEffect(() => {
+    setClientSecret(null);
+    setLoadedCheckoutKey("");
+    checkoutRequestKeyRef.current = "";
+  }, [normalizedAccessEmail]);
+
+  useEffect(() => {
+    if (appliedDiscount && discountCode.trim().toUpperCase() !== appliedDiscount.code) {
+      setAppliedDiscount(null);
+      setDiscountMessage("");
+      setClientSecret(null);
+      setLoadedCheckoutKey("");
+      checkoutRequestKeyRef.current = "";
+    }
+  }, [discountCode, appliedDiscount]);
+
+  const applyDiscountCode = async () => {
+    const code = discountCode.trim();
+    setDiscountMessage("");
+    setAppliedDiscount(null);
+    setClientSecret(null);
+    setLoadedCheckoutKey("");
+    checkoutRequestKeyRef.current = "";
+    setCheckoutError("");
+
+    if (!code) {
+      setDiscountMessage("Discount code is optional.");
+      return;
+    }
+
+    setIsDiscountLoading(true);
+    try {
+      const res = await api.post("/api/discount-codes/validate/", {
+        code,
+        price: selectedPriceUsd,
+      });
+      setAppliedDiscount(res.data);
+      setDiscountMessage(res.data?.message || "Discount applied.");
+    } catch (error: any) {
+      setDiscountMessage(error?.response?.data?.message || "Invalid discount code.");
+    } finally {
+      setIsDiscountLoading(false);
+    }
+  };
 
   const createOrder = async () => {
     if (!isAccessEmailValid) {
@@ -296,6 +368,34 @@ export default function CheckOutForm({
                 <p className="mt-2 text-xs text-gray-600">We will use this email for your receipt and account setup link.</p>
               )}
             </div>
+            <div className="mt-4 rounded-sm border p-3">
+              <label className="text-sm font-bold" htmlFor="checkout-discount-code">
+                Discount code <span className="font-normal text-gray-500">(optional)</span>
+              </label>
+              <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+                <input
+                  id="checkout-discount-code"
+                  type="text"
+                  value={discountCode}
+                  onChange={(e) => setDiscountCode(e.target.value)}
+                  placeholder="Enter code"
+                  className="min-w-0 flex-1 rounded-sm border px-3 py-2 text-sm uppercase"
+                />
+                <button
+                  type="button"
+                  onClick={applyDiscountCode}
+                  disabled={isDiscountLoading}
+                  className="rounded-sm bg-hb-green px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isDiscountLoading ? "Checking..." : "Apply"}
+                </button>
+              </div>
+              {discountMessage ? (
+                <p className={`mt-2 text-xs ${appliedDiscount?.valid ? "text-hb-green" : "text-red-600"}`}>
+                  {discountMessage}
+                </p>
+              ) : null}
+            </div>
             <Accordion type="single" collapsible className="mt-4" value={openPaymentMethod} onValueChange={setOpenPaymentMethod}>
               <AccordionItem value="paypal">
                 <AccordionTrigger>PayPal</AccordionTrigger>
@@ -330,16 +430,25 @@ export default function CheckOutForm({
                 <AccordionContent>
                   {!isAccessEmailValid ? (
                     <p className="text-sm text-gray-600">Enter your email above to load card payment.</p>
+                  ) : hasUnappliedDiscountCode ? (
+                    <p className="text-sm text-gray-600">Apply the discount code, or clear it, before loading card payment.</p>
                   ) : isCardCheckoutLoading ? (
                     <p className="text-sm text-gray-600">Loading secure card checkout...</p>
-                  ) : clientSecret ? (
-                    <EmbeddedCheckoutProvider stripe={stripePromise} options={{ clientSecret }}>
+                  ) : clientSecret && openPaymentMethod === "card" ? (
+                    <EmbeddedCheckoutProvider key={clientSecret} stripe={stripePromise} options={{ clientSecret }}>
                       <EmbeddedCheckout />
                     </EmbeddedCheckoutProvider>
                   ) : checkoutError ? (
                     <p className="text-sm text-red-600">{checkoutError}</p>
                   ) : (
-                    <p className="text-sm text-gray-600">Select your preferred checkout option to load card payment.</p>
+                    <button
+                      type="button"
+                      onClick={createCheckout}
+                      disabled={!canInitiateCheckout}
+                      className="rounded-sm bg-hb-green px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      Load secure card payment
+                    </button>
                   )}
                 </AccordionContent>
               </AccordionItem>
@@ -354,7 +463,7 @@ export default function CheckOutForm({
                 <AccordionContent>
                   <div className="space-y-3">
                     <div className="rounded-sm border border-amber-800 bg-yellow-100 p-4 text-sm text-amber-800">
-                      Kindly proceed to pay NGN {Number((selectedPriceUsd * exchangeRateNaira).toFixed(2)) || "0"} via OPAY
+                      Kindly proceed to pay NGN {Number((finalPriceUsd * exchangeRateNaira).toFixed(2)) || "0"} via OPAY
                       (9552770865, THEHACKBIO ENTERPRISES). Send receipt to contact@thehackbio.com.
                     </div>
                     <a
@@ -477,6 +586,16 @@ export default function CheckOutForm({
                 <p className="text-sm text-gray-700">
                   Selected: <span className="font-semibold">{checkoutType}</span>
                 </p>
+                {appliedDiscount?.valid ? (
+                  <div className="mt-2 space-y-1 text-sm text-gray-700">
+                    <p>
+                      Original: {currency} {originalPriceInCurrency}
+                    </p>
+                    <p>
+                      Discount ({appliedDiscount.percentage_off}%): -{currency} {discountAmountInCurrency}
+                    </p>
+                  </div>
+                ) : null}
                 <p className="text-xl font-bold">
                   Total: {currency} {totalPriceInCurrency}
                 </p>

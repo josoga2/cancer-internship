@@ -23,7 +23,7 @@ export const metadata = buildPageMetadata({
 
 export default function Home() {
   return (
-    <main>
+    <main className="bg-white text-[#1f1f24] dark:bg-[#020617] dark:text-white">
     <Navbar /> 
     <div className="w-full">
       <div className="hidden md:flex w-full flex-col bg md:items-center md:justify-between">

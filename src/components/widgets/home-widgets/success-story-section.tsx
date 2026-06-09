@@ -50,19 +50,19 @@ export default function SuccessStorySection() {
   return (
     <section className="w-full overflow-x-clip py-12 md:py-16">
       <div className="mx-auto w-full max-w-5xl px-0 md:px-0">
-        <h2 className="px-5 text-start text-4xl font-medium leading-tight tracking-normal text-black">
+        <h2 className="px-5 text-start text-4xl font-medium leading-tight tracking-normal text-black dark:text-white">
           <span className="text-hb-green underline decoration-hb-green decoration-2 underline-offset-3">
             Success
           </span>{" "}
           that speaks for itself
         </h2>
 
-        <div className="relative left-1/2 mt-20 w-screen max-w-none -translate-x-1/2 bg-[linear-gradient(100deg,#d7edf5_0%,#e9f7ee_50%,#f7f2f5_100%)]">
+        <div className="relative left-1/2 mt-20 w-screen max-w-none -translate-x-1/2 bg-[linear-gradient(100deg,#d7edf5_0%,#e9f7ee_50%,#f7f2f5_100%)] dark:bg-[linear-gradient(100deg,#0f172a_0%,#11251d_52%,#171827_100%)]">
           <div className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-8 px-5 py-8 md:min-h-[340px] md:grid-cols-[minmax(0,1fr)_420px] md:items-center md:gap-16 md:px-0 md:py-0">
             <div className="min-w-0 bg-transparent md:max-w-[560px] md:py-8 md:pl-8">
               <div className="flex items-center gap-5">
                 <img src="/hb_logo.png" alt="HackBio" className="h-10 w-10 object-contain" />
-                <span className="text-xl font-medium text-gray-900">→</span>
+                <span className="text-xl font-medium text-gray-900 dark:text-slate-100">→</span>
                 <img src={ub_euro.src} alt="University of Burgundy" className="h-12 object-contain" />
               </div>
 
@@ -72,11 +72,11 @@ export default function SuccessStorySection() {
                 className="mt-5 h-[100px] w-[100px] rounded-full border-2 border-yellow-400 object-cover object-center md:hidden"
               />
 
-              <a href="/testimonial" className="mt-6 inline-flex items-center text-xl font-medium text-gray-900 hover:text-hb-green">
+              <a href="/testimonial" className="mt-6 inline-flex items-center text-xl font-medium text-gray-900 hover:text-hb-green dark:text-white dark:hover:text-hb-green">
                 Featured Story
               </a>
 
-              <p className="mt-6 max-w-[34rem] text-base leading-7 text-gray-900 md:text-base">
+              <p className="mt-6 max-w-[34rem] text-base leading-7 text-gray-900 dark:text-slate-200 md:text-base">
                 Learn how Titilope transformed her career in bioinformatics and moved from Akure Nigeria to develop Innovative Drugs at University of Burgundy, France after her Cancer Bioinformatics internship program at HackBio.
               </p>
 
@@ -89,7 +89,7 @@ export default function SuccessStorySection() {
                   Watch her session on YouTube
                 </button>
 
-                <span className="text-base text-gray-900">or</span>
+                <span className="text-base text-gray-900 dark:text-slate-100">or</span>
 
                 <a
                   href="https://forms.gle/XVeyCtzFLKmDPmbF7"
@@ -102,7 +102,7 @@ export default function SuccessStorySection() {
               </div>
             </div>
 
-            <div className="relative z-10 mx-auto hidden h-[500px] w-[420px] overflow-hidden rounded-[18px] border-2 border-yellow-400 bg-white shadow-[0_18px_45px_rgba(18,39,32,0.12)] md:-my-20 md:flex">
+            <div className="relative z-10 mx-auto hidden h-[500px] w-[420px] overflow-hidden rounded-[18px] border-2 border-yellow-400 bg-white shadow-[0_18px_45px_rgba(18,39,32,0.12)] dark:bg-slate-900 dark:shadow-black/40 md:-my-20 md:flex">
               <img
                 src="/titilope.png"
                 alt="HackBio learner success story"
