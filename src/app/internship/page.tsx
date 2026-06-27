@@ -194,6 +194,7 @@ export default function Page() {
                     ctaText={heroInternshipIsFree ? "Enroll For Free" : "Enroll Now"}
                     isFree={heroInternshipIsFree}
                     duration={heroDuration}
+                    startDate={heroInternship?.start_date}
                 />
                 <ProgramSkillsTools items={heroInternship?.skills_and_tools_detail} />
                 <ProgramOutline
@@ -250,6 +251,7 @@ export default function Page() {
                     ctaText={heroInternshipIsFree ? "Enroll For Free" : "Enroll Now"}
                     isFree={heroInternshipIsFree}
                     duration={heroDuration}
+                    startDate={heroInternship?.start_date}
                 />
                 <ProgramSkillsTools items={heroInternship?.skills_and_tools_detail} />
                 <ProgramOutline

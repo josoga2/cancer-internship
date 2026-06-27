@@ -21,6 +21,7 @@ type HeroSectionProps = {
   learners?: string | null;
   countries?: string | null;
   duration?: string | null;
+  startDate?: string | null;
   projectTitle?: string | null;
   projectSubtitle?: string | null;
   isFree?: boolean;
@@ -40,6 +41,7 @@ export default function HeroSection({
   learners,
   countries,
   duration,
+  startDate,
   projectTitle,
   projectSubtitle,
   isFree = false,
@@ -57,6 +59,7 @@ export default function HeroSection({
     "Join over 800 learners who are building scalable bioinformatics pipelines across pharma, academia and biotech.";
   const safeBadgeText = badgeText || "High Job Demand";
   const safeCtaText = ctaText || "Enroll Now";
+  const safeStartDate = String(startDate || "").trim();
   const scrollToCareerOutlook = () => {
     const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-career-outlook]"));
     const visibleSection = sections.find((section) => section.offsetParent !== null) || sections[0];
@@ -132,6 +135,10 @@ export default function HeroSection({
           </div>
 
           <p className="max-w-full break-words text-base font-medium leading-[1.38] text-white">{safeSubcopy}</p>
+
+          {safeStartDate ? (
+            <p className="text-base font-bold leading-tight text-white">Starts {safeStartDate}</p>
+          ) : null}
 
           {isFree ? (
             <button
