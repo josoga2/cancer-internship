@@ -123,7 +123,7 @@ export default function LearningPage() {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
-  const [catalogType, setCatalogType] = useState<CatalogType>("pathway");
+  const [catalogType, setCatalogType] = useState<CatalogType>("all");
   const [sort, setSort] = useState("popular");
   const [page, setPage] = useState(1);
 
@@ -132,7 +132,7 @@ export default function LearningPage() {
   const [selectedDurations, setSelectedDurations] = useState<string[]>([]);
   const [onlyStandalone, setOnlyStandalone] = useState(false);
   const [onlyInPathway, setOnlyInPathway] = useState(false);
-  const [onlyPathwayBundles, setOnlyPathwayBundles] = useState(true);
+  const [onlyPathwayBundles, setOnlyPathwayBundles] = useState(false);
   const [priceFilter, setPriceFilter] = useState<"all" | "free" | "paid">("all");
 
   const [data, setData] = useState<CatalogResponse>({
