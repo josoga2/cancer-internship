@@ -17,6 +17,11 @@ import {
 import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import Markdown from "react-markdown";
+import rehypeKatex from "rehype-katex";
+import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 import {
   Accordion,
   AccordionContent,
@@ -96,8 +101,7 @@ export default function ProgramOutline({
   const [selectedPlan, setSelectedPlan] = useState<"all-in" | "program">("all-in");
   const descriptionWords = useMemo(() => wordsFromText(description || ""), [description]);
   const shouldTruncate = descriptionWords.length > 50;
-  const visibleDescription =
-    shouldTruncate && !expandedDescription ? `${descriptionWords.slice(0, 50).join(" ")}...` : descriptionWords.join(" ");
+  const safeDescription = String(description || "").trim();
   const selectedPrice = selectedPlan === "all-in" ? allInPrice : Number(programPrice || 0);
   const selectedLabel = selectedPlan === "all-in" ? "Go All-In" : programPriceLabel;
 
@@ -176,10 +180,26 @@ export default function ProgramOutline({
           <ProgramMetric icon={<ListChecks className="h-5 w-5 text-amber-700 dark:text-amber-400" />} label="0 Prerequisites" />
         </div>
 
-        {visibleDescription ? (
+        {safeDescription ? (
           <div className="mt-16 max-w-2xl">
             <h3 className="mb-5 text-3xl font-bold text-[#1f1f24] dark:text-white">{descriptionTitle}</h3>
-            <p className="text-base leading-8 text-[#2f2f35] dark:text-slate-200">{visibleDescription}</p>
+            <div className="relative">
+              <article
+                className={`prose prose-base max-w-none text-[#2f2f35] dark:prose-invert dark:text-slate-200 ${
+                  shouldTruncate && !expandedDescription ? "max-h-64 overflow-hidden" : ""
+                }`}
+              >
+                <Markdown
+                  remarkPlugins={[remarkGfm, remarkMath]}
+                  rehypePlugins={[rehypeRaw, rehypeKatex]}
+                >
+                  {safeDescription}
+                </Markdown>
+              </article>
+              {shouldTruncate && !expandedDescription ? (
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent dark:from-[#101a15]" />
+              ) : null}
+            </div>
             {shouldTruncate ? (
               <button
                 type="button"

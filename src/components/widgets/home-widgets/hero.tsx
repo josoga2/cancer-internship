@@ -54,9 +54,13 @@ export default function Hero() {
                     <p className="max-w-[35rem] break-words text-lg font-medium leading-[1.36] text-gray-800 dark:text-slate-200 md:text-xl">
                         {content.subheadline}
                     </p>
-                    <div className="pt-2">
+                    <div className="pt-2 flex flex-col gap-3 sm:flex-row sm:gap-5">
                         <a href={content.button_link}>
                             <HbButtons type="primary" text={content.button_text}/>
+                        </a>
+
+                        <a href={`/learning`}>
+                            <HbButtons type="primary" text={`or Start a Course`}/>
                         </a>
                     </div>
                 </div>
