@@ -34,6 +34,15 @@ type CatalogItem = {
   thumbnail?: string;
   published?: boolean;
   is_active?: boolean;
+  goals?: LearningGoal[];
+  goals_detail?: LearningGoal[];
+};
+
+type LearningGoal = {
+  id: number;
+  title: string;
+  slug: string;
+  description?: string | null;
 };
 
 type CatalogResponse = {
@@ -81,6 +90,8 @@ type LegacyCourse = {
   duration_days?: number;
   image?: string;
   hero_background_image?: string;
+  goals?: Array<number | string | LearningGoal>;
+  goals_detail?: LearningGoal[];
 };
 
 type LegacyPathway = {
@@ -101,19 +112,13 @@ type LegacyPathway = {
   hero_background_image?: string;
   published?: boolean;
   is_active?: boolean;
+  goals?: Array<number | string | LearningGoal>;
+  goals_detail?: LearningGoal[];
 };
 
 const PAGE_SIZE = 12;
 
-const sortOptions = [
-  { value: "popular", label: "Popular" },
-  { value: "newest", label: "Newest" },
-  { value: "price_asc", label: "Price: Low to High" },
-  { value: "price_desc", label: "Price: High to Low" },
-];
-
 const levelOptions = ["Beginner", "Intermediate", "Advanced"];
-const durationOptions = ["< 2 weeks", "2–4 weeks", "1–3 months"];
 
 const keepPublishedPathways = (items: CatalogItem[]) =>
   items.filter((item) => item.item_type !== "pathway" || item.published !== false);
@@ -124,16 +129,15 @@ export default function LearningPage() {
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
   const [catalogType, setCatalogType] = useState<CatalogType>("all");
-  const [sort, setSort] = useState("popular");
   const [page, setPage] = useState(1);
 
   const [selectedLevels, setSelectedLevels] = useState<string[]>([]);
-  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
-  const [selectedDurations, setSelectedDurations] = useState<string[]>([]);
-  const [onlyStandalone, setOnlyStandalone] = useState(false);
-  const [onlyInPathway, setOnlyInPathway] = useState(false);
-  const [onlyPathwayBundles, setOnlyPathwayBundles] = useState(false);
   const [priceFilter, setPriceFilter] = useState<"all" | "free" | "paid">("all");
+  const [goals, setGoals] = useState<LearningGoal[]>([]);
+  const [selectedGoal, setSelectedGoal] = useState("");
+  const [pendingGoal, setPendingGoal] = useState("");
+  const [goalPromptOpen, setGoalPromptOpen] = useState(true);
+  const [goalsLoading, setGoalsLoading] = useState(true);
 
   const [data, setData] = useState<CatalogResponse>({
     count: 0,
@@ -158,17 +162,18 @@ export default function LearningPage() {
     return Array.from(tags).sort();
   };
 
-  const matchesDuration = (durationDays: number | undefined, selected: string[]) => {
-    if (!selected.length) return true;
-    const days = Number(durationDays || 0);
-    return selected.some((bucket) => {
-      const key = bucket.replaceAll(" ", "").replace("–", "-");
-      return (
-        (["<2weeks", "lt2weeks"].includes(key) && days < 14) ||
-        (["2-4weeks", "2to4weeks"].includes(key) && days >= 14 && days <= 28) ||
-        (["1-3months", "1to3months"].includes(key) && days >= 29 && days <= 90)
-      );
-    });
+  const itemGoalKeys = (item: LegacyCourse | LegacyPathway | CatalogItem) => {
+    const rawGoals = [
+      ...((item.goals || []) as Array<number | string | LearningGoal>),
+      ...((item.goals_detail || []) as LearningGoal[]),
+    ];
+
+    return rawGoals
+      .map((goal) => {
+        if (typeof goal === "number" || typeof goal === "string") return String(goal);
+        return goal.slug || String(goal.id);
+      })
+      .filter(Boolean);
   };
 
   const fetchLegacyCatalog = async (params: Record<string, string | number>): Promise<CatalogResponse> => {
@@ -180,15 +185,8 @@ export default function LearningPage() {
       .split(",")
       .map((item) => item.trim().toLowerCase())
       .filter(Boolean);
-    const topicFilter = String(params.topic || "")
-      .split(",")
-      .map((item) => item.trim().toLowerCase())
-      .filter(Boolean);
-    const durationFilter = String(params.duration || "")
-      .split(",")
-      .map((item) => item.trim())
-      .filter(Boolean);
     const selectedPrice = String(params.price || "all");
+    const selectedGoalParam = String(params.goal || "");
 
     const [coursesResponse, pathwaysResponse] = await Promise.all([
       type !== "pathway" ? publicApi.get("/api/courses/") : Promise.resolve({ data: [] }),
@@ -218,13 +216,13 @@ export default function LearningPage() {
           .join(" ")
           .toLowerCase();
         const isFree = Boolean(pathway.free || !pathway.price);
+        const goalKeys = itemGoalKeys(pathway);
 
         if (searchQuery && !searchableBlob.includes(searchQuery)) return;
         if (levelFilter.length && !levelFilter.includes((pathway.level || "Beginner").toLowerCase())) return;
-        if (topicFilter.length && !topicFilter.some((topic) => normalizedTags.includes(topic))) return;
-        if (!matchesDuration(pathway.duration_days, durationFilter)) return;
         if (selectedPrice === "free" && !isFree) return;
         if (selectedPrice === "paid" && isFree) return;
+        if (selectedGoalParam && !goalKeys.includes(selectedGoalParam)) return;
 
         items.push({
           item_type: "pathway",
@@ -244,6 +242,7 @@ export default function LearningPage() {
           int_image: pathway.int_image,
           published: true,
           is_active: true,
+          goals: pathway.goals_detail || [],
         });
       });
     }
@@ -254,13 +253,13 @@ export default function LearningPage() {
         const description = course.short_description || course.overview || course.description || "";
         const searchableBlob = [course.title, description, tags.join(" ")].join(" ").toLowerCase();
         const isFree = Boolean(course.free || !course.price);
+        const goalKeys = itemGoalKeys(course);
 
         if (searchQuery && !searchableBlob.includes(searchQuery)) return;
         if (levelFilter.length && !levelFilter.includes((course.level || course.difficulty_level || "Beginner").toLowerCase())) return;
-        if (topicFilter.length && !topicFilter.some((topic) => tags.includes(topic))) return;
-        if (!matchesDuration(course.duration_days, durationFilter)) return;
         if (selectedPrice === "free" && !isFree) return;
         if (selectedPrice === "paid" && isFree) return;
+        if (selectedGoalParam && !goalKeys.includes(selectedGoalParam)) return;
 
         items.push({
           item_type: "course",
@@ -276,13 +275,12 @@ export default function LearningPage() {
           hero_background_image: course.hero_background_image,
           background_image: course.hero_background_image,
           image: course.image,
+          goals: course.goals_detail || [],
         });
       });
     }
 
-    if (params.sort === "price_asc") items.sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
-    else if (params.sort === "price_desc") items.sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
-    else items.sort((a, b) => (a.item_type === b.item_type ? a.title.localeCompare(b.title) : a.item_type === "pathway" ? -1 : 1));
+    items.sort((a, b) => (a.item_type === b.item_type ? a.title.localeCompare(b.title) : a.item_type === "pathway" ? -1 : 1));
 
     return {
       count: items.length,
@@ -308,6 +306,35 @@ export default function LearningPage() {
       root.style.overflowY = previousOverflowY;
       root.style.scrollbarGutter = previousScrollbarGutter;
     };
+  }, []);
+
+  useEffect(() => {
+    const fetchGoals = async () => {
+      setGoalsLoading(true);
+      try {
+        const response = await publicApi.get("/api/learning-goals/");
+        const results: LearningGoal[] = Array.isArray(response.data) ? response.data : [];
+        setGoals(results);
+
+        const savedGoal = typeof window !== "undefined" ? window.sessionStorage.getItem("hb_learning_goal") : "";
+        const savedGoalIsValid = savedGoal && results.some((goal) => goal.slug === savedGoal || String(goal.id) === savedGoal);
+        setPendingGoal(savedGoalIsValid ? savedGoal : results[0]?.slug || String(results[0]?.id || ""));
+
+        if (!results.length) {
+          setGoalPromptOpen(false);
+        } else {
+          setGoalPromptOpen(true);
+        }
+      } catch (error) {
+        console.error("Failed to load learning goals:", error);
+        setGoals([]);
+        setGoalPromptOpen(false);
+      } finally {
+        setGoalsLoading(false);
+      }
+    };
+
+    fetchGoals();
   }, []);
 
   useEffect(() => {
@@ -340,6 +367,8 @@ export default function LearningPage() {
 
   useEffect(() => {
     const fetchFeaturedPathways = async () => {
+      if (goalsLoading || (goals.length > 0 && !selectedGoal)) return;
+      setFeaturedPathways([]);
       try {
         const response = await publicApi.get("/api/catalog/", {
           params: {
@@ -347,6 +376,7 @@ export default function LearningPage() {
             page: 1,
             page_size: 50,
             sort: "popular",
+            ...(selectedGoal ? { goal: selectedGoal } : {}),
           },
         });
         const results = Array.isArray(response.data?.results) ? response.data.results : [];
@@ -358,48 +388,35 @@ export default function LearningPage() {
           page: 1,
           page_size: 50,
           sort: "popular",
+          ...(selectedGoal ? { goal: selectedGoal } : {}),
         });
         setFeaturedPathways(keepPublishedPathways(fallback.results));
       }
     };
 
     fetchFeaturedPathways();
-  }, []);
+  }, [goals.length, goalsLoading, selectedGoal]);
 
-  const availableTopics = useMemo(() => {
-    const topics = new Set<string>();
-    data.results.forEach((item) => {
-      (item.tags || []).forEach((tag) => topics.add(tag));
-    });
-    return Array.from(topics).sort().slice(0, 12);
-  }, [data.results]);
-
-  
   useEffect(() => {
     const fetchCatalog = async () => {
+      if (goalsLoading) return;
+      if (goals.length > 0 && !selectedGoal) {
+        setLoading(false);
+        setData({ count: 0, page: 1, page_size: PAGE_SIZE, results: [] });
+        return;
+      }
+
       setLoading(true);
       const params: Record<string, string | number> = {
         page,
         page_size: PAGE_SIZE,
-        sort,
+        type: catalogType,
       };
-
-      let effectiveType = catalogType;
-      if (onlyPathwayBundles) {
-        effectiveType = "pathway";
-      }
-      params.type = effectiveType;
 
       if (debouncedQuery) params.q = debouncedQuery;
       if (selectedLevels.length) params.level = selectedLevels.join(",");
-      if (selectedTopics.length) params.topic = selectedTopics.join(",");
-      if (selectedDurations.length) params.duration = selectedDurations.join(",");
       if (priceFilter !== "all") params.price = priceFilter;
-
-      if (!onlyPathwayBundles) {
-        if (onlyStandalone) params.in_pathway = "false";
-        if (onlyInPathway) params.in_pathway = "true";
-      }
+      if (selectedGoal) params.goal = selectedGoal;
 
       try {
         const response = await publicApi.get("/api/catalog/", { params });
@@ -433,19 +450,28 @@ export default function LearningPage() {
     fetchCatalog();
   }, [
     page,
-    sort,
     catalogType,
     debouncedQuery,
     selectedLevels,
-    selectedTopics,
-    selectedDurations,
-    onlyStandalone,
-    onlyInPathway,
-    onlyPathwayBundles,
     priceFilter,
+    selectedGoal,
+    goals.length,
+    goalsLoading,
   ]);
 
   const totalPages = Math.max(1, Math.ceil((data.count || 0) / PAGE_SIZE));
+  const selectedGoalLabel = goals.find((goal) => goal.slug === selectedGoal || String(goal.id) === selectedGoal)?.title;
+
+  const applyGoal = () => {
+    const goalKey = pendingGoal || goals[0]?.slug || String(goals[0]?.id || "");
+    if (!goalKey) return;
+    setSelectedGoal(goalKey);
+    setGoalPromptOpen(false);
+    setPage(1);
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem("hb_learning_goal", goalKey);
+    }
+  };
 
   const resolveMediaUrl = (src?: string) => {
     if (!src) return "";
@@ -553,9 +579,6 @@ export default function LearningPage() {
           <button
             onClick={() => {
               setCatalogType("pathway");
-              if (item.tags?.length) {
-                setSelectedTopics(item.tags.slice(0, 2));
-              }
               setPage(1);
             }}
             className="rounded-sm border border-hb-green px-4 py-2 text-sm font-semibold text-hb-green dark:text-hb-lightgreen"
@@ -647,11 +670,51 @@ export default function LearningPage() {
   return (
     <section>
       <Navbar />
+      {goalPromptOpen && goals.length > 0 ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-white/95 px-4 py-8 dark:bg-[#06130f]/95">
+          <div className="w-full max-w-[520px] overflow-hidden rounded-sm border-[3px] border-gray-300 bg-white shadow-sm dark:border-hb-green/40 dark:bg-[#071812]">
+            <div className="relative aspect-[16/9] w-full bg-gray-100 dark:bg-[#0d2a22]">
+              <Image
+                src="/learning_path.png"
+                alt="Learning goals"
+                fill
+                sizes="520px"
+                className="object-cover"
+                priority
+              />
+            </div>
+            <div className="px-8 pb-12 pt-12 sm:px-10 sm:pb-14">
+              <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl dark:text-white">What are your goals?</h2>
+              <select
+                value={pendingGoal}
+                onChange={(event) => setPendingGoal(event.target.value)}
+                className="mt-8 h-20 w-full rounded-sm border-2 border-gray-300 bg-white px-6 text-2xl text-gray-900 outline-none focus:border-hb-green dark:border-hb-green/40 dark:bg-[#0d2a22] dark:text-white"
+              >
+                {goals.map((goal) => (
+                  <option key={goal.id} value={goal.slug || String(goal.id)}>
+                    {goal.title}
+                  </option>
+                ))}
+              </select>
+              <div className="mt-12 flex justify-end">
+                <button
+                  type="button"
+                  onClick={applyGoal}
+                  disabled={!pendingGoal}
+                  className="rounded-sm bg-hb-green px-8 py-4 text-2xl font-bold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  Explore
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
       <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-24 md:px-6">
         <section className="rounded-sm border border-gray-200 bg-white p-6 dark:border-hb-green/30 dark:bg-[#0a1f19]">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Build the skills for your dream career in Biotech</h1>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-            High-demand skill development for modern biotech careers.
+            Explore our range of helpful training courses and tools.
           </p>
         </section>
         {/* Highlighted Pathway or Internship */}
@@ -687,7 +750,7 @@ export default function LearningPage() {
           </section>
         ) : null}
 
-        <section className="mt-4 grid grid-cols-1 gap-3 rounded-sm border border-gray-200 bg-white p-4 md:grid-cols-[1fr_180px_180px] dark:border-hb-green/30 dark:bg-[#0a1f19]">
+        <section className="mt-4 grid grid-cols-1 gap-3 rounded-sm border border-gray-200 bg-white p-4 md:grid-cols-[1fr_180px] dark:border-hb-green/30 dark:bg-[#0a1f19]">
           <input
             value={query}
             onChange={(e) => {
@@ -698,33 +761,36 @@ export default function LearningPage() {
             placeholder="Search courses, pathways, tags..."
           />
           <select
-            value={onlyPathwayBundles ? "pathway" : catalogType}
+            value={catalogType}
             onChange={(e) => {
-              setOnlyPathwayBundles(e.target.value === "pathway");
               setCatalogType(e.target.value as CatalogType);
               setPage(1);
             }}
             className="rounded-sm border border-gray-300 px-3 py-2 text-sm dark:border-hb-green/40 dark:bg-[#0d2a22] dark:text-white"
           >
             <option value="all">All</option>
-            <option value="pathway">Pathway bundles</option>
+            <option value="pathway">Pathways</option>
             <option value="course">Courses</option>
           </select>
-          <select
-            value={sort}
-            onChange={(e) => {
-              setSort(e.target.value);
-              setPage(1);
-            }}
-            className="rounded-sm border border-gray-300 px-3 py-2 text-sm dark:border-hb-green/40 dark:bg-[#0d2a22] dark:text-white"
-          >
-            {sortOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
         </section>
+
+        {selectedGoalLabel ? (
+          <section className="mt-4 flex flex-col gap-3 rounded-sm border border-hb-green/30 bg-hb-lightgreen/30 p-4 sm:flex-row sm:items-center sm:justify-between dark:bg-hb-green/10">
+            <p className="text-base text-gray-800 dark:text-gray-200">
+              Showing recommendations for <span className="font-semibold text-hb-green dark:text-hb-lightgreen">{selectedGoalLabel}</span>
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setPendingGoal(selectedGoal);
+                setGoalPromptOpen(true);
+              }}
+              className="w-fit rounded-sm border border-hb-green px-4 py-2 text-sm font-semibold text-hb-green dark:text-hb-lightgreen"
+            >
+              Change goal
+            </button>
+          </section>
+        ) : null}
 
         <section className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-[280px_1fr]">
           <aside className="rounded-sm border border-gray-200 bg-white p-4 dark:border-hb-green/30 dark:bg-[#0a1f19]">
@@ -741,83 +807,6 @@ export default function LearningPage() {
                     className="accent-hb-green"
                   />
                   <span>{level}</span>
-                </label>
-              ))}
-            </div>
-
-            <div className="mb-4">
-              <p className="mb-2 text-sm font-semibold text-gray-700 dark:text-gray-200">Duration</p>
-              {durationOptions.map((duration) => (
-                <label key={duration} className="mb-2 flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={selectedDurations.includes(duration)}
-                    onChange={() => toggleMultiSelect(duration, selectedDurations, setSelectedDurations)}
-                    className="accent-hb-green"
-                  />
-                  <span>{duration}</span>
-                </label>
-              ))}
-            </div>
-
-            <div className="mb-4">
-              <p className="mb-2 text-sm font-semibold text-gray-700 dark:text-gray-200">Format</p>
-              <label className="mb-2 flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={onlyStandalone}
-                  onChange={(e) => {
-                    setOnlyStandalone(e.target.checked);
-                    if (e.target.checked) setOnlyInPathway(false);
-                    setPage(1);
-                  }}
-                  className="accent-hb-green"
-                />
-                <span>Standalone only</span>
-              </label>
-              <label className="mb-2 flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={onlyInPathway}
-                  onChange={(e) => {
-                    setOnlyInPathway(e.target.checked);
-                    if (e.target.checked) setOnlyStandalone(false);
-                    setPage(1);
-                  }}
-                  className="accent-hb-green"
-                />
-                <span>In pathway</span>
-              </label>
-              <label className="mb-2 flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={onlyPathwayBundles}
-                  onChange={(e) => {
-                    setOnlyPathwayBundles(e.target.checked);
-                    if (e.target.checked) {
-                      setCatalogType("pathway");
-                      setOnlyStandalone(false);
-                      setOnlyInPathway(false);
-                    }
-                    setPage(1);
-                  }}
-                  className="accent-hb-green"
-                />
-                <span>Pathway bundles</span>
-              </label>
-            </div>
-
-            <div className="mb-4">
-              <p className="mb-2 text-sm font-semibold text-gray-700 dark:text-gray-200">Topic</p>
-              {availableTopics.map((topic) => (
-                <label key={topic} className="mb-2 flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={selectedTopics.includes(topic)}
-                    onChange={() => toggleMultiSelect(topic, selectedTopics, setSelectedTopics)}
-                    className="accent-hb-green"
-                  />
-                  <span>{topic}</span>
                 </label>
               ))}
             </div>

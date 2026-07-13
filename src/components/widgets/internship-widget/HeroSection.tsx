@@ -113,7 +113,7 @@ export default function HeroSection({
 
   return (
     <section
-      className="min-h-[50svh] w-full max-w-full overflow-hidden bg-[#e4f5fe] bg-cover bg-center p-6 dark:bg-[#101a15] sm:p-8 md:p-12"
+      className="relative left-1/2 min-h-[50svh] w-screen max-w-none -translate-x-1/2 overflow-hidden bg-[#e4f5fe] bg-cover bg-center p-6 dark:bg-[#101a15] sm:p-8 md:p-12"
       style={heroBackground ? { backgroundImage: `url(${heroBackground})` } : undefined}
     >
       <div className="mx-auto flex min-h-[50svh] w-full max-w-5xl flex-col justify-evenly gap-6 px-0 py-6 sm:px-6 md:px-10">

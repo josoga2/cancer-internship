@@ -193,7 +193,7 @@ export default function Page() {
 
 
   return (
-    <section>
+    <section className="w-full overflow-x-hidden">
         <Navbar />
         <HeroSection
             id={String(courseId)}
