@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import api from "@/api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/constants/constants";
+import { getCountryQueryParam } from "@/lib/country";
 
 type ProgramType = "course" | "pathway" | "internship";
 
@@ -47,8 +48,7 @@ export default function HeroSection({
   isFree = false,
 }: HeroSectionProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const countryParam = (searchParams.get("country") || "").trim().toUpperCase();
+  const [countryParam, setCountryParam] = useState("");
   const [isEnrolling, setIsEnrolling] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [enrollmentError, setEnrollmentError] = useState("");
@@ -62,6 +62,11 @@ export default function HeroSection({
   const safeBadgeText = badgeText || "High Job Demand";
   const safeCtaText = ctaText || "Enroll Now";
   const safeStartDate = String(startDate || "").trim();
+
+  useEffect(() => {
+    setCountryParam(getCountryQueryParam());
+  }, []);
+
   const scrollToCareerOutlook = () => {
     const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-career-outlook]"));
     const visibleSection = sections.find((section) => section.offsetParent !== null) || sections[0];

@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import Navbar from "@/components/Nav/navbar";
 import Footer from "@/components/Nav/footer";
 import publicApi from "@/publicApi";
-import { detectBrowserCountry, syncCountryQueryParam } from "@/lib/country";
+import { detectBrowserCountry, getCountryQueryParam, syncCountryQueryParam } from "@/lib/country";
 import { formatPricing, type PricingInfo } from "@/lib/pricing";
 
 type CatalogType = "all" | "course" | "pathway";
@@ -130,10 +130,9 @@ const keepPublishedPathways = (items: CatalogItem[]) =>
 
 export default function LearningPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const countryParam = (searchParams.get("country") || "").trim().toUpperCase();
+  const [countryParam, setCountryParam] = useState("");
   const [detectedCountry, setDetectedCountry] = useState("");
-  const [countryReady, setCountryReady] = useState(Boolean(countryParam));
+  const [countryReady, setCountryReady] = useState(false);
   const countryCode = countryParam || detectedCountry;
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -308,7 +307,9 @@ export default function LearningPage() {
   }, [query]);
 
   useEffect(() => {
-    if (countryParam) {
+    const urlCountry = getCountryQueryParam();
+    setCountryParam(urlCountry);
+    if (urlCountry) {
       setCountryReady(true);
       return;
     }
@@ -317,7 +318,7 @@ export default function LearningPage() {
     setDetectedCountry(resolvedCountry);
     syncCountryQueryParam(resolvedCountry);
     setCountryReady(true);
-  }, [countryParam]);
+  }, []);
 
   useEffect(() => {
     // Keep viewport width stable when result count changes (prevents horizontal jumping).

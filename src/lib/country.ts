@@ -37,3 +37,8 @@ export function syncCountryQueryParam(country: string) {
   url.searchParams.set("country", countryCode);
   window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
 }
+
+export function getCountryQueryParam() {
+  if (typeof window === "undefined") return "";
+  return new URL(window.location.href).searchParams.get("country")?.trim().toUpperCase() || "";
+}

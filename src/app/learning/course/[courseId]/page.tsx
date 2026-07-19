@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import publicApi from "@/publicApi";
 import Navbar from "@/components/Nav/navbar";
 import Footer from "@/components/Nav/footer";
@@ -14,7 +14,7 @@ import CareerOutlook from "@/components/widgets/career-outlook";
 import CareerClaritySection from "@/components/widgets/career-clarity-section";
 import GraduateTestimonialSection from "@/components/widgets/graduate-testimonial-section";
 import FAQPreviewSection from "@/components/widgets/faq-preview-section";
-import { detectBrowserCountry, syncCountryQueryParam } from "@/lib/country";
+import { detectBrowserCountry, getCountryQueryParam, syncCountryQueryParam } from "@/lib/country";
 import { pricingFromContext, type PricingInfo } from "@/lib/pricing";
 
 
@@ -88,16 +88,17 @@ export default function Page() {
 
     //const router = useRouter();
     const params = useParams();
-    const searchParams = useSearchParams();
     const  courseId = Number(params.courseId);
-    const countryParam = (searchParams.get("country") || "").trim().toUpperCase();
+    const [countryParam, setCountryParam] = useState("");
     const [detectedCountry, setDetectedCountry] = useState("");
-    const [countryReady, setCountryReady] = useState(Boolean(countryParam));
+    const [countryReady, setCountryReady] = useState(false);
     const countryCode = countryParam || detectedCountry;
     const router = useRouter();
 
     useEffect(() => {
-        if (countryParam) {
+        const urlCountry = getCountryQueryParam();
+        setCountryParam(urlCountry);
+        if (urlCountry) {
             setCountryReady(true);
             return;
         }
@@ -106,7 +107,7 @@ export default function Page() {
         setDetectedCountry(resolvedCountry);
         syncCountryQueryParam(resolvedCountry);
         setCountryReady(true);
-    }, [countryParam]);
+    }, []);
 
     useEffect(() => {
         const fetchCourses = async () => {
