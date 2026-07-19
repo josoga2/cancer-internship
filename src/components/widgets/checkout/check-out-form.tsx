@@ -9,6 +9,7 @@ import { Accordion } from "@radix-ui/react-accordion";
 import { CreditCard, Wallet } from "lucide-react";
 import NavbarPay from "@/components/Nav/navbar-pay";
 import api from "@/api";
+import { formatCurrencyAmount, type PricingInfo } from "@/lib/pricing";
 
 type CheckoutType = "course" | "pathway" | "internship" | "subscription";
 
@@ -17,13 +18,16 @@ type CatalogProgram = {
   title: string;
   description: string;
   price: string | number;
+  pricing?: PricingInfo;
   mentorship_addon_price?: string | number;
+  mentorship_addon_pricing?: PricingInfo;
 };
 
 type SubscriptionOffer = {
   id: number | null;
   name: string;
   price: string | number;
+  pricing?: PricingInfo;
   duration_days: number;
   description: string;
   features: string[];
@@ -47,6 +51,7 @@ export default function CheckOutForm({
   allowProgramSelection,
   supportsMentorshipAddon,
   subscriptionOffer,
+  country,
 }: {
   plan: CheckoutType;
   sourceType: string;
@@ -55,6 +60,7 @@ export default function CheckOutForm({
   allowProgramSelection: boolean;
   supportsMentorshipAddon: boolean;
   subscriptionOffer: SubscriptionOffer;
+  country?: string;
 }) {
   const stripePromise = useMemo(
     () => loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST || ""),
@@ -64,7 +70,6 @@ export default function CheckOutForm({
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState("");
   const [refCode, setRefCode] = useState("");
-  const [currency, setCurrency] = useState("USD");
   const [subscriptionLength, setSubscriptionLength] = useState("12 months");
   const [openPaymentMethod, setOpenPaymentMethod] = useState("card");
   const [loadedCheckoutKey, setLoadedCheckoutKey] = useState("");
@@ -116,6 +121,11 @@ export default function CheckOutForm({
     ? subscriptionPrice * subscriptionMonthsMultiplier
     : baseProgramPrice + (mentorshipEnabled ? mentorshipAddonPrice : 0);
   const finalPriceUsd = appliedDiscount?.valid ? Number(appliedDiscount.final_price || 0) : selectedPriceUsd;
+  const pricingContext = isSubscriptionCheckout ? subscriptionOffer?.pricing : selectedProgramData?.pricing;
+  const displayCurrency = pricingContext?.display_currency || "USD";
+  const displayCurrencyName = pricingContext?.display_currency_name || displayCurrency;
+  const displayCountry = pricingContext?.country || country || "US";
+  const displayExchangeRate = Number(pricingContext?.exchange_rate || 1);
 
   const normalizedAccessEmail = accessEmail.trim().toLowerCase();
   const isAccessEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedAccessEmail);
@@ -123,12 +133,10 @@ export default function CheckOutForm({
   const canInitiateCheckout = canSelectProgram && isAccessEmailValid;
   const hasUnappliedDiscountCode = discountCode.trim().length > 0 && discountCode.trim().toUpperCase() !== appliedDiscount?.code;
 
-  const exchangeRateNaira = 1500;
-  const exchangeRateRupee = 90;
-  const exchangeRate = currency === "NGN" ? exchangeRateNaira : currency === "INR" ? exchangeRateRupee : 1;
-  const totalPriceInCurrency = Number((finalPriceUsd * exchangeRate).toFixed(2));
-  const originalPriceInCurrency = Number((selectedPriceUsd * exchangeRate).toFixed(2));
-  const discountAmountInCurrency = Number(((appliedDiscount?.discount_amount || 0) * exchangeRate).toFixed(2));
+  const exchangeRateNaira = displayCurrency === "NGN" ? displayExchangeRate : 1500;
+  const totalPriceInCurrency = Number((finalPriceUsd * displayExchangeRate).toFixed(2));
+  const originalPriceInCurrency = Number((selectedPriceUsd * displayExchangeRate).toFixed(2));
+  const discountAmountInCurrency = Number(((appliedDiscount?.discount_amount || 0) * displayExchangeRate).toFixed(2));
   const shouldShowProgramSelector = !isSubscriptionCheckout && (allowProgramSelection || !selectedProgramData) && programs.length > 0;
 
   const checkoutPayload = useMemo(
@@ -144,6 +152,7 @@ export default function CheckOutForm({
       includeMentorship: mentorshipEnabled,
       accessEmail: normalizedAccessEmail,
       discount_code: appliedDiscount?.valid ? appliedDiscount.code : "",
+      country: displayCountry,
     }),
     [
       checkoutType,
@@ -159,6 +168,7 @@ export default function CheckOutForm({
       normalizedAccessEmail,
       appliedDiscount?.valid,
       appliedDiscount?.code,
+      displayCountry,
     ]
   );
   const checkoutKey = useMemo(() => JSON.stringify(checkoutPayload), [checkoutPayload]);
@@ -480,13 +490,8 @@ export default function CheckOutForm({
 
           <section className="rounded-sm border bg-white p-5">
             <div className="flex flex-col gap-4">
-              <div className="flex flex-wrap items-center gap-3 text-sm font-medium">
-                <label className="font-bold">Currency</label>
-                <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="rounded-sm border p-1">
-                  <option value="USD">USD</option>
-                  <option value="NGN">NGN</option>
-                  <option value="INR">INR</option>
-                </select>
+              <div className="rounded-sm border border-hb-green/30 bg-hb-lightgreen/20 p-3 text-sm text-gray-700">
+                Pricing shown for {displayCountry} in {displayCurrencyName} ({displayCurrency}). Payments are securely processed in USD where required by the provider.
               </div>
 
               <div className="flex flex-wrap items-center gap-3 text-sm font-medium">
@@ -556,7 +561,7 @@ export default function CheckOutForm({
                     </option>
                     {programs.map((program) => (
                       <option key={program.id} value={program.id}>
-                        {program.title} (${Number(program.price || 0)})
+                        {program.title} ({program.pricing?.formatted || `$${Number(program.price || 0)}`})
                       </option>
                     ))}
                   </select>
@@ -572,7 +577,9 @@ export default function CheckOutForm({
 
               {!isSubscriptionCheckout && supportsMentorshipAddon ? (
                 <label className="flex items-center justify-between rounded-sm border p-3 text-sm">
-                  <span>Add mentorship support (+${mentorshipAddonPrice})</span>
+                  <span className="font-bold">
+                    Add mentorship support (+{selectedProgramData?.mentorship_addon_pricing?.formatted || `$${mentorshipAddonPrice}`})
+                  </span>
                   <input
                     type="checkbox"
                     checked={includeMentorship}
@@ -589,15 +596,15 @@ export default function CheckOutForm({
                 {appliedDiscount?.valid ? (
                   <div className="mt-2 space-y-1 text-sm text-gray-700">
                     <p>
-                      Original: {currency} {originalPriceInCurrency}
+                      Original: {formatCurrencyAmount(displayCurrency, originalPriceInCurrency)}
                     </p>
                     <p>
-                      Discount ({appliedDiscount.percentage_off}%): -{currency} {discountAmountInCurrency}
+                      Discount ({appliedDiscount.percentage_off}%): -{formatCurrencyAmount(displayCurrency, discountAmountInCurrency)}
                     </p>
                   </div>
                 ) : null}
                 <p className="text-xl font-bold">
-                  Total: {currency} {totalPriceInCurrency}
+                  Total: {formatCurrencyAmount(displayCurrency, totalPriceInCurrency)}
                 </p>
               </div>
             </div>

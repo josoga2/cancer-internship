@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import {useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import publicApi from "@/publicApi";
 import Navbar from "@/components/Nav/navbar";
 import Footer from "@/components/Nav/footer";
@@ -14,6 +14,8 @@ import CareerOutlook from "@/components/widgets/career-outlook";
 import CareerClaritySection from "@/components/widgets/career-clarity-section";
 import GraduateTestimonialSection from "@/components/widgets/graduate-testimonial-section";
 import FAQPreviewSection from "@/components/widgets/faq-preview-section";
+import { detectBrowserCountry, syncCountryQueryParam } from "@/lib/country";
+import { pricingFromContext, type PricingInfo } from "@/lib/pricing";
 
 
 
@@ -39,6 +41,7 @@ export default function Page() {
         high_salary?: number
         brochure_link?: string
         price?: number
+        pricing?: PricingInfo
         courses?: Array<{
             id?: number | string
         }>
@@ -85,13 +88,33 @@ export default function Page() {
 
     //const router = useRouter();
     const params = useParams();
+    const searchParams = useSearchParams();
     const  courseId = Number(params.courseId);
+    const countryParam = (searchParams.get("country") || "").trim().toUpperCase();
+    const [detectedCountry, setDetectedCountry] = useState("");
+    const [countryReady, setCountryReady] = useState(Boolean(countryParam));
+    const countryCode = countryParam || detectedCountry;
     const router = useRouter();
 
     useEffect(() => {
+        if (countryParam) {
+            setCountryReady(true);
+            return;
+        }
+        const browserCountry = detectBrowserCountry();
+        const resolvedCountry = browserCountry || "US";
+        setDetectedCountry(resolvedCountry);
+        syncCountryQueryParam(resolvedCountry);
+        setCountryReady(true);
+    }, [countryParam]);
+
+    useEffect(() => {
         const fetchCourses = async () => {
+            if (!countryReady) return;
             try {
-                const response = await publicApi.get('/api/courses/');
+                const response = await publicApi.get('/api/courses/', {
+                    params: countryCode ? { country: countryCode } : undefined,
+                });
                 if (response.status === 200) {
                     setCoursesList(
                         response.data.filter(
@@ -107,7 +130,7 @@ export default function Page() {
             }
         };
         fetchCourses();
-    }, []);
+    }, [countryCode, countryReady, courseId]);
     //console.log(coursesList)
     
     useEffect(() => {
@@ -169,6 +192,7 @@ export default function Page() {
     const internshipStatus: string = 'open';
     const heroCourse = coursesList[0];
     const heroCourseIsFree = Boolean(heroCourse && (heroCourse.free || Number(heroCourse.price || 0) <= 0));
+    const allInPricing = pricingFromContext(200, heroCourse?.pricing);
     const heroDuration = heroCourse?.duration_label || (heroCourse?.duration_days ? `${heroCourse.duration_days} Days` : "12");
     const courseContents = contentList.filter(
         (content) =>
@@ -222,6 +246,8 @@ export default function Page() {
             programType="course"
             programId={String(courseId)}
             programPrice={heroCourse?.price || 0}
+            programPricing={heroCourse?.pricing}
+            allInPricing={allInPricing}
             programPriceLabel="This Course Alone"
         />
         <CareerOutlook

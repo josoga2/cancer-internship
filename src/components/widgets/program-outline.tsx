@@ -29,6 +29,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import ProgramLeadCapture from "@/components/widgets/program-lead-capture";
+import { formatPricing, type PricingInfo } from "@/lib/pricing";
 
 export type ProgramOutlineChild = {
   id?: string | number;
@@ -59,6 +60,8 @@ type ProgramOutlineProps = {
   programType: "course" | "pathway" | "internship";
   programId: string | number;
   programPrice?: number | null;
+  programPricing?: PricingInfo | null;
+  allInPricing?: PricingInfo | null;
   allInPrice?: number;
   programPriceLabel?: string;
 };
@@ -94,6 +97,8 @@ export default function ProgramOutline({
   programType,
   programId,
   programPrice = 0,
+  programPricing,
+  allInPricing,
   allInPrice = 200,
   programPriceLabel = "This Program Alone",
 }: ProgramOutlineProps) {
@@ -103,7 +108,14 @@ export default function ProgramOutline({
   const shouldTruncate = descriptionWords.length > 50;
   const safeDescription = String(description || "").trim();
   const selectedPrice = selectedPlan === "all-in" ? allInPrice : Number(programPrice || 0);
+  const selectedPricing = selectedPlan === "all-in" ? allInPricing : programPricing;
+  const selectedPriceLabel = formatPricing(selectedPricing, selectedPrice);
   const selectedLabel = selectedPlan === "all-in" ? "Go All-In" : programPriceLabel;
+  const checkoutQuery = {
+    prog: programType,
+    id: programId,
+    ...(selectedPricing?.country ? { country: selectedPricing.country } : {}),
+  };
 
   if (!items.length) {
     return null;
@@ -219,12 +231,14 @@ export default function ProgramOutline({
             active={selectedPlan === "all-in"}
             label="Go All-In"
             price={allInPrice}
+            pricing={allInPricing}
             onClick={() => setSelectedPlan("all-in")}
           />
           <PriceChoice
             active={selectedPlan === "program"}
             label={programPriceLabel}
             price={Number(programPrice || 0)}
+            pricing={programPricing}
             onClick={() => setSelectedPlan("program")}
           />
         </div>
@@ -265,9 +279,14 @@ export default function ProgramOutline({
 
         <div className="mt-5 rounded-sm border-2 border-hb-green p-5 dark:bg-[#0f172a]">
           <p className="break-words text-base font-bold text-[#1f1f24] dark:text-white">Selected: {selectedLabel}</p>
-          <p className="mt-4 break-words text-4xl font-black text-[#1f1f24] dark:text-white">Total: ${selectedPrice}</p>
+          {selectedPricing?.country && selectedPricing?.display_currency ? (
+            <p className="mt-2 text-sm text-[#2f2f35] dark:text-slate-300">
+              Shown for {selectedPricing.country} in {selectedPricing.display_currency_name || selectedPricing.display_currency} ({selectedPricing.display_currency})
+            </p>
+          ) : null}
+          <p className="mt-4 break-words text-4xl font-black text-[#1f1f24] dark:text-white">Total: {selectedPriceLabel}</p>
           <Link
-            href={{ pathname: "/dashboard/checkout", query: { prog: programType, id: programId } }}
+            href={{ pathname: "/dashboard/checkout", query: checkoutQuery }}
             className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-sm bg-hb-green px-5 text-base font-bold text-white transition hover:bg-hb-green-dark"
           >
             Continue to checkout
@@ -293,11 +312,13 @@ function PriceChoice({
   active,
   label,
   price,
+  pricing,
   onClick,
 }: {
   active: boolean;
   label: string;
   price: number;
+  pricing?: PricingInfo | null;
   onClick: () => void;
 }) {
   return (
@@ -307,7 +328,7 @@ function PriceChoice({
       className={`min-w-0 rounded-sm border p-2 text-left transition dark:bg-[#0f172a] ${active ? "border-2 border-hb-green" : "border-hb-green/40 dark:border-hb-green/60"}`}
     >
       <span className="block break-words text-sm font-bold text-[#1f1f24] dark:text-white">{label}</span>
-      <span className="mt-4 block break-words text-2xl font-black text-[#1f1f24] dark:text-white">$ {price}</span>
+      <span className="mt-4 block break-words text-2xl font-black text-[#1f1f24] dark:text-white">{formatPricing(pricing, price)}</span>
     </button>
   );
 }

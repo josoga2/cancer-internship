@@ -1,10 +1,51 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
+import publicApi from "@/publicApi";
+
+type SiteBanner = {
+  id: number;
+  prefix?: string | null;
+  text: string;
+  link?: string | null;
+  link_label?: string | null;
+  background_from?: string | null;
+  background_to?: string | null;
+  text_color?: string | null;
+  is_dismissible?: boolean;
+  open_in_new_tab?: boolean;
+};
 
 // components/CourseBanner.tsx
 export default function Banner() {
   const [visible, setVisible] = useState(false);
+  const [banner, setBanner] = useState<SiteBanner | null>(null);
   const bannerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    let ignore = false;
+
+    const fetchBanner = async () => {
+      try {
+        const response = await publicApi.get("/api/site-banner/");
+        const activeBanner = response.data?.banner || null;
+        if (!ignore) {
+          setBanner(activeBanner);
+          setVisible(Boolean(activeBanner));
+        }
+      } catch (error) {
+        console.error("Failed to load site banner:", error);
+        if (!ignore) {
+          setBanner(null);
+          setVisible(false);
+        }
+      }
+    };
+
+    fetchBanner();
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   useEffect(() => {
     const updateOffset = () => {
@@ -20,25 +61,46 @@ export default function Banner() {
     };
   }, [visible]);
 
-  if (!visible) return null;
+  if (!visible || !banner) return null;
+
+  const bannerText = (
+    <>
+      {banner.prefix ? <span className="font-semibold">{banner.prefix}: </span> : null}
+      <span className="underline">{banner.text}</span>
+      {banner.link_label ? <span className="ml-1 font-semibold no-underline">{banner.link_label}</span> : null}
+    </>
+  );
 
   return (
-    <div ref={bannerRef} className="w-full bg-linear-to-r from-blue-500 to-purple-600 text-white text-center py-2 px-4 text-sm relative">
-      <button
-        className="absolute right-4 top-2 text-white hover:text-gray-200 text-lg font-bold"
-        onClick={() => setVisible(false)}
-        aria-label="Close banner"
-      >
-        &times;
-      </button>
-      <div>
-        <a href="https://internship.thehackbio.com/internship" className=" font-medium hover:text-gray-100">
-          <span className="font-semibold">New Internship: </span> 
-          <p className="underline inline-block">
-            AI in Genomics | Starts April 18, 2026 | Enjoy 50% early bird discount now. 
-          </p>
+    <div
+      ref={bannerRef}
+      className="relative w-full px-4 py-2 text-center text-sm"
+      style={{
+        color: banner.text_color || "#ffffff",
+        background: `linear-gradient(90deg, ${banner.background_from || "#3b82f6"}, ${banner.background_to || "#9333ea"})`,
+      }}
+    >
+      {banner.is_dismissible !== false ? (
+        <button
+          className="absolute right-4 top-2 text-lg font-bold opacity-90 hover:opacity-100"
+          onClick={() => setVisible(false)}
+          aria-label="Close banner"
+        >
+          &times;
+        </button>
+      ) : null}
+      {banner.link ? (
+        <a
+          href={banner.link}
+          className="font-medium hover:opacity-90"
+          target={banner.open_in_new_tab ? "_blank" : undefined}
+          rel={banner.open_in_new_tab ? "noreferrer" : undefined}
+        >
+          {bannerText}
         </a>
-      </div>
+      ) : (
+        <p className="inline-block font-medium">{bannerText}</p>
+      )}
     </div>
   );
 }

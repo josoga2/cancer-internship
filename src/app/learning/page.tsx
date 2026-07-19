@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import Navbar from "@/components/Nav/navbar";
 import Footer from "@/components/Nav/footer";
 import publicApi from "@/publicApi";
+import { detectBrowserCountry, syncCountryQueryParam } from "@/lib/country";
+import { formatPricing, type PricingInfo } from "@/lib/pricing";
 
 type CatalogType = "all" | "course" | "pathway";
 
@@ -36,6 +38,7 @@ type CatalogItem = {
   is_active?: boolean;
   goals?: LearningGoal[];
   goals_detail?: LearningGoal[];
+  pricing?: PricingInfo;
 };
 
 type LearningGoal = {
@@ -92,6 +95,7 @@ type LegacyCourse = {
   hero_background_image?: string;
   goals?: Array<number | string | LearningGoal>;
   goals_detail?: LearningGoal[];
+  pricing?: PricingInfo;
 };
 
 type LegacyPathway = {
@@ -114,6 +118,7 @@ type LegacyPathway = {
   is_active?: boolean;
   goals?: Array<number | string | LearningGoal>;
   goals_detail?: LearningGoal[];
+  pricing?: PricingInfo;
 };
 
 const PAGE_SIZE = 12;
@@ -125,6 +130,11 @@ const keepPublishedPathways = (items: CatalogItem[]) =>
 
 export default function LearningPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const countryParam = (searchParams.get("country") || "").trim().toUpperCase();
+  const [detectedCountry, setDetectedCountry] = useState("");
+  const [countryReady, setCountryReady] = useState(Boolean(countryParam));
+  const countryCode = countryParam || detectedCountry;
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
@@ -232,6 +242,7 @@ export default function LearningPage() {
           short_description: description,
           level: pathway.level || "Beginner",
           price: pathway.price || 0,
+          pricing: pathway.pricing,
           tags: normalizedTags,
           duration_label: pathway.duration_label,
           duration_days: pathway.duration_days,
@@ -269,6 +280,7 @@ export default function LearningPage() {
           short_description: description,
           level: course.level || course.difficulty_level || "Beginner",
           price: course.price || 0,
+          pricing: course.pricing,
           tags,
           duration_label: course.duration_label,
           duration_days: course.duration_days,
@@ -294,6 +306,18 @@ export default function LearningPage() {
     const timer = setTimeout(() => setDebouncedQuery(query.trim()), 250);
     return () => clearTimeout(timer);
   }, [query]);
+
+  useEffect(() => {
+    if (countryParam) {
+      setCountryReady(true);
+      return;
+    }
+    const browserCountry = detectBrowserCountry();
+    const resolvedCountry = browserCountry || "US";
+    setDetectedCountry(resolvedCountry);
+    syncCountryQueryParam(resolvedCountry);
+    setCountryReady(true);
+  }, [countryParam]);
 
   useEffect(() => {
     // Keep viewport width stable when result count changes (prevents horizontal jumping).
@@ -367,6 +391,7 @@ export default function LearningPage() {
 
   useEffect(() => {
     const fetchFeaturedPathways = async () => {
+      if (!countryReady) return;
       if (goalsLoading || (goals.length > 0 && !selectedGoal)) return;
       setFeaturedPathways([]);
       try {
@@ -376,6 +401,7 @@ export default function LearningPage() {
             page: 1,
             page_size: 50,
             sort: "popular",
+            ...(countryCode ? { country: countryCode } : {}),
             ...(selectedGoal ? { goal: selectedGoal } : {}),
           },
         });
@@ -388,6 +414,7 @@ export default function LearningPage() {
           page: 1,
           page_size: 50,
           sort: "popular",
+          ...(countryCode ? { country: countryCode } : {}),
           ...(selectedGoal ? { goal: selectedGoal } : {}),
         });
         setFeaturedPathways(keepPublishedPathways(fallback.results));
@@ -395,10 +422,11 @@ export default function LearningPage() {
     };
 
     fetchFeaturedPathways();
-  }, [goals.length, goalsLoading, selectedGoal]);
+  }, [countryCode, countryReady, goals.length, goalsLoading, selectedGoal]);
 
   useEffect(() => {
     const fetchCatalog = async () => {
+      if (!countryReady) return;
       if (goalsLoading) return;
       if (goals.length > 0 && !selectedGoal) {
         setLoading(false);
@@ -417,6 +445,7 @@ export default function LearningPage() {
       if (selectedLevels.length) params.level = selectedLevels.join(",");
       if (priceFilter !== "all") params.price = priceFilter;
       if (selectedGoal) params.goal = selectedGoal;
+      if (countryCode) params.country = countryCode;
 
       try {
         const response = await publicApi.get("/api/catalog/", { params });
@@ -457,10 +486,13 @@ export default function LearningPage() {
     selectedGoal,
     goals.length,
     goalsLoading,
+    countryCode,
+    countryReady,
   ]);
 
   const totalPages = Math.max(1, Math.ceil((data.count || 0) / PAGE_SIZE));
   const selectedGoalLabel = goals.find((goal) => goal.slug === selectedGoal || String(goal.id) === selectedGoal)?.title;
+  const displayPricing = data.results.find((item) => item.pricing)?.pricing;
 
   const applyGoal = () => {
     const goalKey = pendingGoal || goals[0]?.slug || String(goals[0]?.id || "");
@@ -559,7 +591,7 @@ export default function LearningPage() {
         {item.short_description}
       </p>
       <p className="mt-3 text-sm text-gray-700 dark:text-gray-200">
-        Level: {item.level} • Price: ${item.price || 0}
+        Level: {item.level} • Price: {formatPricing(item.pricing, item.price)}
         {item.duration_label ? ` • Duration: ${item.duration_label}` : ""}
       </p>
       {item.tags?.length ? (
@@ -776,9 +808,16 @@ export default function LearningPage() {
 
         {selectedGoalLabel ? (
           <section className="mt-4 flex flex-col gap-3 rounded-sm border border-hb-green/30 bg-hb-lightgreen/30 p-4 sm:flex-row sm:items-center sm:justify-between dark:bg-hb-green/10">
-            <p className="text-base text-gray-800 dark:text-gray-200">
-              Showing recommendations for <span className="font-semibold text-hb-green dark:text-hb-lightgreen">{selectedGoalLabel}</span>
-            </p>
+            <div>
+              <p className="text-base text-gray-800 dark:text-gray-200">
+                Showing recommendations for <span className="font-semibold text-hb-green dark:text-hb-lightgreen">{selectedGoalLabel}</span>
+              </p>
+              {displayPricing ? (
+                <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
+                  Prices shown for {displayPricing.country} in {displayPricing.display_currency_name || displayPricing.display_currency} ({displayPricing.display_currency})
+                </p>
+              ) : null}
+            </div>
             <button
               type="button"
               onClick={() => {

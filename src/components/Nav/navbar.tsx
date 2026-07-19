@@ -6,6 +6,8 @@ import { Menu, X } from 'lucide-react'
 import Link from 'next/link';
 import HbButton from '../widgets/hb-buttons';
 import api from '@/api';
+import Banner from './Banner';
+import { ACCESS_TOKEN } from '@/constants/constants';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -25,6 +27,12 @@ export default function Navbar() {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
+      const token = localStorage.getItem(ACCESS_TOKEN);
+      if (!token) {
+        setLoginStatus(false);
+        return;
+      }
+
       try {
         const response = await api.get('/api/get-user-profile/'); // Adjust the endpoint as needed
         //console.log("Response from get-user-profile:", response.data);
@@ -47,6 +55,7 @@ export default function Navbar() {
   
   return (
     <main className='fixed left-0 top-0 z-50 w-full bg-white pb-2 text-[#1f1f24] shadow-md dark:bg-[#0f172a] dark:text-white dark:shadow-black/30'>
+    <Banner />
     <div className="hidden md:flex md:max-w-7xl bg md:m-auto md:items-center pt-5 md:justify-between">
         <Link href='/' className='flex flex-row gap-3 items-center'> 
           <Image src={hb_logo} alt='hb_log' width={35} height={35} /> 

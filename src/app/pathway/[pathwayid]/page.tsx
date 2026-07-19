@@ -2,7 +2,7 @@
 import React, {  useEffect, useState } from "react";
 import publicApi from "../../../publicApi"
 import  Navbar  from "@/components/Nav/navbar";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import Footer from "@/components/Nav/footer";
 import { useRouter } from "next/navigation";
 import api from "@/api";
@@ -14,6 +14,8 @@ import CareerClaritySection from "@/components/widgets/career-clarity-section";
 import GraduateTestimonialSection from "@/components/widgets/graduate-testimonial-section";
 import FAQPreviewSection from "@/components/widgets/faq-preview-section";
 import PotentialProjectsSection, { type PotentialProject } from "@/components/widgets/potential-projects-section";
+import { detectBrowserCountry, syncCountryQueryParam } from "@/lib/country";
+import { pricingFromContext, type PricingInfo } from "@/lib/pricing";
 
 
 
@@ -21,8 +23,25 @@ import PotentialProjectsSection, { type PotentialProject } from "@/components/wi
 
 export default function Page() {
     const params = useParams();
+    const searchParams = useSearchParams();
     const pathwayId = Number(params.pathwayid);
+    const countryParam = (searchParams.get("country") || "").trim().toUpperCase();
+    const [detectedCountry, setDetectedCountry] = useState("");
+    const [countryReady, setCountryReady] = useState(Boolean(countryParam));
+    const countryCode = countryParam || detectedCountry;
     const router = useRouter();
+
+    useEffect(() => {
+        if (countryParam) {
+            setCountryReady(true);
+            return;
+        }
+        const browserCountry = detectBrowserCountry();
+        const resolvedCountry = browserCountry || "US";
+        setDetectedCountry(resolvedCountry);
+        syncCountryQueryParam(resolvedCountry);
+        setCountryReady(true);
+    }, [countryParam]);
 
     const [pathways, setPathwayList] = useState<Array<{
         id?: string
@@ -46,6 +65,7 @@ export default function Page() {
         high_salary?: number
         brochure_link?: string
         price?: number
+        pricing?: PricingInfo
         courses?: Array<string | number>
         potential_projects?: PotentialProject[]
     }>>([
@@ -94,8 +114,11 @@ export default function Page() {
     // Fetch courses from the public API
     useEffect(() => {
         const fetchPathways = async () => {
+            if (!countryReady) return;
             try {
-                const response = await publicApi.get('/api/pathways/');
+                const response = await publicApi.get('/api/pathways/', {
+                    params: countryCode ? { country: countryCode } : undefined,
+                });
                 if (response.status === 200) {
                     setPathwayList(response.data);
                 } else {
@@ -106,13 +129,16 @@ export default function Page() {
             }
         };
         fetchPathways();
-    }, []);
+    }, [countryCode, countryReady]);
     //console.log(internship);
 
     useEffect(() => {
         const fetchCourses = async () => {
+            if (!countryReady) return;
             try {
-                const response = await publicApi.get('/api/courses/');
+                const response = await publicApi.get('/api/courses/', {
+                    params: countryCode ? { country: countryCode } : undefined,
+                });
                 if (response.status === 200) {
                     setCoursesList(response.data);
                 } else {
@@ -123,7 +149,7 @@ export default function Page() {
             }
         };
         fetchCourses();
-    }, []);
+    }, [countryCode, countryReady]);
 
     useEffect(() => {
         const fetchModules = async () => {
@@ -157,6 +183,7 @@ export default function Page() {
     const thisPathwayStatus = pathways.find((pathway) => Number(pathway.id) === Number(pathwayId))?.free;
     const heroPathway = pathways.find((pathway) => Number(pathway.id) === Number(pathwayId));
     const heroPathwayIsFree = Boolean(heroPathway && (heroPathway.free || Number(heroPathway.price || 0) <= 0));
+    const allInPricing = pricingFromContext(200, heroPathway?.pricing);
     const internshipStatus: string = 'open';
     const heroDuration = heroPathway?.duration_label || (heroPathway?.lenght_in_weeks ? String(heroPathway.lenght_in_weeks) : "12");
     const heroCourseIds = new Set((heroPathway?.courses ?? []).map(String))
@@ -235,6 +262,8 @@ export default function Page() {
             programType="pathway"
             programId={String(pathwayId)}
             programPrice={heroPathway?.price || 0}
+            programPricing={heroPathway?.pricing}
+            allInPricing={allInPricing}
             programPriceLabel="This Pathway Alone"
         />
         <PotentialProjectsSection

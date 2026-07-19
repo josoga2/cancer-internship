@@ -6,6 +6,8 @@ import { Elements } from "@stripe/react-stripe-js";
 import { useSearchParams, useRouter } from "next/navigation";
 import publicApi from "@/publicApi";
 import CheckOutForm from "@/components/widgets/checkout/check-out-form";
+import { detectBrowserCountry, syncCountryQueryParam } from "@/lib/country";
+import type { PricingInfo } from "@/lib/pricing";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -18,13 +20,16 @@ type CatalogProgram = {
   title: string;
   description: string;
   price: string | number;
+  pricing?: PricingInfo;
   mentorship_addon_price?: string | number;
+  mentorship_addon_pricing?: PricingInfo;
 };
 
 type SubscriptionOffer = {
   id: number | null;
   name: string;
   price: string | number;
+  pricing?: PricingInfo;
   duration_days: number;
   description: string;
   features: string[];
@@ -50,8 +55,24 @@ function PageContent() {
   const sourceType = (queryType || prog || "subscription").toLowerCase();
   const normalizedType = (sourceType === "career" ? "pathway" : sourceType) as CheckoutType;
   const id = Number(searchParams.get("id") || 0);
+  const countryParam = (searchParams.get("country") || "").trim().toUpperCase();
+  const [detectedCountry, setDetectedCountry] = useState("");
+  const [countryReady, setCountryReady] = useState(Boolean(countryParam));
+  const country = countryParam || detectedCountry;
   const [catalog, setCatalog] = useState<CheckoutCatalogResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (countryParam) {
+      setCountryReady(true);
+      return;
+    }
+    const browserCountry = detectBrowserCountry();
+    const resolvedCountry = browserCountry || "US";
+    setDetectedCountry(resolvedCountry);
+    syncCountryQueryParam(resolvedCountry);
+    setCountryReady(true);
+  }, [countryParam]);
 
   useEffect(() => {
     const allowedTypes = new Set(["course", "pathway", "internship", "subscription"]);
@@ -61,10 +82,11 @@ function PageContent() {
     }
 
     const fetchCheckoutCatalog = async () => {
+      if (!countryReady) return;
       setIsLoading(true);
       try {
         const res = await publicApi.get("/api/checkout/catalog/", {
-          params: { type: normalizedType, id, source_type: sourceType },
+          params: { type: normalizedType, id, source_type: sourceType, ...(country ? { country } : {}) },
         });
         setCatalog(res.data);
       } catch {
@@ -75,7 +97,7 @@ function PageContent() {
     };
 
     fetchCheckoutCatalog();
-  }, [normalizedType, id, router, sourceType]);
+  }, [normalizedType, id, router, sourceType, country, countryReady]);
 
   if (isLoading || !catalog) {
     return <div className="p-8 text-sm">Loading checkout details...</div>;
@@ -91,6 +113,7 @@ function PageContent() {
         allowProgramSelection={catalog.allow_program_selection}
         supportsMentorshipAddon={catalog.supports_mentorship_addon}
         subscriptionOffer={catalog.subscription_offer}
+        country={country}
       />
     </Elements>
   );

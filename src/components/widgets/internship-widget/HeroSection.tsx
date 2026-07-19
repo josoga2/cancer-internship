@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import api from "@/api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/constants/constants";
@@ -47,6 +47,8 @@ export default function HeroSection({
   isFree = false,
 }: HeroSectionProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const countryParam = (searchParams.get("country") || "").trim().toUpperCase();
   const [isEnrolling, setIsEnrolling] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [enrollmentError, setEnrollmentError] = useState("");
@@ -151,7 +153,10 @@ export default function HeroSection({
             </button>
           ) : (
             <Link
-              href={{ pathname: "/dashboard/checkout", query: { prog: programType, id: checkoutId } }}
+              href={{
+                pathname: "/dashboard/checkout",
+                query: { prog: programType, id: checkoutId, ...(countryParam ? { country: countryParam } : {}) },
+              }}
               className="inline-flex h-9 w-fit min-w-35 items-center justify-center rounded-sm bg-hb-green px-6 text-base font-bold text-white transition hover:bg-hb-green-dark"
             >
               {safeCtaText}
