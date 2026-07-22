@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import publicApi from "@/publicApi";
 
 type ProgramItem = {
@@ -139,9 +141,21 @@ export default function FeaturedCareerPathways() {
               <h3 className="text-4xl font-medium leading-tight tracking-normal text-black dark:text-white">
                 {activeItem?.title || "Become a Genome Data Scientist"}
               </h3>
-              <p className="mt-8 text-base leading-snug text-gray-900 dark:text-slate-200">
-                {activeDescription}
-              </p>
+              <div className="prose prose-base mt-8 max-w-none leading-snug text-gray-900 dark:prose-invert dark:text-slate-200">
+                <Markdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    p: ({ children }) => <p className="my-0 text-base leading-snug">{children}</p>,
+                    a: ({ children, href }) => (
+                      <a href={href} className="text-hb-green underline underline-offset-2">
+                        {children}
+                      </a>
+                    ),
+                  }}
+                >
+                  {activeDescription}
+                </Markdown>
+              </div>
 
               <div className="mt-7 flex items-center gap-3 text-base font-medium text-gray-900 dark:text-slate-100">
                 <span className="h-5 w-5 rounded-full bg-yellow-400 shadow-[0_0_0_0_rgba(250,204,21,0.8)] animate-pulse" />

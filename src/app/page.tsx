@@ -23,7 +23,7 @@ export const metadata = buildPageMetadata({
 
 export default function Home() {
   return (
-    <main className="bg-white text-[#1f1f24] dark:bg-[#020617] dark:text-white">
+    <main className="overflow-x-hidden bg-white text-[#1f1f24] dark:bg-[#020617] dark:text-white">
     <Navbar /> 
     <div className="w-full">
       <div className="hidden md:flex w-full flex-col bg md:items-center md:justify-between">
@@ -61,7 +61,7 @@ export default function Home() {
 
       </div>
       {/**Mobile */}
-      <div className="flex flex-col w-full md:hidden bg pt-20 px-5 gap-10">
+      <div className="flex w-full flex-col gap-10 overflow-x-hidden bg pt-20 md:hidden">
 
         {/* Hero Section */}
         <Hero />

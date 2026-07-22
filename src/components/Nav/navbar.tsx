@@ -54,7 +54,7 @@ export default function Navbar() {
   }, []);
   
   return (
-    <main className='fixed left-0 top-0 z-50 w-full bg-white pb-2 text-[#1f1f24] shadow-md dark:bg-[#0f172a] dark:text-white dark:shadow-black/30'>
+    <main className='fixed left-0 top-0 z-50 w-full max-w-full overflow-x-clip bg-white pb-2 text-[#1f1f24] shadow-md dark:bg-[#0f172a] dark:text-white dark:shadow-black/30'>
     <Banner />
     <div className="hidden md:flex md:max-w-7xl bg md:m-auto md:items-center pt-5 md:justify-between">
         <Link href='/' className='flex flex-row gap-3 items-center'> 
@@ -195,7 +195,7 @@ export default function Navbar() {
     
     
     {/***MOBILE */}
-    <div className="relative z-0 flex w-full max-w-full items-center justify-between overflow-x-hidden box-border bg-white px-4 pt-4 dark:bg-[#0f172a] md:hidden">
+    <div className="relative z-0 flex h-16 w-full max-w-full items-center justify-between overflow-x-clip box-border bg-white px-4 dark:bg-[#0f172a] md:hidden">
       {/* Logo */}
         <Link href="/">
           <Image src={hb_logo} alt="hb_logo" width={35} height={35} />
@@ -208,10 +208,9 @@ export default function Navbar() {
 
         {/* Drawer */}
         {isOpen && (
-          <div className="absolute left-0 right-0 top-full z-40 flex w-full max-w-full flex-col gap-4 overflow-x-hidden box-border bg-white px-6 py-6 shadow-lg transition-all dark:bg-[#111827] dark:text-white dark:shadow-black/30">
+          <div className="fixed left-0 right-0 top-[calc(var(--hb-banner-offset,0px)+4rem)] z-50 flex max-h-[calc(100vh-var(--hb-banner-offset,0px)-4rem)] w-full max-w-full flex-col gap-4 overflow-y-auto overflow-x-clip box-border bg-white px-6 py-6 shadow-lg transition-all dark:bg-[#111827] dark:text-white dark:shadow-black/30">
             <Link href='/internship'>Internships</Link>
             <Link href='/learning'>Explore Careers Tracks</Link>
-            <Link href='/hire-talents'>Hire Talents</Link>
             <Link href='/pricing'>Enrollment Plan</Link>
             <Link href='/blog'>Blog</Link>
             <Link href='/testimonial'>Testimonials</Link>

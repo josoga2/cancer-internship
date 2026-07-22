@@ -12,9 +12,15 @@ import CareerClaritySection from "@/components/widgets/career-clarity-section";
 import GraduateTestimonialSection from "@/components/widgets/graduate-testimonial-section";
 import FAQPreviewSection from "@/components/widgets/faq-preview-section";
 import PotentialProjectsSection, { type PotentialProject } from "@/components/widgets/potential-projects-section";
+import { detectBrowserCountry, getCountryQueryParam, syncCountryQueryParam } from "@/lib/country";
+import { pricingFromContext, type PricingInfo } from "@/lib/pricing";
 
 
 export default function Page() {
+    const [countryParam, setCountryParam] = useState("");
+    const [detectedCountry, setDetectedCountry] = useState("");
+    const [countryReady, setCountryReady] = useState(false);
+    const countryCode = countryParam || detectedCountry;
 
     const [internship, setInternshipList] = useState<Array<{
         id?: string
@@ -34,6 +40,7 @@ export default function Page() {
         high_salary?: number
         brochure_link?: string
         price?: number
+        pricing?: PricingInfo
         free?: boolean
         courses?: Array<string | number>
         potential_projects?: PotentialProject[]
@@ -80,12 +87,29 @@ export default function Page() {
     }>>([]);
     const internshipStatus: string = 'open';
 
+    useEffect(() => {
+        const urlCountry = getCountryQueryParam();
+        setCountryParam(urlCountry);
+        if (urlCountry) {
+            setCountryReady(true);
+            return;
+        }
+
+        const browserCountry = detectBrowserCountry();
+        const resolvedCountry = browserCountry || "US";
+        setDetectedCountry(resolvedCountry);
+        syncCountryQueryParam(resolvedCountry);
+        setCountryReady(true);
+    }, []);
 
     // Fetch courses from the public API
     useEffect(() => {
         const fetchInternships = async () => {
+            if (!countryReady) return;
             try {
-                const response = await publicApi.get('/api/internships/');
+                const response = await publicApi.get('/api/internships/', {
+                    params: countryCode ? { country: countryCode } : undefined,
+                });
                 if (response.status === 200) {
                     setInternshipList(response.data);
                 } else {
@@ -96,7 +120,7 @@ export default function Page() {
             }
         };
         fetchInternships();
-    }, []);
+    }, [countryCode, countryReady]);
     //console.log(internship);
 
     useEffect(() => {
@@ -146,6 +170,7 @@ export default function Page() {
     const publishedInternships = internship.filter(int => int.published === true)
     const heroInternship = publishedInternships[0]
     const heroInternshipIsFree = Boolean(heroInternship && (heroInternship.free || Number(heroInternship.price || 0) <= 0))
+    const allInPricing = pricingFromContext(200, heroInternship?.pricing);
     const thisInternshipid = heroInternship?.id || "0"
     const heroDuration = heroInternship?.lenght_in_weeks ? String(heroInternship.lenght_in_weeks) : "12"
     const heroCourseIds = new Set((heroInternship?.courses ?? []).map(String))
@@ -210,6 +235,8 @@ export default function Page() {
                     programType="internship"
                     programId={String(thisInternshipid)}
                     programPrice={heroInternship?.price || 0}
+                    programPricing={heroInternship?.pricing}
+                    allInPricing={allInPricing}
                     programPriceLabel="This Internship Alone"
                 />
                 <PotentialProjectsSection
@@ -267,6 +294,8 @@ export default function Page() {
                     programType="internship"
                     programId={String(thisInternshipid)}
                     programPrice={heroInternship?.price || 0}
+                    programPricing={heroInternship?.pricing}
+                    allInPricing={allInPricing}
                     programPriceLabel="This Internship Alone"
                 />
                 <PotentialProjectsSection

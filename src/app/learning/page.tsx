@@ -8,7 +8,7 @@ import Navbar from "@/components/Nav/navbar";
 import Footer from "@/components/Nav/footer";
 import publicApi from "@/publicApi";
 import { detectBrowserCountry, getCountryQueryParam, syncCountryQueryParam } from "@/lib/country";
-import { formatPricing, type PricingInfo } from "@/lib/pricing";
+import type { PricingInfo } from "@/lib/pricing";
 
 type CatalogType = "all" | "course" | "pathway";
 
@@ -493,8 +493,6 @@ export default function LearningPage() {
 
   const totalPages = Math.max(1, Math.ceil((data.count || 0) / PAGE_SIZE));
   const selectedGoalLabel = goals.find((goal) => goal.slug === selectedGoal || String(goal.id) === selectedGoal)?.title;
-  const displayPricing = data.results.find((item) => item.pricing)?.pricing;
-
   const applyGoal = () => {
     const goalKey = pendingGoal || goals[0]?.slug || String(goals[0]?.id || "");
     if (!goalKey) return;
@@ -592,7 +590,7 @@ export default function LearningPage() {
         {item.short_description}
       </p>
       <p className="mt-3 text-sm text-gray-700 dark:text-gray-200">
-        Level: {item.level} • Price: {formatPricing(item.pricing, item.price)}
+        Level: {item.level}
         {item.duration_label ? ` • Duration: ${item.duration_label}` : ""}
       </p>
       {item.tags?.length ? (
@@ -704,24 +702,24 @@ export default function LearningPage() {
     <section>
       <Navbar />
       {goalPromptOpen && goals.length > 0 ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-white/95 px-4 py-8 dark:bg-[#06130f]/95">
-          <div className="w-full max-w-[520px] overflow-hidden rounded-sm border-[3px] border-gray-300 bg-white shadow-sm dark:border-hb-green/40 dark:bg-[#071812]">
-            <div className="relative aspect-[16/9] w-full bg-gray-100 dark:bg-[#0d2a22]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-white/95 px-4 pb-14 pt-5 dark:bg-[#06130f]/95 sm:py-8">
+          <div className="max-h-[calc(100svh-2.5rem)] w-full max-w-[360px] overflow-y-auto overflow-x-hidden rounded-sm border-2 border-gray-300 bg-white shadow-sm dark:border-hb-green/40 dark:bg-[#071812] sm:max-h-[calc(100vh-4rem)] sm:max-w-[520px]">
+            <div className="relative h-42 w-full bg-gray-100 dark:bg-[#0d2a22] sm:aspect-[16/9] sm:h-auto">
               <Image
                 src="/learning_path.png"
                 alt="Learning goals"
                 fill
-                sizes="520px"
+                sizes="(max-width: 640px) 360px, 520px"
                 className="object-cover"
                 priority
               />
             </div>
-            <div className="px-8 pb-12 pt-12 sm:px-10 sm:pb-14">
-              <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl dark:text-white">What are your goals?</h2>
+            <div className="px-5 pb-6 pt-6 sm:px-10 sm:pb-14 sm:pt-12">
+              <h2 className="text-2xl font-bold text-gray-900 sm:text-4xl dark:text-white">What are your goals?</h2>
               <select
                 value={pendingGoal}
                 onChange={(event) => setPendingGoal(event.target.value)}
-                className="mt-8 h-20 w-full rounded-sm border-2 border-gray-300 bg-white px-6 text-2xl text-gray-900 outline-none focus:border-hb-green dark:border-hb-green/40 dark:bg-[#0d2a22] dark:text-white"
+                className="mt-5 h-12 w-full rounded-sm border-2 border-gray-300 bg-white px-4 text-base text-gray-900 outline-none focus:border-hb-green dark:border-hb-green/40 dark:bg-[#0d2a22] dark:text-white sm:mt-8 sm:h-20 sm:px-6 sm:text-2xl"
               >
                 {goals.map((goal) => (
                   <option key={goal.id} value={goal.slug || String(goal.id)}>
@@ -729,12 +727,12 @@ export default function LearningPage() {
                   </option>
                 ))}
               </select>
-              <div className="mt-12 flex justify-end">
+              <div className="mt-7 flex justify-end sm:mt-12">
                 <button
                   type="button"
                   onClick={applyGoal}
                   disabled={!pendingGoal}
-                  className="rounded-sm bg-hb-green px-8 py-4 text-2xl font-bold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-sm bg-hb-green px-6 py-3 text-base font-bold text-white disabled:cursor-not-allowed disabled:opacity-60 sm:px-8 sm:py-4 sm:text-2xl"
                 >
                   Explore
                 </button>
@@ -813,11 +811,6 @@ export default function LearningPage() {
               <p className="text-base text-gray-800 dark:text-gray-200">
                 Showing recommendations for <span className="font-semibold text-hb-green dark:text-hb-lightgreen">{selectedGoalLabel}</span>
               </p>
-              {displayPricing ? (
-                <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
-                  Prices shown for {displayPricing.country} in {displayPricing.display_currency_name || displayPricing.display_currency} ({displayPricing.display_currency})
-                </p>
-              ) : null}
             </div>
             <button
               type="button"
