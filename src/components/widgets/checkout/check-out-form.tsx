@@ -10,6 +10,13 @@ import { CreditCard, Wallet } from "lucide-react";
 import NavbarPay from "@/components/Nav/navbar-pay";
 import api from "@/api";
 import { formatCurrencyAmount, type PricingInfo } from "@/lib/pricing";
+import {
+  toAnalyticsItem,
+  trackAddPaymentInfo,
+  trackCheckoutError,
+  trackCheckoutStart,
+  trackPurchase,
+} from "@/lib/analytics";
 
 type CheckoutType = "course" | "pathway" | "internship" | "subscription";
 
@@ -138,6 +145,18 @@ export default function CheckOutForm({
   const originalPriceInCurrency = Number((selectedPriceUsd * displayExchangeRate).toFixed(2));
   const discountAmountInCurrency = Number(((appliedDiscount?.discount_amount || 0) * displayExchangeRate).toFixed(2));
   const shouldShowProgramSelector = !isSubscriptionCheckout && (allowProgramSelection || !selectedProgramData) && programs.length > 0;
+  const analyticsItem = useMemo(
+    () =>
+      toAnalyticsItem(
+        {
+          id: isSubscriptionCheckout ? subscriptionOffer.id || "all_in" : checkoutProgramId,
+          title: isSubscriptionCheckout ? subscriptionOffer.name : selectedProgramData?.title || checkoutType,
+          price: finalPriceUsd,
+        },
+        isSubscriptionCheckout ? "subscription" : checkoutType
+      ),
+    [checkoutProgramId, checkoutType, finalPriceUsd, isSubscriptionCheckout, selectedProgramData?.title, subscriptionOffer.id, subscriptionOffer.name]
+  );
 
   const checkoutPayload = useMemo(
     () => ({
@@ -191,6 +210,7 @@ export default function CheckOutForm({
     setClientSecret(null);
     setCheckoutError("");
     try {
+      trackAddPaymentInfo("card", [analyticsItem], finalPriceUsd, "USD");
       const res = await api.post("/api/create-checkout/", checkoutPayload);
       if (res.status === 200) {
         if (res.data?.enrolled) {
@@ -217,6 +237,7 @@ export default function CheckOutForm({
           error?.response?.data?.detail ||
           "Card checkout could not be loaded. Please try again."
       );
+      trackCheckoutError("card_checkout_load_failed");
       if (error?.response?.status === 401 || error?.response?.data?.login_required) {
         window.alert(error?.response?.data?.detail || "Please login or create an account first.");
         window.location.href = error?.response?.data?.redirect_path || "/login";
@@ -225,6 +246,11 @@ export default function CheckOutForm({
       setIsCardCheckoutLoading(false);
     }
   }, [canInitiateCheckout, checkoutKey, checkoutPayload, clientSecret, loadedCheckoutKey]);
+
+  useEffect(() => {
+    if (!canSelectProgram) return;
+    trackCheckoutStart([analyticsItem], finalPriceUsd, "USD");
+  }, [analyticsItem, canSelectProgram, finalPriceUsd]);
 
   useEffect(() => {
     let ignore = false;
@@ -310,6 +336,7 @@ export default function CheckOutForm({
     }
     if (!canInitiateCheckout) return undefined;
     try {
+      trackAddPaymentInfo("paypal", [analyticsItem], finalPriceUsd, "USD");
       const res = await api.post("/api/create-paypal-order/", paypalPayload);
       if (res.status === 200) {
         if (res.data?.enrolled) {
@@ -330,6 +357,7 @@ export default function CheckOutForm({
         return undefined;
       }
       console.error("Error creating PayPal order:", error);
+      trackCheckoutError("paypal_order_create_failed");
     }
     return undefined;
   };
@@ -338,11 +366,18 @@ export default function CheckOutForm({
     try {
       const res = await api.post(`/api/capture-paypal-order/${data.orderID}/`);
       if (res.status === 200) {
+        trackPurchase({
+          transaction_id: String(data.orderID || res.data?.transaction_id || "paypal_order"),
+          value: finalPriceUsd,
+          currency: "USD",
+          items: [analyticsItem],
+        });
         alert(`Payment Successful! Thank you very much for your purchase. We sent a mail to: ${res.data.email}.`);
         window.location.href = `/dashboard/checkout/return-paypal/`;
       }
     } catch (error) {
       console.error("Error capturing PayPal order:", error);
+      trackCheckoutError("paypal_capture_failed");
     }
   };
 
@@ -478,6 +513,7 @@ export default function CheckOutForm({
                     </div>
                     <a
                       href="mailto:contact@thehackbio.com?subject=Payment%20Receipt&body=Hi%20HackBio%2C%0A%0APlease%20find%20my%20receipt%20attached."
+                      onClick={() => trackAddPaymentInfo("bank_transfer", [analyticsItem], finalPriceUsd, "USD")}
                       className="inline-flex rounded-sm bg-hb-green px-4 py-2 text-sm font-bold text-white"
                     >
                       Send us your receipt

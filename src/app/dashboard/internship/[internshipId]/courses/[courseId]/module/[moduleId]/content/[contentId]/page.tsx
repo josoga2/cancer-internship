@@ -30,6 +30,7 @@ import StreakBar from "@/components/widgets/dashboard-widgets/streak-bar";
 import Link from "next/link";
 import ProgressFloat from "@/components/widgets/progress-float";
 import { CheckCircle2, XCircle } from "lucide-react";
+import { trackModuleComplete } from "@/lib/analytics";
 
 const CONTENT_META: Record<string, { icon: string; label: string }> = {
   video: { icon: "🎥", label: "Video" },
@@ -718,6 +719,7 @@ function Page() {
 
       if (response.status === 200) {
         setCompletedContent(prevCompleted => prevCompleted.concat(',', String(contentId)));
+        trackModuleComplete({ id: courseId, title: courseTitle }, { id: moduleId, title: moduleTitle });
         toast.success("Marked as complete. 2 XP gained! Proceed to next content.");
         if (navigateAfter) {
           router.push(nextHref);

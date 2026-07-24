@@ -16,6 +16,7 @@ import FAQPreviewSection from "@/components/widgets/faq-preview-section";
 import PotentialProjectsSection, { type PotentialProject } from "@/components/widgets/potential-projects-section";
 import { detectBrowserCountry, getCountryQueryParam, syncCountryQueryParam } from "@/lib/country";
 import { pricingFromContext, type PricingInfo } from "@/lib/pricing";
+import { trackPathwayView } from "@/lib/analytics";
 
 
 
@@ -212,6 +213,16 @@ export default function Page() {
             content.content_type === "project" &&
             (heroCourseIds.has(String(content.course)) || outlineModuleIds.has(String(content.module)))
     ).length
+
+    useEffect(() => {
+        if (!heroPathway?.id) return;
+        trackPathwayView({
+            id: heroPathway.id,
+            title: heroPathway.title,
+            level: heroPathway.duration_label,
+            price: Number(heroPathway.price || 0),
+        });
+    }, [heroPathway?.id, heroPathway?.title, heroPathway?.duration_label, heroPathway?.price]);
 
     const handleFreeEnroll = async () => {
         try {

@@ -16,6 +16,7 @@ import GraduateTestimonialSection from "@/components/widgets/graduate-testimonia
 import FAQPreviewSection from "@/components/widgets/faq-preview-section";
 import { detectBrowserCountry, getCountryQueryParam, syncCountryQueryParam } from "@/lib/country";
 import { pricingFromContext, type PricingInfo } from "@/lib/pricing";
+import { trackCourseView } from "@/lib/analytics";
 
 
 
@@ -29,6 +30,8 @@ export default function Page() {
         overview?: string
         duration_label?: string
         duration_days?: number
+        level?: string
+        difficulty_level?: string
         published?: boolean
         free?: boolean
         image?: string
@@ -214,6 +217,16 @@ export default function Page() {
             })),
     }))
     const outlineProjectCount = courseContents.filter((content) => content.content_type === "project").length
+
+    useEffect(() => {
+        if (!heroCourse?.id) return;
+        trackCourseView({
+            id: heroCourse.id,
+            title: heroCourse.title,
+            level: heroCourse.level || heroCourse.difficulty_level,
+            price: Number(heroCourse.price || 0),
+        });
+    }, [heroCourse?.id, heroCourse?.title, heroCourse?.level, heroCourse?.difficulty_level, heroCourse?.price]);
 
 
 

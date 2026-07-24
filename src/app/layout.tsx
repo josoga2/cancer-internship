@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 // @ts-ignore: CSS module without type declarations
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner"
-import { GoogleAnalytics } from '@next/third-parties/google'
 import { ThemeProvider } from "@/components/theme-provider";
 import ThemeToggle from "@/components/theme-toggle";
 import Script from "next/script";
@@ -76,7 +75,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const gaId = 'G-E5BTKCZEBN'
+  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
   return (
     <html lang="en">
       <body
@@ -86,7 +85,23 @@ export default function RootLayout({
           <div className="min-h-svh flex items-start justify-center">
               {children}
               <Toaster />
-              <GoogleAnalytics gaId={gaId} />
+              {gaId ? (
+                <>
+                  <Script
+                    src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+                    strategy="afterInteractive"
+                  />
+                  <Script id="ga4-base" strategy="afterInteractive">
+                    {`
+                      window.dataLayer = window.dataLayer || [];
+                      function gtag(){dataLayer.push(arguments);}
+                      window.gtag = gtag;
+                      gtag('js', new Date());
+                      gtag('config', '${gaId}');
+                    `}
+                  </Script>
+                </>
+              ) : null}
               <Script id="microsoft-clarity" strategy="afterInteractive">
                 {`
                   (function(c,l,a,r,i,t,y){

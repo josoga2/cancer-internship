@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/accordion";
 import ProgramLeadCapture from "@/components/widgets/program-lead-capture";
 import { formatPricing, type PricingInfo } from "@/lib/pricing";
+import { toAnalyticsItem, trackCheckoutStart, trackCurriculumClick, trackEvent } from "@/lib/analytics";
 
 export type ProgramOutlineChild = {
   id?: string | number;
@@ -111,6 +112,14 @@ export default function ProgramOutline({
   const selectedPricing = selectedPlan === "all-in" ? allInPricing : programPricing;
   const selectedPriceLabel = formatPricing(selectedPricing, selectedPrice);
   const selectedLabel = selectedPlan === "all-in" ? "Go All-In" : programPriceLabel;
+  const selectedAnalyticsItem = toAnalyticsItem(
+    {
+      id: selectedPlan === "all-in" ? "all_in" : programId,
+      title: selectedLabel,
+      price: selectedPrice,
+    },
+    selectedPlan === "all-in" ? "subscription" : programType
+  );
   const checkoutQuery = {
     prog: programType,
     id: programId,
@@ -141,7 +150,10 @@ export default function ProgramOutline({
               value={`${item.id || index}`}
               className="rounded-sm border border-hb-green/50 px-4 py-2 dark:border-hb-green/70 dark:bg-[#111827] sm:px-5"
             >
-              <AccordionTrigger className="gap-4 text-left text-base hover:no-underline [&>svg]:hidden">
+              <AccordionTrigger
+                className="gap-4 text-left text-base hover:no-underline [&>svg]:hidden"
+                onClick={() => trackCurriculumClick(programType, item.title)}
+              >
                 <span className="grid w-full grid-cols-[72px_minmax(0,1fr)_20px] items-center gap-3 sm:grid-cols-[96px_minmax(0,1fr)_20px] sm:gap-4">
                   <span className="break-words font-medium text-[#1f1f24] dark:text-slate-100">{item.label}</span>
                   <span className="min-w-0 break-words font-bold text-[#1f1f24] dark:text-white">{item.title}</span>
@@ -232,14 +244,26 @@ export default function ProgramOutline({
             label="Go All-In"
             price={allInPrice}
             pricing={allInPricing}
-            onClick={() => setSelectedPlan("all-in")}
+            onClick={() => {
+              setSelectedPlan("all-in");
+              trackEvent("select_item", {
+                item_list_name: "program_outline_pricing",
+                items: [toAnalyticsItem({ id: "all_in", title: "Go All-In", price: allInPrice }, "subscription")],
+              });
+            }}
           />
           <PriceChoice
             active={selectedPlan === "program"}
             label={programPriceLabel}
             price={Number(programPrice || 0)}
             pricing={programPricing}
-            onClick={() => setSelectedPlan("program")}
+            onClick={() => {
+              setSelectedPlan("program");
+              trackEvent("select_item", {
+                item_list_name: "program_outline_pricing",
+                items: [toAnalyticsItem({ id: programId, title: programPriceLabel, price: Number(programPrice || 0) }, programType)],
+              });
+            }}
           />
         </div>
 
@@ -287,6 +311,14 @@ export default function ProgramOutline({
           <p className="mt-4 break-words text-4xl font-black text-[#1f1f24] dark:text-white">Total: {selectedPriceLabel}</p>
           <Link
             href={{ pathname: "/dashboard/checkout", query: checkoutQuery }}
+            onClick={() => {
+              trackEvent("add_to_cart", {
+                currency: selectedPricing?.charge_currency || "USD",
+                value: selectedPrice,
+                items: [selectedAnalyticsItem],
+              });
+              trackCheckoutStart([selectedAnalyticsItem], selectedPrice, selectedPricing?.charge_currency || "USD");
+            }}
             className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-sm bg-hb-green px-5 text-base font-bold text-white transition hover:bg-hb-green-dark"
           >
             Continue to checkout

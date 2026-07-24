@@ -6,6 +6,7 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import Footer from "@/components/Nav/footer";
 import Navbar from "@/components/Nav/navbar";
 import publicApi from "@/publicApi";
+import { trackPricingView } from "@/lib/analytics";
 
 type BillingType = "one_time" | "subscription";
 type ProductType = "course" | "pathway" | "internship" | "subscription";
@@ -387,6 +388,10 @@ export default function PricingPage() {
     internship: null,
     subscription: null,
   });
+
+  useEffect(() => {
+    trackPricingView("pricing_page");
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {

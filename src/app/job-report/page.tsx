@@ -6,6 +6,7 @@ import { ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
 import publicApi from "@/publicApi";
+import { trackFormError, trackFormStart, trackLeadGenerated, trackOutboundClick } from "@/lib/analytics";
 
 export default function DocumentDownloader() {
 
@@ -28,13 +29,16 @@ export default function DocumentDownloader() {
                 // Handle successful registration, e.g., redirect to login page
                 setError('You are successfully registered.');
                 
-                
+                trackLeadGenerated("job_report_download", "job_report");
+                trackOutboundClick("https://zenodo.org/records/13944541", "job_report");
                 router.replace('https://zenodo.org/records/13944541/files/BFX_2024.pdf.pdf?download=1');
             } else {
+                trackFormError("job_report_download", "job_report", "unexpected_status");
                 setError('You are successfully registered. Please check your email to verify your registeration.');
             }
         } catch (error) {
             console.error('Registration error:', error);
+            trackFormError("job_report_download", "job_report", "request_failed");
             setError('Either a User with the same credentials exist or Invalid Email or Password.');
         }
     };
@@ -70,8 +74,8 @@ export default function DocumentDownloader() {
         <div className="pr-10 flex flex-col items-start gap-3">
             <img src="https://github.com/HackBio-Internship/2025_project_collection/blob/main/RoGsdCGIeXV.png?raw=true" alt="Bioinformatics Jobs 2024 Report Cover" className=" rounded-lg w-full h-full" />
             <label className="font-bold text-base mb-2">Download the Full Report</label>
-            <input type="email" placeholder="Enter your email" className="w-full p-2 px-5 border border-gray-300 rounded-md mb-4" value={email} onChange={(e) => setEmail((e.target as HTMLInputElement).value)} required />
-            <input type="text" placeholder="Enter your name" className="w-full p-2 px-5 border border-gray-300 rounded-md mb-4" value={name} onChange={(e) => setName((e.target as HTMLInputElement).value)} required />
+            <input type="email" placeholder="Enter your email" className="w-full p-2 px-5 border border-gray-300 rounded-md mb-4" value={email} onFocus={() => trackFormStart("job_report_download", "job_report")} onChange={(e) => setEmail((e.target as HTMLInputElement).value)} required />
+            <input type="text" placeholder="Enter your name" className="w-full p-2 px-5 border border-gray-300 rounded-md mb-4" value={name} onFocus={() => trackFormStart("job_report_download", "job_report")} onChange={(e) => setName((e.target as HTMLInputElement).value)} required />
             <Button className="w-full bg-hb-green hover:bg-green-700 text-white py-6 text-base font-bold rounded-md flex items-center justify-center" onClick={handleLogin} >
                 Download Report <ExternalLink className="ml-2" />
             </Button>

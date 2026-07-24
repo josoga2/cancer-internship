@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader,  } from "@/components/ui/card"
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import publicApi from '@/publicApi';
 import { useRouter } from 'next/navigation';
+import { trackFormStart, trackRegistrationComplete, trackRegistrationError, trackRegistrationStart } from '@/lib/analytics';
 
 
 export default function Login() {
@@ -20,8 +21,14 @@ export default function Login() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const router = useRouter();
+    const formStartedRef = useRef(false);
 
-
+    const trackRegisterFormStart = () => {
+        if (formStartedRef.current) return;
+        formStartedRef.current = true;
+        trackRegistrationStart("register_page");
+        trackFormStart("registration", "register_page");
+    };
     
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -33,6 +40,7 @@ export default function Login() {
             if (registerResponse.status === 200 || registerResponse.status === 201) {
                 // Handle successful registration, e.g., redirect to login page
                 setError('You are successfully registered. Please check your email to verify your registeration.');
+                trackRegistrationComplete("email");
 
                 await publicApi.post("/api/attempted-payment/", {
                     name: username,
@@ -42,10 +50,12 @@ export default function Login() {
                 
                 router.replace('/login');
             } else {
+                trackRegistrationError("unexpected_status");
                 setError('You are successfully registered. Please check your email to verify your registeration.');
             }
         } catch (error) {
             console.error('Registration error:', error);
+            trackRegistrationError("registration_request_failed");
             setError('Either a User with the same credentials exist or Invalid Email or Password.');
         }
     };
@@ -69,22 +79,22 @@ export default function Login() {
                                 
                                 <div className="grid gap-1">
                                     <Label className='font-bold'>Email</Label>
-                                    <Input id="email" type="text" placeholder="you@mail.com" value={email} onChange={(e) => setEmail((e.target as HTMLInputElement).value)} required className='bg-blue-50 py-5' />
+                                    <Input id="email" type="text" placeholder="you@mail.com" value={email} onFocus={trackRegisterFormStart} onChange={(e) => setEmail((e.target as HTMLInputElement).value)} required className='bg-blue-50 py-5' />
                                 </div>
 
                                 <div className="grid gap-1">
                                     <Label className='font-bold'>Username</Label>
-                                    <Input id="username" type="text" placeholder="myUniqueUserName" value={username} onChange={(e)=>setUsername(e.target.value)} required className='bg-blue-50 py-5' />
+                                    <Input id="username" type="text" placeholder="myUniqueUserName" value={username} onFocus={trackRegisterFormStart} onChange={(e)=>setUsername(e.target.value)} required className='bg-blue-50 py-5' />
                                 </div>
                                 
                                 <div className="grid gap-1">
                                     <Label htmlFor="password" className='font-bold'>Password</Label>
-                                    <Input  type="password" placeholder="Password" required value={password} onChange={(e)=>setPassword(e.target.value)}  className='bg-blue-50 py-5'/>
+                                    <Input  type="password" placeholder="Password" required value={password} onFocus={trackRegisterFormStart} onChange={(e)=>setPassword(e.target.value)}  className='bg-blue-50 py-5'/>
                                 </div>
 
                                 <div className="grid gap-1">
                                     <Label htmlFor="password" className='font-bold'>Confirm Password</Label>
-                                    <Input  type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e)=>setConfirmPassword(e.target.value)} required  className='bg-blue-50 py-5'/>
+                                    <Input  type="password" placeholder="Confirm Password" value={confirmPassword} onFocus={trackRegisterFormStart} onChange={(e)=>setConfirmPassword(e.target.value)} required  className='bg-blue-50 py-5'/>
                                 </div>
                                 
                                 <a onClick={handleLogin} className='w-full'>
@@ -123,6 +133,7 @@ export default function Login() {
                                 type="text"
                                 placeholder="you@mail.com"
                                 value={email}
+                                onFocus={trackRegisterFormStart}
                                 onChange={(e) =>
                                 setEmail((e.target as HTMLInputElement).value)
                                 }
@@ -138,6 +149,7 @@ export default function Login() {
                                 type="text"
                                 placeholder="myUniqueUserName"
                                 value={username}
+                                onFocus={trackRegisterFormStart}
                                 onChange={(e) => setUsername(e.target.value)}
                                 required
                                 className="bg-blue-50 text-base py-3 placeholder:text-base"
@@ -151,6 +163,7 @@ export default function Login() {
                                 type="password"
                                 placeholder="Password"
                                 value={password}
+                                onFocus={trackRegisterFormStart}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                                 className="bg-blue-50 text-base py-3 placeholder:text-base"
@@ -164,6 +177,7 @@ export default function Login() {
                                 type="password"
                                 placeholder="Confirm Password"
                                 value={confirmPassword}
+                                onFocus={trackRegisterFormStart}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 required
                                 className="bg-blue-50 text-base py-3 placeholder:text-base"

@@ -9,6 +9,7 @@ import Footer from "@/components/Nav/footer";
 import publicApi from "@/publicApi";
 import { detectBrowserCountry, getCountryQueryParam, syncCountryQueryParam } from "@/lib/country";
 import type { PricingInfo } from "@/lib/pricing";
+import { toAnalyticsItem, trackEvent } from "@/lib/analytics";
 
 type CatalogType = "all" | "course" | "pathway";
 
@@ -601,7 +602,13 @@ export default function LearningPage() {
       </p>
       <div className="mt-auto pt-4 flex flex-wrap gap-3">
         <button
-          onClick={() => router.push(`/learning/course/${item.id}`)}
+          onClick={() => {
+            trackEvent("select_item", {
+              item_list_name: "learning_catalog",
+              items: [toAnalyticsItem({ id: item.id, title: item.title, level: item.level, price: item.price }, "course")],
+            });
+            router.push(`/learning/course/${item.id}`);
+          }}
           className="rounded-sm bg-hb-green px-4 py-2 text-sm font-semibold text-white"
         >
           View Course
@@ -646,7 +653,13 @@ export default function LearningPage() {
       ) : null}
       <div className="mt-auto pt-4 flex flex-wrap gap-3">
         <button
-          onClick={() => router.push(`/pathway/${item.id}`)}
+          onClick={() => {
+            trackEvent("select_item", {
+              item_list_name: "learning_catalog",
+              items: [toAnalyticsItem({ id: item.id, title: item.title, level: item.level, price: item.price }, "pathway")],
+            });
+            router.push(`/pathway/${item.id}`);
+          }}
           className="rounded-sm bg-hb-green px-4 py-2 text-sm font-semibold text-white"
         >
           View Pathway

@@ -6,11 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader,  } from "@/components/ui/card"
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import publicApi from '@/publicApi';
 import { useRouter } from 'next/navigation';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/constants/constants';
 import { toast } from 'sonner';
+import { trackFormStart, trackLoginAttempt, trackLoginError, trackLoginSuccess, trackPasswordResetStart } from '@/lib/analytics';
 
 
 
@@ -20,10 +21,18 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const router = useRouter();
+    const formStartedRef = useRef(false);
+
+    const trackLoginFormStart = () => {
+        if (formStartedRef.current) return;
+        formStartedRef.current = true;
+        trackFormStart("login", "login_page");
+    };
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+        trackLoginAttempt();
 
         try {
             const loginResponse = await publicApi.post('/api/auth/login/', { username: username.trim().toLowerCase(), password } );
@@ -31,13 +40,16 @@ export default function Login() {
                 localStorage.setItem(ACCESS_TOKEN, loginResponse.data.access);
                 localStorage.setItem(REFRESH_TOKEN, loginResponse.data.refresh);
                 toast.success("Logged in successfully!");
+                trackLoginSuccess();
                 // Handle successful login, e.g., redirect to dashboard
                 router.replace('/dashboard');
             } else if (loginResponse.status === 401 || loginResponse.status === 400) {
+                trackLoginError("invalid_or_unverified_credentials");
                 setError('Either your email is not yet verified or you are not inputting your username. Please check your email to verify your account or enter your username.');
             }
         } catch (error) {
             console.error('Login error:', error);
+            trackLoginError("login_request_failed");
             if (
                 typeof error === 'object' &&
                 error !== null &&
@@ -72,11 +84,11 @@ export default function Login() {
                                 <p className='text-red-500 text-center text-xs'>{error}</p>
                                 <div className="grid gap-2">
                                     <Label htmlFor="username" className='font-bold'>Username</Label>
-                                    <Input id="username" type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required className='bg-blue-50 py-5' />
+                                    <Input id="username" type="text" placeholder="Username" value={username} onFocus={trackLoginFormStart} onChange={(e) => setUsername(e.target.value)} required className='bg-blue-50 py-5' />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="password" className='font-bold'>Password</Label>
-                                    <Input id="password" type="password" placeholder="Password" value={password} onChange={(e)=> setPassword(e.target.value)} required  className='bg-blue-50  py-5'/>
+                                    <Input id="password" type="password" placeholder="Password" value={password} onFocus={trackLoginFormStart} onChange={(e)=> setPassword(e.target.value)} required  className='bg-blue-50  py-5'/>
                                 </div>
                                 <a onClick={handleLogin} className='w-full'>
                                     <Button className='w-full bg-green-600 text-white  py-5 hover:bg-green-700'>
@@ -84,7 +96,7 @@ export default function Login() {
                                     </Button>
                                 </a>
                                 <a href='/register'><p className='text-base text-center pt-5 text-blue-600 hover:underline'>New here? Register. </p></a>
-                                <a href='/forgot-password'><p className='text-base text-center pt-5 text-blue-600 hover:underline'>Forgot password? Reset here. </p></a>
+                                <a href='/forgot-password' onClick={trackPasswordResetStart}><p className='text-base text-center pt-5 text-blue-600 hover:underline'>Forgot password? Reset here. </p></a>
                             </form>
                         </CardContent>
                     </Card>
@@ -109,6 +121,7 @@ export default function Login() {
                                         type="text"
                                         placeholder="Username"
                                         value={username}
+                                        onFocus={trackLoginFormStart}
                                         onChange={(e) => setUsername(e.target.value)}
                                         required
                                         className="bg-blue-50 py-3 text-base placeholder:text-base"
@@ -121,6 +134,7 @@ export default function Login() {
                                         type="password"
                                         placeholder="Password"
                                         value={password}
+                                        onFocus={trackLoginFormStart}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
                                         className="bg-blue-50 py-3 placeholder:text-base"
@@ -134,7 +148,7 @@ export default function Login() {
                                         New here? Register.
                                     </p>
                                 </a>
-                                <a href='/forgot-password'><p className='text-base text-center pt-5 text-blue-600 hover:underline'>Forgot password? Reset here. </p></a>
+                                <a href='/forgot-password' onClick={trackPasswordResetStart}><p className='text-base text-center pt-5 text-blue-600 hover:underline'>Forgot password? Reset here. </p></a>
                             </form>
                         </CardContent>
                     </Card>

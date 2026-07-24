@@ -5,6 +5,7 @@ import withAuth from "@/components/withAuth";
 import { useRouter } from "next/navigation";
 import LeftSideBar from "@/components/widgets/dashboard-widgets/left-sidebar";
 import MainScreen from "@/components/widgets/dashboard-widgets/main-screen";
+import { trackEvent } from "@/lib/analytics";
 
 
 function Page() {
@@ -13,6 +14,8 @@ function Page() {
   const router = useRouter()
 
   useEffect(() => {
+    trackEvent("dashboard_enter");
+
     const fetchUserProfile = async () => {
       try {
         const response = await api.get('/api/get-user-profile/'); // Adjust the endpoint as needed

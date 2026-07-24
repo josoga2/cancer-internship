@@ -3,6 +3,7 @@ import HbButton from '@/components/widgets/hb-buttons'
 import { SERVER_URL } from '@/constants/constants'
 import publicApi from '@/publicApi'
 import { useState } from 'react'
+import { trackPasswordResetStart } from '@/lib/analytics'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -12,6 +13,7 @@ export default function ForgotPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    trackPasswordResetStart()
 
 
     await fetch(

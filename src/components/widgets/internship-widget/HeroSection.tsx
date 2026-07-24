@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import api from "@/api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/constants/constants";
 import { getCountryQueryParam } from "@/lib/country";
+import { trackApplicationStart, trackCheckoutError, trackRegistrationStart } from "@/lib/analytics";
 
 type ProgramType = "course" | "pathway" | "internship";
 
@@ -79,6 +80,8 @@ export default function HeroSection({
 
   const handleFreeEnrollment = async () => {
     if (isEnrolling) return;
+    trackApplicationStart(safeHeadline);
+    trackRegistrationStart(`${programType}_free_enrollment`);
     setIsEnrolling(true);
     try {
       const response = await api.post("/api/free-enroll/", {
@@ -108,6 +111,7 @@ export default function HeroSection({
         return;
       }
       setEnrollmentError(data?.error || data?.detail || "We could not enroll you right now. Please try again.");
+      trackCheckoutError("free_enrollment_failed");
     } finally {
       setIsEnrolling(false);
     }
@@ -161,6 +165,10 @@ export default function HeroSection({
               href={{
                 pathname: "/dashboard/checkout",
                 query: { prog: programType, id: checkoutId, ...(countryParam ? { country: countryParam } : {}) },
+              }}
+              onClick={() => {
+                trackApplicationStart(safeHeadline);
+                trackRegistrationStart(`${programType}_checkout_cta`);
               }}
               className="inline-flex h-9 w-fit min-w-35 items-center justify-center rounded-sm bg-hb-green px-6 text-base font-bold text-white transition hover:bg-hb-green-dark"
             >

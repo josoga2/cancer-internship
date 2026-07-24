@@ -9,6 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { trackFaqExpand } from "@/lib/analytics";
 
 type FAQItem = {
   id: number;
@@ -42,7 +43,15 @@ export default function FAQPreviewSection() {
         <div className="rounded-[5px] bg-[#eaf9f1] px-6 py-7 dark:bg-[#10251b] md:px-10">
           <h2 className="text-base font-bold uppercase text-hb-green">Frequently Asked Questions</h2>
 
-          <Accordion type="single" collapsible className="mt-7 flex flex-col gap-2">
+          <Accordion
+            type="single"
+            collapsible
+            className="mt-7 flex flex-col gap-2"
+            onValueChange={(value) => {
+              const faq = faqs.find((item) => String(item.id) === value);
+              if (faq) trackFaqExpand(faq.question, "faq_preview");
+            }}
+          >
             {faqs.length ? (
               faqs.map((faq) => (
                 <AccordionItem key={faq.id} value={String(faq.id)} className="border-none">

@@ -14,6 +14,7 @@ import FAQPreviewSection from "@/components/widgets/faq-preview-section";
 import PotentialProjectsSection, { type PotentialProject } from "@/components/widgets/potential-projects-section";
 import { detectBrowserCountry, getCountryQueryParam, syncCountryQueryParam } from "@/lib/country";
 import { pricingFromContext, type PricingInfo } from "@/lib/pricing";
+import { trackInternshipView } from "@/lib/analytics";
 
 
 export default function Page() {
@@ -198,6 +199,15 @@ export default function Page() {
             content.content_type === "project" &&
             (heroCourseIds.has(String(content.course)) || outlineModuleIds.has(String(content.module)))
     ).length
+
+    useEffect(() => {
+        if (!heroInternship?.id) return;
+        trackInternshipView({
+            id: heroInternship.id,
+            title: heroInternship.title,
+            price: Number(heroInternship.price || 0),
+        });
+    }, [heroInternship?.id, heroInternship?.title, heroInternship?.price]);
 
     //console.log(coursesList.filter(course => course.published === true));
 

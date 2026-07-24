@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import type { FormEvent, ReactNode } from "react";
 import { useState } from "react";
 import publicApi from "@/publicApi";
+import { trackApplicationSubmit, trackFormError, trackFormStart, trackLeadGenerated, trackOutboundClick } from "@/lib/analytics";
 
 type ProgramLeadCaptureProps = {
   programType: "course" | "pathway" | "internship";
@@ -58,11 +59,15 @@ export default function ProgramLeadCapture({
       setLeadName("");
       setLeadEmail("");
       setMarketingConsent(false);
+      trackLeadGenerated(`${programType}_${leadSource}`, leadSource);
+      trackApplicationSubmit(`${programType}_${programId}`);
 
       if (redirectUrl && typeof window !== "undefined") {
+        trackOutboundClick(redirectUrl, `${programType}_${leadSource}`);
         window.open(redirectUrl, "_blank", "noopener,noreferrer");
       }
     } catch (error) {
+      trackFormError(`${programType}_${leadSource}`, "program_lead_capture", "lead_capture_failed");
       setLeadError("We could not save your details. Please check your name and email, then try again.");
     } finally {
       setLeadSubmitting(false);
@@ -75,7 +80,15 @@ export default function ProgramLeadCapture({
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className={className} aria-label={ariaLabel}>
+      <button
+        type="button"
+        onClick={() => {
+          setOpen(true);
+          trackFormStart(`${programType}_${leadSource}`, "program_lead_capture");
+        }}
+        className={className}
+        aria-label={ariaLabel}
+      >
         {children}
       </button>
 
