@@ -15,10 +15,16 @@ import ForRecruiters from "@/components/widgets/home-widgets/for-recruiters";
 import TestimonialsInterns from "@/components/widgets/home-widgets/testimonials-interns";
 
 export const metadata = buildPageMetadata({
-  title: "HackBio Internship",
+  title: "HackBio | Bioinformatics Internships & Genomics Training",
   description:
-    "Learn bioinformatics, data science, and AI by doing real-world projects with HackBio internships.",
+    "Join HackBio to learn bioinformatics, genomics, and data science through hands-on internships, courses, projects, and practical training.",
   urlPath: "/",
+  keywords: [
+    "bioinformatics internship",
+    "online bioinformatics internship",
+    "genomics training",
+    "HackBio internship",
+  ],
 });
 
 export default function Home() {

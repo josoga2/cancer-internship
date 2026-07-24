@@ -2,10 +2,16 @@ import { buildPageMetadata } from "@/lib/page-metadata";
 import type { ReactNode } from "react";
 
 export const metadata = buildPageMetadata({
-  title: "Internships",
+  title: "Online Bioinformatics Internship | HackBio",
   description:
-    "Discover HackBio internships with hands-on projects, mentorship, and real-world bioinformatics experience.",
+    "Build practical bioinformatics and genomics skills through HackBio's online internship programs, project-based learning, and guided training.",
   urlPath: "/internship",
+  keywords: [
+    "online bioinformatics internship",
+    "bioinformatics internship remote",
+    "bioinformatics internships for undergraduates",
+    "HackBio internship",
+  ],
 });
 
 export default function InternshipLayout({

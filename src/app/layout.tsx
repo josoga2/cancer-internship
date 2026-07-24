@@ -6,14 +6,22 @@ import { Toaster } from "@/components/ui/sonner"
 import { ThemeProvider } from "@/components/theme-provider";
 import ThemeToggle from "@/components/theme-toggle";
 import Script from "next/script";
+import {
+  DEFAULT_OG_IMAGE,
+  SITE_BASE_URL,
+  organizationJsonLd,
+  serializeJsonLd,
+  websiteJsonLd,
+} from "@/lib/page-metadata";
 
 
 export const metadata: Metadata = {
   title: {
-    default: "HackBio Internship | Learn Bioinformatics, Data, and AI by Doing",
-    template: "%s | HackBio Internship",
+    default: "HackBio | Bioinformatics Internships & Genomics Training",
+    template: "%s | HackBio",
   },
-  description: "Join the HackBio Internship to learn Bioinformatics, Data Science, and AI through real-world projects, hands-on practice, and community mentorship.",
+  description:
+    "Learn bioinformatics, genomics, and data science through hands-on HackBio internships, courses, practical projects, and guided training.",
   keywords: [
     "HackBio", 
     "bioinformatics internship", 
@@ -22,24 +30,25 @@ export const metadata: Metadata = {
     "AI internship", 
     "bioinformatics training", 
     "bioinformatics projects", 
-    "HackBio internship 2025"
+    "HackBio internship 2026"
   ],
-  authors: [{ name: "HackBio", url: "https://thehackbio.com" }],
+  authors: [{ name: "HackBio", url: SITE_BASE_URL }],
   creator: "HackBio Team",
   publisher: "HackBio",
   applicationName: "HackBio",
-  metadataBase: new URL("https://thehackbio.com"),
+  metadataBase: new URL(SITE_BASE_URL),
   openGraph: {
-    title: "HackBio Internship | Learn Bioinformatics, Data, and AI by Doing",
-    description: "Get real-world experience in Bioinformatics, Data Science, and AI with HackBio’s hands-on internship program.",
-    url: "https://internship.thehackbio.com/",
+    title: "HackBio | Bioinformatics Internships & Genomics Training",
+    description:
+      "Learn bioinformatics, genomics, and data science through hands-on HackBio internships, courses, practical projects, and guided training.",
+    url: SITE_BASE_URL,
     siteName: "HackBio",
     images: [
       {
-        url: "https://github.com/HackBio-Internship/2025_project_collection/blob/main/Group%20190.png?raw=true", // Update with actual image path
+        url: DEFAULT_OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: "HackBio Internship Banner",
+        alt: "HackBio bioinformatics learning and internship programs",
       },
     ],
     locale: "en_US",
@@ -47,11 +56,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "HackBio Internship | Learn Bioinformatics, Data, and AI by Doing",
-    description: "Learn Bioinformatics through practical projects in HackBio's internship program.",
-    site: "@hackbio", // Update if you have a Twitter handle
-    creator: "@hackbio",
-    images: ["https://github.com/HackBio-Internship/2025_project_collection/blob/main/Group%20190.png?raw=true"], // Same as OG image
+    title: "HackBio | Bioinformatics Internships & Genomics Training",
+    description:
+      "Learn bioinformatics, genomics, and data science through hands-on internships, courses, and practical projects.",
+    images: [DEFAULT_OG_IMAGE],
   },
   robots: {
     index: true,
@@ -64,9 +72,6 @@ export const metadata: Metadata = {
     },
   },
   category: "Education",
-  alternates: {
-    canonical: "https://internship.thehackbio.com/internship",
-  },
 };
 
 
@@ -81,6 +86,18 @@ export default function RootLayout({
       <body
         className="text-base"
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: serializeJsonLd(organizationJsonLd),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: serializeJsonLd(websiteJsonLd),
+          }}
+        />
         <ThemeProvider>
           <div className="min-h-svh flex items-start justify-center">
               {children}

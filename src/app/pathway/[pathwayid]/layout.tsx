@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { buildPageMetadata, getPathwayMeta } from "@/lib/page-metadata";
+import {
+  breadcrumbJsonLd,
+  buildPageMetadata,
+  getPathwayMeta,
+  serializeJsonLd,
+} from "@/lib/page-metadata";
 import type { ReactNode } from "react";
 
 export async function generateMetadata({
@@ -8,23 +13,49 @@ export async function generateMetadata({
   params: { pathwayid: string };
 }): Promise<Metadata> {
   const pathway = await getPathwayMeta(params.pathwayid);
-  const title = pathway?.title || "Pathway";
+  const title = pathway
+    ? `${pathway.title} Learning Path | HackBio`
+    : "Bioinformatics Learning Path | HackBio";
   const description =
     pathway?.description ||
-    "Explore this HackBio pathway with curated courses, modules, and practical lessons.";
+    "Follow a structured HackBio learning path with curated bioinformatics courses, practical lessons, tools, and projects.";
 
   return buildPageMetadata({
     title,
     description,
     urlPath: `/pathway/${params.pathwayid}`,
     image: pathway?.image,
+    noIndex: pathway
+      ? pathway.published === false || pathway.isActive === false
+      : false,
   });
 }
 
-export default function PathwayDetailLayout({
+export default async function PathwayDetailLayout({
   children,
+  params,
 }: {
   children: ReactNode;
+  params: { pathwayid: string };
 }) {
-  return children;
+  const pathway = await getPathwayMeta(params.pathwayid);
+  const path = `/pathway/${params.pathwayid}`;
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd(
+            breadcrumbJsonLd([
+              { name: "Home", path: "/" },
+              { name: "Learning", path: "/learning" },
+              { name: pathway?.title || "Pathway", path },
+            ])
+          ),
+        }}
+      />
+      {children}
+    </>
+  );
 }

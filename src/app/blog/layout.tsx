@@ -2,9 +2,9 @@ import { buildPageMetadata } from "@/lib/page-metadata";
 import type { ReactNode } from "react";
 
 export const metadata = buildPageMetadata({
-  title: "Blog",
+  title: "Bioinformatics, Genomics & Career Articles | HackBio",
   description:
-    "Read HackBio articles, announcements, and insights on bioinformatics, data science, and AI careers.",
+    "Read practical HackBio articles on bioinformatics, genomics, data science, scientific careers, training, and internship opportunities.",
   urlPath: "/blog",
 });
 

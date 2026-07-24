@@ -5,6 +5,7 @@ export const metadata = buildPageMetadata({
   title: "Register",
   description: "Create a HackBio account to access internships and learning resources.",
   urlPath: "/register",
+  noIndex: true,
 });
 
 export default function RegisterLayout({

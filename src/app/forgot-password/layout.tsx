@@ -5,6 +5,7 @@ export const metadata = buildPageMetadata({
   title: "Forgot Password",
   description: "Reset your HackBio account password.",
   urlPath: "/forgot-password",
+  noIndex: true,
 });
 
 export default function ForgotPasswordLayout({

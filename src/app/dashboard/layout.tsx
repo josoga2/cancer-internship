@@ -5,6 +5,7 @@ export const metadata = buildPageMetadata({
   title: "Dashboard",
   description: "Access your HackBio dashboard to track progress, courses, and learning streaks.",
   urlPath: "/dashboard",
+  noIndex: true,
 });
 
 export default function DashboardLayout({

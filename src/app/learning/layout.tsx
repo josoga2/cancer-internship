@@ -2,10 +2,16 @@ import { buildPageMetadata } from "@/lib/page-metadata";
 import type { ReactNode } from "react";
 
 export const metadata = buildPageMetadata({
-  title: "Learning Tracks",
+  title: "Bioinformatics Courses & Learning Paths | HackBio",
   description:
-    "Explore HackBio learning tracks with curated courses, modules, and practical lessons designed for bioinformatics, data science, and AI learners.",
+    "Explore beginner-friendly bioinformatics, genomics, and data science courses designed around practical skills, useful tools, and real projects.",
   urlPath: "/learning",
+  keywords: [
+    "bioinformatics 101",
+    "bioinformatics courses",
+    "bioinformatics tools",
+    "genomics courses",
+  ],
 });
 
 export default function LearningLayout({

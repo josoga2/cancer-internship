@@ -2,8 +2,9 @@ import { buildPageMetadata } from "@/lib/page-metadata";
 import type { ReactNode } from "react";
 
 export const metadata = buildPageMetadata({
-  title: "Job Report",
-  description: "Explore HackBio job reports and career insights for learners.",
+  title: "Bioinformatics Job Report | HackBio",
+  description:
+    "Explore bioinformatics job trends, career paths, and practical insights for learners planning their next role.",
   urlPath: "/job-report",
 });
 
