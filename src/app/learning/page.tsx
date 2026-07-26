@@ -600,7 +600,7 @@ export default function LearningPage() {
       <p className="mt-2 text-sm text-gray-500 dark:text-gray-300">
         {item.pathway_count ? `Also in ${item.pathway_count} pathway(s)` : "Standalone course"}
       </p>
-      <div className="mt-auto pt-4 flex flex-wrap gap-3">
+      <div className="mt-auto pt-4">
         <button
           onClick={() => {
             trackEvent("select_item", {
@@ -663,12 +663,6 @@ export default function LearningPage() {
           className="rounded-sm bg-hb-green px-4 py-2 text-sm font-semibold text-white"
         >
           View Pathway
-        </button>
-        <button
-          onClick={() => router.push(`/pathway/${item.id}`)}
-          className="rounded-sm border border-hb-green px-4 py-2 text-sm font-semibold text-hb-green dark:text-hb-lightgreen"
-        >
-          See Included Courses
         </button>
       </div>
     </div>
@@ -882,13 +876,10 @@ export default function LearningPage() {
           </aside>
 
           <section className="rounded-sm border border-gray-200 bg-white p-4 dark:border-hb-green/30 dark:bg-[#0a1f19]">
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4 flex items-center">
               <p className="text-sm text-gray-600 dark:text-gray-300">
                 {loading ? "Loading..." : `Showing ${data.count} result${data.count === 1 ? "" : "s"}`}
               </p>
-              <Link href="/pricing" className="text-sm font-semibold text-hb-green underline">
-                Compare plans
-              </Link>
             </div>
 
             <div className="grid grid-cols-1 gap-4">
