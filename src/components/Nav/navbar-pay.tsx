@@ -22,6 +22,7 @@ import {
 export default function NavbarPay() {
   
   return (
+    <>
     <main className='fixed left-0 top-0 z-50 w-full bg-white pb-2 text-[#1f1f24] shadow-md dark:bg-[#0f172a] dark:text-white dark:shadow-black/30'>
        <Banner />
     <div className="hidden md:flex md:max-w-5xl bg md:m-auto md:items-center pt-5 md:justify-between">
@@ -46,5 +47,10 @@ export default function NavbarPay() {
       </div>
 
     </main>
+    <div
+      aria-hidden="true"
+      className="h-[var(--hb-banner-offset,0px)] w-full shrink-0"
+    />
+    </>
   )
 }
