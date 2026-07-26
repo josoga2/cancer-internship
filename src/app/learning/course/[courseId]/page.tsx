@@ -44,6 +44,7 @@ export default function Page() {
         high_salary?: number
         brochure_link?: string
         price?: number
+        mentorship_addon_price?: number
         pricing?: PricingInfo
         courses?: Array<{
             id?: number | string
@@ -261,8 +262,10 @@ export default function Page() {
             programId={String(courseId)}
             programPrice={heroCourse?.price || 0}
             programPricing={heroCourse?.pricing}
+            mentorshipAddonPrice={heroCourse?.mentorship_addon_price}
             allInPricing={allInPricing}
             programPriceLabel="This Course Alone"
+            isFree={heroCourseIsFree}
         />
         <CareerOutlook
             programTitle={heroCourse?.title || "Genome Data Science"}

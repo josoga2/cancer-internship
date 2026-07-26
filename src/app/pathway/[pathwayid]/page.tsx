@@ -67,6 +67,7 @@ export default function Page() {
         high_salary?: number
         brochure_link?: string
         price?: number
+        mentorship_addon_price?: number
         pricing?: PricingInfo
         courses?: Array<string | number>
         potential_projects?: PotentialProject[]
@@ -275,8 +276,10 @@ export default function Page() {
             programId={String(pathwayId)}
             programPrice={heroPathway?.price || 0}
             programPricing={heroPathway?.pricing}
+            mentorshipAddonPrice={heroPathway?.mentorship_addon_price}
             allInPricing={allInPricing}
             programPriceLabel="This Pathway Alone"
+            isFree={heroPathwayIsFree}
         />
         <PotentialProjectsSection
             projects={heroPathway?.potential_projects}

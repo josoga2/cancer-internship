@@ -1,12 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import api from "@/api";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/constants/constants";
+import FreeProgramEnrollment from "@/components/enroll/free-program-enrollment";
 import { getCountryQueryParam } from "@/lib/country";
-import { trackApplicationStart, trackCheckoutError, trackRegistrationStart } from "@/lib/analytics";
+import { trackApplicationStart, trackRegistrationStart } from "@/lib/analytics";
 
 type ProgramType = "course" | "pathway" | "internship";
 
@@ -48,11 +46,7 @@ export default function HeroSection({
   projectSubtitle,
   isFree = false,
 }: HeroSectionProps) {
-  const router = useRouter();
   const [countryParam, setCountryParam] = useState("");
-  const [isEnrolling, setIsEnrolling] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [enrollmentError, setEnrollmentError] = useState("");
   const checkoutId = id || "0";
   const heroBackground = backgroundImage || "";
   const safeHeadline = headline || "Genome Data Scientist";
@@ -78,49 +72,12 @@ export default function HeroSection({
     }
   };
 
-  const handleFreeEnrollment = async () => {
-    if (isEnrolling) return;
-    trackApplicationStart(safeHeadline);
-    trackRegistrationStart(`${programType}_free_enrollment`);
-    setIsEnrolling(true);
-    try {
-      const response = await api.post("/api/free-enroll/", {
-        type: programType,
-        id: checkoutId,
-      });
-      if (response.status === 200) {
-        window.alert(response.data?.detail || "You have been enrolled successfully.");
-        router.push(response.data?.redirect_path || "/dashboard");
-        return;
-      }
-    } catch (error: any) {
-      const status = error?.response?.status;
-      const data = error?.response?.data;
-      const detail = String(data?.detail || data?.error || "");
-      const authFailed =
-        status === 401 ||
-        data?.login_required ||
-        detail.toLowerCase().includes("token") ||
-        detail.toLowerCase().includes("credentials");
-
-      if (authFailed) {
-        localStorage.removeItem(ACCESS_TOKEN);
-        localStorage.removeItem(REFRESH_TOKEN);
-        setEnrollmentError("");
-        setShowLoginModal(true);
-        return;
-      }
-      setEnrollmentError(data?.error || data?.detail || "We could not enroll you right now. Please try again.");
-      trackCheckoutError("free_enrollment_failed");
-    } finally {
-      setIsEnrolling(false);
-    }
-  };
-
-  const goToAuth = (path: "/login" | "/register") => {
-    setShowLoginModal(false);
-    router.push(path);
-  };
+  const mentorshipCheckoutQuery = new URLSearchParams({
+    prog: programType,
+    id: String(checkoutId),
+    mentorship: "1",
+    ...(countryParam ? { country: countryParam } : {}),
+  }).toString();
 
   return (
     <section
@@ -152,14 +109,15 @@ export default function HeroSection({
           ) : null}
 
           {isFree ? (
-            <button
-              type="button"
-              onClick={handleFreeEnrollment}
-              disabled={isEnrolling}
+            <FreeProgramEnrollment
+              programType={programType}
+              programId={checkoutId}
+              programTitle={safeHeadline}
+              label={safeCtaText}
+              offerMentorship
+              mentorshipCheckoutHref={`/dashboard/checkout?${mentorshipCheckoutQuery}`}
               className="inline-flex h-9 w-fit min-w-35 items-center justify-center rounded-sm bg-hb-green px-6 text-base font-bold text-white transition hover:bg-hb-green-dark disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {isEnrolling ? "Enrolling..." : safeCtaText}
-            </button>
+            />
           ) : (
             <Link
               href={{
@@ -175,11 +133,6 @@ export default function HeroSection({
               {safeCtaText}
             </Link>
           )}
-          {enrollmentError ? (
-            <p className="max-w-sm rounded-sm bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
-              {enrollmentError}
-            </p>
-          ) : null}
         </div>
 
         {/* <div className="grid max-w-[640px] grid-cols-2 gap-x-8 gap-y-5 md:grid-cols-4 md:gap-x-10">
@@ -193,46 +146,6 @@ export default function HeroSection({
           />
         </div> */}
       </div>
-      {showLoginModal ? (
-        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/55 px-4">
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="free-enrollment-login-title"
-            className="w-full max-w-md rounded-sm bg-white p-6 shadow-xl dark:bg-[#101a15]"
-          >
-            <h2 id="free-enrollment-login-title" className="text-2xl font-bold text-gray-900 dark:text-white">
-              Account Required
-            </h2>
-            <p className="mt-3 text-base leading-7 text-gray-700 dark:text-gray-200">
-              Kindly login/create an account to access this {programType} for free.
-            </p>
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <button
-                type="button"
-                onClick={() => goToAuth("/login")}
-                className="inline-flex h-11 flex-1 items-center justify-center rounded-sm bg-hb-green px-5 text-base font-bold text-white transition hover:bg-hb-green-dark"
-              >
-                Login
-              </button>
-              <button
-                type="button"
-                onClick={() => goToAuth("/register")}
-                className="inline-flex h-11 flex-1 items-center justify-center rounded-sm border border-hb-green px-5 text-base font-bold text-hb-green transition hover:bg-hb-lightgreen"
-              >
-                Create Account
-              </button>
-            </div>
-            <button
-              type="button"
-              onClick={() => setShowLoginModal(false)}
-              className="mt-4 w-full text-sm font-semibold text-gray-500 underline underline-offset-2 dark:text-gray-300"
-            >
-              Not now
-            </button>
-          </div>
-        </div>
-      ) : null}
     </section>
   );
 }

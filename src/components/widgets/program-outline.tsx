@@ -15,7 +15,7 @@ import {
   UserRoundCheck,
 } from "lucide-react";
 import type { ReactNode } from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Markdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
@@ -29,7 +29,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import ProgramLeadCapture from "@/components/widgets/program-lead-capture";
-import { formatPricing, type PricingInfo } from "@/lib/pricing";
+import FreeProgramEnrollment from "@/components/enroll/free-program-enrollment";
+import { formatPricing, pricingFromContext, type PricingInfo } from "@/lib/pricing";
 import { toAnalyticsItem, trackCheckoutStart, trackCurriculumClick, trackEvent } from "@/lib/analytics";
 
 export type ProgramOutlineChild = {
@@ -65,6 +66,8 @@ type ProgramOutlineProps = {
   allInPricing?: PricingInfo | null;
   allInPrice?: number;
   programPriceLabel?: string;
+  isFree?: boolean;
+  mentorshipAddonPrice?: number | null;
 };
 
 const contentIcons = {
@@ -102,15 +105,27 @@ export default function ProgramOutline({
   allInPricing,
   allInPrice = 200,
   programPriceLabel = "This Program Alone",
+  isFree = false,
+  mentorshipAddonPrice = 20,
 }: ProgramOutlineProps) {
   const [expandedDescription, setExpandedDescription] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<"all-in" | "program">("all-in");
+  const [selectedPlan, setSelectedPlan] = useState<"all-in" | "program">(
+    isFree ? "program" : "all-in"
+  );
   const descriptionWords = useMemo(() => wordsFromText(description || ""), [description]);
   const shouldTruncate = descriptionWords.length > 50;
   const safeDescription = String(description || "").trim();
-  const selectedPrice = selectedPlan === "all-in" ? allInPrice : Number(programPrice || 0);
+  const selectedPrice =
+    selectedPlan === "all-in"
+      ? allInPrice
+      : isFree
+        ? 0
+        : Number(programPrice || 0);
   const selectedPricing = selectedPlan === "all-in" ? allInPricing : programPricing;
-  const selectedPriceLabel = formatPricing(selectedPricing, selectedPrice);
+  const isFreeProgramSelected = isFree && selectedPlan === "program";
+  const selectedPriceLabel = isFreeProgramSelected
+    ? "Free"
+    : formatPricing(selectedPricing, selectedPrice);
   const selectedLabel = selectedPlan === "all-in" ? "Go All-In" : programPriceLabel;
   const selectedAnalyticsItem = toAnalyticsItem(
     {
@@ -121,10 +136,24 @@ export default function ProgramOutline({
     selectedPlan === "all-in" ? "subscription" : programType
   );
   const checkoutQuery = {
-    prog: programType,
-    id: programId,
+    prog: selectedPlan === "all-in" ? "subscription" : programType,
+    id: selectedPlan === "all-in" ? 0 : programId,
     ...(selectedPricing?.country ? { country: selectedPricing.country } : {}),
   };
+  const mentorshipPrice = Number(mentorshipAddonPrice ?? 20);
+  const mentorshipPricing = pricingFromContext(mentorshipPrice, programPricing);
+  const mentorshipCheckoutQuery = new URLSearchParams({
+    prog: programType,
+    id: String(programId),
+    mentorship: "1",
+    ...(programPricing?.country ? { country: programPricing.country } : {}),
+  }).toString();
+
+  useEffect(() => {
+    if (isFree) {
+      setSelectedPlan("program");
+    }
+  }, [isFree]);
 
   if (!items.length) {
     return null;
@@ -257,6 +286,7 @@ export default function ProgramOutline({
             label={programPriceLabel}
             price={Number(programPrice || 0)}
             pricing={programPricing}
+            priceLabel={isFree ? "Free" : undefined}
             onClick={() => {
               setSelectedPlan("program");
               trackEvent("select_item", {
@@ -268,10 +298,16 @@ export default function ProgramOutline({
         </div>
 
         <div className="mt-8">
-          {selectedPlan === "program" && programType === "internship" ? (
+          {selectedPlan === "program" ? (
             <>
-              <h3 className="text-2xl font-bold text-[#1f1f24] dark:text-white">Access this program alone</h3>
-              <p className="mt-1 text-base leading-7 text-[#2f2f35] dark:text-slate-200">1 year access to your selected program.</p>
+              <h3 className="text-2xl font-bold text-[#1f1f24] dark:text-white">
+                {isFree ? "Access this program for free" : "Access this program alone"}
+              </h3>
+              <p className="mt-1 text-base leading-7 text-[#2f2f35] dark:text-slate-200">
+                {isFree
+                  ? "Create an account or log in to add this program to your dashboard."
+                  : "1 year access to your selected program."}
+              </p>
             </>
           ) : (
             <>
@@ -309,20 +345,37 @@ export default function ProgramOutline({
             </p>
           ) : null}
           <p className="mt-4 break-words text-4xl font-black text-[#1f1f24] dark:text-white">Total: {selectedPriceLabel}</p>
-          <Link
-            href={{ pathname: "/dashboard/checkout", query: checkoutQuery }}
-            onClick={() => {
-              trackEvent("add_to_cart", {
-                currency: selectedPricing?.charge_currency || "USD",
-                value: selectedPrice,
-                items: [selectedAnalyticsItem],
-              });
-              trackCheckoutStart([selectedAnalyticsItem], selectedPrice, selectedPricing?.charge_currency || "USD");
-            }}
-            className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-sm bg-hb-green px-5 text-base font-bold text-white transition hover:bg-hb-green-dark"
-          >
-            Continue to checkout
-          </Link>
+          <div className="mt-5">
+            {isFreeProgramSelected ? (
+              <FreeProgramEnrollment
+                programType={programType}
+                programId={programId}
+                programTitle={programPriceLabel}
+                offerMentorship
+                mentorshipPriceLabel={formatPricing(mentorshipPricing, mentorshipPrice)}
+                mentorshipCheckoutHref={`/dashboard/checkout?${mentorshipCheckoutQuery}`}
+              />
+            ) : (
+              <Link
+                href={{ pathname: "/dashboard/checkout", query: checkoutQuery }}
+                onClick={() => {
+                  trackEvent("add_to_cart", {
+                    currency: selectedPricing?.charge_currency || "USD",
+                    value: selectedPrice,
+                    items: [selectedAnalyticsItem],
+                  });
+                  trackCheckoutStart(
+                    [selectedAnalyticsItem],
+                    selectedPrice,
+                    selectedPricing?.charge_currency || "USD"
+                  );
+                }}
+                className="inline-flex h-11 w-full items-center justify-center rounded-sm bg-hb-green px-5 text-base font-bold text-white transition hover:bg-hb-green-dark"
+              >
+                Continue to checkout
+              </Link>
+            )}
+          </div>
         </div>
         </aside>
       </div>
@@ -345,12 +398,14 @@ function PriceChoice({
   label,
   price,
   pricing,
+  priceLabel,
   onClick,
 }: {
   active: boolean;
   label: string;
   price: number;
   pricing?: PricingInfo | null;
+  priceLabel?: string;
   onClick: () => void;
 }) {
   return (
@@ -360,7 +415,9 @@ function PriceChoice({
       className={`min-w-0 rounded-sm border p-2 text-left transition dark:bg-[#0f172a] ${active ? "border-2 border-hb-green" : "border-hb-green/40 dark:border-hb-green/60"}`}
     >
       <span className="block break-words text-sm font-bold text-[#1f1f24] dark:text-white">{label}</span>
-      <span className="mt-4 block break-words text-2xl font-black text-[#1f1f24] dark:text-white">{formatPricing(pricing, price)}</span>
+      <span className="mt-4 block break-words text-2xl font-black text-[#1f1f24] dark:text-white">
+        {priceLabel || formatPricing(pricing, price)}
+      </span>
     </button>
   );
 }

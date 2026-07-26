@@ -8,7 +8,9 @@ import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/
 import { Accordion } from "@radix-ui/react-accordion";
 import { CreditCard, Wallet } from "lucide-react";
 import NavbarPay from "@/components/Nav/navbar-pay";
+import FreeProgramEnrollment from "@/components/enroll/free-program-enrollment";
 import api from "@/api";
+import publicApi from "@/publicApi";
 import { formatCurrencyAmount, type PricingInfo } from "@/lib/pricing";
 import {
   toAnalyticsItem,
@@ -50,6 +52,17 @@ type DiscountInfo = {
   message: string;
 };
 
+async function postCheckoutRequest(url: string, payload: Record<string, unknown>) {
+  try {
+    return await api.post(url, payload);
+  } catch (error: any) {
+    if (error?.response?.status === 401) {
+      return publicApi.post(url, payload);
+    }
+    throw error;
+  }
+}
+
 export default function CheckOutForm({
   plan,
   sourceType,
@@ -57,6 +70,7 @@ export default function CheckOutForm({
   selectedProgram,
   allowProgramSelection,
   supportsMentorshipAddon,
+  initialMentorship = false,
   subscriptionOffer,
   country,
 }: {
@@ -66,6 +80,7 @@ export default function CheckOutForm({
   selectedProgram: CatalogProgram | null;
   allowProgramSelection: boolean;
   supportsMentorshipAddon: boolean;
+  initialMentorship?: boolean;
   subscriptionOffer: SubscriptionOffer;
   country?: string;
 }) {
@@ -81,12 +96,10 @@ export default function CheckOutForm({
   const [openPaymentMethod, setOpenPaymentMethod] = useState("card");
   const [loadedCheckoutKey, setLoadedCheckoutKey] = useState("");
   const [isCardCheckoutLoading, setIsCardCheckoutLoading] = useState(false);
-  const [accessEmail, setAccessEmail] = useState("");
-  const [isAccessEmailLocked, setIsAccessEmailLocked] = useState(false);
   const [purchaseOption, setPurchaseOption] = useState<"program" | "subscription">(
     plan === "subscription" ? "subscription" : "program"
   );
-  const [includeMentorship, setIncludeMentorship] = useState(false);
+  const [includeMentorship, setIncludeMentorship] = useState(initialMentorship);
   const [selectedProgramId, setSelectedProgramId] = useState<number>(selectedProgram?.id || programs?.[0]?.id || 0);
   const [discountCode, setDiscountCode] = useState("");
   const [appliedDiscount, setAppliedDiscount] = useState<DiscountInfo | null>(null);
@@ -119,25 +132,25 @@ export default function CheckOutForm({
   const checkoutType: CheckoutType = isSubscriptionCheckout ? "subscription" : plan;
   const checkoutProgramId = isSubscriptionCheckout ? 0 : Number(selectedProgramData?.id || 0);
 
-  const mentorshipAddonPrice = Number(selectedProgramData?.mentorship_addon_price || 20);
+  const mentorshipAddonPrice = Number(selectedProgramData?.mentorship_addon_price ?? 20);
   const mentorshipEnabled = !isSubscriptionCheckout && supportsMentorshipAddon && includeMentorship;
 
-  const baseProgramPrice = Number(selectedProgramData?.price || 0);
+  const baseProgramPrice = Number(selectedProgramData?.price ?? 0);
   const subscriptionPrice = Number(subscriptionOffer?.price || 0);
   const selectedPriceUsd = isSubscriptionCheckout
     ? subscriptionPrice * subscriptionMonthsMultiplier
     : baseProgramPrice + (mentorshipEnabled ? mentorshipAddonPrice : 0);
   const finalPriceUsd = appliedDiscount?.valid ? Number(appliedDiscount.final_price || 0) : selectedPriceUsd;
+  const isFreeProgram = !isSubscriptionCheckout && baseProgramPrice <= 0;
+  const isFreeWithoutMentorship = isFreeProgram && !mentorshipEnabled;
   const pricingContext = isSubscriptionCheckout ? subscriptionOffer?.pricing : selectedProgramData?.pricing;
   const displayCurrency = pricingContext?.display_currency || "USD";
   const displayCurrencyName = pricingContext?.display_currency_name || displayCurrency;
   const displayCountry = pricingContext?.country || country || "US";
   const displayExchangeRate = Number(pricingContext?.exchange_rate || 1);
 
-  const normalizedAccessEmail = accessEmail.trim().toLowerCase();
-  const isAccessEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedAccessEmail);
   const canSelectProgram = isSubscriptionCheckout || checkoutProgramId > 0;
-  const canInitiateCheckout = canSelectProgram && isAccessEmailValid;
+  const canInitiateCheckout = canSelectProgram;
   const hasUnappliedDiscountCode = discountCode.trim().length > 0 && discountCode.trim().toUpperCase() !== appliedDiscount?.code;
 
   const exchangeRateNaira = displayCurrency === "NGN" ? displayExchangeRate : 1500;
@@ -169,7 +182,6 @@ export default function CheckOutForm({
       sourceType,
       subscriptionLength,
       includeMentorship: mentorshipEnabled,
-      accessEmail: normalizedAccessEmail,
       discount_code: appliedDiscount?.valid ? appliedDiscount.code : "",
       country: displayCountry,
     }),
@@ -184,7 +196,6 @@ export default function CheckOutForm({
       sourceType,
       subscriptionLength,
       mentorshipEnabled,
-      normalizedAccessEmail,
       appliedDiscount?.valid,
       appliedDiscount?.code,
       displayCountry,
@@ -211,7 +222,7 @@ export default function CheckOutForm({
     setCheckoutError("");
     try {
       trackAddPaymentInfo("card", [analyticsItem], finalPriceUsd, "USD");
-      const res = await api.post("/api/create-checkout/", checkoutPayload);
+      const res = await postCheckoutRequest("/api/create-checkout/", checkoutPayload);
       if (res.status === 200) {
         if (res.data?.enrolled) {
           window.alert(res.data?.detail || "You have been enrolled successfully.");
@@ -238,10 +249,6 @@ export default function CheckOutForm({
           "Card checkout could not be loaded. Please try again."
       );
       trackCheckoutError("card_checkout_load_failed");
-      if (error?.response?.status === 401 || error?.response?.data?.login_required) {
-        window.alert(error?.response?.data?.detail || "Please login or create an account first.");
-        window.location.href = error?.response?.data?.redirect_path || "/login";
-      }
     } finally {
       setIsCardCheckoutLoading(false);
     }
@@ -253,42 +260,12 @@ export default function CheckOutForm({
   }, [analyticsItem, canSelectProgram, finalPriceUsd]);
 
   useEffect(() => {
-    let ignore = false;
-
-    async function loadCheckoutIdentity() {
-      try {
-        const res = await api.get("/api/get-user-profile/");
-        const email = String(res.data?.email || "").trim().toLowerCase();
-        if (!ignore && email) {
-          setAccessEmail(email);
-          setIsAccessEmailLocked(true);
-        }
-      } catch {
-        if (!ignore) {
-          setIsAccessEmailLocked(false);
-        }
-      }
-    }
-
-    loadCheckoutIdentity();
-    return () => {
-      ignore = true;
-    };
-  }, []);
-
-  useEffect(() => {
     setAppliedDiscount(null);
     setDiscountMessage("");
     setClientSecret(null);
     setLoadedCheckoutKey("");
     checkoutRequestKeyRef.current = "";
   }, [selectedPriceUsd, checkoutType, checkoutProgramId, mentorshipEnabled, subscriptionLength]);
-
-  useEffect(() => {
-    setClientSecret(null);
-    setLoadedCheckoutKey("");
-    checkoutRequestKeyRef.current = "";
-  }, [normalizedAccessEmail]);
 
   useEffect(() => {
     if (appliedDiscount && discountCode.trim().toUpperCase() !== appliedDiscount.code) {
@@ -316,7 +293,7 @@ export default function CheckOutForm({
 
     setIsDiscountLoading(true);
     try {
-      const res = await api.post("/api/discount-codes/validate/", {
+      const res = await publicApi.post("/api/discount-codes/validate/", {
         code,
         price: selectedPriceUsd,
       });
@@ -330,14 +307,10 @@ export default function CheckOutForm({
   };
 
   const createOrder = async () => {
-    if (!isAccessEmailValid) {
-      window.alert("Enter the email where we should send your access link.");
-      return undefined;
-    }
     if (!canInitiateCheckout) return undefined;
     try {
       trackAddPaymentInfo("paypal", [analyticsItem], finalPriceUsd, "USD");
-      const res = await api.post("/api/create-paypal-order/", paypalPayload);
+      const res = await postCheckoutRequest("/api/create-paypal-order/", paypalPayload);
       if (res.status === 200) {
         if (res.data?.enrolled) {
           window.alert(res.data?.detail || "You have been enrolled successfully.");
@@ -351,11 +324,6 @@ export default function CheckOutForm({
         return res.data.id;
       }
     } catch (error: any) {
-      if (error?.response?.status === 401 || error?.response?.data?.login_required) {
-        window.alert(error?.response?.data?.detail || "Please login or create an account first.");
-        window.location.href = error?.response?.data?.redirect_path || "/login";
-        return undefined;
-      }
       console.error("Error creating PayPal order:", error);
       trackCheckoutError("paypal_order_create_failed");
     }
@@ -364,7 +332,7 @@ export default function CheckOutForm({
 
   const onApprove = async (data: any) => {
     try {
-      const res = await api.post(`/api/capture-paypal-order/${data.orderID}/`);
+      const res = await publicApi.post(`/api/capture-paypal-order/${data.orderID}/`);
       if (res.status === 200) {
         trackPurchase({
           transaction_id: String(data.orderID || res.data?.transaction_id || "paypal_order"),
@@ -392,27 +360,26 @@ export default function CheckOutForm({
       <div className="mx-auto w-full max-w-6xl px-4 py-8 md:px-6">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <section className="rounded-sm border bg-white p-5">
-            <p className="text-base font-bold">Select Preferred Payment Method</p>
-            <div className="mt-4 rounded-sm border p-3">
-              <label className="text-sm font-bold" htmlFor="checkout-access-email">
-                Where should we send your access link?
-              </label>
-              <input
-                id="checkout-access-email"
-                type="email"
-                value={accessEmail}
-                onChange={(e) => setAccessEmail(e.target.value)}
-                readOnly={isAccessEmailLocked}
-                placeholder="you@example.com"
-                className="mt-2 w-full rounded-sm border px-3 py-2 text-sm read-only:bg-gray-100"
-                required
-              />
-              {isAccessEmailLocked ? (
-                <p className="mt-2 text-xs text-gray-600">Purchasing as {accessEmail}</p>
-              ) : (
-                <p className="mt-2 text-xs text-gray-600">We will use this email for your receipt and account setup link.</p>
-              )}
-            </div>
+            <p className="text-base font-bold">
+              {isFreeWithoutMentorship ? "Complete your free enrollment" : "Select Preferred Payment Method"}
+            </p>
+            {isFreeWithoutMentorship && selectedProgramData ? (
+              <div className="mt-4 rounded-sm border border-hb-green/40 bg-hb-lightgreen/20 p-4">
+                <p className="text-sm leading-6 text-gray-700">
+                  No payment is required. Enroll now to add this {checkoutType} to
+                  your dashboard.
+                </p>
+                <div className="mt-4">
+                  <FreeProgramEnrollment
+                    programType={checkoutType as "course" | "pathway" | "internship"}
+                    programId={checkoutProgramId}
+                    programTitle={selectedProgramData.title}
+                    label="Enroll for free"
+                  />
+                </div>
+              </div>
+            ) : (
+              <>
             <div className="mt-4 rounded-sm border p-3">
               <label className="text-sm font-bold" htmlFor="checkout-discount-code">
                 Discount code <span className="font-normal text-gray-500">(optional)</span>
@@ -459,7 +426,7 @@ export default function CheckOutForm({
                     </div>
                   ) : (
                     <p className="text-sm text-gray-600">
-                      {isAccessEmailValid ? "Select a program to continue." : "Enter your email above to continue."}
+                      Select a program to continue.
                     </p>
                   )}
                 </AccordionContent>
@@ -473,9 +440,7 @@ export default function CheckOutForm({
                   </span>
                 </AccordionTrigger>
                 <AccordionContent>
-                  {!isAccessEmailValid ? (
-                    <p className="text-sm text-gray-600">Enter your email above to load card payment.</p>
-                  ) : hasUnappliedDiscountCode ? (
+                  {hasUnappliedDiscountCode ? (
                     <p className="text-sm text-gray-600">Apply the discount code, or clear it, before loading card payment.</p>
                   ) : isCardCheckoutLoading ? (
                     <p className="text-sm text-gray-600">Loading secure card checkout...</p>
@@ -492,7 +457,7 @@ export default function CheckOutForm({
                       disabled={!canInitiateCheckout}
                       className="rounded-sm bg-hb-green px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      Load secure card payment
+                      Pay
                     </button>
                   )}
                 </AccordionContent>
@@ -522,6 +487,8 @@ export default function CheckOutForm({
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
+              </>
+            )}
           </section>
 
           <section className="rounded-sm border bg-white p-5">

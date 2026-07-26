@@ -41,6 +41,7 @@ export default function Page() {
         high_salary?: number
         brochure_link?: string
         price?: number
+        mentorship_addon_price?: number
         pricing?: PricingInfo
         free?: boolean
         courses?: Array<string | number>
@@ -246,8 +247,10 @@ export default function Page() {
                     programId={String(thisInternshipid)}
                     programPrice={heroInternship?.price || 0}
                     programPricing={heroInternship?.pricing}
+                    mentorshipAddonPrice={heroInternship?.mentorship_addon_price}
                     allInPricing={allInPricing}
                     programPriceLabel="This Internship Alone"
+                    isFree={heroInternshipIsFree}
                 />
                 <PotentialProjectsSection
                     projects={heroInternship?.potential_projects}
@@ -305,8 +308,10 @@ export default function Page() {
                     programId={String(thisInternshipid)}
                     programPrice={heroInternship?.price || 0}
                     programPricing={heroInternship?.pricing}
+                    mentorshipAddonPrice={heroInternship?.mentorship_addon_price}
                     allInPricing={allInPricing}
                     programPriceLabel="This Internship Alone"
+                    isFree={heroInternshipIsFree}
                 />
                 <PotentialProjectsSection
                     projects={heroInternship?.potential_projects}

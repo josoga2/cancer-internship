@@ -55,6 +55,7 @@ function PageContent() {
   const sourceType = (queryType || prog || "subscription").toLowerCase();
   const normalizedType = (sourceType === "career" ? "pathway" : sourceType) as CheckoutType;
   const id = Number(searchParams.get("id") || 0);
+  const initialMentorship = searchParams.get("mentorship") === "1";
   const countryParam = (searchParams.get("country") || "").trim().toUpperCase();
   const [detectedCountry, setDetectedCountry] = useState("");
   const [countryReady, setCountryReady] = useState(Boolean(countryParam));
@@ -112,6 +113,7 @@ function PageContent() {
         selectedProgram={catalog.selected_program}
         allowProgramSelection={catalog.allow_program_selection}
         supportsMentorshipAddon={catalog.supports_mentorship_addon}
+        initialMentorship={initialMentorship}
         subscriptionOffer={catalog.subscription_offer}
         country={country}
       />
