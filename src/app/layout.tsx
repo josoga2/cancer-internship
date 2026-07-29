@@ -6,6 +6,8 @@ import { Toaster } from "@/components/ui/sonner"
 import { ThemeProvider } from "@/components/theme-provider";
 import ThemeToggle from "@/components/theme-toggle";
 import Script from "next/script";
+import { Suspense } from "react";
+import GoogleAnalyticsPageView from "@/components/analytics/google-analytics-page-view";
 import {
   DEFAULT_OG_IMAGE,
   SITE_BASE_URL,
@@ -80,7 +82,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  // GA measurement IDs are public. The fallback preserves the existing
+  // HackBio property if a deployment is missing its environment variable.
+  const gaId =
+    process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim() || "G-E5BTKCZEBN";
   return (
     <html lang="en">
       <body
@@ -104,19 +109,22 @@ export default function RootLayout({
               <Toaster />
               {gaId ? (
                 <>
+                  <Script id="ga4-base" strategy="beforeInteractive">
+                    {`
+                      window.dataLayer = window.dataLayer || [];
+                      window.gtag = window.gtag || function(){dataLayer.push(arguments);}
+                      gtag('js', new Date());
+                      gtag('config', '${gaId}', { send_page_view: false });
+                    `}
+                  </Script>
                   <Script
+                    id="ga4-loader"
                     src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
                     strategy="afterInteractive"
                   />
-                  <Script id="ga4-base" strategy="afterInteractive">
-                    {`
-                      window.dataLayer = window.dataLayer || [];
-                      function gtag(){dataLayer.push(arguments);}
-                      window.gtag = gtag;
-                      gtag('js', new Date());
-                      gtag('config', '${gaId}');
-                    `}
-                  </Script>
+                  <Suspense fallback={null}>
+                    <GoogleAnalyticsPageView />
+                  </Suspense>
                 </>
               ) : null}
               <Script id="microsoft-clarity" strategy="afterInteractive">

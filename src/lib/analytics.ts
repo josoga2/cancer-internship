@@ -26,9 +26,30 @@ declare global {
 const cleanParams = (params: AnalyticsParams = {}) =>
   Object.fromEntries(Object.entries(params).filter(([, value]) => value !== undefined && value !== null));
 
+const getGtag = () => {
+  if (typeof window === "undefined") return null;
+  if (typeof window.gtag === "function") return window.gtag;
+
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function queuedGtag() {
+    window.dataLayer?.push(arguments);
+  };
+  return window.gtag;
+};
+
 export function trackEvent(eventName: string, params: AnalyticsParams = {}) {
-  if (typeof window === "undefined" || typeof window.gtag !== "function") return;
-  window.gtag("event", eventName, cleanParams(params));
+  const gtag = getGtag();
+  if (!gtag) return;
+  gtag("event", eventName, cleanParams(params));
+}
+
+export function trackPageView(pagePath: string, pageTitle?: string) {
+  if (typeof window === "undefined") return;
+  trackEvent("page_view", {
+    page_path: pagePath,
+    page_location: window.location.href,
+    page_title: pageTitle || document.title,
+  });
 }
 
 export function trackButtonClick(name: string, location: string, extraParams?: AnalyticsParams) {

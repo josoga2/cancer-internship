@@ -1,6 +1,17 @@
 # GA4 Analytics Notes
 
-GA4 is configured in `src/app/layout.tsx` with `NEXT_PUBLIC_GA_MEASUREMENT_ID`.
+GA4 is configured in `src/app/layout.tsx` with
+`NEXT_PUBLIC_GA_MEASUREMENT_ID`. The existing HackBio property
+`G-E5BTKCZEBN` is used as a non-secret fallback so a missing deployment
+variable cannot silently disable analytics.
+
+Microsoft Clarity is initialized separately in the same layout. It uses the
+`clarity` global and does not replace GA4's `gtag` or `dataLayer`.
+
+App Router page views are sent by
+`src/components/analytics/google-analytics-page-view.tsx`. The GA base config
+uses `send_page_view: false` so the explicit tracker does not duplicate the
+initial page view.
 
 Reusable event helpers live in `src/lib/analytics.ts`. Use those helpers instead of calling `window.gtag` directly inside components.
 
