@@ -68,6 +68,21 @@ const staticRoutes: MetadataRoute.Sitemap = [
     changeFrequency: "monthly",
     priority: 0.6,
   },
+  {
+    url: absoluteUrl("/contact-us"),
+    changeFrequency: "yearly",
+    priority: 0.6,
+  },
+  {
+    url: absoluteUrl("/privacy-policy"),
+    changeFrequency: "yearly",
+    priority: 0.4,
+  },
+  {
+    url: absoluteUrl("/terms-of-service"),
+    changeFrequency: "yearly",
+    priority: 0.4,
+  },
 ];
 
 const validDate = (value?: string) => {

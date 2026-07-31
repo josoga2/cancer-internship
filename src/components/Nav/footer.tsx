@@ -36,7 +36,9 @@ export default function Footer() {
             <Link href='/faqs'>FAQs</Link>
             <Link href='/scholarships'>Scholarships</Link>
             <Link href='/'>Partners and Sponsors</Link>
-            <Link href='/'>Contact Us</Link>
+            <Link href='/contact-us'>Contact Us</Link>
+            <Link href='/privacy-policy'>Privacy Policy</Link>
+            <Link href='/terms-of-service'>Terms of Service</Link>
           </div>
           
           
@@ -76,7 +78,9 @@ export default function Footer() {
             <hr />  
             <Link href='/'>About Us</Link>
             <Link href='/'>Partners and Sponsors</Link>
-            <Link href='/'>Contact Us</Link>
+            <Link href='/contact-us'>Contact Us</Link>
+            <Link href='/privacy-policy'>Privacy Policy</Link>
+            <Link href='/terms-of-service'>Terms of Service</Link>
           </div>
       </div>
       </div>
