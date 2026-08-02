@@ -5,7 +5,7 @@ export const SITE_NAME = "HackBio";
 export const SITE_BASE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://internship.thehackbio.com"
 ).replace(/\/$/, "");
-export const DEFAULT_OG_IMAGE = `${SITE_BASE_URL}/internships.jpg`;
+export const DEFAULT_OG_IMAGE = `${SITE_BASE_URL}/meta.png`;
 
 const configuredApiBase = process.env.NEXT_PUBLIC_API_URL || SERVER_URL || "";
 const apiBase = configuredApiBase
@@ -205,6 +205,7 @@ export const getCourseMeta = async (
     description?: string;
     overview?: string;
     image?: string;
+    thumbnail?: string;
     hero_background_image?: string;
     level?: string;
     updated_at?: string;
@@ -223,7 +224,11 @@ export const getCourseMeta = async (
       course.overview,
       course.description
     ),
-    image: course.hero_background_image || course.image || null,
+    image:
+      course.hero_background_image ||
+      course.thumbnail ||
+      course.image ||
+      null,
     level: course.level,
     updatedAt: course.updated_at,
     published: course.published,
@@ -259,6 +264,32 @@ export const getInternshipMeta = async (internshipId: string | string[]) => {
   };
 };
 
+export const getFeaturedInternshipMeta = async () => {
+  const internships = await fetchList<{
+    id?: number | string;
+    title?: string;
+    summary?: string;
+    description?: string;
+    overview?: string;
+    published?: boolean;
+    int_image?: string;
+    hero_background_image?: string;
+  }>("api/internships/");
+  const internship = internships.find((item) => item.published === true);
+  if (!internship?.id) return null;
+
+  return {
+    id: internship.id,
+    title: internship.title || "Bioinformatics Internship",
+    description: pickDescription(
+      internship.summary,
+      internship.overview,
+      internship.description
+    ),
+    image: internship.hero_background_image || internship.int_image || null,
+  };
+};
+
 export const getPathwayMeta = async (
   pathwayId: string | string[]
 ): Promise<PathwaySeoData | null> => {
@@ -273,6 +304,7 @@ export const getPathwayMeta = async (
     description?: string;
     overview?: string;
     int_image?: string;
+    thumbnail?: string;
     hero_background_image?: string;
     level?: string;
     published?: boolean;
@@ -290,7 +322,11 @@ export const getPathwayMeta = async (
       pathway.overview,
       pathway.description
     ),
-    image: pathway.hero_background_image || pathway.int_image || null,
+    image:
+      pathway.hero_background_image ||
+      pathway.thumbnail ||
+      pathway.int_image ||
+      null,
     level: pathway.level,
     published: pathway.published,
     isActive: pathway.is_active,
