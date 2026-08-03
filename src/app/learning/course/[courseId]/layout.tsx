@@ -4,6 +4,7 @@ import {
   buildPageMetadata,
   courseJsonLd,
   getCourseMeta,
+  programOgImageUrl,
   serializeJsonLd,
 } from "@/lib/page-metadata";
 import type { ReactNode } from "react";
@@ -25,7 +26,8 @@ export async function generateMetadata({
     title,
     description,
     urlPath: `/learning/course/${params.courseId}`,
-    image: course?.image,
+    image: course ? programOgImageUrl("course", course.id) : undefined,
+    imageAlt: course ? `${course.title} course` : "HackBio bioinformatics course",
     noIndex: course ? course.published === false || course.isActive === false : false,
   });
 }

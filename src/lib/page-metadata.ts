@@ -56,6 +56,14 @@ export const absoluteUrl = (path = "/") => {
   return `${SITE_BASE_URL}${normalizedPath}`;
 };
 
+export const programOgImageUrl = (
+  programType: "course" | "pathway" | "internship",
+  programId: string | number
+) =>
+  absoluteUrl(
+    `/api/og/program?type=${encodeURIComponent(programType)}&id=${encodeURIComponent(String(programId))}`
+  );
+
 export const cleanSeoText = (value?: string | null) => {
   if (!value) return "";
 

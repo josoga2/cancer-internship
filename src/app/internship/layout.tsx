@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import {
   buildPageMetadata,
   getFeaturedInternshipMeta,
+  programOgImageUrl,
 } from "@/lib/page-metadata";
 import type { ReactNode } from "react";
 
@@ -16,7 +17,9 @@ export async function generateMetadata(): Promise<Metadata> {
       internship?.description ||
       "Build practical bioinformatics and genomics skills through HackBio's online internship programs, project-based learning, and guided training.",
     urlPath: "/internship",
-    image: internship?.image,
+    image: internship
+      ? programOgImageUrl("internship", internship.id)
+      : undefined,
     imageAlt: internship
       ? `${internship.title} internship`
       : "HackBio online bioinformatics internship",

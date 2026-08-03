@@ -3,6 +3,7 @@ import {
   breadcrumbJsonLd,
   buildPageMetadata,
   getPathwayMeta,
+  programOgImageUrl,
   serializeJsonLd,
 } from "@/lib/page-metadata";
 import type { ReactNode } from "react";
@@ -24,7 +25,10 @@ export async function generateMetadata({
     title,
     description,
     urlPath: `/pathway/${params.pathwayid}`,
-    image: pathway?.image,
+    image: pathway ? programOgImageUrl("pathway", pathway.id) : undefined,
+    imageAlt: pathway
+      ? `${pathway.title} learning pathway`
+      : "HackBio bioinformatics learning pathway",
     noIndex: pathway
       ? pathway.published === false || pathway.isActive === false
       : false,
