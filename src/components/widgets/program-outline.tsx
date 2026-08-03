@@ -271,6 +271,7 @@ export default function ProgramOutline({
           <PriceChoice
             active={selectedPlan === "all-in"}
             label="Go All-In"
+            accessLabel="12 months access"
             price={allInPrice}
             pricing={allInPricing}
             onClick={() => {
@@ -284,6 +285,7 @@ export default function ProgramOutline({
           <PriceChoice
             active={selectedPlan === "program"}
             label={programPriceLabel}
+            accessLabel="12 months access"
             price={Number(programPrice || 0)}
             pricing={programPricing}
             priceLabel={isFree ? "Free" : undefined}
@@ -305,15 +307,15 @@ export default function ProgramOutline({
               </h3>
               <p className="mt-1 text-base leading-7 text-[#2f2f35] dark:text-slate-200">
                 {isFree
-                  ? "Create an account or log in to add this program to your dashboard."
-                  : "1 year access to your selected program."}
+                  ? "Includes 12 months access. Create an account or log in to add this program to your dashboard."
+                  : "12 months access to your selected program."}
               </p>
             </>
           ) : (
             <>
               <h3 className="text-2xl font-bold text-[#1f1f24] dark:text-white">Go All-In</h3>
               <p className="mt-1 text-base leading-7 text-[#2f2f35] dark:text-slate-200">
-                Get full access to all current and future courses, pathways, and practice tasks for preparing for your career interviews.
+                Get 12 months access to all current and future courses, pathways, and practice tasks for preparing for your career interviews.
               </p>
               <ul className="mt-2 list-disc space-y-1 pl-7 text-base leading-7 text-[#2f2f35] dark:text-slate-200">
                 <li>Everything included</li>
@@ -396,6 +398,7 @@ function wordsFromText(text: string) {
 function PriceChoice({
   active,
   label,
+  accessLabel,
   price,
   pricing,
   priceLabel,
@@ -403,6 +406,7 @@ function PriceChoice({
 }: {
   active: boolean;
   label: string;
+  accessLabel: string;
   price: number;
   pricing?: PricingInfo | null;
   priceLabel?: string;
@@ -415,6 +419,9 @@ function PriceChoice({
       className={`min-w-0 rounded-sm border p-2 text-left transition dark:bg-[#0f172a] ${active ? "border-2 border-hb-green" : "border-hb-green/40 dark:border-hb-green/60"}`}
     >
       <span className="block break-words text-sm font-bold text-[#1f1f24] dark:text-white">{label}</span>
+      <span className="mt-1 block break-words text-sm text-[#2f2f35] dark:text-slate-300">
+        {accessLabel}
+      </span>
       <span className="mt-4 block break-words text-2xl font-black text-[#1f1f24] dark:text-white">
         {priceLabel || formatPricing(pricing, price)}
       </span>
