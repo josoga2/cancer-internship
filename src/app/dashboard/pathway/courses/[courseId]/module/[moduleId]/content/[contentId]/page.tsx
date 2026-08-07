@@ -25,10 +25,9 @@ import TocLink from "@/components/widgets/dashboard-widgets/toc-link";
 import HbButton from "@/components/widgets/hb-buttons";
 import Video from "@/components/widgets/course-props-widgets/video";
 import TextContent from "@/components/widgets/course-props-widgets/text";
-import WebRPy from "@/components/widgets/course-props-widgets/webrpy";
+import MentorProjectRubric from "@/components/widgets/course-props-widgets/mentor-project-rubric";
 import StreakBar from "@/components/widgets/dashboard-widgets/streak-bar";
 import Link from "next/link";
-import ProgressFloat from "@/components/widgets/progress-float";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { trackModuleComplete } from "@/lib/analytics";
 
@@ -84,6 +83,7 @@ function Page() {
   const router = useRouter()
 
   const [username, setUsername] = useState("");
+  const [isMentor, setIsMentor] = useState(false);
   const [loginDates, setLoginDates] = useState<string[]>([]);
   const [cert, setCert] = useState(false);
   const [userXP, setUserXP] = useState("");
@@ -105,18 +105,8 @@ function Page() {
   const [totalXP, setTotalXP] = useState<number>(1);
   const [certSkill, setCertSkill] = useState("");
    const [progressPercent, setProgressPercent] = useState<number>(0);
-  const [popupDismissed, setPopupDismissed] = useState(false);
-  const [popupRequestedTrigger, setPopupRequestedTrigger] = useState<string | null>(null);
-  const [popupTrigger, setPopupTrigger] = useState<string | null>(null);
-  const [popupData, setPopupData] = useState<{
-    variant_id: number;
-    headline: string;
-    body: string;
-    cta_text?: string;
-    cta_url?: string;
-  } | null>(null);
   const [stepsOpen, setStepsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"learn" | "practice" | "steps" | "resources">("learn");
+  const [activeTab, setActiveTab] = useState<"learn" | "steps" | "resources">("learn");
   const [certPreparedness, setCertPreparedness] = useState("");
   const [certImprovement, setCertImprovement] = useState("");
   const [certError, setCertError] = useState("");
@@ -434,6 +424,7 @@ function Page() {
         if (response.data && (response.status == 200 || response.status == 201)) {
           const userProfile = response.data;
           setUsername(userProfile.username);
+          setIsMentor(Boolean(userProfile.is_mentor));
           setLoginDates(Array.isArray(userProfile.login_dates) ? userProfile.login_dates : []);
         } else {
           router.push("/login");
@@ -561,6 +552,7 @@ function Page() {
         const response = await api.get('/api/get-user-profile/');
         if (response.data && (response.status == 200 || response.status == 201)) {
           const userProfile = response.data;
+          setIsMentor(Boolean(userProfile.is_mentor));
           setLoginDates(Array.isArray(userProfile.login_dates) ? userProfile.login_dates : []);
           setUserInternshipId(
             Array.isArray(userProfile.Internships)
@@ -942,87 +934,6 @@ function Page() {
     }
   };
 
-  const resolvedTrigger =
-    progressPercent >= 80
-      ? "on_course_80"
-      : progressPercent >= 50
-        ? "on_course_50"
-        : progressPercent >= 25
-          ? "on_course_25"
-          : null;
-
-  const shouldFetchPopup = !!resolvedTrigger && courseId > 0;
-  const popupRequestKey = resolvedTrigger ? `${courseId}:${resolvedTrigger}` : null;
-  const showProgressPopup = shouldFetchPopup && !!popupData && !popupDismissed;
-  const allowCta = popupTrigger === "on_course_50" || popupTrigger === "on_course_80";
-
-  useEffect(() => {
-    if (popupTrigger && resolvedTrigger && popupTrigger !== resolvedTrigger) {
-      setPopupData(null);
-      setPopupDismissed(false);
-    }
-  }, [resolvedTrigger, popupTrigger]);
-
-  useEffect(() => {
-    const fetchPopup = async () => {
-      if (!shouldFetchPopup || popupDismissed || !resolvedTrigger) return;
-      if (!popupRequestKey) return;
-      if (popupRequestedTrigger === popupRequestKey) return;
-      setPopupRequestedTrigger(popupRequestKey);
-      try {
-        const res = await api.get("/api/popups/next/", {
-          params: { course_id: courseId, trigger: resolvedTrigger },
-        });
-        if (res.status === 200 && res.data?.variant_id) {
-          setPopupData(res.data);
-          setPopupTrigger(resolvedTrigger);
-          await api.post("/api/popups/impression/", {
-            variant_id: res.data.variant_id,
-            course_id: courseId,
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching popup:", error);
-      }
-    };
-
-    fetchPopup();
-  }, [shouldFetchPopup, popupDismissed, courseId, resolvedTrigger, popupRequestedTrigger]);
-
-  const handlePopupDismiss = async () => {
-    if (popupData?.variant_id) {
-      try {
-        await api.post("/api/popups/action/", {
-          variant_id: popupData.variant_id,
-          action: "dismissed",
-        });
-      } catch (error) {
-        console.error("Error logging dismiss:", error);
-      }
-    }
-    setPopupDismissed(true);
-  };
-
-  const handlePopupCta = async () => {
-    if (!popupData?.cta_url) return;
-    if (popupData?.variant_id) {
-      try {
-        await api.post("/api/popups/action/", {
-          variant_id: popupData.variant_id,
-          action: "clicked",
-        });
-      } catch (error) {
-        console.error("Error logging click:", error);
-      }
-    }
-    setPopupDismissed(true);
-    if (popupData.cta_url.startsWith("http")) {
-      window.location.href = popupData.cta_url;
-    } else {
-      router.push(popupData.cta_url);
-    }
-  };
-
   const courseTitle = coursesList.find((course) => Number(course.id) === courseId)?.title || "Course";
   const moduleTitle = modulesList.find((module) => Number(module.id) === moduleId)?.title || "Module";
   const currentLessonTitle = filteredContentList[0]?.title || "Lesson";
@@ -1157,22 +1068,6 @@ function Page() {
     }
   };
 
-  const estimateMinutes = (content: { content_type?: string; text_content?: string }) => {
-    const type = content.content_type || "";
-    if (type === "text" && typeof content.text_content === "string") {
-      const words = countWords(content.text_content);
-      return Math.max(2, Math.ceil(words / 180));
-    }
-    if (type === "video") return 8;
-    if (type === "quiz") return 3;
-    if (type === "feedback") return 4;
-    if (type === "project") return 15;
-    if (type === "codeTask") return 12;
-    if (type === "jupyter") return 10;
-    if (type === "certificate") return 10;
-    return 5;
-  };
-
   const stepsList = (
     <div className="flex flex-col gap-2">
       {contentList.map((content) => {
@@ -1180,7 +1075,6 @@ function Page() {
         const isActive = Number(content.id) === Number(contentId);
         const isCompleted = uniqCContent.has(String(content.id));
         const statusIcon = isCompleted ? "✅" : isActive ? "⏳" : "○";
-        const minutes = estimateMinutes(content);
         return (
           <Link
             key={content.id}
@@ -1190,7 +1084,7 @@ function Page() {
             <span className="text-lg">{statusIcon}</span>
             <div className="flex flex-1 flex-col">
               <span className="text-sm font-semibold text-gray-800">{content.title}</span>
-              <span className="text-xs text-gray-500">{meta.icon} {meta.label} • {minutes} min</span>
+              <span className="text-xs text-gray-500">{meta.icon} {meta.label}</span>
             </div>
           </Link>
         );
@@ -1448,23 +1342,6 @@ function Page() {
       {filteredContentList.length > 0 ? (
         filteredContentList.map((content) => (
           <div className="flex flex-col gap-10" key={content.id}>
-            <div className="w-full p-3 text-lg border rounded-md border-hb-green">
-              {globalInternshipId > 0 ? (
-                <p className="text-sm text-gray-600">Overall Pathway Progress</p>
-              ) : (
-                <p className="text-sm text-gray-600">Course Progress</p>
-              )}
-              {uniqueContentId > 0 && totalContent > 0 ? (
-                <div className="flex flex-row gap-10 items-center max-w-full">
-                  <Progress value={Math.ceil(progressPercent)} className="" />
-                  <p className="font-bold text-2xl rounded-full">{Math.ceil(progressPercent)}%</p>
-                </div>
-              ) : (
-                <div className="h-3 w-10"></div>
-              )}
-              <p className="text-xs text-gray-500">🎖️XP and progress are computed from the entire pathway content.</p>
-            </div>
-
             {subscriptionIntStatus ? (
               <div>
                 {content.content_type === "video" && (
@@ -1481,6 +1358,11 @@ function Page() {
                   <div className="w-full flex flex-col text-sm">
                     <div className="rounded-md flex flex-col w-full prose gap-5">
                       <TextContent text_content={content.text_content} />
+                      <MentorProjectRubric
+                        isMentor={isMentor}
+                        rubric={content.project_rubric}
+                        contentType="codeTask"
+                      />
                       <textarea
                         id="solution"
                         value={solution}
@@ -1523,6 +1405,10 @@ function Page() {
                         Project Details: Submit markdown or code solution to the project below
                       </p>
                       <TextContent text_content={content.project_data} />
+                      <MentorProjectRubric
+                        isMentor={isMentor}
+                        rubric={content.project_rubric}
+                      />
                       <div className="grid gap-2">
                         <Label htmlFor="solution" className="text-base font-bold pt-5">Your Solution</Label>
                         <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} placeholder="type your solution..." required className="bg-green-950 text-white text-xs placeholder:text-xs p-3 h-100 font-mono border border-neutral-200" />
@@ -1708,6 +1594,11 @@ function Page() {
             <div className="w-full flex flex-col text-sm">
               <div className="rounded-md flex flex-col w-full prose gap-5">
                 <TextContent text_content={content.text_content} />
+                <MentorProjectRubric
+                  isMentor={isMentor}
+                  rubric={content.project_rubric}
+                  contentType="codeTask"
+                />
                 <textarea
                   id="solution"
                   value={solution}
@@ -1746,6 +1637,10 @@ function Page() {
           {content.content_type === "project" && (
             <div className="flex flex-col prose leading-tight gap-3 ">
               <TextContent text_content={content.project_data} />
+              <MentorProjectRubric
+                isMentor={isMentor}
+                rubric={content.project_rubric}
+              />
               <Label htmlFor="solution" className="text-sm font-bold">Your Solution</Label>
               <textarea id="solution" value={solution} onChange={(e) => setSolution(e.target.value)} className="text-xs font-mono h-100 p-2 bg-green-900 text-white" />
               <Button onClick={() => { handleSolutionSubmit(); }} className="bg-hb-green text-white">SUBMIT</Button>
@@ -1839,12 +1734,12 @@ function Page() {
 
   return (
     <main className="w-full">
-    <div className="hidden md:flex w-full">
+    <div className="hidden h-screen w-full overflow-hidden md:flex">
       <div>
         <LeftSideBar />
       </div>
-      <div className="flex-1 bg-hb-lightgreen min-h-screen flex flex-col">
-          <div className="sticky top-0 z-30 bg-white border-b">
+      <div className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden bg-hb-lightgreen">
+          <div className="z-30 shrink-0 border-b bg-white">
             <div className="flex items-center justify-between px-8 py-4">
               <div>
                 <p className="text-xs text-gray-500">HackBio › {courseTitle} › {moduleTitle}</p>
@@ -1869,14 +1764,14 @@ function Page() {
           </div>
           </div>
 
-          <div className="flex flex-1">
-            <div className="flex-1 overflow-y-auto">
+          <div className="flex min-h-0 flex-1 overflow-hidden">
+            <div className="min-w-0 flex-1 overflow-y-auto overscroll-contain">
               <div className="mx-auto w-full max-w-3xl px-8 py-8">
                 {desktopLessonContent}
               </div>
             </div>
             {stepsOpen && (
-              <aside className="w-80 border-l bg-white px-4 py-6 flex flex-col gap-4">
+              <aside className="flex h-full w-80 shrink-0 flex-col gap-4 overflow-y-auto overscroll-contain border-l bg-white px-4 py-6">
                 <div className="flex items-center justify-between">
                 <p className="font-semibold text-gray-800">Module Content</p>
                   <button
@@ -1888,30 +1783,35 @@ function Page() {
                   </button>
                 </div>
                 {stepsList}
-                <div className="pt-4 border-t">
-                  <p className="text-sm font-semibold text-gray-700 pb-2">Practice</p>
-                  <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
-                    <WebRPy />
-                  </div>
-                </div>
               </aside>
             )}
           </div>
 
-          <div className="sticky bottom-0 z-30 border-t bg-white px-8 py-3">
-            <div className="flex items-center justify-between">
+          <div className="z-30 shrink-0 border-t bg-white px-8 py-3">
+            <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
               <button
                 type="button"
                 onClick={() => router.push(prevHref)}
-                className="text-sm font-semibold text-gray-600 hover:text-hb-green"
+                className="justify-self-start text-left text-sm font-semibold text-gray-600 hover:text-hb-green"
               >
                 ← Back
               </button>
+              <div className="flex w-96 max-w-[40vw] items-center gap-4 justify-self-center rounded-md border border-hb-green px-4 py-2" aria-label={`Overall progress ${Math.round(progressPercent)} percent`}>
+                <p className="shrink-0 text-xl font-bold text-gray-800">
+                  <span aria-hidden="true">🎖️</span> {Math.round(progressPercent)}%
+                </p>
+                <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
+                  <div
+                    className="h-full rounded-full bg-hb-green transition-[width]"
+                    style={{ width: `${Math.max(0, Math.min(100, progressPercent))}%` }}
+                  />
+                </div>
+              </div>
             <button
               type="button"
               onClick={handlePrimaryAction}
               disabled={primaryDisabled}
-              className={`rounded-full bg-hb-green px-6 py-2 text-sm font-semibold text-white transition ${primaryDisabled ? "opacity-60 cursor-not-allowed" : "hover:bg-green-700"}`}
+              className={`justify-self-end rounded-full bg-hb-green px-6 py-2 text-sm font-semibold text-white transition ${primaryDisabled ? "opacity-60 cursor-not-allowed" : "hover:bg-green-700"}`}
             >
               {primaryLabel}
             </button>
@@ -1920,8 +1820,8 @@ function Page() {
         </div>
       </div>
 
-      <div className="md:hidden w-full min-h-svh bg-hb-lightgreen flex flex-col">
-        <div className="px-4 pt-4 pb-2">
+      <div className="flex h-svh w-full flex-col overflow-hidden bg-hb-lightgreen md:hidden">
+        <div className="shrink-0 px-4 pb-2 pt-4">
           <p className="text-xs text-gray-500">{courseTitle} • {moduleTitle}</p>
           <div className="flex items-center justify-between gap-4">
             <p className="text-lg font-semibold text-gray-900">{currentLessonTitle}</p>
@@ -1933,27 +1833,22 @@ function Page() {
           <div className="mt-3">
             <StreakBar loginDates={loginDates} mode="mobile" />
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            {["learn", "practice", "steps", "resources"].map((tab) => (
+          <div className="mt-4 grid grid-cols-3 gap-2">
+            {["learn", "steps", "resources"].map((tab) => (
               <button
                 key={tab}
                 type="button"
                 onClick={() => setActiveTab(tab as typeof activeTab)}
                 className={`w-full rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap ${activeTab === tab ? "bg-hb-green text-white" : "bg-white text-gray-600 border border-gray-200"}`}
               >
-                {tab === "learn" ? "Learn" : tab === "practice" ? "Practice" : tab === "steps" ? "Module Content" : "Resources"}
+                {tab === "learn" ? "Learn" : tab === "steps" ? "Module Content" : "Resources"}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="flex-1 px-4 pb-28">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-8">
           {activeTab === "learn" && mobileLessonContent}
-          {activeTab === "practice" && (
-            <div className="rounded-lg border border-gray-200 bg-white p-3">
-              <WebRPy />
-            </div>
-          )}
           {activeTab === "steps" && stepsList}
           {activeTab === "resources" && (
             <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-700">
@@ -1966,20 +1861,31 @@ function Page() {
           )}
         </div>
 
-        <div className="sticky bottom-0 z-30 border-t bg-white px-4 py-3">
-          <div className="flex items-center justify-between">
+        <div className="z-30 shrink-0 border-t bg-white px-4 py-3">
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
             <button
               type="button"
               onClick={() => router.push(prevHref)}
-              className="text-sm font-semibold text-gray-600"
+              className="justify-self-start text-left text-sm font-semibold text-gray-600"
             >
               Back
             </button>
+            <div className="flex w-32 items-center gap-2 justify-self-center rounded-md border border-hb-green px-2 py-1.5" aria-label={`Overall progress ${Math.round(progressPercent)} percent`}>
+              <p className="shrink-0 text-lg font-bold text-gray-800">
+                <span aria-hidden="true">🎖️</span> {Math.round(progressPercent)}%
+              </p>
+              <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-gray-200">
+                <div
+                  className="h-full rounded-full bg-hb-green transition-[width]"
+                  style={{ width: `${Math.max(0, Math.min(100, progressPercent))}%` }}
+                />
+              </div>
+            </div>
             <button
               type="button"
               onClick={handlePrimaryAction}
               disabled={primaryDisabled}
-              className={`rounded-full bg-hb-green px-6 py-2 text-sm font-semibold text-white transition ${primaryDisabled ? "opacity-60 cursor-not-allowed" : ""}`}
+              className={`justify-self-end rounded-full bg-hb-green px-6 py-2 text-sm font-semibold text-white transition ${primaryDisabled ? "opacity-60 cursor-not-allowed" : ""}`}
             >
               {primaryLabel}
             </button>
@@ -1987,16 +1893,6 @@ function Page() {
         </div>
       </div>
 
-      {showProgressPopup && popupData && (
-        <ProgressFloat
-          title={popupData.headline}
-          message={popupData.body || ""}
-          percent={progressPercent}
-          ctaText={allowCta ? popupData.cta_text : undefined}
-          onCta={allowCta && popupData.cta_url ? handlePopupCta : undefined}
-          onClose={handlePopupDismiss}
-        />
-      )}
     </main>
   )
 }
